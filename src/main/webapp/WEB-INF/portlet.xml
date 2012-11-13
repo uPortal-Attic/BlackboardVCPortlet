@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+<portlet-app xmlns='http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd' version='1.0'>
+    <portlet>
+        <description>View and schedule web conferences</description>
+        <portlet-name>BlackboardVCPortlet</portlet-name>
+        <display-name>Collaborate</display-name>
+        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
+        <expiration-cache>0</expiration-cache>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>VIEW</portlet-mode>
+            <portlet-mode>EDIT</portlet-mode>
+        </supports>
+        <supported-locale>en</supported-locale>
+        <resource-bundle>messages</resource-bundle>
+        <portlet-info>
+            <title>Web Conferencing</title>
+            <short-title>Web Conferencing</short-title>
+        </portlet-info>
+        <portlet-preferences>
+            <preference>
+                <name>wsusername</name>
+                <value>**Will be provided by Blackboard**</value>
+            </preference>
+            <preference>
+                <name>wspassword</name>
+                <value>**Will be provided by Blackboard**</value>
+            </preference>
+			<!-- Set the callback URL to your uPortal instance URL -->
+            <preference>
+                <name>callbackUrl</name>
+                <value>http://localhost:8080/BlackboardVCPortlet/callback</value>
+            </preference>
+            <!-- The attribute to check for basic or full access.
+                 Attribute must be available below-->
+            <preference>
+                <name>userTypeAttribute</name>
+                <value>uid</value>
+            </preference>   
+            <!-- The values of the above attribute which will grant full access
+                 If the attribute or value isn't found then the portlet will
+                 default to basic access
+            -->      
+            <preference>
+                <name>fullAccessValues</name>
+                <value>staff</value>
+            </preference>
+            <!-- Role which grants admin access. Role must be available below-->
+            <preference>
+                <name>adminRole</name>
+                <value>Collaborate Administrators</value>
+            </preference>
+        </portlet-preferences>
+    </portlet>
+    <security-role-ref>
+      <role-name>Collaborate Administrators</role-name>
+      <role-link>local.30</role-link>
+    </security-role-ref>
+    <user-attribute>
+        <name>eduPersonAffiliation</name>
+    </user-attribute>
+     <user-attribute>
+        <name>eduPersonOrgUnitDN</name>
+    </user-attribute>
+     <user-attribute>
+        <name>displayName</name>
+    </user-attribute>
+     <user-attribute>
+        <name>uid</name>
+    </user-attribute>
+    <user-attribute>
+        <name>mail</name>
+    </user-attribute>
+    
+</portlet-app>
