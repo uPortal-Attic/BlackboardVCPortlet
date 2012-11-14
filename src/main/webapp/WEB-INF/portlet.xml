@@ -72,11 +72,14 @@
                 <value>Collaborate Administrators</value>
             </preference>
         </portlet-preferences>
-    </portlet>
+    
     <security-role-ref>
       <role-name>Collaborate Administrators</role-name>
       <role-link>local.30</role-link>
     </security-role-ref>
+    
+    </portlet>
+    
     <user-attribute>
         <name>eduPersonAffiliation</name>
     </user-attribute>
