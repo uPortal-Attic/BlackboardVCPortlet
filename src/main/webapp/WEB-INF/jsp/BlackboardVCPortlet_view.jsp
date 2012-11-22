@@ -92,7 +92,7 @@
         <hr/>
     </form>
     </c:when>
-    <c:otherwise><b>No sessions available</b><hr/></c:otherwise>
+    <c:otherwise></form><b>No sessions available</b><hr/></c:otherwise>
 </c:choose>
 
 <c:choose>
