@@ -8,9 +8,7 @@ Firstly, Blackboard will provide the details of how to integrate with Collaborat
 
 Once you have that information you will have to edit the following files in the WEB-INF directory:
 
-* web.xml - Set the Collaborate username/password (used for the callback)
-* portlet.xml - Set the Collaborate username/password, and which user attribute values should give access to full functionality
-* applicationContext.xml - Set the DB connection details, LDAP connection details, Mail server details, and (optionally) configure the templates used when emailing participants
+* webapp.properties - See webapp.properties.SAMPLE .  You will need to set Blackboard Collaborate username/password, database information
 * log4.properties - The portlet will log to <web_container>/logs/BlackboardVCPortlet.log, and by default is set to DEBUG
 
 NOTE: The portlet makes use of a callback feature in order to retrieve recordings when a session closes. In order for this to work, the portlet must be callable from an external source (the Collaborate servers). 
