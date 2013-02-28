@@ -38,14 +38,17 @@
             <title>Web Conferencing</title>
             <short-title>Web Conferencing</short-title>
         </portlet-info>
+        <!--
+        	TODO : Move username/password to .properties file 
+         -->
         <portlet-preferences>
             <preference>
                 <name>wsusername</name>
-                <value>**Will be provided by Blackboard**</value>
+                <value>${bbc.username}</value>
             </preference>
             <preference>
                 <name>wspassword</name>
-                <value>**Will be provided by Blackboard**</value>
+                <value>${bbc.password}</value>
             </preference>
 			<!-- Set the callback URL to your uPortal instance URL -->
             <preference>

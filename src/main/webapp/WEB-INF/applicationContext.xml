@@ -35,14 +35,22 @@
     
     <context:annotation-config />
      
-    <context:property-placeholder />
-     
-	<!-- Set the datasource details to the database where you want to cache Collaborate data --> 
+    <context:property-placeholder location="classpath:/webapp.properties" />
+    
+    <!-- Set the datasource details to the database where you want to cache Collaborate data --> 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource" destroy-method="close">
-	    <property name="driverClassName" value="oracle.jdbc.OracleDriver" />
-	    <property name="url" value="jdbc:oracle:thin:@localhost:1592:BBVC" />
-	    <property name="username" value="bbvc" />
-	    <property name="password" value="bbvc" />
+	    <property name="driverClassName" >
+	    	<value>${bbc.db.driverClassName}</value>
+	    </property>
+	    <property name="url">
+	    	<value>${bbc.db.jdbc}</value>
+	    </property>
+	    <property name="username" >
+	    	<value>${bbc.db.username}</value>
+	    </property>
+	    <property name="password">
+	    	<value>${bbc.db.password}</value>
+	    </property>
     </bean>   
       
     <bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
@@ -50,53 +58,27 @@
 		<property name="annotatedClasses">
 	        <list>
 	            <value>org.jasig.portlet.blackboardvcportlet.data.ServerQuota</value>
-                    <value>org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration</value>
-                    <value>org.jasig.portlet.blackboardvcportlet.data.Session</value>
-                    <value>org.jasig.portlet.blackboardvcportlet.data.SessionUrl</value>
-                    <value>org.jasig.portlet.blackboardvcportlet.data.RecordingUrl</value>
-                    <value>org.jasig.portlet.blackboardvcportlet.data.RecordingShort</value>
-                    <value>org.jasig.portlet.blackboardvcportlet.data.SessionMultimedia</value>
-                    <value>org.jasig.portlet.blackboardvcportlet.data.SessionPresentation</value>
-                    <value>org.jasig.portlet.blackboardvcportlet.data.SessionExtParticipant</value>
+                <value>org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration</value>
+                <value>org.jasig.portlet.blackboardvcportlet.data.Session</value>
+                <value>org.jasig.portlet.blackboardvcportlet.data.SessionUrl</value>
+                <value>org.jasig.portlet.blackboardvcportlet.data.RecordingUrl</value>
+                <value>org.jasig.portlet.blackboardvcportlet.data.RecordingShort</value>
+                <value>org.jasig.portlet.blackboardvcportlet.data.SessionMultimedia</value>
+                <value>org.jasig.portlet.blackboardvcportlet.data.SessionPresentation</value>
+                <value>org.jasig.portlet.blackboardvcportlet.data.SessionExtParticipant</value>
 	        </list>
 	    </property>
 		<property name="hibernateProperties">
 			<props>
-				<prop key="hibernate.dialect">org.hibernate.dialect.OracleDialect</prop>
+				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
 				<prop key="hibernate.show_sql">false</prop>
                                 <prop key="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</prop>
 								<!-- For first run, uncommenting this out will autocreate the DB schema objects for you-->
-                                <!--<prop key="hibernate.hbm2ddl.auto">create</prop>-->
+                                <!-- <prop key="hibernate.hbm2ddl.auto">create</prop> -->
 			</props>
 		</property>
     </bean> 
-  
-    <!-- For user lookups, set this to your LDAP source -->
-    <bean id="ldapContextSource" class="org.springframework.ldap.core.support.LdapContextSource">
-        <property name="url" value="ldaps://localhost:636" /> 
-        <property name="base" value="ou=people,dc=example,dc=com" />
-        <!-- If you need to bind as a user, uncomment out below
-        <property name="authenticationSource" ref="authenticationSource" />
-        <property name="pooled" value="false" />-->
-        <!-- If userName and password are not set, the value below should be 
-             in use -->
-        <property name="anonymousReadOnly" value="true"/>
-    </bean>
-   
-    <!-- Only needed if you want to bind via a user to LDAP
-   <bean id="authenticationSource" class="org.springframework.ldap.authentication.DefaultValuesAuthenticationSourceDecorator">
-      <property name="target" ref="springSecurityAuthenticationSource" />
-      <property name="defaultUser" value="uid=vcuser,ou=people,dc=example,dc=com" />
-      <property name="defaultPassword" value="" />
-   </bean> -->
-
-   <!-- only needed if you want to bind via a user to LDAP
-   <bean id="springSecurityAuthenticationSource" class="org.springframework.security.ldap.authentication.SpringSecurityAuthenticationSource" />-->
-    
-    <bean id="ldapTemplate" class="org.springframework.ldap.core.LdapTemplate">
-         <constructor-arg ref="ldapContextSource" />
-    </bean>
-	
+  	
     <tx:annotation-driven transaction-manager="transactionManager" />
 	
     <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
@@ -207,7 +189,18 @@ Please contact %s if you have any questions.]]></value>
         </list>
     </property>
    </bean>
- 
+	<bean id="userService" class="org.jasig.portlet.blackboardvcportlet.service.impl.DefaultUserServiceImpl" />
+	<!-- Only needed if you want to bind via a user to LDAP
+   <bean id="authenticationSource" class="org.springframework.ldap.authentication.DefaultValuesAuthenticationSourceDecorator">
+      <property name="target" ref="springSecurityAuthenticationSource" />
+      <property name="defaultUser" value="uid=vcuser,ou=people,dc=example,dc=com" />
+      <property name="defaultPassword" value="" />
+   </bean> -->
+
+   <!-- only needed if you want to bind via a user to LDAP
+   <bean id="springSecurityAuthenticationSource" class="org.springframework.security.ldap.authentication.SpringSecurityAuthenticationSource" />-->
+    
+    
 
     <!-- Where to look for Spring annotated files -->
     <context:component-scan base-package="org.jasig.portlet.blackboardvcportlet" />

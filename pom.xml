@@ -2,25 +2,76 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     
     <parent>
-        <groupId>org.jasig.parent</groupId>
-        <artifactId>jasig-parent</artifactId>
-        <version>34</version>
+        <groupId>edu.wisc.doit.code</groupId>
+        <artifactId>shared-tools-uw-parent</artifactId>
+        <version>4</version>
     </parent>
     
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.jasig.portlet</groupId>
+    <groupId>edu.wisc.portlet.blackboardVCPortlet</groupId>
     <artifactId>BlackboardVCPortlet</artifactId>
     <packaging>war</packaging>
 
     <name>BlackboardVCPortlet</name>
-    <version>1.2.0</version>
-    <url>https://github.com/Jasig/BlackboardVCPortlet</url>
+    <version>1.2.0-SNAPSHOT</version>
+    <url>https://github.com/UW-Madison-DoIT/BlackboardVCPortlet</url>
+    
+    <distributionManagement>
+		<repository>
+			<id>code.doit-uw-releases</id>
+			<name>code.doit-uw-releases</name>
+			<url>https://code.doit.wisc.edu/maven/content/repositories/uw-releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>code.doit-uw-snapshots</id>
+			<name>code.doit-uw-snapshots</name>
+			<url>https://code.doit.wisc.edu/maven/content/repositories/uw-snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+    
+    <repositories>
+        <repository>
+			<id>code.doit-public-releases</id>
+			<name>code.doit-public-releases</name>
+			<url>https://code.doit.wisc.edu/maven/content/repositories/public-releases</url>
+		</repository>
+		<repository>
+			<id>code.doit-public-snapshots</id>
+			<name>code.doit-public-snapshots</name>
+			<url>https://code.doit.wisc.edu/maven/content/repositories/public-snapshots</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>code.doit-uw-releases</id>
+			<name>code.doit-uw-releases</name>
+			<url>https://code.doit.wisc.edu/maven/content/repositories/uw-releases</url>
+		</repository>
+		<repository>
+			<id>code.doit-release-proxies</id>
+			<name>code.doit-release-proxies</name>
+			<url>https://code.doit.wisc.edu/maven/content/groups/release-proxies</url>
+		</repository>
+    </repositories>
     
     <scm>
-        <connection>scm:git:git://github.com/Jasig/BlackboardVCPortlet.git</connection>
-        <developerConnection>scm:git:git@github.com:Jasig/BlackboardVCPortlet.git</developerConnection>
-        <url>https://github.com/Jasig/BlackboardVCPortlet</url>
+        <connection>scm:git:git@github.com:UW-Madison-DoIT/BlackboardVCPortlet.git</connection>
+        <developerConnection>scm:git:git@github.com:UW-Madison-DoIT/BlackboardVCPortlet.git</developerConnection>
+        <url>https://github.com/UW-Madison-DoIT/BlackboardVCPortlet</url>
     </scm>
+    
+    <properties>
+        <mockito.version>1.9.0</mockito.version>
+        <spring.version>3.1.1.RELEASE</spring.version>
+        <jackson.version>1.9.7</jackson.version>
+        <jaxb2basics.version>0.6.3</jaxb2basics.version>
+        <resource-server.version>1.0.25</resource-server.version>
+        
+        <project.build.sourceVersion>1.6</project.build.sourceVersion>
+        <project.build.targetVersion>1.6</project.build.targetVersion>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -173,10 +224,15 @@
             <version>1.3.2</version>
         </dependency>
         <dependency>
-	<groupId>joda-time</groupId>
-	<artifactId>joda-time</artifactId>
-	<version>2.1</version>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>2.1</version>
         </dependency>
+        <dependency>
+		    <groupId>org.codehaus.mojo</groupId>
+		    <artifactId>jaxws-maven-plugin</artifactId>
+		    <version>1.12</version>
+		</dependency>
     </dependencies>
 
     <build>
@@ -217,10 +273,9 @@
                             <goal>wsimport</goal>
                         </goals>
                         <configuration>
-                            <wsdlFiles>
-                                <wsdlFile>**Set once you have the WSDL from Blackboard</wsdlFile>
-                            </wsdlFiles>
-                            <wsdlLocation>webservice.wsdl</wsdlLocation>
+                           <wsdlUrls>
+                           		<target>http://sas-int.elluminate.com/site/external/adapter/default/v3/webservice.wsdl</target>
+                           </wsdlUrls>
                             <staleFile>${project.build.directory}/jaxws/stale/webservice.stale</staleFile>
                         </configuration>
                         <id>wsimport-generate-webservice</id>
@@ -262,26 +317,4 @@
             </plugin>
         </plugins>
     </build>
-    <repositories>
-        <repository>            
-            <id>sonatype-nexus-snapshots</id>
-            <name>Sonatype Nexus Snapshots</name>
-            <url>http://oss.sonatype.org/content/repositories/snapshots</url>
-            <releases><enabled>false</enabled></releases>
-            <snapshots><enabled>true</enabled></snapshots>
-        </repository>
-        <repository>
-            <url>http://repo1.maven.org/maven2/</url>
-            <id>Portlet-1.0-Lib</id>
-            <layout>default</layout>
-            <name>Repository for library Library[Portlet-1.0-Lib]</name>
-        </repository>
-        <repository>
-            <url>http://download.java.net/maven/2/</url>
-            <id>hibernate-support</id>
-            <layout>default</layout>
-            <name>Repository for library Library[hibernate-support]</name>
-        </repository>       
-    </repositories>
- 
 </project>

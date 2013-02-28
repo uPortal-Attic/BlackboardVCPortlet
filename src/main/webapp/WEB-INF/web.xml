@@ -34,13 +34,16 @@
         <param-name>log4jConfigLocation</param-name>
         <param-value>/WEB-INF/log4j.properties</param-value>
     </context-param>
+    <!--
+    TODO : DoNOT commit this file with username/password 
+     -->
     <context-param>
         <param-name>wsusername</param-name>
-        <param-value>**Will be provided by Blackboard**</param-value>
+        <param-value>${bbc.username}</param-value>
     </context-param>
     <context-param>
         <param-name>wspassword</param-name>
-        <param-value>**Will be provided by Blackboard**</param-value>
+        <param-value>${bbc.password}</param-value>
     </context-param>
 
     <listener>

@@ -40,10 +40,10 @@ import org.jasig.portlet.blackboardvcportlet.data.SessionUrl;
 import org.jasig.portlet.blackboardvcportlet.data.SessionUrlId;
 import org.jasig.portlet.blackboardvcportlet.data.User;
 import org.jasig.portlet.blackboardvcportlet.service.AuthorisationService;
-import org.jasig.portlet.blackboardvcportlet.service.LdapService;
 import org.jasig.portlet.blackboardvcportlet.service.RecordingService;
 import org.jasig.portlet.blackboardvcportlet.service.ServerQuotaService;
 import org.jasig.portlet.blackboardvcportlet.service.SessionService;
+import org.jasig.portlet.blackboardvcportlet.service.UserService;
 
 /**
  * Controller for handling Portlet view mode
@@ -75,7 +75,7 @@ public class BlackboardVCPortletViewController {
     AuthorisationService authService;
     
     @Autowired
-    LdapService ldapService;
+    UserService userService;
     
     /**
      * Standard view mode handler
@@ -107,7 +107,7 @@ public class BlackboardVCPortletViewController {
          }
          else
          {
-             User thisUser = ldapService.getUserDetails(userInfo.get("uid"));  
+             User thisUser = userService.getUserDetails(userInfo.get("uid"));  
              mail = thisUser.getEmail();
          }
         
@@ -313,7 +313,7 @@ public class BlackboardVCPortletViewController {
                 //List<User> moderatorList = new ArrayList<User>();
                 for (int i=0;i<chairList.length;i++)
                 {
-                    user=ldapService.getUserDetails(chairList[i]);
+                    user=userService.getUserDetails(chairList[i]);
                     if (user==null)
                     {
                         user = new User();
@@ -334,7 +334,7 @@ public class BlackboardVCPortletViewController {
                 
                 for (int i=0;i<nonChairList.length;i++)
                 {
-                    user=ldapService.getUserDetails(nonChairList[i]);
+                    user=userService.getUserDetails(nonChairList[i]);
                     if (user!=null)
                     {
                         outputStream.println(user.getUid()+","+user.getDisplayName()+","+user.getEmail()+",Internal Participant");

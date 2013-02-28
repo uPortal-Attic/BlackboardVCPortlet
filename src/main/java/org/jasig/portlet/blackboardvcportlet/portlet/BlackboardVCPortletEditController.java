@@ -40,10 +40,10 @@ import org.jasig.portlet.blackboardvcportlet.data.SessionPresentation;
 import org.jasig.portlet.blackboardvcportlet.data.User;
 import org.jasig.portlet.blackboardvcportlet.service.SessionForm;
 import org.jasig.portlet.blackboardvcportlet.service.AuthorisationService;
-import org.jasig.portlet.blackboardvcportlet.service.LdapService;
 import org.jasig.portlet.blackboardvcportlet.service.RecordingService;
 import org.jasig.portlet.blackboardvcportlet.service.ServerConfigurationService;
 import org.jasig.portlet.blackboardvcportlet.service.SessionService;
+import org.jasig.portlet.blackboardvcportlet.service.UserService;
 
 /**
  * Controller class for Portlet EDIT related actions and render
@@ -66,7 +66,7 @@ public class BlackboardVCPortletEditController {
     SessionService sessionService;
     
     @Autowired
-    LdapService ldapService;
+    UserService userService;
     
     @Autowired
     AuthorisationService authService;
@@ -228,7 +228,7 @@ public class BlackboardVCPortletEditController {
             }
             else
             {
-              thisUser = ldapService.getUserDetails(userInfo.get("uid"));  
+              thisUser = userService.getUserDetails(userInfo.get("uid"));  
             }
             
             List<User> moderators = new ArrayList<User>();
@@ -281,7 +281,7 @@ public class BlackboardVCPortletEditController {
                 List<User> moderatorList = new ArrayList<User>();
                 for (int i=0;i<chairList.length;i++)
                 {
-                    user=ldapService.getUserDetails(chairList[i]);
+                    user=userService.getUserDetails(chairList[i]);
                     if (user!=null)
                     {
                         moderatorList.add(user);
@@ -306,7 +306,7 @@ public class BlackboardVCPortletEditController {
                 
                 for (int i=0;i<nonChairList.length;i++)
                 {
-                    user=ldapService.getUserDetails(nonChairList[i]);
+                    user=userService.getUserDetails(nonChairList[i]);
                     if (user!=null)
                     {
                         intParticipantList.add(user);
@@ -565,7 +565,7 @@ public class BlackboardVCPortletEditController {
             }
             while (st.hasMoreTokens()) {
                 userToLookup = st.nextToken();
-                user = ldapService.getUserDetails(userToLookup);
+                user = userService.getUserDetails(userToLookup);
                 if (user == null) {
                     hasErrors = true;
 
@@ -837,7 +837,7 @@ public class BlackboardVCPortletEditController {
             int numToSearch = st.countTokens();
             while (st.hasMoreTokens()) {
                 userToLookup = st.nextToken();
-                user = ldapService.getUserDetails(userToLookup);
+                user = userService.getUserDetails(userToLookup);
                 if (user == null) {
                     hasErrors = true;
 
@@ -1147,7 +1147,7 @@ public class BlackboardVCPortletEditController {
                     }
                     else
                     {
-                        creatorUser=ldapService.getUserDetails(userInfo.get("uid"));
+                        creatorUser=userService.getUserDetails(userInfo.get("uid"));
                     }
                     
                                      

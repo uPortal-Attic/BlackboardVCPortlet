@@ -53,6 +53,7 @@ import org.jasig.portlet.blackboardvcportlet.data.SessionPresentation;
 import org.jasig.portlet.blackboardvcportlet.data.SessionUrl;
 import org.jasig.portlet.blackboardvcportlet.data.SessionUrlId;
 import org.jasig.portlet.blackboardvcportlet.data.User;
+import org.jasig.portlet.blackboardvcportlet.service.UserService;
 
 /**
  * Service class for manipulating Collaborate sessions and their persistent
@@ -73,7 +74,7 @@ public class SessionService {
     @Autowired
     MailTemplateService mailTemplateService;
     @Autowired
-    LdapService ldapService;
+    UserService userService;
     @Autowired
     RecordingService recordingService;
     @Autowired
@@ -360,7 +361,7 @@ public class SessionService {
         String[] substitutions;
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy HH:mm");
         
-        User creator = ldapService.getUserDetails(session.getCreatorId());
+        User creator = userService.getUserDetails(session.getCreatorId());
         String creatorDetails= "Unknown user";
         
         if (creator!=null)
@@ -381,7 +382,7 @@ public class SessionService {
                 
                 for (int i=0;i<chairList.length;i++)
                 {
-                    lookupUser=ldapService.getUserDetails(chairList[i]);
+                    lookupUser=userService.getUserDetails(chairList[i]);
                     if (lookupUser!=null)
                     {
                         users.add(lookupUser);
@@ -398,7 +399,7 @@ public class SessionService {
                              
                 for (int i=0;i<nonChairList.length;i++)
                 {
-                    lookupUser=ldapService.getUserDetails(nonChairList[i]);
+                    lookupUser=userService.getUserDetails(nonChairList[i]);
                     if (lookupUser!=null)
                     {
                         users.add(lookupUser);

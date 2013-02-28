@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portlet.blackboardvcportlet.service;
+package org.jasig.portlet.blackboardvcportlet.service.impl;
 
 import java.util.List;
 import javax.naming.NamingException;
@@ -29,15 +29,15 @@ import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.filter.OrFilter;
-import org.springframework.stereotype.Service;
 import org.jasig.portlet.blackboardvcportlet.data.User;
+import org.jasig.portlet.blackboardvcportlet.service.UserService;
 
 /**
  * Service Class for retrieving LDAP user lookups
  * @author Richard Good
  */
-@Service
-public class LdapService {
+
+public class LdapUserServiceImpl implements UserService {
     
     protected final Log logger = LogFactory.getLog(this.getClass());
     
