@@ -74,7 +74,7 @@
 				<prop key="hibernate.show_sql">false</prop>
                                 <prop key="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</prop>
 								<!-- For first run, uncommenting this out will autocreate the DB schema objects for you-->
-                                <!-- <prop key="hibernate.hbm2ddl.auto">create</prop> -->
+                                <prop key="hibernate.hbm2ddl.auto">update</prop>
 			</props>
 		</property>
     </bean> 
