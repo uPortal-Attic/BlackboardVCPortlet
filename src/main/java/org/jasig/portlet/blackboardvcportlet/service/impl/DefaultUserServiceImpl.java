@@ -10,7 +10,7 @@ public class DefaultUserServiceImpl implements UserService {
 		User myFakeUser = new User();
 		myFakeUser.setDisplayName("Bruce Wayne");
 		myFakeUser.setEmail("bruce@batcave.com");
-		myFakeUser.setUid("120");
+		myFakeUser.setUid(searchTerm);
 		return myFakeUser;
 	}
 
