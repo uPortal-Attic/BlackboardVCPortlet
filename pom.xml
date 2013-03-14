@@ -155,6 +155,16 @@
             <artifactId>spring-webmvc-portlet</artifactId>
             <version>${spring.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
         <!-- spring-security-core is required if you want to authenticate
         to LDAP -->
         <dependency>
