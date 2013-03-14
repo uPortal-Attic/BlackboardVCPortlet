@@ -1,0 +1,549 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema elementFormDefault="qualified" targetNamespace="http://sas.elluminate.com/"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://sas.elluminate.com/">
+    <xs:element name="BasicAuth">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="1" maxOccurs="1" name="Name" type="xs:string"/>
+                <xs:element minOccurs="1" maxOccurs="1" name="Password" type="xs:string"/>
+            </xs:sequence>
+            <xs:anyAttribute/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="RemoveRepositoryMultimediaSuccessResponse" type="tns:SuccessResponse"/>
+    <xs:element name="RemoveRepositoryPresentationSuccessResponse" type="tns:SuccessResponse"/>
+    <xs:element name="SetSessionMultimediaSuccessResponse" type="tns:SuccessResponse"/>
+    <xs:element name="SetSessionPresentationSuccessResponse" type="tns:SuccessResponse"/>
+    <xs:element name="RemoveSessionMultimediaSuccessResponse" type="tns:SuccessResponse"/>
+    <xs:element name="RemoveSessionPresentationSuccessResponse" type="tns:SuccessResponse"/>
+    <xs:element name="SendEmailSuccessResponse" type="tns:SuccessResponse"/>
+    <xs:element name="RemoveSessionSuccessResponse" type="tns:SuccessResponse"/>
+    <xs:element name="RemoveRecordingSuccessResponse" type="tns:SuccessResponse"/>
+    <xs:element name="RemoveSessionTelephonySuccessResponse" type="tns:SuccessResponse"/>
+    <xs:element name="SetRecordingSecureSignOnSuccessResponse" type="tns:SuccessResponse"/>
+    <xs:element name="ClearSessionNonChairListSuccessResponse" type="tns:SuccessResponse"/>
+    <xs:element name="ClearSessionChairListSuccessResponse" type="tns:SuccessResponse"/>
+    <xs:element name="SetApiCallbackUrlSuccessResponse" type="tns:SuccessResponse"/>
+    <xs:complexType name="SuccessResponse">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="success" type="xs:boolean"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ErrorResponse" type="tns:ErrorResponse"/>
+    <xs:complexType name="ErrorResponse">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="command" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="message" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="success" type="xs:boolean"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="BuildRecordingUrl" type="tns:RecordingUrl"/>
+    <xs:complexType name="RecordingUrl">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="recordingId" type="xs:long"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="BuildSessionUrl" type="tns:SessionUrl"/>
+    <xs:complexType name="SessionUrl">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="sessionId" type="xs:long"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="displayName" type="xs:string"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="userId" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="BuildSessionUrlResponse" type="tns:UrlResponse"/>
+    <xs:element name="BuildRecordingUrlResponse" type="tns:UrlResponse"/>
+    <xs:complexType name="UrlResponse">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="url" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="GetEmailBody" type="tns:EmailBody"/>
+    <xs:complexType name="EmailBody">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="sessionList" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="EmailBodyResponse" type="tns:EmailBodyResponse"/>
+    <xs:complexType name="EmailBodyResponse">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="emailBody" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="GetServerConfiguration" nillable="true" type="tns:ServerConfiguration"/>
+    <xs:complexType name="ServerConfiguration">
+        <xs:sequence/>
+    </xs:complexType>
+    <xs:element name="GetServerConfigurationResponseCollection" type="tns:ServerConfigurationResponseCollection"/>
+    <xs:complexType name="ServerConfigurationResponseCollection">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="ServerConfigurationResponse" type="tns:ServerConfigurationResponse"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ServerConfigurationResponse" type="tns:ServerConfigurationResponse"/>
+    <xs:complexType name="ServerConfigurationResponse">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="boundaryTime" type="xs:int"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="maxAvailableTalkers" type="xs:int"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="maxAvailableCameras" type="xs:int"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="raiseHandOnEnter" type="xs:boolean"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="mayUseTelephony" type="xs:boolean"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="mayUseSecureSignOn" type="xs:boolean"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="mustReserveSeats" type="xs:boolean"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="timeZone" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="GetServerQuotas" nillable="true" type="tns:ServerQuotas"/>
+    <xs:complexType name="ServerQuotas">
+        <xs:sequence/>
+    </xs:complexType>
+    <xs:element name="GetServerQuotasResponseCollection" type="tns:ServerQuotasResponseCollection"/>
+    <xs:complexType name="ServerQuotasResponseCollection">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="ServerQuotasResponse" type="tns:ServerQuotasResponse"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ServerQuotasResponse" type="tns:ServerQuotasResponse"/>
+    <xs:complexType name="ServerQuotasResponse">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="diskQuota" type="xs:long"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="diskQuotaAvailable" type="xs:long"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="sessionQuota" type="xs:int"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="sessionQuotaAvailable" type="xs:int"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="GetSchedulingManager" nillable="true" type="tns:SchedulingManager"/>
+    <xs:complexType name="SchedulingManager">
+        <xs:sequence/>
+    </xs:complexType>
+    <xs:element name="GetSchedulingManagerResponseCollection" type="tns:SchedulingManagerResponseCollection"/>
+    <xs:complexType name="SchedulingManagerResponseCollection">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="SchedulingManagerResponse" type="tns:SchedulingManagerResponse"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="SchedulingManagerResponse" type="tns:SchedulingManagerResponse"/>
+    <xs:complexType name="SchedulingManagerResponse">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="manager" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="version" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="GetServerVersions" nillable="true" type="tns:ServerVersions"/>
+    <xs:complexType name="ServerVersions">
+        <xs:sequence/>
+    </xs:complexType>
+    <xs:element name="GetServerVersionResponseCollection" type="tns:ServerVersionResponseCollection"/>
+    <xs:complexType name="ServerVersionResponseCollection">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="ServerVersionResponse" type="tns:ServerVersionResponse"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ServerVersionResponse" type="tns:ServerVersionResponse"/>
+    <xs:complexType name="ServerVersionResponse">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="versionId" type="xs:long"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="versionName" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="versionMaxTalkersLimit" type="xs:int"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="versionMaxFilmersLimit" type="xs:int"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="UploadRepositoryPresentation" type="tns:UploadRepositoryContent"/>
+    <xs:element name="UploadRepositoryMultimedia" type="tns:UploadRepositoryContent"/>
+    <xs:complexType name="UploadRepositoryContent">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="creatorId" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="filename" type="xs:string"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="description" type="xs:string"/>
+            <xs:element xmlns:ns1="http://www.w3.org/2005/05/xmlmime" minOccurs="1" maxOccurs="1" name="content" type="xs:base64Binary" ns1:expectedContentTypes="application/octet-stream"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ListRepositoryMultimedia" type="tns:ListRepositoryMultimediaContent"/>
+    <xs:complexType name="ListRepositoryMultimediaContent">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="creatorId" type="xs:string"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="multimediaId" type="xs:long"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="description" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ListRepositoryPresentation" type="tns:ListRepositoryPresentationContent"/>
+    <xs:complexType name="ListRepositoryPresentationContent">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="creatorId" type="xs:string"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="presentationId" type="xs:long"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="description" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="RemoveRepositoryMultimedia" type="tns:RemoveRepositoryMultimedia"/>
+    <xs:complexType name="RemoveRepositoryMultimedia">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="multimediaId" type="xs:long"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="RemoveRepositoryPresentation" type="tns:RemoveRepositoryPresentation"/>
+    <xs:complexType name="RemoveRepositoryPresentation">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="presentationId" type="xs:long"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ListSessionMultimedia" type="tns:ListSessionContent"/>
+    <xs:element name="ListSessionPresentation" type="tns:ListSessionContent"/>
+    <xs:complexType name="ListSessionContent">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="sessionId" type="xs:long"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="SetApiCallbackUrl" type="tns:SetApiCallbackUrl"/>
+    <xs:complexType name="SetApiCallbackUrl">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="apiCallbackUrl" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="SetSessionMultimedia" type="tns:SetSessionMultimediaContent"/>
+    <xs:complexType name="SetSessionMultimediaContent">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="sessionId" type="xs:long"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="multimediaIds" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="SetSessionPresentation" type="tns:SetSessionPresentationContent"/>
+    <xs:complexType name="SetSessionPresentationContent">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="sessionId" type="xs:long"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="presentationId" type="xs:long"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="RemoveSessionMultimedia" type="tns:RemoveSessionMultimediaContent"/>
+    <xs:complexType name="RemoveSessionMultimediaContent">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="sessionId" type="xs:long"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="multimediaId" type="xs:long"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="RemoveSessionPresentation" type="tns:RemoveSessionPresentationContent"/>
+    <xs:complexType name="RemoveSessionPresentationContent">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="sessionId" type="xs:long"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="presentationId" type="xs:long"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="UploadRepositoryMultimediaResponseCollection" type="tns:MultimediaResponseCollection"/>
+    <xs:element name="ListRepositoryMultimediaResponseCollection" type="tns:MultimediaResponseCollection"/>
+    <xs:element name="ListSessionMultimediaResponseCollection" type="tns:MultimediaResponseCollection"/>
+    <xs:element name="MultimediaResponse" type="tns:MultimediaResponse"/>
+    <xs:complexType name="MultimediaResponseCollection">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="MultimediaResponse" type="tns:MultimediaResponse"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="MultimediaResponse">
+        <xs:sequence>
+            <xs:element name="multimediaId" type="xs:long"/>
+            <xs:element name="description" type="xs:string"/>
+            <xs:element name="size" type="xs:long"/>
+            <xs:element name="creatorId" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="UploadRepositoryPresentationResponseCollection" type="tns:PresentationResponseCollection"/>
+    <xs:element name="ListRepositoryPresentationResponseCollection" type="tns:PresentationResponseCollection"/>
+    <xs:element name="ListSessionPresentationResponseCollection" type="tns:PresentationResponseCollection"/>
+    <xs:element name="PresentationResponse" type="tns:PresentationResponse"/>
+    <xs:complexType name="PresentationResponseCollection">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="PresentationResponse" type="tns:PresentationResponse"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="PresentationResponse">
+        <xs:sequence>
+            <xs:element name="presentationId" type="xs:long"/>
+            <xs:element name="description" type="xs:string"/>
+            <xs:element name="size" type="xs:long"/>
+            <xs:element name="creatorId" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ListRecordingLong" type="tns:ListRecordingLong"/>
+    <xs:complexType name="ListRecordingLong">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="userId" type="xs:string"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="groupingId" type="xs:string"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="sessionId" type="xs:long"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="creatorId" type="xs:string"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="startTime" type="xs:long"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="endTime" type="xs:long"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="sessionName" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ListRecordingLongResponseCollection" type="tns:RecordingLongResponseCollection"/>
+    <xs:element name="RecordingLongResponse" type="tns:RecordingLongResponse"/>
+    <xs:complexType name="RecordingLongResponseCollection">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="RecordingLongResponse" type="tns:RecordingLongResponse"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="RecordingLongResponse">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="roomStartDate" type="xs:long"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="roomEndDate" type="xs:long"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="recordingURL" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="secureSignOn" type="xs:boolean"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="recordingId" type="xs:long"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="creationDate" type="xs:long"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="recordingSize" type="xs:long"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="roomName" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="sessionId" type="xs:long"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ListRecordingShort" type="tns:RecordingShort"/>
+    <xs:complexType name="RecordingShort">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="userId" type="xs:string"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="groupingId" type="xs:string"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="sessionId" type="xs:long"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="creatorId" type="xs:string"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="startTime" type="xs:long"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="endTime" type="xs:long"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="sessionName" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ListRecordingShortResponseCollection" type="tns:RecordingShortResponseCollection"/>
+    <xs:element name="RecordingShortResponse" type="tns:RecordingShortResponse"/>
+    <xs:complexType name="RecordingShortResponseCollection">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="RecordingShortResponse" type="tns:RecordingShortResponse"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="RecordingShortResponse">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="recordingId" type="xs:long"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="creationDate" type="xs:long"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="recordingSize" type="xs:long"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="roomName" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="sessionId" type="xs:long"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="SetSession" type="tns:SetSession"/>
+    <xs:complexType name="SetSession">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="creatorId" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="startTime" type="xs:long"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="endTime" type="xs:long"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="sessionName" type="xs:string"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="accessType" type="xs:long"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="boundaryTime" type="xs:int"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="chairList" type="xs:string"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="chairNotes" type="xs:string"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="groupingList" type="xs:string"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="maxTalkers" type="xs:int"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="maxCameras" type="xs:int"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="mustBeSupervised" type="xs:boolean"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="nonChairList" type="xs:string"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="nonChairNotes" type="xs:string"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="openChair" type="xs:boolean"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="permissionsOn" type="xs:boolean"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="raiseHandOnEnter" type="xs:boolean"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="recordingModeType" type="xs:long"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="recurrenceCount" type="xs:int"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="recurrenceDays" type="xs:int"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="reserveSeats" type="xs:int"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="secureSignOn" type="xs:boolean"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="versionId" type="xs:long"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="allowInSessionInvites" type="xs:boolean"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="hideParticipantNames" type="xs:boolean"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="UpdateSession" type="tns:UpdateSession"/>
+    <xs:complexType name="UpdateSession">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="sessionId" type="xs:long"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="startTime" type="xs:long"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="endTime" type="xs:long"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="sessionName" type="xs:string"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="accessType" type="xs:long"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="boundaryTime" type="xs:int"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="chairList" type="xs:string"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="chairNotes" type="xs:string"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="groupingList" type="xs:string"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="maxTalkers" type="xs:int"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="maxCameras" type="xs:int"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="mustBeSupervised" type="xs:boolean"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="nonChairList" type="xs:string"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="nonChairNotes" type="xs:string"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="openChair" type="xs:boolean"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="permissionsOn" type="xs:boolean"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="raiseHandOnEnter" type="xs:boolean"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="recordingModeType" type="xs:long"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="recurrenceCount" type="xs:int"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="recurrenceDays" type="xs:int"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="reserveSeats" type="xs:int"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="secureSignOn" type="xs:boolean"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="versionId" type="xs:long"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="allowInSessionInvites" type="xs:boolean"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="hideParticipantNames" type="xs:boolean"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ListSession" type="tns:ListSession"/>
+    <xs:complexType name="ListSession">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="userId" type="xs:string"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="groupingId" type="xs:string"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="sessionId" type="xs:long"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="creatorId" type="xs:string"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="startTime" type="xs:long"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="endTime" type="xs:long"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="sessionName" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ListSessionResponseCollection" type="tns:SessionResponseCollection"/>
+    <xs:element name="SetSessionResponseCollection" type="tns:SessionResponseCollection"/>
+    <xs:element name="UpdateSessionResponseCollection" type="tns:SessionResponseCollection"/>
+    <xs:element name="SessionResponse" type="tns:SessionResponse"/>
+    <xs:complexType name="SessionResponseCollection">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="SessionResponse" type="tns:SessionResponse"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="SessionResponse">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="sessionId" type="xs:long"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="sessionName" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="startTime" type="xs:long"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="endTime" type="xs:long"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="creatorId" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="boundaryTime" type="xs:int"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="accessType" type="xs:long"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="recordings" type="xs:boolean"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="chairNotes" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="nonChairNotes" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="chairList" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="nonChairList" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="groupingList" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="openChair" type="xs:boolean"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="permissionsOn" type="xs:boolean"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="mustBeSupervised" type="xs:boolean"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="recordingModeType" type="xs:long"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="maxTalkers" type="xs:int"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="maxCameras" type="xs:int"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="raiseHandOnEnter" type="xs:boolean"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="reserveSeats" type="xs:int"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="secureSignOn" type="xs:boolean"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="versionId" type="xs:long"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="allowInSessionInvites" type="xs:boolean"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="hideParticipantNames" type="xs:boolean"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ClearSessionChairList" type="tns:ClearSessionUserList"/>
+    <xs:element name="ClearSessionNonChairList" type="tns:ClearSessionUserList"/>
+    <xs:complexType name="ClearSessionUserList">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="sessionId" type="xs:long"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ListSessionAttendance" type="tns:SessionAttendance"/>
+    <xs:complexType name="SessionAttendance">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="sessionId" type="xs:long"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="startTime" type="xs:long"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ListSessionAttendanceResponseCollection" type="tns:SessionAttendanceResponseCollection"/>
+    <xs:element name="SessionAttendanceResponse" type="tns:SessionAttendanceResponse"/>
+    <xs:complexType name="SessionAttendanceResponseCollection">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="SessionAttendanceResponse" type="tns:SessionAttendanceResponse"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="SessionAttendanceResponse">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="roomName" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="roomOpened" type="xs:long"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="roomClosed" type="xs:long"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="AttendeeResponseCollection" type="tns:AttendeeResponseCollection"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ListAttendeeResponseCollection" type="tns:AttendeeResponseCollection"/>
+    <xs:element name="AttendeeResponse" type="tns:AttendeeResponse"/>
+    <xs:complexType name="AttendeeResponseCollection">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="AttendeeResponse" type="tns:AttendeeResponse"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="AttendeeResponse">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="attendeeName" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="attendeeWasChair" type="xs:boolean"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="attendeeJoinedAt" type="xs:long"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="attendeeLeftAt" type="xs:long"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="SendEmail" type="tns:SendEmail"/>
+    <xs:complexType name="SendEmail">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="senderAddr" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="senderName" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="toAddrList" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="subject" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="body" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="RemoveSession" type="tns:RemoveSession"/>
+    <xs:complexType name="RemoveSession">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="sessionId" type="xs:long"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="RemoveRecording" type="tns:RemoveRecording"/>
+    <xs:complexType name="RemoveRecording">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="recordingId" type="xs:long"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="SetSessionTelephony" type="tns:SetSessionTelephony"/>
+    <xs:complexType name="SetSessionTelephony">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="sessionId" type="xs:long"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="chairPhone" type="xs:string"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="chairPIN" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="nonChairPhone" type="xs:string"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="nonChairPIN" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="isPhone" type="xs:boolean"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="sessionSIPPhone" type="xs:string"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="sessionPIN" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ListSessionTelephony" type="tns:SessionTelephony"/>
+    <xs:element name="RemoveSessionTelephony" type="tns:SessionTelephony"/>
+    <xs:complexType name="SessionTelephony">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="sessionId" type="xs:long"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="SetSessionTelephonyResponseCollection" type="tns:SessionTelephonyResponseCollection"/>
+    <xs:element name="ListSessionTelephonyResponseCollection" type="tns:SessionTelephonyResponseCollection"/>
+    <xs:element name="SessionTelephonyResponse" type="tns:SessionTelephonyResponse"/>
+    <xs:element name="SessionTelephonyResponseCollection" type="tns:SessionTelephonyResponseCollection"/>
+    <xs:complexType name="SessionTelephonyResponseCollection">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="SessionTelephonyResponse" type="tns:SessionTelephonyResponse"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="SessionTelephonyResponse">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="sessionId" type="xs:long"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="chairPhone" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="chairPIN" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="nonChairPhone" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="nonChairPIN" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="isPhone" type="xs:boolean"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="sessionSIPPhone" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="sessionPIN" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="SetRecordingSecureSignOn" type="tns:RecordingSecureSignOn"/>
+    <xs:complexType name="RecordingSecureSignOn">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="recordingId" type="xs:long"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="secureSignOn" type="xs:boolean"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

@@ -270,38 +270,47 @@
                     <licenseMapping><param>https://source.jasig.org/licenses/license-mappings.xml</param></licenseMapping>
                 </configuration>
             </plugin>
+            <!-- Generates JAXB binding classes -->
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>jaxws-maven-plugin</artifactId>
-                <version>1.10</version>
+                <groupId>org.jvnet.jaxb2.maven2</groupId>
+                <artifactId>maven-jaxb2-plugin</artifactId>
+                <version>0.8.2</version>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>wsimport</goal>
+                            <goal>generate</goal>
                         </goals>
-                        <configuration>
-                           <wsdlUrls>
-                           		<target>http://sas-int.elluminate.com/site/external/adapter/default/v3/webservice.wsdl</target>
-                           </wsdlUrls>
-                            <staleFile>${project.build.directory}/jaxws/stale/webservice.stale</staleFile>
-                        </configuration>
-                        <id>wsimport-generate-webservice</id>
-                        <phase>generate-sources</phase>
                     </execution>
                 </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>javax.xml</groupId>
-                        <artifactId>webservices-api</artifactId>
-                        <version>1.4</version>
-                    </dependency>
-                </dependencies>
                 <configuration>
-                    <sourceDestDir>${project.build.directory}/generated-sources/jaxws-wsimport</sourceDestDir>
-                    <xnocompile>true</xnocompile>
-                    <verbose>true</verbose>
+                    <specVersion>2.1</specVersion>
+                    <bindingDirectory>src/main/binding</bindingDirectory>
+                    <schemaDirectory>src/main/resources/xsd/elluminate</schemaDirectory>
+                    <episode>true</episode>
+                    <useDependenciesAsEpisodes>true</useDependenciesAsEpisodes>
                     <extension>true</extension>
-                    <catalog>${basedir}/src/jax-ws-catalog.xml</catalog>
+                    <args>
+                        <arg>-XtoString</arg>
+                        <arg>-Xequals</arg>
+                        <arg>-XhashCode</arg>
+                        <arg>-Xdefault-value</arg>
+                        <arg>-Xinheritance</arg>
+                        <arg>-no-header</arg>
+                        <arg>-readOnly</arg>
+                        <arg>-mark-generated</arg>
+                    </args>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.jvnet.jaxb2_commons</groupId>
+                            <artifactId>jaxb2-basics</artifactId>
+                            <version>${jaxb2basics.version}</version>
+                        </plugin>
+                        <plugin>
+                            <groupId>org.jvnet.jaxb2_commons</groupId>
+                            <artifactId>jaxb2-default-value</artifactId>
+                            <version>1.1</version>
+                        </plugin>
+                    </plugins>
                 </configuration>
             </plugin>
             <plugin>

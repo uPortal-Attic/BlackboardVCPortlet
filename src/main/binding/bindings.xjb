@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jaxb:bindings
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+        xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+        xmlns:inheritance="http://jaxb2-commons.dev.java.net/basic/inheritance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/jaxb http://java.sun.com/xml/ns/jaxb/bindingschema_2_0.xsd"
+        jaxb:version="2.1"
+        >
+
+    <jaxb:bindings>
+        <jaxb:globalBindings fixedAttributeAsConstantProperty="true" enableFailFastCheck="true">
+            <jaxb:javaType name="org.joda.time.DateTime" xmlType="xs:dateTime" parseMethod="edu.wisc.jaxb.util.JodaTypeConverter.parseDateTime" printMethod="edu.wisc.jaxb.util.JodaTypeConverter.printDateTime" />
+            <jaxb:javaType name="org.joda.time.DateMidnight" xmlType="xs:date" parseMethod="edu.wisc.jaxb.util.JodaTypeConverter.parseDate" printMethod="edu.wisc.jaxb.util.JodaTypeConverter.printDate" />
+            <jaxb:javaType name="org.joda.time.DateTime" xmlType="xs:time" parseMethod="edu.wisc.jaxb.util.JodaTypeConverter.parseTime" printMethod="edu.wisc.jaxb.util.JodaTypeConverter.printTime" />
+            <jaxb:serializable/>
+            <xjc:simple />
+        </jaxb:globalBindings>
+    </jaxb:bindings>
+
+    <jaxb:bindings schemaLocation="../resources/xsd/elluminate/sas-int-v3.xsd">
+        <jaxb:schemaBindings>
+            <jaxb:package name="com.elluminate.sas"/>
+        </jaxb:schemaBindings>
+    </jaxb:bindings>
+
+</jaxb:bindings>
