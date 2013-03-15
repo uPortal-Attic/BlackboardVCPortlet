@@ -44,6 +44,7 @@ public class RecordingService {
     
     protected final Log logger = LogFactory.getLog(SessionService.class);
 
+	@Autowired
 	private WebServiceTemplate webServiceTemplate;
 
 	//private boolean isInit=false;
@@ -65,18 +66,6 @@ public class RecordingService {
 	{
 		super();
 	}
-
-	public WebServiceTemplate getWebServiceTemplate()
-	{
-		return webServiceTemplate;
-	}
-
-	@Autowired
-	public void setWebServiceTemplate(WebServiceTemplate webServiceTemplate)
-	{
-		this.webServiceTemplate = webServiceTemplate;
-	}
-
 	/**
      * Get the recordings for a session
      * @param sessionId

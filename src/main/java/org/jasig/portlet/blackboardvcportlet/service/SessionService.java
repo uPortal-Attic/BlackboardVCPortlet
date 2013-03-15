@@ -18,12 +18,7 @@
  */
 package org.jasig.portlet.blackboardvcportlet.service;
 
-import com.elluminate.sas.BasicAuth;
-import com.elluminate.sas.MultimediaResponse;
-import com.elluminate.sas.PresentationResponse;
-import com.elluminate.sas.SASDefaultAdapter;
-import com.elluminate.sas.SASDefaultAdapterV3Port;
-import com.elluminate.sas.SessionResponse;
+import com.elluminate.sas.*;
 import freemarker.template.utility.StringUtil;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
@@ -33,7 +28,6 @@ import java.util.List;
 import javax.activation.DataHandler;
 import javax.mail.util.ByteArrayDataSource;
 import javax.portlet.PortletPreferences;
-import javax.xml.ws.BindingProvider;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +47,7 @@ import org.jasig.portlet.blackboardvcportlet.data.SessionPresentation;
 import org.jasig.portlet.blackboardvcportlet.data.SessionUrl;
 import org.jasig.portlet.blackboardvcportlet.data.SessionUrlId;
 import org.jasig.portlet.blackboardvcportlet.data.User;
-import org.jasig.portlet.blackboardvcportlet.service.UserService;
+import org.springframework.ws.client.core.WebServiceTemplate;
 
 /**
  * Service class for manipulating Collaborate sessions and their persistent
@@ -83,8 +77,10 @@ public class SessionService {
     SessionPresentationDao sessionPresentationDao;
     @Autowired
     SessionMultimediaDao sessionMultimediaDao;
+	@Autowired
+	private WebServiceTemplate webServiceTemplate;
 
-    public List<Session> getSessionsForUser(String uid) {
+	public List<Session> getSessionsForUser(String uid) {
         List<Session> sessionList = sessionDao.getSessionsForUser(uid);
         for (int i = 0; i < sessionList.size(); i++) {
             
@@ -133,12 +129,13 @@ public class SessionService {
 
         try {
             logger.debug("getting session url from Collaborate");
-            SASDefaultAdapter service = new SASDefaultAdapter();
-            SASDefaultAdapterV3Port port = service.getDefaultAdapterPort();
-            ((BindingProvider) port).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, user.getName());
-            ((BindingProvider) port).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, user.getPassword());
-            String buildSessionUrl = port.buildSessionUrl(sessionUrl.getSessionId(), sessionUrl.getDisplayName(), sessionUrl.getUserId());
-            sessionUrl.setUrl(buildSessionUrl);
+			BuildSessionUrl buildSessionUrl = new BuildSessionUrl();
+			buildSessionUrl.setSessionId(sessionUrl.getSessionId());
+			buildSessionUrl.setDisplayName(sessionUrl.getDisplayName());
+			buildSessionUrl.setUserId(sessionUrl.getUserId());
+			UrlResponse urlResponse = (UrlResponse)webServiceTemplate.marshalSendAndReceive(buildSessionUrl);
+
+            sessionUrl.setUrl(urlResponse.getUrl());
             sessionUrl.setLastUpdated(new Date());
             if (sessionUrl.getUserId() == null) {
                 sessionUrl.setUserId("-1");
@@ -164,12 +161,6 @@ public class SessionService {
             Session session = sessionDao.getSession(sessionId);
             
             // Call Web Service Operation
-            logger.debug("Setup session web service call");
-            SASDefaultAdapter service = new SASDefaultAdapter();
-            SASDefaultAdapterV3Port port = service.getDefaultAdapterPort();
-            ((BindingProvider) port).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, user.getName());
-            ((BindingProvider) port).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, user.getPassword());
-            
             logger.debug("deleting session multimedia");
             deleteSessionMultimedia(prefs, sessionId);
 
@@ -179,12 +170,13 @@ public class SessionService {
                 logger.debug("deleting session presentation");
                 deleteSessionPresentation(prefs, sessionId, sessionPresentation.getPresentationId());
             }
-            
-            
+
             logger.debug("Calling removeSession:" + sessionId);
             try {
-                boolean removeSession = port.removeSession(sessionId);
-                logger.debug("removeSession called, returned:" + removeSession);
+				RemoveSession removeSession = new RemoveSession();
+				removeSession.setSessionId(sessionId);
+				SuccessResponse successResponse = (SuccessResponse)webServiceTemplate.marshalSendAndReceive(removeSession);
+                logger.debug("removeSession called, returned:" + successResponse.isSuccess());
             } catch (Exception e) {
                 logger.error(e);
             }
@@ -227,25 +219,67 @@ public class SessionService {
 
         try { // Call Web Service Operation
             logger.debug("Setup session web service call");
-            SASDefaultAdapter service = new SASDefaultAdapter();
-            SASDefaultAdapterV3Port port = service.getDefaultAdapterPort();
-            ((BindingProvider) port).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, user.getName());
-            ((BindingProvider) port).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, user.getPassword());
             logger.debug("Calling setSession:" + session.getSessionId());
-            List<SessionResponse> setSessionResponse;
+			SessionResponseCollection sessionResponseCollection = null;
             if (session.getSessionId() > 0) {
                 logger.debug("Existing session, calling updateSession");
-                setSessionResponse = port.updateSession(session.getSessionId(), session.getStartTime().getTime(), session.getEndTime().getTime(), session.getSessionName(), session.getAccessType(), session.getBoundaryTime(), session.getChairList(), session.getChairNotes(), session.getGroupingList(), session.getMaxTalkers(), session.getMaxCameras(), session.isMustBeSupervised(), session.getNonChairList(), session.getNonChairNotes(), session.isOpenChair(), session.isPermissionsOn(), session.isRaiseHandOnEnter(), session.getRecordingModeType(), null, null, session.getReserveSeats(), session.isSecureSignOn(), null, session.isAllowInSessionInvites(), session.isHideParticipantNames());
+				UpdateSession updateSession = new UpdateSession();
+				updateSession.setSessionId(session.getSessionId());
+				updateSession.setStartTime(session.getStartTime().getTime());
+				updateSession.setEndTime(session.getEndTime().getTime());
+				updateSession.setSessionName(session.getSessionName());
+				updateSession.setAccessType(session.getAccessType());
+				updateSession.setBoundaryTime(session.getBoundaryTime());
+				updateSession.setChairList(session.getChairList());
+				updateSession.setChairNotes(session.getChairNotes());
+				updateSession.setGroupingList(session.getGroupingList());
+				updateSession.setMaxTalkers(session.getMaxTalkers());
+				updateSession.setMaxCameras(session.getMaxCameras());
+				updateSession.setMustBeSupervised(session.isMustBeSupervised());
+				updateSession.setNonChairList(session.getNonChairList());
+				updateSession.setNonChairNotes(session.getNonChairNotes());
+				updateSession.setOpenChair(session.isOpenChair());
+				updateSession.setPermissionsOn(session.isPermissionsOn());
+				updateSession.setRaiseHandOnEnter(session.isRaiseHandOnEnter());
+				updateSession.setRecordingModeType(session.getRecordingModeType());
+				updateSession.setReserveSeats(session.getReserveSeats());
+				updateSession.setSecureSignOn(session.isSecureSignOn());
+				updateSession.setAllowInSessionInvites(session.isAllowInSessionInvites());
+				updateSession.setHideParticipantNames(session.isHideParticipantNames());
+				sessionResponseCollection = (SessionResponseCollection)webServiceTemplate.marshalSendAndReceive(updateSession);
             } else {
                 logger.debug("New session, calling setSession");
-                setSessionResponse = port.setSession(session.getCreatorId(), session.getStartTime().getTime(), session.getEndTime().getTime(), session.getSessionName(), session.getAccessType(), session.getBoundaryTime(), session.getChairList(), session.getChairNotes(), null, session.getMaxTalkers(), session.getMaxCameras(), session.isMustBeSupervised(), session.getNonChairList(), session.getNonChairNotes(), session.isOpenChair(), session.isPermissionsOn(), session.isRaiseHandOnEnter(), session.getRecordingModeType(), null, null, session.getReserveSeats(), session.isSecureSignOn(), null, session.isAllowInSessionInvites(), session.isHideParticipantNames());
-                logger.debug("setSession called, recieved response");
+				SetSession setSession = new SetSession();
+				setSession.setCreatorId(session.getCreatorId());
+				setSession.setStartTime(session.getStartTime().getTime());
+				setSession.setEndTime(session.getEndTime().getTime());
+				setSession.setSessionName(session.getSessionName());
+				setSession.setAccessType(session.getAccessType());
+				setSession.setBoundaryTime(session.getBoundaryTime());
+				setSession.setChairList(session.getChairList());
+				setSession.setChairNotes(session.getChairNotes());
+				setSession.setMaxTalkers(session.getMaxTalkers());
+				setSession.setMaxCameras(session.getMaxCameras());
+				setSession.setMustBeSupervised(session.isMustBeSupervised());
+				setSession.setNonChairList(session.getNonChairList());
+				setSession.setNonChairNotes(session.getNonChairNotes());
+				setSession.setOpenChair(session.isOpenChair());
+				setSession.setPermissionsOn(session.isPermissionsOn());
+				setSession.setRaiseHandOnEnter(session.isRaiseHandOnEnter());
+				setSession.setRecordingModeType(session.getRecordingModeType());
+				setSession.setReserveSeats(session.getReserveSeats());
+				setSession.setSecureSignOn(session.isSecureSignOn());
+				setSession.setAllowInSessionInvites(session.isAllowInSessionInvites());
+				setSession.setHideParticipantNames(session.isHideParticipantNames());
 
+				sessionResponseCollection = (SessionResponseCollection)webServiceTemplate.marshalSendAndReceive(setSession);
+                logger.debug("setSession called, recieved response");
             }
 
-            for (int i = 0; i < setSessionResponse.size(); i++) {
+			for (SessionResponse sessionResponse : sessionResponseCollection.getSessionResponses())
+			{
                 logger.debug("Setting sessionId");
-                session.setSessionId(setSessionResponse.get(i).getSessionId());
+                session.setSessionId(sessionResponse.getSessionId());
                 session.setLastUpdated(new Date());
                 logger.debug("Storing session");
                 this.storeSession(session);
@@ -292,8 +326,10 @@ public class SessionService {
             String callBackUrl = prefs.getValue("callbackUrl", null);
             logger.debug("Setting callback Url to:" + callBackUrl);
             if (callBackUrl != null) {
-                boolean setApiCallbackUrl = port.setApiCallbackUrl(callBackUrl);
-                logger.debug("callBackUrl response:" + setApiCallbackUrl);
+				SetApiCallbackUrl setApiCallbackUrl = new SetApiCallbackUrl();
+				setApiCallbackUrl.setApiCallbackUrl(callBackUrl);
+				SuccessResponse successResponse = (SuccessResponse)webServiceTemplate.marshalSendAndReceive(setApiCallbackUrl);
+                logger.debug("callBackUrl response:" + successResponse.isSuccess());
             }
 
         } catch (Exception ex) {
@@ -511,20 +547,20 @@ public class SessionService {
 
         try {
             logger.debug("Setup session web service call");
-            SASDefaultAdapter service = new SASDefaultAdapter();
-            SASDefaultAdapterV3Port port = service.getDefaultAdapterPort();
-            ((BindingProvider) port).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, user.getName());
-            ((BindingProvider) port).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, user.getPassword());
-            boolean removeSessionPresentation = port.removeSessionPresentation(sessionId, presentationId);
-            logger.debug("removeSessionPresentation returned:" + removeSessionPresentation);
-            boolean removeRepositoryPresentation = port.removeRepositoryPresentation(presentationId);
-            logger.debug("removeRepositoryPresentation returned:" + removeRepositoryPresentation);
+			RemoveSessionPresentation removeSessionPresentation = new RemoveSessionPresentation();
+			removeSessionPresentation.setSessionId(sessionId);
+			removeSessionPresentation.setPresentationId(presentationId);
+			SuccessResponse successResponse = (SuccessResponse)webServiceTemplate.marshalSendAndReceive(removeSessionPresentation);
+            logger.debug("removeSessionPresentation returned:" + successResponse.isSuccess());
+			RemoveRepositoryPresentation removeRepositoryPresentation = new RemoveRepositoryPresentation();
+			removeRepositoryPresentation.setPresentationId(presentationId);
+			successResponse = (SuccessResponse)webServiceTemplate.marshalSendAndReceive(removeRepositoryPresentation);
+            logger.debug("removeRepositoryPresentation returned:" + successResponse.isSuccess());
             sessionPresentationDao.deleteSessionPresentation(Long.toString(presentationId));
         } catch (Exception e) {
             logger.error("Exception caught deleting session presentation", e);
             throw e;
         }
-
     }
 
     public void addSessionPresentation(String uid, PortletPreferences prefs, long sessionId, MultipartFile file) throws Exception {
@@ -535,28 +571,31 @@ public class SessionService {
 
         try { // Call Web Service Operation
             logger.debug("Setup session web service call");
-            SASDefaultAdapter service = new SASDefaultAdapter();
-            SASDefaultAdapterV3Port port = service.getDefaultAdapterPort();
-            ((BindingProvider) port).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, user.getName());
-            ((BindingProvider) port).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, user.getPassword());
             ByteArrayDataSource rawData = new ByteArrayDataSource(file.getBytes(), file.getContentType());
             logger.debug("ByteArrayDataSource created");
             DataHandler dataHandler = new DataHandler(rawData);
             logger.debug("DataHandler created from ByteArrayDataSource");
-            List<PresentationResponse> uploadRepositoryPresentation = port.uploadRepositoryPresentation(uid, file.getOriginalFilename(), null, dataHandler);
+			UploadRepositoryContent uploadRepositoryContent = new UploadRepositoryContent();
+			uploadRepositoryContent.setCreatorId(uid);
+			uploadRepositoryContent.setFilename(file.getOriginalFilename());
+			uploadRepositoryContent.setContent(dataHandler);
+			PresentationResponseCollection presentationResponseCollection = (PresentationResponseCollection)webServiceTemplate.marshalSendAndReceive(uploadRepositoryContent);
             logger.debug("uploadRepositoryPresentation called");
 
-
-            if (uploadRepositoryPresentation != null) {
+            if (presentationResponseCollection != null) {
                 SessionPresentation sessionPresentation = new SessionPresentation();
                 sessionPresentation.setCreatorId(uid);
                 sessionPresentation.setDateUploaded(new Date());
                 sessionPresentation.setFileName(file.getOriginalFilename());
                 sessionPresentation.setSessionId(Long.toString(sessionId));
-                for (int i = 0; i < uploadRepositoryPresentation.size(); i++) {
-                    boolean setSessionPresentation = port.setSessionPresentation(sessionId, uploadRepositoryPresentation.get(i).getPresentationId());
-                    if (setSessionPresentation) {
-                        sessionPresentation.setPresentationId(uploadRepositoryPresentation.get(i).getPresentationId());
+				for (PresentationResponse presentationResponse : presentationResponseCollection.getPresentationResponses())
+				{
+                 	SetSessionPresentation setSessionPresentation = new SetSessionPresentation();
+					setSessionPresentation.setSessionId(sessionId);
+					setSessionPresentation.setPresentationId(presentationResponse.getPresentationId());
+					SuccessResponse successResponse = (SuccessResponse)webServiceTemplate.marshalSendAndReceive(setSessionPresentation);
+                    if (successResponse.isSuccess()) {
+                        sessionPresentation.setPresentationId(presentationResponse.getPresentationId());
                         sessionPresentationDao.storeSessionPresentation(sessionPresentation);
                     }
                 }
@@ -566,8 +605,6 @@ public class SessionService {
         } catch (Exception e) {
             throw e;
         }
-
-
     }
 
     public void deleteSessionMultimedia(PortletPreferences prefs, long sessionId) throws Exception {
@@ -579,16 +616,17 @@ public class SessionService {
 
         try { // Call Web Service Operation
             logger.debug("Setup session web service call");
-            SASDefaultAdapter service = new SASDefaultAdapter();
-            SASDefaultAdapterV3Port port = service.getDefaultAdapterPort();
-            ((BindingProvider) port).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, user.getName());
-            ((BindingProvider) port).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, user.getPassword());
-            for (int i = 0; i < sessionMultimediaList.size(); i++) {
-                boolean removeSessionMultimedia = port.removeSessionMultimedia(sessionId,sessionMultimediaList.get(i).getMultimediaId());
-                logger.debug("deleteSessionMultimedia returned:"+removeSessionMultimedia);
-                boolean removeRepositoryMultimedia = port.removeRepositoryMultimedia(sessionMultimediaList.get(i).getMultimediaId());
-                logger.debug("delete multimediaId (" + sessionMultimediaList.get(i).getMultimediaId() + " returned:" + removeRepositoryMultimedia);
-                sessionMultimediaDao.deleteSessionMultimedia(sessionMultimediaList.get(i).getMultimediaId());
+            for (SessionMultimedia sessionMultimedia : sessionMultimediaList) {
+				RemoveSessionMultimedia removeSessionMultimedia = new RemoveSessionMultimedia();
+				removeSessionMultimedia.setSessionId(sessionId);
+				removeSessionMultimedia.setMultimediaId(sessionMultimedia.getMultimediaId());
+				SuccessResponse successResponse = (SuccessResponse)webServiceTemplate.marshalSendAndReceive(removeSessionMultimedia);
+                logger.debug("deleteSessionMultimedia returned:" + successResponse.isSuccess());
+				RemoveRepositoryMultimedia removeRepositoryMultimedia = new RemoveRepositoryMultimedia();
+				removeRepositoryMultimedia.setMultimediaId(sessionMultimedia.getMultimediaId());
+				successResponse = (SuccessResponse)webServiceTemplate.marshalSendAndReceive(removeRepositoryMultimedia);
+                logger.debug("delete multimediaId (" + sessionMultimedia.getMultimediaId() + " returned:" + successResponse.isSuccess());
+                sessionMultimediaDao.deleteSessionMultimedia(sessionMultimedia.getMultimediaId());
             }
         } catch (Exception e) {
             logger.error("Exception caught removing multimedia files", e);
@@ -608,17 +646,18 @@ public class SessionService {
          the repository */
         try { // Call Web Service Operation
             logger.debug("Setup session web service call");
-            SASDefaultAdapter service = new SASDefaultAdapter();
-            SASDefaultAdapterV3Port port = service.getDefaultAdapterPort();
-            ((BindingProvider) port).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, user.getName());
-            ((BindingProvider) port).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, user.getPassword());
 
-            for (int i = 0; i < multimediaIds.length; i++) {
-                boolean removeSessionMultimedia = port.removeSessionMultimedia(sessionId, Long.valueOf(multimediaIds[i]));
-                if (removeSessionMultimedia) {
-                    boolean removeRepositoryMultimedia = port.removeRepositoryMultimedia(Long.valueOf(multimediaIds[i]));
-                    logger.debug("delete multimediaId (" + multimediaIds[i] + " returned:" + removeRepositoryMultimedia);
-                    sessionMultimediaDao.deleteSessionMultimedia(Long.valueOf(multimediaIds[i]));
+            for (String multiMediaId : multimediaIds) {
+                RemoveSessionMultimedia removeSessionMultimedia = new RemoveSessionMultimedia();
+				removeSessionMultimedia.setSessionId(sessionId);
+				removeSessionMultimedia.setMultimediaId(Long.valueOf(multiMediaId));
+				SuccessResponse successResponse = (SuccessResponse)webServiceTemplate.marshalSendAndReceive(removeSessionMultimedia);
+                if (successResponse.isSuccess()) {
+					RemoveRepositoryMultimedia removeRepositoryMultimedia = new RemoveRepositoryMultimedia();
+					removeRepositoryMultimedia.setMultimediaId(Long.valueOf(multiMediaId));
+					SuccessResponse response = (SuccessResponse)webServiceTemplate.marshalSendAndReceive(removeRepositoryMultimedia);
+                    logger.debug("delete multimediaId (" + multiMediaId + " returned:" + response.isSuccess());
+                    sessionMultimediaDao.deleteSessionMultimedia(Long.valueOf(multiMediaId));
                 } else {
                     throw new Exception("Error deleting session multimedia.");
                 }
@@ -642,21 +681,18 @@ public class SessionService {
 
         try { // Call Web Service Operation
             logger.debug("Setup session web service call");
-            SASDefaultAdapter service = new SASDefaultAdapter();
-            SASDefaultAdapterV3Port port = service.getDefaultAdapterPort();
-            ((BindingProvider) port).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, user.getName());
-            ((BindingProvider) port).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, user.getPassword());
             ByteArrayDataSource rawData = new ByteArrayDataSource(file.getBytes(), file.getContentType());
             logger.debug("ByteArrayDataSource created");
             DataHandler dataHandler = new DataHandler(rawData);
             logger.debug("DataHandler created from ByteArrayDataSource");
-            List<MultimediaResponse> uploadRepositoryMultimedia = port.uploadRepositoryMultimedia(uid, file.getOriginalFilename(), null, dataHandler);
-
-
+			UploadRepositoryContent uploadRepositoryContent = new UploadRepositoryContent();
+			uploadRepositoryContent.setCreatorId(uid);
+			uploadRepositoryContent.setFilename(file.getOriginalFilename());
+			uploadRepositoryContent.setContent(dataHandler);
+            MultimediaResponseCollection multimediaResponseCollection = (MultimediaResponseCollection)webServiceTemplate.marshalSendAndReceive(uploadRepositoryContent);
             logger.debug("uploadRepositoryMultimedia called");
 
-
-            if (uploadRepositoryMultimedia != null) {
+            if (multimediaResponseCollection != null) {
                 SessionMultimedia sessionMultimedia = new SessionMultimedia();
                 sessionMultimedia.setCreatorId(uid);
                 sessionMultimedia.setDateUploaded(new Date());
@@ -664,16 +700,19 @@ public class SessionService {
                 sessionMultimedia.setSessionId(Long.toString(sessionId));
                 List<SessionMultimedia> sessionMultimediaList = sessionMultimediaDao.getSessionMultimedia(Long.toString(sessionId));
                 String multimediaIds = "";
-                for (int x = 0; x < sessionMultimediaList.size(); x++) {
-                    multimediaIds += sessionMultimediaList.get(x).getMultimediaId();
+                for (SessionMultimedia sm : sessionMultimediaList) {
+                    multimediaIds += sm.getMultimediaId();
                     multimediaIds += ",";
                 }
 
-                for (int i = 0; i < uploadRepositoryMultimedia.size(); i++) {
-                    sessionMultimedia.setMultimediaId(uploadRepositoryMultimedia.get(i).getMultimediaId());
+                for (MultimediaResponse multimediaResponse : multimediaResponseCollection.getMultimediaResponses()) {
+                    sessionMultimedia.setMultimediaId(multimediaResponse.getMultimediaId());
                     multimediaIds += sessionMultimedia.getMultimediaId();
-                    boolean setSessionPresentation = port.setSessionMultimedia(sessionId, multimediaIds);
-                    if (setSessionPresentation) {
+					SetSessionMultimedia setSessionMultimedia = new SetSessionMultimedia();
+					setSessionMultimedia.setSessionId(sessionId);
+					setSessionMultimedia.setMultimediaIds(multimediaIds);
+					SuccessResponse successResponse = (SuccessResponse)webServiceTemplate.marshalSendAndReceive(setSessionMultimedia);
+                    if (successResponse.isSuccess()) {
                         sessionMultimediaDao.saveSessionMultimedia(sessionMultimedia);
                     }
                 }
@@ -683,7 +722,5 @@ public class SessionService {
         } catch (Exception e) {
             throw e;
         }
-
-
     }
 }
