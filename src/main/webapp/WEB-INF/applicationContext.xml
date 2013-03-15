@@ -20,23 +20,27 @@
 
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns:p="http://www.springframework.org/schema/p"
-	xmlns:aop="http://www.springframework.org/schema/aop"
-	xmlns:tx="http://www.springframework.org/schema/tx"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:sws="http://www.springframework.org/schema/web-services"
+       xmlns:oxm="http://www.springframework.org/schema/oxm"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
            http://www.springframework.org/schema/tx 
            http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
            http://www.springframework.org/schema/context
-           http://www.springframework.org/schema/context/spring-context-2.5.xsd"
-	default-autowire="byName"> 
+           http://www.springframework.org/schema/context/spring-context-2.5.xsd
+           http://www.springframework.org/schema/web-services http://www.springframework.org/schema/web-services/web-services-2.0.xsd http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm.xsd"
+       default-autowire="byName">
     
     <context:annotation-config />
-     
     <context:property-placeholder location="classpath:/webapp.properties" />
-    
+
+    <sws:annotation-driven/>
+
     <!-- Set the datasource details to the database where you want to cache Collaborate data --> 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource" destroy-method="close">
 	    <property name="driverClassName" >
@@ -199,12 +203,34 @@ Please contact %s if you have any questions.]]></value>
 
    <!-- only needed if you want to bind via a user to LDAP
    <bean id="springSecurityAuthenticationSource" class="org.springframework.security.ldap.authentication.SpringSecurityAuthenticationSource" />-->
-    
-    
 
     <!-- Where to look for Spring annotated files -->
     <context:component-scan base-package="org.jasig.portlet.blackboardvcportlet" />
     
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" id="viewResolver" p:prefix="/WEB-INF/jsp/" p:suffix=".jsp"/>
-    
+
+    <!--Spring Web Services Client-->
+    <bean id="webServicesTemplate" class="org.springframework.ws.client.core.WebServiceTemplate">
+        <property name="marshaller" ref="elluminateMarshaller"/>
+        <property name="unmarshaller" ref="elluminateMarshaller"/>
+        <property name="messageSender" ref="webServiceMessageSender"/>
+        <property name="checkConnectionForFault" value="false" />
+        <property name="defaultUri" value="https://sas-int.elluminate.com/site/external/adapter/default/v3/webservice.event"/>
+    </bean>
+    <bean id="elluminateMarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+        <property name="contextPaths">
+            <list>
+                <value>com.elluminate.sas</value>
+            </list>
+        </property>
+    </bean>
+    <bean id="webServiceMessageSender" class="org.springframework.ws.transport.http.HttpComponentsMessageSender">
+        <property name="credentials">
+            <bean id="wsCredentials" class="org.apache.http.auth.UsernamePasswordCredentials">
+                <constructor-arg value="${bbc.username}"/>
+                <constructor-arg value="${bbc.password}"/>
+            </bean>
+        </property>
+    </bean>
+
 </beans>

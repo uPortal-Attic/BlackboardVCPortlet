@@ -18,26 +18,22 @@
  */
 package org.jasig.portlet.blackboardvcportlet.service;
 
-import com.elluminate.sas.BasicAuth;
-import com.elluminate.sas.RecordingShortResponse;
-import com.elluminate.sas.SASDefaultAdapter;
-import com.elluminate.sas.SASDefaultAdapterV3Port;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import javax.portlet.PortletPreferences;
-import javax.servlet.ServletContext;
-import javax.xml.ws.BindingProvider;
+import com.elluminate.sas.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.jasig.portlet.blackboardvcportlet.dao.RecordingShortDao;
 import org.jasig.portlet.blackboardvcportlet.dao.RecordingUrlDao;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingShort;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingUrl;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.ws.client.core.WebServiceTemplate;
+import javax.portlet.PortletPreferences;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Service Class for handling Recording interactions
@@ -47,8 +43,10 @@ import org.jasig.portlet.blackboardvcportlet.data.Session;
 public class RecordingService {
     
     protected final Log logger = LogFactory.getLog(SessionService.class);
-    
-    //private boolean isInit=false;
+
+	private WebServiceTemplate webServiceTemplate;
+
+	//private boolean isInit=false;
     //private BasicAuth user;
     
     @Autowired
@@ -59,8 +57,27 @@ public class RecordingService {
     
     @Autowired
     SessionService sessionService;
-    
-    /**
+
+	/**
+	 * Constructor
+	 */
+	public RecordingService()
+	{
+		super();
+	}
+
+	public WebServiceTemplate getWebServiceTemplate()
+	{
+		return webServiceTemplate;
+	}
+
+	@Autowired
+	public void setWebServiceTemplate(WebServiceTemplate webServiceTemplate)
+	{
+		this.webServiceTemplate = webServiceTemplate;
+	}
+
+	/**
      * Get the recordings for a session
      * @param sessionId
      * @return List<RecordingShort>
@@ -183,14 +200,11 @@ public class RecordingService {
         
         try
         {
-             SASDefaultAdapter service = new SASDefaultAdapter();
-             SASDefaultAdapterV3Port port = service.getDefaultAdapterPort();
-             ((BindingProvider)port).getRequestContext().put(BindingProvider.USERNAME_PROPERTY,prefs.getValue("wsusername", null));
-             ((BindingProvider)port).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY,prefs.getValue("wspassword", null));
-             boolean removeRecording = port.removeRecording(recordingId);
-             logger.debug("removeRecording response:"+removeRecording);
- 
-        }
+			RemoveRecording removeRecording = new RemoveRecording();
+			removeRecording.setRecordingId(recordingId);
+			SuccessResponse successResponse = (SuccessResponse) webServiceTemplate.marshalSendAndReceive(removeRecording);
+			logger.debug("removeRecording response:" + successResponse);
+		}
         catch (Exception e)
         {
             logger.error("Exception caught calling Collaborate API",e);
@@ -201,7 +215,6 @@ public class RecordingService {
              
         recordingDao.deleteRecordingShort(recordingId);
         logger.debug("Deleted recordingShort");
-       
     }
    
     /**
@@ -215,49 +228,47 @@ public class RecordingService {
         List<RecordingShort> recordingList = new ArrayList<RecordingShort>();
         try
         {
-             SASDefaultAdapter service = new SASDefaultAdapter();
-             SASDefaultAdapterV3Port port = service.getDefaultAdapterPort();
-             ((BindingProvider)port).getRequestContext().put(BindingProvider.USERNAME_PROPERTY,user.getName());
-             ((BindingProvider)port).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY,user.getPassword());
-             
-             List<RecordingShortResponse> listRecordingShort = port.listRecordingShort(null, null, sessionId, null, null, null, null);
-             RecordingShort recordingShort;
-             RecordingUrl recordingUrl;
-             String buildRecordingUrl;
-             Session session = sessionService.getSession(sessionId);
-             for (int i=0;i<listRecordingShort.size();i++)
-             {
-                 recordingShort = new RecordingShort();
-                 recordingShort.setCreationDate(listRecordingShort.get(i).getCreationDate());
-                 recordingShort.setRecordingId(listRecordingShort.get(i).getRecordingId());
-                 recordingShort.setRecordingSize(listRecordingShort.get(i).getRecordingSize());
-                 recordingShort.setRoomName(listRecordingShort.get(i).getRoomName());
-                 recordingShort.setSessionId(listRecordingShort.get(i).getSessionId());
-                 recordingShort.setChairList(session.getChairList());
-                 recordingShort.setNonChairList(session.getNonChairList());
-                 logger.debug("initialised recording for recording id:"+recordingShort.getRecordingId());
-                 recordingDao.saveRecordingShort(recordingShort);
-                 logger.debug("stored recording short");
-                 logger.debug("getting url for recording");
-                 buildRecordingUrl = port.buildRecordingUrl(recordingShort.getRecordingId());
-                 recordingUrl= new RecordingUrl();
-                 recordingUrl.setRecordingId(listRecordingShort.get(i).getRecordingId());
-                 recordingUrl.setUrl(buildRecordingUrl);
-                 recordingUrl.setLastUpdated(new Date());
-                 logger.debug("initialised recording for recording url:"+recordingUrl.getUrl());
-                 recordingUrlDao.saveRecordingUrl(recordingUrl);
-                 logger.debug("Stored recording url");
-                 recordingList.add(recordingShort);
-             }
-             
-        }
+			ListRecordingShort listRecordingShort = new ListRecordingShort();
+			listRecordingShort.setSessionId(sessionId);
+			ListRecordingShortResponseCollection listRecordingShortResponseCollection = (ListRecordingShortResponseCollection)webServiceTemplate.marshalSendAndReceive(listRecordingShort);
+			List<RecordingShortResponse> recordingShortResponses = listRecordingShortResponseCollection.getRecordingShortResponses();
+
+			RecordingShort recordingShort;
+			RecordingUrl recordingUrl;
+			Session session = sessionService.getSession(sessionId);
+			for (RecordingShortResponse shortResponse : recordingShortResponses)
+			{
+				recordingShort = new RecordingShort();
+				recordingShort.setCreationDate(shortResponse.getCreationDate());
+				recordingShort.setRecordingId(shortResponse.getRecordingId());
+				recordingShort.setRecordingSize(shortResponse.getRecordingSize());
+				recordingShort.setRoomName(shortResponse.getRoomName());
+				recordingShort.setSessionId(shortResponse.getSessionId());
+				recordingShort.setChairList(session.getChairList());
+				recordingShort.setNonChairList(session.getNonChairList());
+				logger.debug("initialised recording for recording id:" + recordingShort.getRecordingId());
+				recordingDao.saveRecordingShort(recordingShort);
+				logger.debug("stored recording short");
+				logger.debug("getting url for recording");
+
+				BuildRecordingUrl buildRecordingUrl = new BuildRecordingUrl();
+				buildRecordingUrl.setRecordingId(recordingShort.getRecordingId());
+				UrlResponse urlResponse = (UrlResponse) webServiceTemplate.marshalSendAndReceive(buildRecordingUrl);
+
+				recordingUrl = new RecordingUrl();
+				recordingUrl.setRecordingId(shortResponse.getRecordingId());
+				recordingUrl.setUrl(urlResponse.getUrl());
+				recordingUrl.setLastUpdated(new Date());
+				logger.debug("initialised recording for recording url:" + recordingUrl.getUrl());
+				recordingUrlDao.saveRecordingUrl(recordingUrl);
+				logger.debug("Stored recording url");
+				recordingList.add(recordingShort);
+			}
+		}
         catch (Exception e)
         {
             logger.error("Exception caught refreshing recordings",e);
         }
-       
-            
         return recordingList;
     }
-      
 }
