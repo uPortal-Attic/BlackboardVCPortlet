@@ -20,39 +20,34 @@ package org.jasig.portlet.blackboardvcportlet.portlet;
 
 import com.elluminate.sas.BasicAuth;
 import freemarker.template.utility.StringUtil;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import javax.portlet.*;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.jasig.portlet.blackboardvcportlet.data.*;
+import org.jasig.portlet.blackboardvcportlet.service.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.portlet.ModelAndView;
-import org.jasig.portlet.blackboardvcportlet.data.RecordingShort;
-import org.jasig.portlet.blackboardvcportlet.data.Session;
-import org.jasig.portlet.blackboardvcportlet.data.SessionUrl;
-import org.jasig.portlet.blackboardvcportlet.data.SessionUrlId;
-import org.jasig.portlet.blackboardvcportlet.data.User;
-import org.jasig.portlet.blackboardvcportlet.service.AuthorisationService;
-import org.jasig.portlet.blackboardvcportlet.service.RecordingService;
-import org.jasig.portlet.blackboardvcportlet.service.ServerQuotaService;
-import org.jasig.portlet.blackboardvcportlet.service.SessionService;
-import org.jasig.portlet.blackboardvcportlet.service.UserService;
+import javax.portlet.PortletPreferences;
+import javax.portlet.PortletRequest;
+import javax.portlet.RenderRequest;
+import javax.portlet.RenderResponse;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Controller for handling Portlet view mode
  * @author Richard Good
  */
 @Controller
-public class BlackboardVCPortletViewController {
-    
-    protected final Log logger = LogFactory.getLog(BlackboardVCPortletViewController.class);
+public class BlackboardVCPortletViewController
+{
+	private static final Logger logger = LoggerFactory.getLogger(BlackboardVCPortletViewController.class);
    // private PortletPreferences prefs;
     
     private String uid;

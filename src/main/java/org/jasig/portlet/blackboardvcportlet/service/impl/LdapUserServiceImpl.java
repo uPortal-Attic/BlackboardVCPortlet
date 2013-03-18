@@ -18,35 +18,33 @@
  */
 package org.jasig.portlet.blackboardvcportlet.service.impl;
 
-import java.util.List;
-import javax.naming.NamingException;
-import javax.naming.directory.Attributes;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.jasig.portlet.blackboardvcportlet.data.User;
+import org.jasig.portlet.blackboardvcportlet.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.filter.OrFilter;
-import org.jasig.portlet.blackboardvcportlet.data.User;
-import org.jasig.portlet.blackboardvcportlet.service.UserService;
+import javax.naming.NamingException;
+import javax.naming.directory.Attributes;
+import java.util.List;
 
 /**
  * Service Class for retrieving LDAP user lookups
  * @author Richard Good
  */
 
-public class LdapUserServiceImpl implements UserService {
-    
-    protected final Log logger = LogFactory.getLog(this.getClass());
-    
+public class LdapUserServiceImpl implements UserService
+{
+	private static final Logger logger = LoggerFactory.getLogger(LdapUserServiceImpl.class);
+
     @Autowired
     LdapTemplate ldapTemplate;
     
     public class PersonAttributeMapper implements AttributesMapper{
-        
-        protected final Log logger = LogFactory.getLog(this.getClass());
 
         /**
          * Maps the basic user attributes 

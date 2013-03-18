@@ -18,23 +18,23 @@
  */
 package org.jasig.portlet.blackboardvcportlet.service;
 
-import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 import javax.portlet.RenderRequest;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.stereotype.Service;
+import java.util.Map;
 
 /**
  * Service Class which provides authorisation level methods
  * @author Richard Good
  */
 @Service
-public class AuthorisationService {
-    
-    protected final Log logger = LogFactory.getLog(AuthorisationService.class);
-    
+public class AuthorisationService
+{
+	private static final Logger logger = LoggerFactory.getLogger(AuthorisationService.class);
+
     /**
      * Is the user in the admin group
      * @param request

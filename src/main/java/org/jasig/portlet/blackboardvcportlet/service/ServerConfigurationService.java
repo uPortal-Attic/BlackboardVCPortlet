@@ -21,10 +21,10 @@ package org.jasig.portlet.blackboardvcportlet.service;
 import com.elluminate.sas.BasicAuth;
 import com.elluminate.sas.GetServerConfigurationResponseCollection;
 import com.elluminate.sas.ServerConfigurationResponse;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portlet.blackboardvcportlet.dao.ServerConfigurationDao;
 import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ws.client.core.WebServiceTemplate;
@@ -38,10 +38,10 @@ import java.util.List;
  * @author rgood
  */
 @Service
-public class ServerConfigurationService {
-
-    protected final Log logger = LogFactory.getLog(ServerConfigurationService.class);
-    private boolean isInit = false;
+public class ServerConfigurationService
+{
+	private static final Logger logger = LoggerFactory.getLogger(ServerConfigurationService.class);
+	private boolean isInit = false;
     private BasicAuth user;
     @Autowired
     ServerConfigurationDao serverConfigurationDao;

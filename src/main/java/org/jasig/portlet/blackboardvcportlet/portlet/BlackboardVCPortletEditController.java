@@ -19,31 +19,21 @@
 package org.jasig.portlet.blackboardvcportlet.portlet;
 
 import freemarker.template.utility.StringUtil;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import javax.portlet.*;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.jasig.portlet.blackboardvcportlet.data.*;
+import org.jasig.portlet.blackboardvcportlet.service.*;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.portlet.ModelAndView;
-import org.jasig.portlet.blackboardvcportlet.data.RecordingShort;
-import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
-import org.jasig.portlet.blackboardvcportlet.data.Session;
-import org.jasig.portlet.blackboardvcportlet.data.SessionMultimedia;
-import org.jasig.portlet.blackboardvcportlet.data.SessionPresentation;
-import org.jasig.portlet.blackboardvcportlet.data.User;
-import org.jasig.portlet.blackboardvcportlet.service.SessionForm;
-import org.jasig.portlet.blackboardvcportlet.service.AuthorisationService;
-import org.jasig.portlet.blackboardvcportlet.service.RecordingService;
-import org.jasig.portlet.blackboardvcportlet.service.ServerConfigurationService;
-import org.jasig.portlet.blackboardvcportlet.service.SessionService;
-import org.jasig.portlet.blackboardvcportlet.service.UserService;
+import javax.portlet.*;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Controller class for Portlet EDIT related actions and render
@@ -51,11 +41,10 @@ import org.jasig.portlet.blackboardvcportlet.service.UserService;
  */
 @Controller
 @RequestMapping("EDIT")
-public class BlackboardVCPortletEditController {
+public class BlackboardVCPortletEditController
+{
+    private static final Logger logger = LoggerFactory.getLogger(BlackboardVCPortletEditController.class);
 
-    
-    protected final Log logger = LogFactory.getLog(this.getClass());
-    
     @Autowired
     RecordingService recordingService;
     

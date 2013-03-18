@@ -38,7 +38,7 @@ import java.util.List;
 @Service
 public class MailTemplateService implements BeanFactoryAware
 {
-	private static Logger logger = LoggerFactory.getLogger(MailTemplateService.class);
+	private static final Logger logger = LoggerFactory.getLogger(MailTemplateService.class);
 
     @Autowired
     private JavaMailSender mailSender;

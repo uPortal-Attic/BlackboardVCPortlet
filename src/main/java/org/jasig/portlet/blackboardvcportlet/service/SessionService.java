@@ -20,34 +20,22 @@ package org.jasig.portlet.blackboardvcportlet.service;
 
 import com.elluminate.sas.*;
 import freemarker.template.utility.StringUtil;
+import org.jasig.portlet.blackboardvcportlet.dao.*;
+import org.jasig.portlet.blackboardvcportlet.data.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.ws.client.core.WebServiceTemplate;
+import javax.activation.DataHandler;
+import javax.mail.util.ByteArrayDataSource;
+import javax.portlet.PortletPreferences;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.activation.DataHandler;
-import javax.mail.util.ByteArrayDataSource;
-import javax.portlet.PortletPreferences;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-import org.jasig.portlet.blackboardvcportlet.dao.SessionDao;
-import org.jasig.portlet.blackboardvcportlet.dao.SessionExtParticipantDao;
-import org.jasig.portlet.blackboardvcportlet.dao.SessionMultimediaDao;
-import org.jasig.portlet.blackboardvcportlet.dao.SessionPresentationDao;
-import org.jasig.portlet.blackboardvcportlet.dao.SessionUrlDao;
-import org.jasig.portlet.blackboardvcportlet.data.RecordingShort;
-import org.jasig.portlet.blackboardvcportlet.data.Session;
-import org.jasig.portlet.blackboardvcportlet.data.SessionExtParticipant;
-import org.jasig.portlet.blackboardvcportlet.data.SessionExtParticipantId;
-import org.jasig.portlet.blackboardvcportlet.data.SessionMultimedia;
-import org.jasig.portlet.blackboardvcportlet.data.SessionPresentation;
-import org.jasig.portlet.blackboardvcportlet.data.SessionUrl;
-import org.jasig.portlet.blackboardvcportlet.data.SessionUrlId;
-import org.jasig.portlet.blackboardvcportlet.data.User;
-import org.springframework.ws.client.core.WebServiceTemplate;
 
 /**
  * Service class for manipulating Collaborate sessions and their persistent
@@ -56,9 +44,9 @@ import org.springframework.ws.client.core.WebServiceTemplate;
  * @author rgood
  */
 @Service
-public class SessionService {
-
-    protected final Log logger = LogFactory.getLog(SessionService.class);
+public class SessionService
+{
+	private static final Logger logger = LoggerFactory.getLogger(SessionService.class);
     private boolean isInit = false;
     private BasicAuth user;
     @Autowired
@@ -113,8 +101,7 @@ public class SessionService {
                 return sessionUrl;
             }
         } catch (Exception e) {
-            logger.debug(e);
-
+            logger.error("Error gettingSessionUrl()", e);
         }
         SessionUrl sessionUrl = new SessionUrl();
         sessionUrl.setDisplayName(sessionUrlId.getDisplayName());
@@ -178,7 +165,7 @@ public class SessionService {
 				SuccessResponse successResponse = (SuccessResponse)webServiceTemplate.marshalSendAndReceive(removeSession);
                 logger.debug("removeSession called, returned:" + successResponse.isSuccess());
             } catch (Exception e) {
-                logger.error(e);
+                logger.error("RemoveSession Error:", e);
             }
             
             logger.debug("Deleting session urls");

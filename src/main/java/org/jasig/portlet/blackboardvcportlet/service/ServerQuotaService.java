@@ -22,10 +22,10 @@ import com.elluminate.sas.BasicAuth;
 import com.elluminate.sas.GetServerQuotasResponseCollection;
 import com.elluminate.sas.ServerQuotas;
 import com.elluminate.sas.ServerQuotasResponse;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portlet.blackboardvcportlet.dao.ServerQuotaDao;
 import org.jasig.portlet.blackboardvcportlet.data.ServerQuota;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ws.client.core.WebServiceTemplate;
@@ -39,9 +39,9 @@ import java.util.List;
  * @author rgood
  */
 @Service
-public class ServerQuotaService {
-    protected final Log logger = LogFactory.getLog(ServerQuotaService.class);
-    
+public class ServerQuotaService
+{
+	private static final Logger logger = LoggerFactory.getLogger(ServerQuotaService.class);
     private boolean isInit=false;
     private BasicAuth user;
     

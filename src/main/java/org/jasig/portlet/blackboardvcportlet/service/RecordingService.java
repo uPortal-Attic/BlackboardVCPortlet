@@ -19,13 +19,13 @@
 package org.jasig.portlet.blackboardvcportlet.service;
 
 import com.elluminate.sas.*;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portlet.blackboardvcportlet.dao.RecordingShortDao;
 import org.jasig.portlet.blackboardvcportlet.dao.RecordingUrlDao;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingShort;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingUrl;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ws.client.core.WebServiceTemplate;
@@ -40,9 +40,9 @@ import java.util.List;
  * @author Richard Good
  */
 @Service
-public class RecordingService {
-    
-    protected final Log logger = LogFactory.getLog(SessionService.class);
+public class RecordingService
+{
+    private static final Logger logger = LoggerFactory.getLogger(RecordingService.class);
 
 	@Autowired
 	private WebServiceTemplate webServiceTemplate;
