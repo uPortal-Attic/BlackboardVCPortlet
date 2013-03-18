@@ -19,20 +19,20 @@
 package org.jasig.portlet.blackboardvcportlet.service;
 
 import com.elluminate.sas.BasicAuth;
-import com.elluminate.sas.SASDefaultAdapter;
-import com.elluminate.sas.SASDefaultAdapterV3Port;
+import com.elluminate.sas.GetServerQuotasResponseCollection;
+import com.elluminate.sas.ServerQuotas;
 import com.elluminate.sas.ServerQuotasResponse;
-import java.util.Date;
-import java.util.Calendar;
-import java.util.List;
-import javax.portlet.PortletPreferences;
-import javax.xml.ws.BindingProvider;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.jasig.portlet.blackboardvcportlet.dao.ServerQuotaDao;
 import org.jasig.portlet.blackboardvcportlet.data.ServerQuota;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.ws.client.core.WebServiceTemplate;
+import javax.portlet.PortletPreferences;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Service class for Server Quota
@@ -47,6 +47,9 @@ public class ServerQuotaService {
     
     @Autowired
     private ServerQuotaDao serverQuotaDao;
+
+	@Autowired
+	private WebServiceTemplate webServiceTemplate;
     
     /**
      * Gets the Server quota
@@ -60,7 +63,7 @@ public class ServerQuotaService {
      /**
       * Refresh the server quota, only goes to Collaborate if last update
       * was longer than an hour ago.
-      * @param prefs 
+      * @param prefs PortletPreferences
       */
     public void refreshServerQuota(PortletPreferences prefs)
     {
@@ -70,48 +73,46 @@ public class ServerQuotaService {
         calendar.add(Calendar.HOUR_OF_DAY,-1);
         Date date = calendar.getTime();
 
-        if (serverQuota==null||serverQuota.getLastUpdated().before(date))
-        {
-        logger.debug("Quota being refreshed");
-        if (!this.isInit())
-            doInit(prefs);
-       
-        try { // Call Web Service Operation
-            SASDefaultAdapter service = new SASDefaultAdapter();
-            SASDefaultAdapterV3Port port = service.getDefaultAdapterPort();
-            ((BindingProvider)port).getRequestContext().put(BindingProvider.USERNAME_PROPERTY,user.getName());
-            ((BindingProvider)port).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY,user.getPassword());
-            
-            List<ServerQuotasResponse> quotaResult = port.getServerQuotas();
-            this.logger.debug("Result = "+quotaResult);
-            ServerQuota quota;
-            for (int i=0;i<quotaResult.size();i++)
-            {
-            quota = new ServerQuota();
-            quota.setDiskQuota(quotaResult.get(i).getDiskQuota());
-            quota.setDiskQuotaAvailable(quotaResult.get(i).getDiskQuotaAvailable());
-            quota.setSessionQuota(quotaResult.get(i).getSessionQuota());
-            quota.setSessionQuotaAvailable(quotaResult.get(i).getSessionQuotaAvailable());
-            quota.setLastUpdated(new Date());
-            this.logger.debug("disk quota:"+quota.getDiskQuota());
-            this.logger.debug("disk quota available:"+quota.getDiskQuotaAvailable());
-            this.logger.debug("session quota:"+quota.getSessionQuota());
-            this.logger.debug("session quota available:"+quota.getSessionQuotaAvailable());
-            
-            //ServerQuotaService serviceQuotaImpl = new ServerQuotaService();
-            /// serviceQuotaImpl.saveServerQuota(quota);
-            serverQuotaDao.deleteServerQuota();
-            serverQuotaDao.saveServerQuota(quota);
-            }
-        } catch (Exception ex) {
-         this.logger.error(ex.toString());
-        }
-        }
-        else
-        {
-            logger.debug("Quota doesn't need refreshed");
-        }
-    }
+		if (serverQuota == null || serverQuota.getLastUpdated().before(date))
+		{
+			logger.debug("Quota being refreshed");
+			if (!this.isInit())
+				doInit(prefs);
+
+			try
+			{
+				// Call Web Service Operation
+				GetServerQuotasResponseCollection serverQuotasResponseCollection = (GetServerQuotasResponseCollection) webServiceTemplate.marshalSendAndReceive(new ServerQuotas());
+				List<ServerQuotasResponse> quotaResult = serverQuotasResponseCollection.getServerQuotasResponses();
+				this.logger.debug("Result = " + quotaResult);
+				for (ServerQuotasResponse response : quotaResult)
+				{
+					ServerQuota quota = new ServerQuota();
+					quota.setDiskQuota(response.getDiskQuota());
+					quota.setDiskQuotaAvailable(response.getDiskQuotaAvailable());
+					quota.setSessionQuota(response.getSessionQuota());
+					quota.setSessionQuotaAvailable(response.getSessionQuotaAvailable());
+					quota.setLastUpdated(new Date());
+					this.logger.debug("disk quota:" + quota.getDiskQuota());
+					this.logger.debug("disk quota available:" + quota.getDiskQuotaAvailable());
+					this.logger.debug("session quota:" + quota.getSessionQuota());
+					this.logger.debug("session quota available:" + quota.getSessionQuotaAvailable());
+
+					//ServerQuotaService serviceQuotaImpl = new ServerQuotaService();
+					/// serviceQuotaImpl.saveServerQuota(quota);
+					serverQuotaDao.deleteServerQuota();
+					serverQuotaDao.saveServerQuota(quota);
+				}
+			}
+			catch (Exception ex)
+			{
+				this.logger.error(ex.toString());
+			}
+		} else
+		{
+			logger.debug("Quota doesn't need refreshed");
+		}
+	}
     
     private boolean isInit()
     {
@@ -120,7 +121,7 @@ public class ServerQuotaService {
     
     /**
      * Init method for Basic Auth user
-     * @param prefs 
+     * @param prefs PortletPreferences
      */
     private void doInit(PortletPreferences prefs)
     {

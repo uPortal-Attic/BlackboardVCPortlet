@@ -18,18 +18,20 @@
  */
 package org.jasig.portlet.blackboardvcportlet.service;
 
-import com.elluminate.sas.*;
-import java.util.Date;
-import java.util.Calendar;
-import java.util.List;
-import javax.portlet.PortletPreferences;
-import javax.xml.ws.BindingProvider;
+import com.elluminate.sas.BasicAuth;
+import com.elluminate.sas.GetServerConfigurationResponseCollection;
+import com.elluminate.sas.ServerConfigurationResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.jasig.portlet.blackboardvcportlet.dao.ServerConfigurationDao;
 import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.ws.client.core.WebServiceTemplate;
+import javax.portlet.PortletPreferences;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Service Class for Server Configuration
@@ -43,6 +45,9 @@ public class ServerConfigurationService {
     private BasicAuth user;
     @Autowired
     ServerConfigurationDao serverConfigurationDao;
+
+	@Autowired
+	private WebServiceTemplate webServiceTemplate;
 
     /**
      * Gets the server configuration
@@ -75,61 +80,68 @@ public class ServerConfigurationService {
         calendar.add(Calendar.HOUR_OF_DAY, -1);
         Date date = calendar.getTime();
 
-        if (serverConfiguration == null || serverConfiguration.getLastUpdated().before(date)) {
-            
-            logger.debug("refreshing server configuration");
-            if (!this.isInit()) {
-                doInit(prefs);
-            }
+		if (serverConfiguration == null || serverConfiguration.getLastUpdated().before(date))
+		{
 
-            try { // Call Web Service Operation
-                SASDefaultAdapter service = new SASDefaultAdapter();
-                SASDefaultAdapterV3Port port = service.getDefaultAdapterPort();
-                ((BindingProvider) port).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, user.getName());
-                ((BindingProvider) port).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, user.getPassword());
+			logger.debug("refreshing server configuration");
+			if (!this.isInit())
+			{
+				doInit(prefs);
+			}
 
-                List<ServerConfigurationResponse> configResult = port.getServerConfiguration();
+			try
+			{ // Call Web Service Operation
 
+				GetServerConfigurationResponseCollection responseCollection = (GetServerConfigurationResponseCollection) webServiceTemplate.marshalSendAndReceive(new com.elluminate.sas.ServerConfiguration());
+				List<ServerConfigurationResponse> configResult = responseCollection.getServerConfigurationResponses();
 
-                this.logger.debug("Result = " + configResult);
-                ServerConfiguration configuration;
-                for (int i = 0; i < configResult.size(); i++) {
+				this.logger.debug("Result = " + configResult);
+				for (ServerConfigurationResponse response : configResult)
+				{
+					ServerConfiguration configuration = new ServerConfiguration();
+					configuration.setBoundaryTime(response.getBoundaryTime());
+					configuration.setLastUpdated(new Date());
+					configuration.setMaxAvailableCameras(response.getMaxAvailableCameras());
+					configuration.setMaxAvailableTalkers(response.getMaxAvailableTalkers());
+					if (response.isMayUseSecureSignOn())
+					{
+						configuration.setMayUseSecureSignOn('Y');
+					} else
+					{
+						configuration.setMayUseSecureSignOn('N');
+					}
 
-                    configuration = new ServerConfiguration();
-                    configuration.setBoundaryTime(configResult.get(i).getBoundaryTime());
-                    configuration.setLastUpdated(new Date());
-                    configuration.setMaxAvailableCameras(configResult.get(i).getMaxAvailableCameras());
-                    configuration.setMaxAvailableTalkers(configResult.get(i).getMaxAvailableTalkers());
-                    if (configResult.get(i).isMayUseSecureSignOn()) {
-                        configuration.setMayUseSecureSignOn('Y');
-                    } else {
-                        configuration.setMayUseSecureSignOn('N');
-                    }
+					if (response.isMustReserveSeats())
+					{
+						configuration.setMustReserveSeats('Y');
+					} else
+					{
+						configuration.setMustReserveSeats('N');
+					}
 
-                    if (configResult.get(i).isMustReserveSeats()) {
-                        configuration.setMustReserveSeats('Y');
-                    } else {
-                        configuration.setMustReserveSeats('N');
-                    }
+					if (response.isRaiseHandOnEnter())
+					{
+						configuration.setRaiseHandOnEnter('Y');
+					} else
+					{
+						configuration.setRaiseHandOnEnter('N');
+					}
 
-                    if (configResult.get(i).isRaiseHandOnEnter()) {
-                        configuration.setRaiseHandOnEnter('Y');
-                    } else {
-                        configuration.setRaiseHandOnEnter('N');
-                    }
+					configuration.setTimezone(response.getTimeZone());
 
-                    configuration.setTimezone(configResult.get(i).getTimeZone());
+					this.storeServerConfiguration(configuration);
 
-                    this.storeServerConfiguration(configuration);
-
-                }
-            } catch (Exception ex) {
-                this.logger.error(ex.toString());
-            }
-        } else {
-            logger.debug("Configuration doesn't need refreshed.");
-        }
-    }
+				}
+			}
+			catch (Exception ex)
+			{
+				this.logger.error(ex.toString());
+			}
+		} else
+		{
+			logger.debug("Configuration doesn't need refreshed.");
+		}
+	}
     
     private boolean isInit() {
         return this.isInit;
