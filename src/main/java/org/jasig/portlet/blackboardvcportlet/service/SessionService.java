@@ -54,7 +54,7 @@ public class SessionService
     @Autowired
     SessionUrlDao sessionUrlDao;
     @Autowired
-    MailTemplateService mailTemplateService;
+    MailTemplateService jasigMailTemplateService;
     @Autowired
     UserService userService;
     @Autowired
@@ -374,7 +374,7 @@ public class SessionService
             toList.add(users.get(i).getEmail());
 
             substitutions = new String[]{users.get(i).getDisplayName(), creatorDetails, session.getSessionName(), dateFormat.format(session.getStartTime()), dateFormat.format(session.getEndTime()), launchUrl, creatorDetails};
-            mailTemplateService.sendEmailUsingTemplate(creator.getEmail(), toList, null, substitutions, "moderatorMailMessage");
+			jasigMailTemplateService.sendEmailUsingTemplate(creator.getEmail(), toList, null, substitutions, "moderatorMailMessage");
         }
         logger.debug("finished");
     }
@@ -451,7 +451,7 @@ public class SessionService
             toList.add(users.get(i).getEmail());
 
             substitutions = new String[]{users.get(i).getDisplayName(), creatorDetails, session.getSessionName(), dateFormat.format(session.getStartTime()), dateFormat.format(session.getEndTime()), creatorDetails};
-            mailTemplateService.sendEmailUsingTemplate(creator.getEmail(), toList, null, substitutions, "sessionDeletionMessage");
+			jasigMailTemplateService.sendEmailUsingTemplate(creator.getEmail(), toList, null, substitutions, "sessionDeletionMessage");
         }
         logger.debug("finished");
     }
@@ -467,7 +467,7 @@ public class SessionService
             toList = new ArrayList<String>();
             toList.add(users.get(i).getEmail());
             substitutions = new String[]{users.get(i).getDisplayName(), creatorDetails, session.getSessionName(), dateFormat.format(session.getStartTime()), dateFormat.format(session.getEndTime()), launchUrl, creatorDetails};
-            mailTemplateService.sendEmailUsingTemplate(creator.getEmail(), toList, null, substitutions, "intParticipantMailMessage");
+			jasigMailTemplateService.sendEmailUsingTemplate(creator.getEmail(), toList, null, substitutions, "intParticipantMailMessage");
         }
         logger.debug("finished");
     }
@@ -491,7 +491,7 @@ public class SessionService
             toList.add(users.get(i).getEmail());
             extParticipantUrl = sessionUrl.getUrl().replaceFirst("Guest",URLEncoder.encode(users.get(i).getDisplayName(), "UTF-8"));
             substitutions = new String[]{users.get(i).getDisplayName(), creatorDetails, session.getSessionName(), dateFormat.format(session.getStartTime()), dateFormat.format(session.getEndTime()), extParticipantUrl, creatorDetails};
-            mailTemplateService.sendEmailUsingTemplate(creator.getEmail(), toList, null, substitutions, "extParticipantMailMessage");
+			jasigMailTemplateService.sendEmailUsingTemplate(creator.getEmail(), toList, null, substitutions, "extParticipantMailMessage");
         }
         logger.debug("finished");
     }
