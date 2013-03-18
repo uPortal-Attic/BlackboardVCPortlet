@@ -18,9 +18,8 @@
  */
 package org.jasig.portlet.blackboardvcportlet.service;
 
-import java.util.List;
-import javax.mail.MessagingException;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -29,16 +28,18 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import javax.mail.MessagingException;
+import java.util.List;
 
 /**
  * Class which allows the sending of email from a template
  * @author Richard Good
  */
 @Service
-public class MailTemplateService implements BeanFactoryAware {
-    
-    static Logger logger = Logger.getLogger(MailTemplateService.class);
-    
+public class MailTemplateService implements BeanFactoryAware
+{
+	private static Logger logger = LoggerFactory.getLogger(MailTemplateService.class);
+
     @Autowired
     private JavaMailSender mailSender;
     
