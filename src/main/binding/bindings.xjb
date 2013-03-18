@@ -11,9 +11,9 @@
 
     <jaxb:bindings>
         <jaxb:globalBindings fixedAttributeAsConstantProperty="true" enableFailFastCheck="true">
-            <jaxb:javaType name="org.joda.time.DateTime" xmlType="xs:dateTime" parseMethod="edu.wisc.jaxb.util.JodaTypeConverter.parseDateTime" printMethod="edu.wisc.jaxb.util.JodaTypeConverter.printDateTime" />
-            <jaxb:javaType name="org.joda.time.DateMidnight" xmlType="xs:date" parseMethod="edu.wisc.jaxb.util.JodaTypeConverter.parseDate" printMethod="edu.wisc.jaxb.util.JodaTypeConverter.printDate" />
-            <jaxb:javaType name="org.joda.time.DateTime" xmlType="xs:time" parseMethod="edu.wisc.jaxb.util.JodaTypeConverter.parseTime" printMethod="edu.wisc.jaxb.util.JodaTypeConverter.printTime" />
+            <jaxb:javaType name="org.joda.time.DateTime" xmlType="xs:dateTime" parseMethod="org.jasig.xml.bind.JodaTypeConverter.parseDateTime" printMethod="org.jasig.xml.bind.JodaTypeConverter.printDateTime" />
+            <jaxb:javaType name="org.joda.time.DateMidnight" xmlType="xs:date" parseMethod="org.jasig.xml.bind.JodaTypeConverter.parseDate" printMethod="org.jasig.xml.bind.JodaTypeConverter.printDate" />
+            <jaxb:javaType name="org.joda.time.LocalTime" xmlType="xs:time" parseMethod="org.jasig.xml.bind.JodaTypeConverter.parseTime" printMethod="org.jasig.xml.bind.JodaTypeConverter.printTime" />
             <jaxb:serializable/>
             <xjc:simple />
         </jaxb:globalBindings>
