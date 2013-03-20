@@ -4,10 +4,9 @@
  */
 package org.jasig.portlet.blackboardvcportlet.test;
 
-
-import com.elluminate.sas.BasicAuth;
+import com.elluminate.sas.GetServerQuotasResponseCollection;
 import com.elluminate.sas.ObjectFactory;
-import org.jasig.springframework.ws.client.core.SetSoapActionCallback;
+import com.elluminate.sas.ServerQuotasResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -19,14 +18,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.client.core.WebServiceMessageCallback;
 import org.springframework.ws.client.core.WebServiceTemplate;
-import org.springframework.ws.soap.SoapHeader;
 import org.springframework.ws.soap.saaj.SaajSoapMessage;
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPElement;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.stream.StreamResult;
 import java.io.IOException;
-import java.io.StringWriter;
+import java.util.List;
+import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/test-applicationContext.xml")
@@ -46,14 +44,8 @@ public class WebServiceIntegrationTest
 	public void testConnection() throws Exception
 	{
 		logger.info("Starting testConnection()...");
-/*
-		BasicAuth basicAuth = OBJECT_FACTORY.createBasicAuth();
-		basicAuth.setName("WISCONSIN-ADMIN");
-		basicAuth.setPassword("Wared4aM");
-*/
-		SetSoapActionCallback soapAction = new SetSoapActionCallback("http://sas.elluminate.com/GetServerQuotas");
 
-		webServicesTemplate.marshalSendAndReceive(OBJECT_FACTORY.createGetServerQuotas(null), new WebServiceMessageCallback() {
+		GetServerQuotasResponseCollection serverQuotasResponseCollection = (GetServerQuotasResponseCollection)webServicesTemplate.marshalSendAndReceive(OBJECT_FACTORY.createGetServerQuotas(null), new WebServiceMessageCallback() {
 
 			@Override
 			public void doWithMessage(WebServiceMessage webServiceMessage) throws IOException, TransformerException
@@ -62,17 +54,6 @@ public class WebServiceIntegrationTest
 				{
 					final SaajSoapMessage casted = (SaajSoapMessage) webServiceMessage;
 					casted.setSoapAction("http://sas.elluminate.com/GetServerQuotas");
-
-					BasicAuth basicAuth = OBJECT_FACTORY.createBasicAuth();
-					basicAuth.setName("WISCONSIN-ADMIN");
-					basicAuth.setPassword("Wared4aM");
-
-					final StringWriter out = new StringWriter();
-					elluminateMarshller.marshal(basicAuth, new StreamResult(out));
-					String bax = out.toString();
-					logger.info("BAX: '{}'", bax);
-
-					SoapHeader soapHeader = casted.getSoapHeader();
 
 					QName qName = new QName(elluminateMarshller.getContextPath(), "BasicAuth", "sas");
 					try
@@ -85,42 +66,14 @@ public class WebServiceIntegrationTest
 					{
 						 logger.error("Error creating SOAPHeader: ", e);
 					}
-
-/*
-					SaajSoapMessageFactory soapMessageFactory = new SaajSoapMessageFactory();
-					soapMessageFactory.createWebServiceMessage().
-*/
-
-//					element.setText("<sas:Name>WISCONSIN-ADMIN</sas:Name><sas:Password>Wared4aM</sas:Password>");
-
-//					soapHeader.addHeaderElement(new QName(bax));
-/*
-					QName qName = new QName("CustomHeaderElement");
-					SoapHeaderElement headerElement = soapHeader.addHeaderElement(qName);
-*/
-
-/*
-					SoapEnvelope soapEnvelope = (SoapEnvelope)(webServiceMessage);
-
-					SOAPHeaderElement soapHeaderElement = casted.getSaajMessage().getSOAPHeader().addHeaderElement(soapEnvelope.c.createName("BasicAuth"));
-					soapHeaderElement.addAttribute(casted.createName("xmlns"), "");
-					soapHeaderElement.addChildElement(casted.createName("Token"));
-*/
 				}
 			}
 		});
 
-//		webServicesTemplate.marshalSendAndReceive(OBJECT_FACTORY.createGetServerQuotas(null), soapAction);
-
-//		Object object = webServicesTemplate.marshalSendAndReceive(null, soapAction);
-//		assertNotNull(object);
-/*
-		GetServerQuotasResponseCollection serverQuotasResponseCollection = (GetServerQuotasResponseCollection)webServicesTemplate.marshalSendAndReceive(auth, soapAction);
 		assertNotNull(serverQuotasResponseCollection);
 		List<ServerQuotasResponse> quotaResult = serverQuotasResponseCollection.getServerQuotasResponses();
 		assertNotNull(quotaResult);
 		assertTrue(quotaResult.size() > 0);
-*/
 		logger.info("Finished testConnection().");
 	}
 }

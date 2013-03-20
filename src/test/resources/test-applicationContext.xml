@@ -23,7 +23,6 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:sws="http://www.springframework.org/schema/web-services"
-       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
            http://www.springframework.org/schema/context
@@ -42,9 +41,6 @@
         <property name="messageSender" ref="webServiceMessageSender"/>
         <property name="checkConnectionForFault" value="false" />
         <property name="defaultUri" value="https://sas-int.elluminate.com/site/external/adapter/default/v3/webservice.event"/>
-<!--
-        <property name="defaultUri" value="http://localhost:8081"/>
--->
     </bean>
     <bean id="elluminateMarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
         <property name="contextPaths">

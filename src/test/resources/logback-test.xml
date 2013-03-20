@@ -6,12 +6,12 @@
 
 <appender name="C" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
-        <pattern>%-5level [%thread] %logger{36} %d{ISO8601} - %msg%n</pattern>
+        <pattern>[%d{ISO8601}] %-5level [%thread] %logger - %msg%n</pattern>
     </encoder>
 </appender>
 <appender name="N" class="ch.qos.logback.core.helpers.NOPAppender" />
 
-<root level="TRACE">
+<root level="INFO">
     <appender-ref ref="C"/>
 </root>
 <!--
