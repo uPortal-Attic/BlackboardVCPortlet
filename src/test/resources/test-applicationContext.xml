@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:sws="http://www.springframework.org/schema/web-services"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-2.5.xsd
+           http://www.springframework.org/schema/web-services http://www.springframework.org/schema/web-services/web-services-2.0.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+       default-autowire="byName">
+
+    <context:annotation-config />
+    <context:component-scan base-package="org.jasig.portlet.blackboardvcportlet.test" />
+    <sws:annotation-driven/>
+
+    <!--Spring Web Services Client-->
+    <bean id="webServicesTemplate" class="org.springframework.ws.client.core.WebServiceTemplate">
+        <property name="marshaller" ref="elluminateMarshaller"/>
+        <property name="unmarshaller" ref="elluminateMarshaller"/>
+        <property name="messageSender" ref="webServiceMessageSender"/>
+        <property name="checkConnectionForFault" value="false" />
+        <property name="defaultUri" value="https://sas-int.elluminate.com/site/external/adapter/default/v3/webservice.event"/>
+<!--
+        <property name="defaultUri" value="http://localhost:8081"/>
+-->
+    </bean>
+    <bean id="elluminateMarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+        <property name="contextPaths">
+            <list>
+                <value>com.elluminate.sas</value>
+            </list>
+        </property>
+    </bean>
+    <bean id="webServiceMessageSender" class="org.springframework.ws.transport.http.HttpComponentsMessageSender">
+        <property name="httpClient" ref="httpClient"/>
+        <property name="credentials">
+            <bean id="wsCredentials" class="org.apache.http.auth.UsernamePasswordCredentials">
+                <constructor-arg value="WISCONSIN-ADMIN"/>
+                <constructor-arg value="Wared4aM"/>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="httpClient" class="org.jasig.apache.http.impl.client.ResponseHeaderHandlingHttpClient" depends-on="httpConnectionParamBean, clientParamBean">
+        <constructor-arg ref="httpConnectionManager" />
+        <constructor-arg ref="httpParams"/>
+    </bean>
+    <bean id="httpConnectionManager" class="org.jasig.apache.http.impl.conn.CleanShutdownPoolingClientConnectionManager" destroy-method="shutdown">
+<!--
+        <constructor-arg>
+            <bean class="org.jasig.apache.http.conn.scheme.SchemeRegistryFactoryBean">
+                <property name="schemes">
+                    <set>
+                        <bean class="org.apache.http.conn.scheme.Scheme">
+                            <constructor-arg value="https" />
+                            <constructor-arg value="8081" />
+                            <constructor-arg>
+                                <bean class="org.apache.http.conn.ssl.SSLSocketFactory">
+                                    <constructor-arg>
+                                        <bean class="org.jasig.apache.http.conn.ssl.TrustAllStrategy" />
+                                    </constructor-arg>
+                                    <constructor-arg>
+                                        <bean class="org.apache.http.conn.ssl.AllowAllHostnameVerifier" />
+                                    </constructor-arg>
+                                </bean>
+                            </constructor-arg>
+                        </bean>
+                    </set>
+                </property>
+            </bean>
+        </constructor-arg>
+-->
+        <property name="defaultMaxPerRoute" value="1000" />
+        <property name="maxTotal" value="1000" />
+    </bean>
+    <bean id="httpParams" class="org.apache.http.params.BasicHttpParams"/>
+    <bean id="httpConnectionParamBean" class="org.apache.http.params.HttpConnectionParamBean">
+        <constructor-arg index="0">
+            <ref bean="httpParams"/>
+        </constructor-arg>
+        <property name="connectionTimeout" value="5000"/>
+        <property name="soTimeout" value="30000"/>
+        <property name="staleCheckingEnabled" value="true"/>
+    </bean>
+    <bean id="clientParamBean" class="org.apache.http.client.params.ClientParamBean">
+        <constructor-arg index="0">
+            <ref bean="httpParams"/>
+        </constructor-arg>
+        <property name="cookiePolicy" value="ignoreCookies"/>
+    </bean>
+<!--
+    <bean id="proxyHost" class="org.apache.http.HttpHost">
+        <constructor-arg value="localhost" />
+        <constructor-arg value="8081" />
+        <constructor-arg value="http" />
+    </bean>
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetObject" ref="httpParams" />
+        <property name="targetMethod" value="setParameter" />
+        <property name="arguments">
+            <list>
+                <util:constant static-field="org.apache.http.conn.params.ConnRoutePNames.DEFAULT_PROXY"/>
+                <ref bean="proxyHost"/>
+            </list>
+        </property>
+    </bean>
+-->
+
+</beans>
