@@ -22,12 +22,12 @@ import com.elluminate.sas.*;
 import freemarker.template.utility.StringUtil;
 import org.jasig.portlet.blackboardvcportlet.dao.*;
 import org.jasig.portlet.blackboardvcportlet.data.*;
+import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.ws.client.core.WebServiceTemplate;
 import javax.activation.DataHandler;
 import javax.mail.util.ByteArrayDataSource;
 import javax.portlet.PortletPreferences;
@@ -66,7 +66,9 @@ public class SessionService
     @Autowired
     SessionMultimediaDao sessionMultimediaDao;
 	@Autowired
-	private WebServiceTemplate webServiceTemplate;
+	private SASWebServiceTemplate sasWebServiceTemplate;
+	@Autowired
+	private ObjectFactory objectFactory;
 
 	public List<Session> getSessionsForUser(String uid) {
         List<Session> sessionList = sessionDao.getSessionsForUser(uid);
@@ -116,11 +118,11 @@ public class SessionService
 
         try {
             logger.debug("getting session url from Collaborate");
-			BuildSessionUrl buildSessionUrl = new BuildSessionUrl();
+			BuildSessionUrl buildSessionUrl = objectFactory.createBuildSessionUrl();
 			buildSessionUrl.setSessionId(sessionUrl.getSessionId());
 			buildSessionUrl.setDisplayName(sessionUrl.getDisplayName());
 			buildSessionUrl.setUserId(sessionUrl.getUserId());
-			UrlResponse urlResponse = (UrlResponse)webServiceTemplate.marshalSendAndReceive(buildSessionUrl);
+			UrlResponse urlResponse = (UrlResponse)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/BuildSessionUrl", buildSessionUrl);
 
             sessionUrl.setUrl(urlResponse.getUrl());
             sessionUrl.setLastUpdated(new Date());
@@ -160,9 +162,9 @@ public class SessionService
 
             logger.debug("Calling removeSession:" + sessionId);
             try {
-				RemoveSession removeSession = new RemoveSession();
+				RemoveSession removeSession = objectFactory.createRemoveSession();
 				removeSession.setSessionId(sessionId);
-				SuccessResponse successResponse = (SuccessResponse)webServiceTemplate.marshalSendAndReceive(removeSession);
+				SuccessResponse successResponse = (SuccessResponse)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/RemoveSession", removeSession);
                 logger.debug("removeSession called, returned:" + successResponse.isSuccess());
             } catch (Exception e) {
                 logger.error("RemoveSession Error:", e);
@@ -181,8 +183,6 @@ public class SessionService
             logger.debug("Deleting session ext participants");
             sessionExtParticipantDao.deleteAllExtParticipants(sessionId);
             logger.debug("Finished deleting ext participants");
-            
-
         } catch (Exception ex) {
             logger.error(ex.toString());
             throw ex;
@@ -193,8 +193,8 @@ public class SessionService
     public List<Session> getAllSessions() {
         logger.debug("getAllSessions called");
         List<Session> sessions = sessionDao.getAllSesssions();
-        for (int i = 0; i < sessions.size(); i++) {
-            sessions.get(i).setCurrUserCanEdit(true);
+        for (Session session : sessions) {
+            session.setCurrUserCanEdit(true);
         }
         return sessions;
     }
@@ -210,7 +210,7 @@ public class SessionService
 			SessionResponseCollection sessionResponseCollection = null;
             if (session.getSessionId() > 0) {
                 logger.debug("Existing session, calling updateSession");
-				UpdateSession updateSession = new UpdateSession();
+				UpdateSession updateSession = objectFactory.createUpdateSession();
 				updateSession.setSessionId(session.getSessionId());
 				updateSession.setStartTime(session.getStartTime().getTime());
 				updateSession.setEndTime(session.getEndTime().getTime());
@@ -233,10 +233,10 @@ public class SessionService
 				updateSession.setSecureSignOn(session.isSecureSignOn());
 				updateSession.setAllowInSessionInvites(session.isAllowInSessionInvites());
 				updateSession.setHideParticipantNames(session.isHideParticipantNames());
-				sessionResponseCollection = (SessionResponseCollection)webServiceTemplate.marshalSendAndReceive(updateSession);
+				sessionResponseCollection = (SessionResponseCollection)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/UpdateSession", updateSession);
             } else {
                 logger.debug("New session, calling setSession");
-				SetSession setSession = new SetSession();
+				SetSession setSession = objectFactory.createSetSession();
 				setSession.setCreatorId(session.getCreatorId());
 				setSession.setStartTime(session.getStartTime().getTime());
 				setSession.setEndTime(session.getEndTime().getTime());
@@ -259,8 +259,8 @@ public class SessionService
 				setSession.setAllowInSessionInvites(session.isAllowInSessionInvites());
 				setSession.setHideParticipantNames(session.isHideParticipantNames());
 
-				sessionResponseCollection = (SessionResponseCollection)webServiceTemplate.marshalSendAndReceive(setSession);
-                logger.debug("setSession called, recieved response");
+				sessionResponseCollection = (SessionResponseCollection)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/SetSession", setSession);
+                logger.debug("setSession called, received response");
             }
 
 			for (SessionResponse sessionResponse : sessionResponseCollection.getSessionResponses())
@@ -313,9 +313,9 @@ public class SessionService
             String callBackUrl = prefs.getValue("callbackUrl", null);
             logger.debug("Setting callback Url to:" + callBackUrl);
             if (callBackUrl != null) {
-				SetApiCallbackUrl setApiCallbackUrl = new SetApiCallbackUrl();
+				SetApiCallbackUrl setApiCallbackUrl = objectFactory.createSetApiCallbackUrl();
 				setApiCallbackUrl.setApiCallbackUrl(callBackUrl);
-				SuccessResponse successResponse = (SuccessResponse)webServiceTemplate.marshalSendAndReceive(setApiCallbackUrl);
+				SuccessResponse successResponse = (SuccessResponse)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/SetApiCallbackUrl", setApiCallbackUrl);
                 logger.debug("callBackUrl response:" + successResponse.isSuccess());
             }
 
@@ -534,14 +534,14 @@ public class SessionService
 
         try {
             logger.debug("Setup session web service call");
-			RemoveSessionPresentation removeSessionPresentation = new RemoveSessionPresentation();
+			RemoveSessionPresentation removeSessionPresentation = objectFactory.createRemoveSessionPresentation();
 			removeSessionPresentation.setSessionId(sessionId);
 			removeSessionPresentation.setPresentationId(presentationId);
-			SuccessResponse successResponse = (SuccessResponse)webServiceTemplate.marshalSendAndReceive(removeSessionPresentation);
+			SuccessResponse successResponse = (SuccessResponse)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/RemoveSessionPresentation", removeSessionPresentation);
             logger.debug("removeSessionPresentation returned:" + successResponse.isSuccess());
-			RemoveRepositoryPresentation removeRepositoryPresentation = new RemoveRepositoryPresentation();
+			RemoveRepositoryPresentation removeRepositoryPresentation = objectFactory.createRemoveRepositoryPresentation();
 			removeRepositoryPresentation.setPresentationId(presentationId);
-			successResponse = (SuccessResponse)webServiceTemplate.marshalSendAndReceive(removeRepositoryPresentation);
+			successResponse = (SuccessResponse)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/RemoveRepositoryPresentation", removeRepositoryPresentation);
             logger.debug("removeRepositoryPresentation returned:" + successResponse.isSuccess());
             sessionPresentationDao.deleteSessionPresentation(Long.toString(presentationId));
         } catch (Exception e) {
@@ -562,14 +562,15 @@ public class SessionService
             logger.debug("ByteArrayDataSource created");
             DataHandler dataHandler = new DataHandler(rawData);
             logger.debug("DataHandler created from ByteArrayDataSource");
-			UploadRepositoryContent uploadRepositoryContent = new UploadRepositoryContent();
+			UploadRepositoryContent uploadRepositoryContent = objectFactory.createUploadRepositoryContent();
 			uploadRepositoryContent.setCreatorId(uid);
 			uploadRepositoryContent.setFilename(file.getOriginalFilename());
 			uploadRepositoryContent.setContent(dataHandler);
-			PresentationResponseCollection presentationResponseCollection = (PresentationResponseCollection)webServiceTemplate.marshalSendAndReceive(uploadRepositoryContent);
+			PresentationResponseCollection presentationResponseCollection = (PresentationResponseCollection)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/UploadRepositoryPresentation", uploadRepositoryContent);
             logger.debug("uploadRepositoryPresentation called");
 
-            if (presentationResponseCollection != null) {
+            if (presentationResponseCollection != null)
+			{
                 SessionPresentation sessionPresentation = new SessionPresentation();
                 sessionPresentation.setCreatorId(uid);
                 sessionPresentation.setDateUploaded(new Date());
@@ -577,10 +578,10 @@ public class SessionService
                 sessionPresentation.setSessionId(Long.toString(sessionId));
 				for (PresentationResponse presentationResponse : presentationResponseCollection.getPresentationResponses())
 				{
-                 	SetSessionPresentation setSessionPresentation = new SetSessionPresentation();
+                 	SetSessionPresentation setSessionPresentation = objectFactory.createSetSessionPresentation();
 					setSessionPresentation.setSessionId(sessionId);
 					setSessionPresentation.setPresentationId(presentationResponse.getPresentationId());
-					SuccessResponse successResponse = (SuccessResponse)webServiceTemplate.marshalSendAndReceive(setSessionPresentation);
+					SuccessResponse successResponse = (SuccessResponse)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/SetSessionPresentation", setSessionPresentation);
                     if (successResponse.isSuccess()) {
                         sessionPresentation.setPresentationId(presentationResponse.getPresentationId());
                         sessionPresentationDao.storeSessionPresentation(sessionPresentation);
@@ -603,15 +604,16 @@ public class SessionService
 
         try { // Call Web Service Operation
             logger.debug("Setup session web service call");
-            for (SessionMultimedia sessionMultimedia : sessionMultimediaList) {
-				RemoveSessionMultimedia removeSessionMultimedia = new RemoveSessionMultimedia();
+            for (SessionMultimedia sessionMultimedia : sessionMultimediaList)
+			{
+				RemoveSessionMultimedia removeSessionMultimedia = objectFactory.createRemoveSessionMultimedia();
 				removeSessionMultimedia.setSessionId(sessionId);
 				removeSessionMultimedia.setMultimediaId(sessionMultimedia.getMultimediaId());
-				SuccessResponse successResponse = (SuccessResponse)webServiceTemplate.marshalSendAndReceive(removeSessionMultimedia);
+				SuccessResponse successResponse = (SuccessResponse)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/RemoveSessionMultimedia", removeSessionMultimedia);
                 logger.debug("deleteSessionMultimedia returned:" + successResponse.isSuccess());
-				RemoveRepositoryMultimedia removeRepositoryMultimedia = new RemoveRepositoryMultimedia();
+				RemoveRepositoryMultimedia removeRepositoryMultimedia = objectFactory.createRemoveRepositoryMultimedia();
 				removeRepositoryMultimedia.setMultimediaId(sessionMultimedia.getMultimediaId());
-				successResponse = (SuccessResponse)webServiceTemplate.marshalSendAndReceive(removeRepositoryMultimedia);
+				successResponse = (SuccessResponse)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/RemoveRepositoryMultimedia", removeRepositoryMultimedia);
                 logger.debug("delete multimediaId (" + sessionMultimedia.getMultimediaId() + " returned:" + successResponse.isSuccess());
                 sessionMultimediaDao.deleteSessionMultimedia(sessionMultimedia.getMultimediaId());
             }
@@ -635,14 +637,14 @@ public class SessionService
             logger.debug("Setup session web service call");
 
             for (String multiMediaId : multimediaIds) {
-                RemoveSessionMultimedia removeSessionMultimedia = new RemoveSessionMultimedia();
+                RemoveSessionMultimedia removeSessionMultimedia = objectFactory.createRemoveSessionMultimedia();
 				removeSessionMultimedia.setSessionId(sessionId);
 				removeSessionMultimedia.setMultimediaId(Long.valueOf(multiMediaId));
-				SuccessResponse successResponse = (SuccessResponse)webServiceTemplate.marshalSendAndReceive(removeSessionMultimedia);
+				SuccessResponse successResponse = (SuccessResponse)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/RemoveSessionMultimedia", removeSessionMultimedia);
                 if (successResponse.isSuccess()) {
-					RemoveRepositoryMultimedia removeRepositoryMultimedia = new RemoveRepositoryMultimedia();
+					RemoveRepositoryMultimedia removeRepositoryMultimedia = objectFactory.createRemoveRepositoryMultimedia();
 					removeRepositoryMultimedia.setMultimediaId(Long.valueOf(multiMediaId));
-					SuccessResponse response = (SuccessResponse)webServiceTemplate.marshalSendAndReceive(removeRepositoryMultimedia);
+					SuccessResponse response = (SuccessResponse)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/RemoveRepositoryMultimedia", removeRepositoryMultimedia);
                     logger.debug("delete multimediaId (" + multiMediaId + " returned:" + response.isSuccess());
                     sessionMultimediaDao.deleteSessionMultimedia(Long.valueOf(multiMediaId));
                 } else {
@@ -672,11 +674,11 @@ public class SessionService
             logger.debug("ByteArrayDataSource created");
             DataHandler dataHandler = new DataHandler(rawData);
             logger.debug("DataHandler created from ByteArrayDataSource");
-			UploadRepositoryContent uploadRepositoryContent = new UploadRepositoryContent();
+			UploadRepositoryContent uploadRepositoryContent = objectFactory.createUploadRepositoryContent();
 			uploadRepositoryContent.setCreatorId(uid);
 			uploadRepositoryContent.setFilename(file.getOriginalFilename());
 			uploadRepositoryContent.setContent(dataHandler);
-            MultimediaResponseCollection multimediaResponseCollection = (MultimediaResponseCollection)webServiceTemplate.marshalSendAndReceive(uploadRepositoryContent);
+            MultimediaResponseCollection multimediaResponseCollection = (MultimediaResponseCollection)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/UploadRepositoryMultimedia", uploadRepositoryContent);
             logger.debug("uploadRepositoryMultimedia called");
 
             if (multimediaResponseCollection != null) {
@@ -695,10 +697,10 @@ public class SessionService
                 for (MultimediaResponse multimediaResponse : multimediaResponseCollection.getMultimediaResponses()) {
                     sessionMultimedia.setMultimediaId(multimediaResponse.getMultimediaId());
                     multimediaIds += sessionMultimedia.getMultimediaId();
-					SetSessionMultimedia setSessionMultimedia = new SetSessionMultimedia();
+					SetSessionMultimedia setSessionMultimedia = objectFactory.createSetSessionMultimedia();
 					setSessionMultimedia.setSessionId(sessionId);
 					setSessionMultimedia.setMultimediaIds(multimediaIds);
-					SuccessResponse successResponse = (SuccessResponse)webServiceTemplate.marshalSendAndReceive(setSessionMultimedia);
+					SuccessResponse successResponse = (SuccessResponse)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/SetSessionMultimedia", setSessionMultimedia);
                     if (successResponse.isSuccess()) {
                         sessionMultimediaDao.saveSessionMultimedia(sessionMultimedia);
                     }

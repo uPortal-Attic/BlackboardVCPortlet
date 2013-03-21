@@ -18,17 +18,14 @@
  */
 package org.jasig.portlet.blackboardvcportlet.service;
 
-import com.elluminate.sas.BasicAuth;
-import com.elluminate.sas.GetServerQuotasResponseCollection;
-import com.elluminate.sas.ServerQuotas;
-import com.elluminate.sas.ServerQuotasResponse;
+import com.elluminate.sas.*;
 import org.jasig.portlet.blackboardvcportlet.dao.ServerQuotaDao;
 import org.jasig.portlet.blackboardvcportlet.data.ServerQuota;
+import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.ws.client.core.WebServiceTemplate;
 import javax.portlet.PortletPreferences;
 import java.util.Calendar;
 import java.util.Date;
@@ -49,11 +46,14 @@ public class ServerQuotaService
     private ServerQuotaDao serverQuotaDao;
 
 	@Autowired
-	private WebServiceTemplate webServiceTemplate;
+	private SASWebServiceTemplate sasWebServiceTemplate;
+
+	@Autowired
+	private ObjectFactory objectFactory;
     
     /**
      * Gets the Server quota
-     * @return 
+     * @return ServerQuota
      */
      public ServerQuota getServerQuota()
      {
@@ -82,9 +82,10 @@ public class ServerQuotaService
 			try
 			{
 				// Call Web Service Operation
-				GetServerQuotasResponseCollection serverQuotasResponseCollection = (GetServerQuotasResponseCollection) webServiceTemplate.marshalSendAndReceive(new ServerQuotas());
+				ServerQuotas serverQuotas = objectFactory.createServerQuotas();
+				GetServerQuotasResponseCollection serverQuotasResponseCollection = (GetServerQuotasResponseCollection) sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/GetServerQuotas", serverQuotas);
 				List<ServerQuotasResponse> quotaResult = serverQuotasResponseCollection.getServerQuotasResponses();
-				this.logger.debug("Result = " + quotaResult);
+				logger.debug("Result = " + quotaResult);
 				for (ServerQuotasResponse response : quotaResult)
 				{
 					ServerQuota quota = new ServerQuota();
@@ -93,10 +94,10 @@ public class ServerQuotaService
 					quota.setSessionQuota(response.getSessionQuota());
 					quota.setSessionQuotaAvailable(response.getSessionQuotaAvailable());
 					quota.setLastUpdated(new Date());
-					this.logger.debug("disk quota:" + quota.getDiskQuota());
-					this.logger.debug("disk quota available:" + quota.getDiskQuotaAvailable());
-					this.logger.debug("session quota:" + quota.getSessionQuota());
-					this.logger.debug("session quota available:" + quota.getSessionQuotaAvailable());
+					logger.debug("disk quota:" + quota.getDiskQuota());
+					logger.debug("disk quota available:" + quota.getDiskQuotaAvailable());
+					logger.debug("session quota:" + quota.getSessionQuota());
+					logger.debug("session quota available:" + quota.getSessionQuotaAvailable());
 
 					//ServerQuotaService serviceQuotaImpl = new ServerQuotaService();
 					/// serviceQuotaImpl.saveServerQuota(quota);
@@ -106,7 +107,7 @@ public class ServerQuotaService
 			}
 			catch (Exception ex)
 			{
-				this.logger.error(ex.toString());
+				logger.error(ex.toString());
 			}
 		} else
 		{
@@ -130,6 +131,4 @@ public class ServerQuotaService
         user.setName(prefs.getValue("wsusername",null));
         user.setPassword(prefs.getValue("wspassword",null));
     }
-    
-    
 }

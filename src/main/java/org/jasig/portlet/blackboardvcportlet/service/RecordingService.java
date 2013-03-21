@@ -24,11 +24,11 @@ import org.jasig.portlet.blackboardvcportlet.dao.RecordingUrlDao;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingShort;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingUrl;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
+import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.ws.client.core.WebServiceTemplate;
 import javax.portlet.PortletPreferences;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -45,7 +45,10 @@ public class RecordingService
     private static final Logger logger = LoggerFactory.getLogger(RecordingService.class);
 
 	@Autowired
-	private WebServiceTemplate webServiceTemplate;
+	private SASWebServiceTemplate sasWebServiceTemplate;
+
+	@Autowired
+	private ObjectFactory objectFactory;
 
 	//private boolean isInit=false;
     //private BasicAuth user;
@@ -68,7 +71,7 @@ public class RecordingService
 	}
 	/**
      * Get the recordings for a session
-     * @param sessionId
+     * @param sessionId Long
      * @return List<RecordingShort>
      */
     public List<RecordingShort> getRecordingsForSession(long sessionId)
@@ -78,7 +81,7 @@ public class RecordingService
     
     /**
      * Get a specific recording
-     * @param recordingId
+     * @param recordingId Long
      * @return RecordingShort
      */
     public RecordingShort getRecording(long recordingId)
@@ -91,7 +94,7 @@ public class RecordingService
     
     /**
      * Get the recordings for a user
-     * @param uid
+     * @param uid String
      * @return List<RecordingShort>
      */
     public List<RecordingShort> getRecordingsForUser(String uid)
@@ -118,7 +121,7 @@ public class RecordingService
     
     /**
      * Store a recording
-     * @param recordingShort 
+     * @param recordingShort RecordingShort
      */
     public void saveRecordingShort(RecordingShort recordingShort)
     {
@@ -127,8 +130,8 @@ public class RecordingService
     
     /**
      * Utility class for pretty output of file size
-     * @param size
-     * @return 
+     * @param size Long
+     * @return String
      */
     public static String readableFileSize(long size) {
         if(size <= 0) {
@@ -141,7 +144,7 @@ public class RecordingService
 
     /**
      * Get recordings as Admin
-     * @return 
+     * @return List<RecordingShort>
      */
     public List<RecordingShort> getRecordingsForAdmin()
     {
@@ -160,8 +163,8 @@ public class RecordingService
     
     /**
      * Gets the url for a recording
-     * @param recordingId
-     * @return 
+     * @param recordingId Long
+     * @return RecordingUrl
      */
     public RecordingUrl getRecordingUrl(long recordingId)
     {
@@ -179,19 +182,19 @@ public class RecordingService
    
     /**
      * Delete a recording
-     * @param prefs
-     * @param recordingId
+     * @param prefs PortletPreferences
+     * @param recordingId Long
      * @throws Exception 
      */
-    public void deleteRecording(PortletPreferences prefs,long recordingId) throws Exception
+    public void deleteRecording(PortletPreferences prefs, long recordingId) throws Exception
     {
         logger.debug("deleteRecording called");
         
         try
         {
-			RemoveRecording removeRecording = new RemoveRecording();
+			RemoveRecording removeRecording = objectFactory.createRemoveRecording();
 			removeRecording.setRecordingId(recordingId);
-			SuccessResponse successResponse = (SuccessResponse) webServiceTemplate.marshalSendAndReceive(removeRecording);
+			SuccessResponse successResponse = (SuccessResponse) sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/RemoveRecording", removeRecording);
 			logger.debug("removeRecording response:" + successResponse);
 		}
         catch (Exception e)
@@ -208,18 +211,18 @@ public class RecordingService
    
     /**
      * Updates the local recordings cache from Collaborate for a particular session
-     * @param user
-     * @param sessionId
-     * @return 
+     * @param user BasicAuth
+     * @param sessionId Long
+     * @return List<RecordingShort>
      */
     public List<RecordingShort> updateSessionRecordings(BasicAuth user,long sessionId)
     {
         List<RecordingShort> recordingList = new ArrayList<RecordingShort>();
         try
         {
-			ListRecordingShort listRecordingShort = new ListRecordingShort();
+			ListRecordingShort listRecordingShort = objectFactory.createListRecordingShort();
 			listRecordingShort.setSessionId(sessionId);
-			ListRecordingShortResponseCollection listRecordingShortResponseCollection = (ListRecordingShortResponseCollection)webServiceTemplate.marshalSendAndReceive(listRecordingShort);
+			ListRecordingShortResponseCollection listRecordingShortResponseCollection = (ListRecordingShortResponseCollection)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/ListRecordingShort", listRecordingShort);
 			List<RecordingShortResponse> recordingShortResponses = listRecordingShortResponseCollection.getRecordingShortResponses();
 
 			RecordingShort recordingShort;
@@ -240,9 +243,9 @@ public class RecordingService
 				logger.debug("stored recording short");
 				logger.debug("getting url for recording");
 
-				BuildRecordingUrl buildRecordingUrl = new BuildRecordingUrl();
+				BuildRecordingUrl buildRecordingUrl = objectFactory.createBuildRecordingUrl();
 				buildRecordingUrl.setRecordingId(recordingShort.getRecordingId());
-				UrlResponse urlResponse = (UrlResponse) webServiceTemplate.marshalSendAndReceive(buildRecordingUrl);
+				UrlResponse urlResponse = (UrlResponse) sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/BuildRecordingUrl", buildRecordingUrl);
 
 				recordingUrl = new RecordingUrl();
 				recordingUrl.setRecordingId(shortResponse.getRecordingId());

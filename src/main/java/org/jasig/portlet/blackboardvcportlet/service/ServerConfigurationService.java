@@ -20,14 +20,15 @@ package org.jasig.portlet.blackboardvcportlet.service;
 
 import com.elluminate.sas.BasicAuth;
 import com.elluminate.sas.GetServerConfigurationResponseCollection;
+import com.elluminate.sas.ObjectFactory;
 import com.elluminate.sas.ServerConfigurationResponse;
 import org.jasig.portlet.blackboardvcportlet.dao.ServerConfigurationDao;
 import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
+import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.ws.client.core.WebServiceTemplate;
 import javax.portlet.PortletPreferences;
 import java.util.Calendar;
 import java.util.Date;
@@ -47,12 +48,15 @@ public class ServerConfigurationService
     ServerConfigurationDao serverConfigurationDao;
 
 	@Autowired
-	private WebServiceTemplate webServiceTemplate;
+	private SASWebServiceTemplate sasWebServiceTemplate;
+
+	@Autowired
+	private ObjectFactory objectFactory;
 
     /**
      * Gets the server configuration
-     * @param prefs
-     * @return 
+     * @param prefs PortletPreferences
+     * @return ServerConfiguration
      */
     public ServerConfiguration getServerConfiguration(PortletPreferences prefs) {
         refreshServerConfiguration(prefs);
@@ -61,7 +65,7 @@ public class ServerConfigurationService
 
     /**
      * Stores the server configuration
-     * @param serverConfiguration 
+     * @param serverConfiguration ServerConfiguration
      */
     public void storeServerConfiguration(ServerConfiguration serverConfiguration) {
         serverConfigurationDao.deleteServerConfiguration();
@@ -71,7 +75,7 @@ public class ServerConfigurationService
     /**
      * Refreshes the server configuration, only updates local cache if last update
      * was older than an hour.
-     * @param prefs 
+     * @param prefs PortletPreferences
      */
     public void refreshServerConfiguration(PortletPreferences prefs) {
         // Quota will refresh on the hour
@@ -91,11 +95,12 @@ public class ServerConfigurationService
 
 			try
 			{ // Call Web Service Operation
+				com.elluminate.sas.ServerConfiguration sc = objectFactory.createServerConfiguration();
 
-				GetServerConfigurationResponseCollection responseCollection = (GetServerConfigurationResponseCollection) webServiceTemplate.marshalSendAndReceive(new com.elluminate.sas.ServerConfiguration());
+				GetServerConfigurationResponseCollection responseCollection = (GetServerConfigurationResponseCollection) sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/GetServerConfiguration", sc);
 				List<ServerConfigurationResponse> configResult = responseCollection.getServerConfigurationResponses();
 
-				this.logger.debug("Result = " + configResult);
+				logger.debug("Result = " + configResult);
 				for (ServerConfigurationResponse response : configResult)
 				{
 					ServerConfiguration configuration = new ServerConfiguration();
@@ -135,7 +140,7 @@ public class ServerConfigurationService
 			}
 			catch (Exception ex)
 			{
-				this.logger.error(ex.toString());
+				logger.error(ex.toString());
 			}
 		} else
 		{
@@ -149,7 +154,7 @@ public class ServerConfigurationService
 
     /**
      * Init method for basic auth user.
-     * @param prefs 
+     * @param prefs PortletPreferences
      */
     private void doInit(PortletPreferences prefs) {
         logger.debug("doInit called");
