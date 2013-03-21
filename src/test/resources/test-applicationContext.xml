@@ -35,7 +35,7 @@
     <sws:annotation-driven/>
 
     <!--Spring Web Services Client-->
-    <bean id="webServicesTemplate" class="org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceTemplate">
+    <bean id="sasWebServicesTemplate" class="org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceTemplate">
         <property name="marshaller" ref="elluminateMarshaller"/>
         <property name="unmarshaller" ref="elluminateMarshaller"/>
         <property name="messageSender" ref="webServiceMessageSender"/>
