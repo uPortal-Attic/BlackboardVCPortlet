@@ -28,7 +28,7 @@ public class SASWebServiceTemplate extends WebServiceTemplate
 		super();
 	}
 
-	public Object marshalSendAndReceive(final String soapAction, final Object requestPayload)
+	public Object marshalSendAndReceiveToSAS(final String soapAction, final Object requestPayload)
 	{
 		return marshalSendAndReceive(requestPayload, new WebServiceMessageCallback() {
 

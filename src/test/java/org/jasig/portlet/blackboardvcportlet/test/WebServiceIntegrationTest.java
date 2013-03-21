@@ -35,7 +35,7 @@ public class WebServiceIntegrationTest
 	public void testConnection() throws Exception
 	{
 		logger.info("Starting testConnection()...");
-		GetServerQuotasResponseCollection serverQuotasResponseCollection = (GetServerQuotasResponseCollection)sasWebServiceTemplate.marshalSendAndReceive("", elluminateObjectFactory.createGetServerQuotas(null));
+		GetServerQuotasResponseCollection serverQuotasResponseCollection = (GetServerQuotasResponseCollection)sasWebServiceTemplate.marshalSendAndReceiveToSAS("", elluminateObjectFactory.createGetServerQuotas(null));
 		assertNotNull(serverQuotasResponseCollection);
 		List<ServerQuotasResponse> quotaResult = serverQuotasResponseCollection.getServerQuotasResponses();
 		assertNotNull(quotaResult);
