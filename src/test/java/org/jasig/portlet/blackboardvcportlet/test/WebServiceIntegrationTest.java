@@ -28,13 +28,14 @@ public class WebServiceIntegrationTest
 	@Autowired
 	private SASWebServiceTemplate sasWebServiceTemplate;
 
-	private static final ObjectFactory OBJECT_FACTORY = new ObjectFactory();
+	@Autowired
+	private ObjectFactory elluminateObjectFactory;
 
 	@Test
 	public void testConnection() throws Exception
 	{
 		logger.info("Starting testConnection()...");
-		GetServerQuotasResponseCollection serverQuotasResponseCollection = (GetServerQuotasResponseCollection)sasWebServiceTemplate.marshalSendAndReceive("", OBJECT_FACTORY.createGetServerQuotas(null));
+		GetServerQuotasResponseCollection serverQuotasResponseCollection = (GetServerQuotasResponseCollection)sasWebServiceTemplate.marshalSendAndReceive("", elluminateObjectFactory.createGetServerQuotas(null));
 		assertNotNull(serverQuotasResponseCollection);
 		List<ServerQuotasResponse> quotaResult = serverQuotasResponseCollection.getServerQuotasResponses();
 		assertNotNull(quotaResult);

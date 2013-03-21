@@ -42,6 +42,7 @@
         <property name="checkConnectionForFault" value="false" />
         <property name="defaultUri" value="https://sas-int.elluminate.com/site/external/adapter/default/v3/webservice.event"/>
     </bean>
+    <bean id="elluminateObjectFactory" class="com.elluminate.sas.ObjectFactory"/>
     <bean id="elluminateMarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
         <property name="contextPaths">
             <list>
