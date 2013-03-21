@@ -211,6 +211,8 @@ Please contact %s if you have any questions.]]></value>
 
     <!--Spring Web Services Client-->
     <bean id="sasWebServicesTemplate" class="org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceTemplate">
+        <constructor-arg index="0" value="${bbc.username}"/>
+        <constructor-arg index="1" value="${bbc.password}"/>
         <property name="marshaller" ref="elluminateMarshaller"/>
         <property name="unmarshaller" ref="elluminateMarshaller"/>
         <property name="messageSender" ref="webServiceMessageSender"/>

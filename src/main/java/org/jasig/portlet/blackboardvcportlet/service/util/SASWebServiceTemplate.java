@@ -20,12 +20,19 @@ public class SASWebServiceTemplate extends WebServiceTemplate
 	@Autowired
 	private Jaxb2Marshaller elluminateMarshller;
 
+	private String username;
+	private String password;
+
 	/**
 	 * Default Constructor
+	 * @param username String SAS Web Service Username credential
+	 * @param password String SAS Web Service Password credential
 	 */
-	public SASWebServiceTemplate()
+	public SASWebServiceTemplate(final String username, final String password)
 	{
 		super();
+		this.username = username;
+		this.password = password;
 	}
 
 	public Object marshalSendAndReceiveToSAS(final String soapAction, final Object requestPayload)
@@ -44,8 +51,8 @@ public class SASWebServiceTemplate extends WebServiceTemplate
 					try
 					{
 						SOAPElement baHeader = casted.getSaajMessage().getSOAPHeader().addChildElement(qName);
-						baHeader.addChildElement(new QName("sas", "Name")).addTextNode("WISCONSIN-ADMIN");
-						baHeader.addChildElement(new QName("sas", "Password")).addTextNode("Wared4aM");
+						baHeader.addChildElement(new QName("sas", "Name")).addTextNode(username);
+						baHeader.addChildElement(new QName("sas", "Password")).addTextNode(password);
 					}
 					catch (Exception e)
 					{
