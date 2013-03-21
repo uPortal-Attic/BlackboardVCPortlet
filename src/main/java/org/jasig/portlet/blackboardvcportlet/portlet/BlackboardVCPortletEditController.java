@@ -18,10 +18,37 @@
  */
 package org.jasig.portlet.blackboardvcportlet.portlet;
 
-import freemarker.template.utility.StringUtil;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.StringTokenizer;
+
+import javax.portlet.ActionRequest;
+import javax.portlet.ActionResponse;
+import javax.portlet.PortletMode;
+import javax.portlet.PortletPreferences;
+import javax.portlet.PortletRequest;
+import javax.portlet.RenderRequest;
+import javax.portlet.RenderResponse;
+
 import org.apache.commons.lang.StringUtils;
-import org.jasig.portlet.blackboardvcportlet.data.*;
-import org.jasig.portlet.blackboardvcportlet.service.*;
+import org.jasig.portlet.blackboardvcportlet.data.RecordingShort;
+import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
+import org.jasig.portlet.blackboardvcportlet.data.Session;
+import org.jasig.portlet.blackboardvcportlet.data.SessionMultimedia;
+import org.jasig.portlet.blackboardvcportlet.data.SessionPresentation;
+import org.jasig.portlet.blackboardvcportlet.data.User;
+import org.jasig.portlet.blackboardvcportlet.service.AuthorisationService;
+import org.jasig.portlet.blackboardvcportlet.service.RecordingService;
+import org.jasig.portlet.blackboardvcportlet.service.ServerConfigurationService;
+import org.jasig.portlet.blackboardvcportlet.service.SessionForm;
+import org.jasig.portlet.blackboardvcportlet.service.SessionService;
+import org.jasig.portlet.blackboardvcportlet.service.UserService;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.slf4j.Logger;
@@ -31,9 +58,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.portlet.ModelAndView;
-import javax.portlet.*;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import org.springframework.web.portlet.bind.annotation.ActionMapping;
+import org.springframework.web.portlet.bind.annotation.RenderMapping;
+
+import freemarker.template.utility.StringUtil;
 
 /**
  * Controller class for Portlet EDIT related actions and render
@@ -68,7 +96,7 @@ public class BlackboardVCPortletEditController
      * @return
      * @throws Exception 
      */
-    @RequestMapping
+    @RenderMapping
     public ModelAndView renderEditView(RenderRequest request, RenderResponse response, ModelAndView mView) throws Exception {
         logger.debug("renderEditView called");
         logger.debug("session_id:"+request.getParameter("session_id"));
@@ -239,7 +267,7 @@ public class BlackboardVCPortletEditController
      * @param mView
      * @return 
      */
-    @RequestMapping(params = "action=editSession")
+    @RenderMapping(params = "action=editSession")
     public ModelAndView editSession(RenderRequest request, RenderResponse response, ModelAndView mView) {
         logger.debug("editSession called");
         ModelAndView modelAndView = new ModelAndView("BlackboardVCPortlet_edit");
@@ -345,7 +373,7 @@ public class BlackboardVCPortletEditController
      * @param mView
      * @throws Exception 
      */
-    @RequestMapping(params = "action=deleteRecordings")
+    @ActionMapping(params = "action=deleteRecordings")
     public void deleteRecordings(ActionRequest request, ActionResponse response, ModelAndView mView) throws Exception {
         logger.debug("deleteRecordings called");
         final PortletPreferences prefs = request.getPreferences();
@@ -373,7 +401,7 @@ public class BlackboardVCPortletEditController
      * @param mView
      * @throws Exception 
      */
-    @RequestMapping(params = "action=deleteSessions")
+    @ActionMapping(params = "action=deleteSessions")
     public void deleteSessions(ActionRequest request, ActionResponse response, ModelAndView mView) throws Exception {
         final PortletPreferences prefs = request.getPreferences();
         String[] sessionIds = request.getParameterValues("deleteSession");
@@ -408,7 +436,7 @@ public class BlackboardVCPortletEditController
      * @param mView
      * @throws Exception 
      */
-    @RequestMapping(params = "action=Upload Multimedia", method = RequestMethod.POST)
+    @ActionMapping(params = "action=Upload Multimedia")
     public void addMultimedia(ActionRequest request, ActionResponse response, SessionForm command, ModelAndView mView) throws Exception 
     {
         logger.debug("addMultimedia called");
@@ -464,7 +492,7 @@ public class BlackboardVCPortletEditController
      * @param mView
      * @throws Exception 
      */
-    @RequestMapping(params = "action=Upload Presentation", method = RequestMethod.POST)
+    @ActionMapping(params = "action=Upload Presentation")
     public void addPresentation(ActionRequest request, ActionResponse response, SessionForm command, ModelAndView mView) throws Exception {
         
         logger.debug("addPresentation called");
@@ -529,7 +557,7 @@ public class BlackboardVCPortletEditController
      * @param mView
      * @throws Exception 
      */
-    @RequestMapping(params = "action=Add Participant(s)", method = RequestMethod.POST)
+    @ActionMapping(params = "action=Add Participant(s)")
     public void addIntParticipant(ActionRequest request, ActionResponse response, ModelAndView mView) throws Exception {
         logger.debug("addInternalParticipant called");
         mView = this.addSessionToModel(request, mView);
@@ -590,7 +618,7 @@ public class BlackboardVCPortletEditController
      * @param mView
      * @throws Exception 
      */
-    @RequestMapping(params = "action=Delete Moderator(s)", method = RequestMethod.POST)
+    @ActionMapping(params = "action=Delete Moderator(s)")
     public void deleteModerators(ActionRequest request, ActionResponse response, ModelAndView mView) throws Exception {
         logger.debug("deleteModerators called");
         mView=this.addSessionToModel(request, mView);
@@ -624,7 +652,7 @@ public class BlackboardVCPortletEditController
      * @param mView
      * @throws Exception 
      */
-    @RequestMapping(params = "action=Delete Internal Participant(s)", method = RequestMethod.POST)
+    @ActionMapping(params = "action=Delete Internal Participant(s)")
     public void deleteInternalParticipant(ActionRequest request, ActionResponse response, ModelAndView mView) throws Exception {
         logger.debug("deleteInternalParticipant called");
         mView=this.addSessionToModel(request, mView);
@@ -656,7 +684,7 @@ public class BlackboardVCPortletEditController
      * @param mView
      * @throws Exception 
      */
-    @RequestMapping(params = "action=Delete Multimedia Item(s)", method = RequestMethod.POST)
+    @ActionMapping(params = "action=Delete Multimedia Item(s)")
     public void deleteMultimedia(ActionRequest request, ActionResponse response, ModelAndView mView) throws Exception
     {
         logger.debug("deleteMultimedia called");
@@ -701,7 +729,7 @@ public class BlackboardVCPortletEditController
      * @param mView
      * @throws Exception 
      */
-    @RequestMapping(params = "action=Delete Presentation", method = RequestMethod.POST)
+    @ActionMapping(params = "action=Delete Presentation")
     public void deletePresentation(ActionRequest request, ActionResponse response, ModelAndView mView) throws Exception {
         logger.debug("deletePresentation called");
         mView = this.addSessionToModel(request, mView);
@@ -732,7 +760,7 @@ public class BlackboardVCPortletEditController
      * @param mView
      * @throws Exception 
      */
-    @RequestMapping(params = "action=Delete External Participant(s)", method = RequestMethod.POST)
+    @ActionMapping(params = "action=Delete External Participant(s)")
     public void deleteExternalParticipant(ActionRequest request, ActionResponse response, ModelAndView mView) throws Exception {
         logger.debug("deleteExternalParticipant called");
         mView=this.addSessionToModel(request, mView);
@@ -766,7 +794,7 @@ public class BlackboardVCPortletEditController
      * @param mView
      * @throws Exception 
      */
-    @RequestMapping(params = "action=Add External Participant", method = RequestMethod.POST)
+    @ActionMapping(params = "action=Add External Participant")
     public void addExternalParticipant(ActionRequest request, ActionResponse response, ModelAndView mView) throws Exception {
         logger.debug("addExternalParticipant called");
         mView = this.addSessionToModel(request, mView);
@@ -802,7 +830,7 @@ public class BlackboardVCPortletEditController
      * @param mView
      * @throws Exception 
      */
-    @RequestMapping(params = "action=Add Moderator(s)", method = RequestMethod.POST)
+    @ActionMapping(params = "action=Add Moderator(s)")
     public void addModerator(ActionRequest request, ActionResponse response, ModelAndView mView) throws Exception {
         logger.debug("addModerator called");
         mView = this.addSessionToModel(request, mView);
@@ -863,7 +891,7 @@ public class BlackboardVCPortletEditController
      * @param modelAndView
      * @throws Exception 
      */
-    @RequestMapping(params = "action=Save Session", method = RequestMethod.POST)
+    @ActionMapping(params = "action=Save Session")
     public void saveSession(ActionRequest request, ActionResponse response, ModelAndView modelAndView) throws Exception {
 
         final PortletPreferences prefs = request.getPreferences();
@@ -1388,7 +1416,7 @@ public class BlackboardVCPortletEditController
      * @param mView
      * @return 
      */
-    @RequestMapping(params = "action=editRecording")
+    @RenderMapping(params = "action=editRecording")
     public ModelAndView editRecording(RenderRequest request, RenderResponse response, ModelAndView mView) {
         logger.debug("editRecording called");
         ModelAndView modelAndView = new ModelAndView("BlackboardVCPortlet_editRecording");
@@ -1411,7 +1439,7 @@ public class BlackboardVCPortletEditController
      * @param modelAndView
      * @throws Exception 
      */
-    @RequestMapping(params = "action=Save Recording", method = RequestMethod.POST)
+    @ActionMapping(params = "action=Save Recording")
     public void saveRecording(ActionRequest request, ActionResponse response, ModelAndView modelAndView) throws Exception {
     
         String roomName = request.getParameter("roomName");

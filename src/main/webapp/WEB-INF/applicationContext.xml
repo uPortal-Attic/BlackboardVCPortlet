@@ -20,29 +20,31 @@
 
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:p="http://www.springframework.org/schema/p"
-       xmlns:aop="http://www.springframework.org/schema/aop"
-       xmlns:tx="http://www.springframework.org/schema/tx"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:sws="http://www.springframework.org/schema/web-services"
-       xmlns:oxm="http://www.springframework.org/schema/oxm"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans
-           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-           http://www.springframework.org/schema/tx 
-           http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
-           http://www.springframework.org/schema/context
-           http://www.springframework.org/schema/context/spring-context-2.5.xsd
-           http://www.springframework.org/schema/web-services http://www.springframework.org/schema/web-services/web-services-2.0.xsd http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm.xsd"
-       default-autowire="byName">
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:tx="http://www.springframework.org/schema/tx"
+	   xmlns:sws="http://www.springframework.org/schema/web-services"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:ehcache="http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+           http://www.springframework.org/schema/web-services http://www.springframework.org/schema/web-services/web-services-2.0.xsd 
+           http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm.xsd
+           http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring/ehcache-spring-1.1.xsd"
+      default-autowire="byType">
+
+
+    <tx:annotation-driven transaction-manager="transactionManager" />
+    <sws:annotation-driven  />
     
     <context:annotation-config />
     <context:property-placeholder location="classpath:/webapp.properties" />
-
-    <sws:annotation-driven/>
+    <context:component-scan base-package="org.jasig.portlet.blackboardvcportlet" />    
 
     <!-- Set the datasource details to the database where you want to cache Collaborate data --> 
-    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource" destroy-method="close">
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 	    <property name="driverClassName" >
 	    	<value>${bbc.db.driverClassName}</value>
 	    </property>
@@ -57,7 +59,7 @@
 	    </property>
     </bean>   
       
-    <bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
 		<property name="annotatedClasses">
 	        <list>
@@ -83,7 +85,7 @@
 		</property>
     </bean> 
   	
-    <tx:annotation-driven transaction-manager="transactionManager" />
+    
 	
     <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
 	<property name="sessionFactory" ref="sessionFactory" />
@@ -91,7 +93,8 @@
     
 	<!-- Set this to the value of your mail host -->
     <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-      <property name="host" value="localhost"/>
+      <property name="host" value="${mail.host}"/>
+      <property name="port" value="${mail.port}" />
     </bean>
     
     <bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
@@ -106,7 +109,7 @@
     
     <!-- Define the four email templates which are to be used. -->
     <bean id="moderatorMailMessage" class="org.springframework.mail.SimpleMailMessage">
-	<property name="from" value="me@people.com" />
+	<property name="from" value="${mail.from}" />
 	<property name="subject" value="Collaborate Session Invite" />
 	<property name="text">
 	   <value><![CDATA[Dear %s
@@ -124,7 +127,7 @@ Contact %s if you have any questions about the session.]]></value>
      </bean>
          
     <bean id="intParticipantMailMessage" class="org.springframework.mail.SimpleMailMessage">
-	<property name="from" value="me@people.com" />
+	<property name="from" value="${mail.from}" />
 	<property name="subject" value="Collaborate Session Invite" />
 	<property name="text">
 	   <value><![CDATA[Dear %s
@@ -144,7 +147,7 @@ Contact %s if you have any questions about the session.]]></value>
      </bean>
      
     <bean id="extParticipantMailMessage" class="org.springframework.mail.SimpleMailMessage">
-	<property name="from" value="me@people.com" />
+	<property name="from" value="${mail.from}" />
 	<property name="subject" value="Collaborate Session Invite" />
 	<property name="text">
 	   <value><![CDATA[Dear %s
@@ -164,7 +167,7 @@ Contact %s if you have any questions about the session.]]></value>
      </bean>
      
      <bean id="sessionDeletionMessage" class="org.springframework.mail.SimpleMailMessage">
-	<property name="from" value="me@people.com" />
+	<property name="from" value="${mail.from}" />
 	<property name="subject" value="Collaborate Session Cancellation" />
 	<property name="text">
 	   <value><![CDATA[Dear %s
@@ -204,8 +207,6 @@ Please contact %s if you have any questions.]]></value>
    <!-- only needed if you want to bind via a user to LDAP
    <bean id="springSecurityAuthenticationSource" class="org.springframework.security.ldap.authentication.SpringSecurityAuthenticationSource" />-->
 
-    <!-- Where to look for Spring annotated files -->
-    <context:component-scan base-package="org.jasig.portlet.blackboardvcportlet" />
     
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" id="viewResolver" p:prefix="/WEB-INF/jsp/" p:suffix=".jsp"/>
 

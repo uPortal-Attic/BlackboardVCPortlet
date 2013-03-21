@@ -59,7 +59,6 @@
 <portlet:actionURL portletMode="EDIT" var="formActionUrl">
     <portlet:param name="action" value="createSession"/>
 </portlet:actionURL>
-<portlet:actionURL portletMode="EDIT" var="formActionUrl"/>
 
 <portlet:actionURL portletMode="EDIT" var="addIntParticipantUrl">
     <portlet:param name="action" value="addInternalParticipant"/>

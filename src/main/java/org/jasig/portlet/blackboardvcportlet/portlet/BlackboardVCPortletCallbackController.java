@@ -25,8 +25,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.ServletContextAware;
+import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.portlet.ResourceRequest;
+import javax.portlet.ResourceResponse;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,6 +41,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Richard Good
  */
 @Controller
+@RequestMapping("VIEW")
 public class BlackboardVCPortletCallbackController implements ServletContextAware
 {
 	private static final Logger logger = LoggerFactory.getLogger(BlackboardVCPortletCallbackController.class);
@@ -52,15 +58,15 @@ public class BlackboardVCPortletCallbackController implements ServletContextAwar
      * @return
      * @throws Exception 
      */
-    @RequestMapping(value = "/callback")
-    public ModelAndView callback(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    @ResourceMapping(value = "callback")
+    public ModelAndView callback(@RequestParam String sessionId, @RequestParam String roomClosedMillis, @RequestParam String recPlaybackLink, @RequestParam String roomOpenedMillis) throws Exception {
     
-        logger.info("callback called from remote host: "+request.getRemoteHost());
+        /*logger.info("callback called from remote host: "+request.getRemoteHost());
         
         String sessionId = request.getParameter("session_id");
         String roomClosedMillis = request.getParameter("room_closed_millis");
         String recPlaybackLink = request.getParameter("rec_playback_link");
-        String roomOpenedMillis = request.getParameter("room_opened_millis");
+        String roomOpenedMillis = request.getParameter("room_opened_millis");*/
         
         logger.debug("sessionId:"+sessionId);
         logger.debug("roomClosedMillis:"+roomClosedMillis);

@@ -77,7 +77,7 @@
         </portlet-preferences>
     
     <security-role-ref>
-      <role-name>Collaborate Administrators</role-name>
+      <role-name>Collaborate-Administrators</role-name>
       <role-link>local.30</role-link>
     </security-role-ref>
     

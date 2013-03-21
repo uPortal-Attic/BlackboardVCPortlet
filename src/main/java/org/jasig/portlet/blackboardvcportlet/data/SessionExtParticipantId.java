@@ -29,7 +29,9 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class SessionExtParticipantId implements Serializable {
     
-    @Column(name="SESSION_ID")
+    private static final long serialVersionUID = -2940420183204251629L;
+
+	@Column(name="SESSION_ID")
     protected long sessionId;
     
     @Column(name="EMAIL_ADDRESS")

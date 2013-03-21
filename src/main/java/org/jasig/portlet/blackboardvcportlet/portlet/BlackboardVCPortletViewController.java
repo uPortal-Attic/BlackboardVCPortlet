@@ -18,33 +18,46 @@
  */
 package org.jasig.portlet.blackboardvcportlet.portlet;
 
-import com.elluminate.sas.BasicAuth;
-import freemarker.template.utility.StringUtil;
-import org.jasig.portlet.blackboardvcportlet.data.*;
-import org.jasig.portlet.blackboardvcportlet.service.*;
+import java.io.PrintWriter;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.portlet.PortletPreferences;
+import javax.portlet.PortletRequest;
+import javax.portlet.RenderRequest;
+import javax.portlet.RenderResponse;
+import javax.portlet.ResourceRequest;
+import javax.portlet.ResourceResponse;
+
+import org.jasig.portlet.blackboardvcportlet.data.RecordingShort;
+import org.jasig.portlet.blackboardvcportlet.data.Session;
+import org.jasig.portlet.blackboardvcportlet.data.SessionUrl;
+import org.jasig.portlet.blackboardvcportlet.data.SessionUrlId;
+import org.jasig.portlet.blackboardvcportlet.data.User;
+import org.jasig.portlet.blackboardvcportlet.service.AuthorisationService;
+import org.jasig.portlet.blackboardvcportlet.service.RecordingService;
+import org.jasig.portlet.blackboardvcportlet.service.ServerQuotaService;
+import org.jasig.portlet.blackboardvcportlet.service.SessionService;
+import org.jasig.portlet.blackboardvcportlet.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.portlet.ModelAndView;
-import javax.portlet.PortletPreferences;
-import javax.portlet.PortletRequest;
-import javax.portlet.RenderRequest;
-import javax.portlet.RenderResponse;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import org.springframework.web.portlet.bind.annotation.RenderMapping;
+import org.springframework.web.portlet.bind.annotation.ResourceMapping;
+
+import com.elluminate.sas.BasicAuth;
+import freemarker.template.utility.StringUtil;
 
 /**
  * Controller for handling Portlet view mode
  * @author Richard Good
  */
 @Controller
+@RequestMapping("VIEW")
 public class BlackboardVCPortletViewController
 {
 	private static final Logger logger = LoggerFactory.getLogger(BlackboardVCPortletViewController.class);
@@ -78,7 +91,7 @@ public class BlackboardVCPortletViewController
      * @param response
      * @return 
      */
-    @RequestMapping("VIEW")
+    @RenderMapping
     public ModelAndView view(RenderRequest request, RenderResponse response) {
  
         logger.debug("view called");
@@ -161,7 +174,7 @@ public class BlackboardVCPortletViewController
      * @param response
      * @return 
      */
-    @RequestMapping(params = "action=viewSession")
+    @RenderMapping(params = "action=viewSession")
      public ModelAndView viewSession(RenderRequest request, RenderResponse response) {
         
         logger.debug("viewSession called");
@@ -255,8 +268,8 @@ public class BlackboardVCPortletViewController
      * @param request
      * @param response 
      */
-    @RequestMapping(value="/csvDownload" , method = RequestMethod.POST)
-    public void csvDownload(HttpServletRequest request, HttpServletResponse response)
+    @ResourceMapping(value="/csvDownload")
+    public void csvDownload(ResourceRequest request, ResourceResponse response)
     {
         logger.debug("csvDownload called");
         //ModelAndView modelAndView = new ModelAndView("csvDownload");
@@ -266,8 +279,7 @@ public class BlackboardVCPortletViewController
         
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/csv");
-        response.setHeader("content-disposition", "inline; filename=participantList_"+sessionId+".csv");
-        
+        response.setProperty("Content-Disposition", "inline; filename=participantList_"+sessionId+".csv");
 
         String userId = request.getRemoteUser();   
         
@@ -279,23 +291,24 @@ public class BlackboardVCPortletViewController
         
         try
         {
-            ServletOutputStream outputStream = response.getOutputStream();
-            outputStream.println("UID,Display Name,Email address,Participant type");
+        	PrintWriter stringWriter = response.getWriter();
+        	//ByteArrayOutputStream outputStream = new ByteArrayOutputStream(response.getPortletOutputStream());
+        	stringWriter.println("UID,Display Name,Email address,Participant type");
             logger.debug("calling sessionService.getSession");
             Session session = sessionService.getSession(Long.valueOf(sessionId));
             logger.debug("done call");
             if (session==null) 
             {
                  logger.error("session is null!");   
-                 outputStream.flush();
-                 outputStream.close();
+                 stringWriter.flush();
+                 stringWriter.close();
                  return;
             }
             else if (session.getChairList()==null||session.getChairList().indexOf(userId)==-1)
             {
                 logger.warn("User not authorised to see csv");
-                outputStream.flush();
-                outputStream.close();
+                stringWriter.flush();
+                stringWriter.close();
                 return;
             }
                 
@@ -315,7 +328,7 @@ public class BlackboardVCPortletViewController
                         user.setUid(chairList[i]);
                         user.setDisplayName("Unknown user");                      
                     }
-                    outputStream.println(user.getUid()+","+user.getDisplayName()+","+user.getEmail()+",Moderator");
+                    stringWriter.println(user.getUid()+","+user.getDisplayName()+","+user.getEmail()+",Moderator");
                 }
                 
                 logger.debug("added moderators to CSV output");
@@ -332,7 +345,7 @@ public class BlackboardVCPortletViewController
                     user=userService.getUserDetails(nonChairList[i]);
                     if (user!=null)
                     {
-                        outputStream.println(user.getUid()+","+user.getDisplayName()+","+user.getEmail()+",Internal Participant");
+                    	stringWriter.println(user.getUid()+","+user.getDisplayName()+","+user.getEmail()+",Internal Participant");
                     }
                     else
                     {
@@ -343,13 +356,13 @@ public class BlackboardVCPortletViewController
                             user.setEmail(nonChairList[i]);
                         }
                         
-                        outputStream.println(user.getUid()+","+user.getDisplayName()+","+user.getEmail()+",External Participant");
+                        stringWriter.println(user.getUid()+","+user.getDisplayName()+","+user.getEmail()+",External Participant");
                     }
                 }
                 
             }
-            outputStream.flush();
-            outputStream.close();
+            stringWriter.flush();
+            stringWriter.close();
             
         }
         catch (Exception e)

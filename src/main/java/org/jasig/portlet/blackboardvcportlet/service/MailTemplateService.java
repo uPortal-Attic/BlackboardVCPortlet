@@ -44,6 +44,10 @@ public class MailTemplateService implements BeanFactoryAware
     private JavaMailSender mailSender;
     
     BeanFactory beanFactory;
+    
+    public MailTemplateService () {
+    	super();
+    }
 
     @Override
     public void setBeanFactory(BeanFactory bf) throws BeansException {
@@ -100,7 +104,7 @@ public class MailTemplateService implements BeanFactoryAware
       }
       catch (Exception e)
       {
-          logger.error("Exception caught",e);
+          logger.error("Issue with sending email",e);
       }
             
     }

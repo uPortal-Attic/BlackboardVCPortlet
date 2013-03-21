@@ -5,3 +5,5 @@ bbc.db.username=
 bbc.db.password=
 hibernate.dialect=org.hibernate.dialect.HSQLDialect
 bbc.db.driverClassName=org.hsqldb.jdbcDriver
+mail.host=localhost
+mail.from=me@people.com
