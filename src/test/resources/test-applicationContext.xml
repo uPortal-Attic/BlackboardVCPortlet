@@ -51,12 +51,6 @@
     </bean>
     <bean id="webServiceMessageSender" class="org.springframework.ws.transport.http.HttpComponentsMessageSender">
         <property name="httpClient" ref="httpClient"/>
-        <property name="credentials">
-            <bean id="wsCredentials" class="org.apache.http.auth.UsernamePasswordCredentials">
-                <constructor-arg value="WISCONSIN-ADMIN"/>
-                <constructor-arg value="Wared4aM"/>
-            </bean>
-        </property>
     </bean>
 
     <bean id="httpClient" class="org.jasig.apache.http.impl.client.ResponseHeaderHandlingHttpClient" depends-on="httpConnectionParamBean, clientParamBean">
