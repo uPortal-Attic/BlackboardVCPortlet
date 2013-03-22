@@ -28,35 +28,42 @@
 <!--    http://www.qos.ch/shop/products/professionalSupport         -->
 <!--                                                                -->
 <configuration scan="true" scanPeriod="30 seconds">
-  <contextName>CoursesPortlet</contextName>
- 
-  <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
-    <resetJUL>true</resetJUL>
-  </contextListener>
-  
-  <jmxConfigurator />
-  
-  <appender name="LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <!--See http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
-    <!--and http://logback.qos.ch/manual/appenders.html#TimeBasedRollingPolicy-->
-    <!--for further documentation-->
-    <File>${BlackboardVCPortlet.webapp.root}/../../logs/BlackboardVCPortlet.log</File>
-    <encoder>
-      <pattern>%-5level [%thread] %logger{36} %d{ISO8601} - %msg%n</pattern>
-    </encoder>
-    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <fileNamePattern>${BlackboardVCPortlet.webapp.root}/../../logs/BlackboardVCPortlet.log.%d{yyyy-MM-dd}</fileNamePattern>
-    </rollingPolicy>
-  </appender>
-  
-  <root level="INFO">
-    <appender-ref ref="LOG"/>
-  </root>
-  
-  <logger name="edu.wisc" additivity="false" level="DEBUG">
-    <appender-ref ref="LOG"/>
-  </logger>
-  <logger name="org.jasig.portlet.blackboardvcportlet" additivity="false" level="DEBUG">
-    <appender-ref ref="LOG"/>
-  </logger>  
+    <contextName>BlackboardVCPortlet</contextName>
+
+    <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+        <resetJUL>true</resetJUL>
+    </contextListener>
+
+    <jmxConfigurator/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[%d{ISO8601}] %-5level [%thread] %logger - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--See http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
+        <!--and http://logback.qos.ch/manual/appenders.html#TimeBasedRollingPolicy-->
+        <!--for further documentation-->
+        <File>${BlackboardVCPortlet.webapp.root}/../../logs/BlackboardVCPortlet.log</File>
+        <encoder>
+            <pattern>[%d{ISO8601}] %-5level [%thread] %logger - %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${BlackboardVCPortlet.webapp.root}/../../logs/BlackboardVCPortlet.log.%d{yyyy-MM-dd}</fileNamePattern>
+        </rollingPolicy>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="LOG"/>
+    </root>
+
+    <logger name="edu.wisc" additivity="false" level="DEBUG">
+        <appender-ref ref="LOG"/>
+    </logger>
+    <logger name="org.jasig.portlet.blackboardvcportlet" additivity="false" level="DEBUG">
+        <appender-ref ref="LOG"/>
+    </logger>
 </configuration>
