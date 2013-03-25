@@ -26,6 +26,7 @@ import javax.portlet.WindowState;
 
 import org.springframework.web.portlet.handler.HandlerInterceptorAdapter;
 
+
 public class MinimizedStateHandlerInterceptor extends HandlerInterceptorAdapter {
 
     @Override

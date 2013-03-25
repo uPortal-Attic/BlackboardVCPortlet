@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portlet.blackboardvcportlet.portlet;
+package org.jasig.portlet.blackboardvcportlet.mvc.callback;
 
 import com.elluminate.sas.BasicAuth;
 import org.jasig.portlet.blackboardvcportlet.service.RecordingService;

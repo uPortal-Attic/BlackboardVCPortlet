@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portlet.blackboardvcportlet.portlet;
+package org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr;
 
 import java.io.PrintWriter;
 import java.util.Date;

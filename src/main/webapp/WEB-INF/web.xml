@@ -46,11 +46,11 @@
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
     <servlet>
-        <servlet-name>dispatcher</servlet-name>
+        <servlet-name>callbackDispatcher</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <init-param>
             <param-name>contextConfigLocation</param-name>
-            <param-value>/WEB-INF/applicationContext.xml</param-value>
+            <param-value>/WEB-INF/callbackDispatcher-servlet.xml</param-value>
         </init-param>
         <load-on-startup>2</load-on-startup>
     </servlet>
@@ -63,11 +63,7 @@
         <url-pattern>/WEB-INF/servlet/view</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>dispatcher</servlet-name>
+        <servlet-name>callbackDispatcher</servlet-name>
         <url-pattern>/callback</url-pattern>
-    </servlet-mapping>
-     <servlet-mapping>
-        <servlet-name>dispatcher</servlet-name>
-        <url-pattern>/csvDownload</url-pattern>
     </servlet-mapping>
 </web-app>

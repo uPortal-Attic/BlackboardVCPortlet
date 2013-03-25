@@ -183,11 +183,6 @@ This session has now been cancelled.
 Please contact %s if you have any questions.]]></value>
         </property>
      </bean>
-    
-     <!-- Configure the multipart resolver -->
-    <bean id="portletMultipartResolver" class="org.springframework.web.portlet.multipart.CommonsPortletMultipartResolver">  
-        <property name="maxUploadSize" value="10000000"/>
-    </bean>
 
    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">  
     <property name="basenames">  
