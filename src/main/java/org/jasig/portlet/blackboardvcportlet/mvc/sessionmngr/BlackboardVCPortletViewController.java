@@ -43,6 +43,7 @@ import org.jasig.portlet.blackboardvcportlet.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.portlet.ModelAndView;
@@ -102,9 +103,6 @@ public class BlackboardVCPortletViewController
         final PortletPreferences prefs=request.getPreferences();
             
         serverQuotaService.refreshServerQuota(prefs);
-        BasicAuth user = new BasicAuth();
-        user.setName(prefs.getValue("wsusername",null));
-        user.setPassword(prefs.getValue("wspassword",null));
         
         Map<String,String> userInfo = (Map<String,String>) request.getAttribute(PortletRequest.USER_INFO);
         uid = userInfo.get("uid");
@@ -217,7 +215,7 @@ public class BlackboardVCPortletViewController
                 sessionUrlId = new SessionUrlId();
                 sessionUrlId.setSessionId(session.getSessionId());
                 sessionUrlId.setDisplayName("Guest");
-                sessionUrl = sessionService.getSessionUrl(sessionUrlId, prefs);
+                sessionUrl = sessionService.getSessionUrl(sessionUrlId);
                 // Removing the username parameter will make collaborate prompt for the person's name
                 modelAndView.addObject("guestUrl",sessionUrl.getUrl().replaceFirst("&username=Guest",""));
             }
@@ -235,7 +233,7 @@ public class BlackboardVCPortletViewController
                 sessionUrlId.setSessionId(session.getSessionId());
                 sessionUrlId.setUserId(uid);
                 sessionUrlId.setDisplayName(displayName);
-                sessionUrl = sessionService.getSessionUrl(sessionUrlId, prefs);
+                sessionUrl = sessionService.getSessionUrl(sessionUrlId);
                 logger.debug("gotten user sessionUrl");
                 modelAndView.addObject("launchSessionUrl",sessionUrl.getUrl());          
             }

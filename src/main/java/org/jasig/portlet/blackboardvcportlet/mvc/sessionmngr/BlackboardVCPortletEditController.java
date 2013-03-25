@@ -167,9 +167,7 @@ public class BlackboardVCPortletEditController
         else 
         {
             logger.debug("mView already exists");
-            Iterator i = mView.getModelMap().entrySet().iterator();
-            while (i.hasNext()) {
-                Map.Entry pairs = (Map.Entry) i.next();
+            for(Map.Entry pairs : mView.getModelMap().entrySet()) {
                 if (pairs.getKey().equals("errorMessage")) 
                 {
                     modelAndView.addObject("errorMessage", pairs.getValue());
@@ -410,7 +408,7 @@ public class BlackboardVCPortletEditController
                 logger.debug("session to delete:" + sessionIds[i]);
                 try
                 {
-                   sessionService.deleteSession(Long.valueOf(sessionIds[i]), prefs);
+                   sessionService.deleteSession(Long.valueOf(sessionIds[i]));
                 }
                 catch (Exception e)
                 {
@@ -466,7 +464,7 @@ public class BlackboardVCPortletEditController
             logger.debug("File has been added:"+command.getMultimediaUpload().getOriginalFilename());
             try
             {
-                sessionService.addSessionMultimedia(uid, prefs, Long.valueOf(sessionId),command.getMultimediaUpload());
+                sessionService.addSessionMultimedia(uid, Long.valueOf(sessionId),command.getMultimediaUpload());
                 List<SessionMultimedia> sessionMultimedia = sessionService.getSessionMultimedia(Long.valueOf(sessionId));
                 mView.addObject("multimedia", sessionMultimedia);
             }
@@ -530,7 +528,7 @@ public class BlackboardVCPortletEditController
             logger.debug("File has been added:"+command.getPresentationUpload().getOriginalFilename());
             try
             {
-                sessionService.addSessionPresentation(uid, prefs, Long.valueOf(sessionId),command.getPresentationUpload());
+                sessionService.addSessionPresentation(uid, Long.valueOf(sessionId),command.getPresentationUpload());
                 SessionPresentation sessionPresentation = sessionService.getSessionPresentation(sessionId);
                 mView.addObject("presentation",sessionPresentation);
             }
@@ -703,7 +701,7 @@ public class BlackboardVCPortletEditController
         
         try
         {
-            sessionService.deleteSessionMultimediaFiles(prefs, sessionId, multiMediaIds);
+            sessionService.deleteSessionMultimediaFiles(sessionId, multiMediaIds);
         }
         catch (Exception e)
         {
@@ -738,7 +736,7 @@ public class BlackboardVCPortletEditController
         long presentationId = Long.valueOf(request.getParameter("presentationId"));
         try
         {
-           sessionService.deleteSessionPresentation(prefs,sessionId,presentationId);
+           sessionService.deleteSessionPresentation(sessionId,presentationId);
            mView.getModelMap().remove("presentation");
         }
         catch (Exception e)
@@ -1181,9 +1179,9 @@ public class BlackboardVCPortletEditController
                             launchUrl +=prefs.getValue("fname","blackboardvc-portlet");
                            
                             logger.debug("New session, notifying participants");
-                            sessionService.notifyModerators(prefs,creatorUser,session,moderatorList,launchUrl);
-                            sessionService.notifyIntParticipants(prefs,creatorUser,session,intParticipantList,launchUrl);
-                            sessionService.notifyExtParticipants(prefs,creatorUser,session,extParticipantList);
+                            sessionService.notifyModerators(creatorUser,session,moderatorList,launchUrl);
+                            sessionService.notifyIntParticipants(creatorUser,session,intParticipantList,launchUrl);
+                            sessionService.notifyExtParticipants(creatorUser,session,extParticipantList);
                         }
                         
                         response.setRenderParameter("feedbackMessage", "feedbackmessage.sessionsaved");

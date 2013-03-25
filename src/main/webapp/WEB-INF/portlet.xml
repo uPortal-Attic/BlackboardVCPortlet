@@ -42,14 +42,6 @@
         	TODO : Move username/password to .properties file 
          -->
         <portlet-preferences>
-            <preference>
-                <name>wsusername</name>
-                <value>${bbc.username}</value>
-            </preference>
-            <preference>
-                <name>wspassword</name>
-                <value>${bbc.password}</value>
-            </preference>
 			<!-- Set the callback URL to your uPortal instance URL -->
             <preference>
                 <name>callbackUrl</name>

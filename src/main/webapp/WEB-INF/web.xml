@@ -26,18 +26,6 @@
         <param-name>webAppRootKey</param-name>
         <param-value>BlackboardVCPortlet.webapp.root</param-value>
     </context-param>
-    <!--
-    TODO : DoNOT commit this file with username/password 
-     -->
-    <context-param>
-        <param-name>wsusername</param-name>
-        <param-value>${bbc.username}</param-value>
-    </context-param>
-    <context-param>
-        <param-name>wspassword</param-name>
-        <param-value>${bbc.password}</param-value>
-    </context-param>
-
     <listener>
         <listener-class>org.springframework.web.util.WebAppRootListener</listener-class>
     </listener>

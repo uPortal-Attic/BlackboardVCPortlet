@@ -28,6 +28,7 @@ import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import javax.portlet.PortletPreferences;
 import java.util.Calendar;
@@ -44,6 +45,13 @@ public class ServerConfigurationService
 	private static final Logger logger = LoggerFactory.getLogger(ServerConfigurationService.class);
 	private boolean isInit = false;
     private BasicAuth user;
+    
+    @Value("${bbc.username}")
+    private String username;
+    
+    @Value("${bbc.password}")
+    private String password;
+    
     @Autowired
     ServerConfigurationDao serverConfigurationDao;
 
@@ -159,8 +167,8 @@ public class ServerConfigurationService
     private void doInit(PortletPreferences prefs) {
         logger.debug("doInit called");
         user = new BasicAuth();
-        user.setName(prefs.getValue("wsusername", null));
-        user.setPassword(prefs.getValue("wspassword", null));
+        user.setName(username);
+        user.setPassword(password);
         isInit = true;
     }
 }

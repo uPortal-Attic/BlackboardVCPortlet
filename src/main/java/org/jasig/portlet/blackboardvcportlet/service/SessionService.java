@@ -26,6 +26,7 @@ import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import javax.activation.DataHandler;
@@ -49,6 +50,13 @@ public class SessionService
 	private static final Logger logger = LoggerFactory.getLogger(SessionService.class);
     private boolean isInit = false;
     private BasicAuth user;
+    
+    @Value("${bbc.username}")
+    private String username;
+    
+    @Value("${bbc.password}")
+    private String password;
+    
     @Autowired
     SessionDao sessionDao;
     @Autowired
@@ -91,7 +99,7 @@ public class SessionService
         return sessionDao.getSession(sessionId);
     }
 
-    public SessionUrl getSessionUrl(SessionUrlId sessionUrlId, PortletPreferences prefs) {
+    public SessionUrl getSessionUrl(SessionUrlId sessionUrlId) {
         // Guest url uses user id set to -1 from the DB
         if (sessionUrlId.getUserId() == null) {
             sessionUrlId.setUserId("-1");
@@ -113,7 +121,7 @@ public class SessionService
         }
 
         if (!this.isInit()) {
-            doInit(prefs);
+            doInit();
         }
 
         try {
@@ -139,10 +147,10 @@ public class SessionService
         return sessionUrl;
     }
 
-    public void deleteSession(long sessionId, PortletPreferences prefs) throws Exception {
+    public void deleteSession(long sessionId) throws Exception {
         logger.debug("deleteSession called for :" + sessionId);
         if (!this.isInit()) {
-            doInit(prefs);
+            doInit();
         }     
 
         try { 
@@ -151,13 +159,13 @@ public class SessionService
             
             // Call Web Service Operation
             logger.debug("deleting session multimedia");
-            deleteSessionMultimedia(prefs, sessionId);
+            deleteSessionMultimedia(sessionId);
 
             SessionPresentation sessionPresentation = getSessionPresentation(Long.toString(sessionId));
 
             if (sessionPresentation != null) {
                 logger.debug("deleting session presentation");
-                deleteSessionPresentation(prefs, sessionId, sessionPresentation.getPresentationId());
+                deleteSessionPresentation(sessionId, sessionPresentation.getPresentationId());
             }
 
             logger.debug("Calling removeSession:" + sessionId);
@@ -201,7 +209,7 @@ public class SessionService
 
     public void createEditSession(Session session, PortletPreferences prefs, List<User> extParticipantList) throws Exception {
         if (!this.isInit()) {
-            doInit(prefs);
+            doInit();
         }
 
         try { // Call Web Service Operation
@@ -347,11 +355,11 @@ public class SessionService
         return this.isInit;
     }
 
-    public void doInit(PortletPreferences prefs) {
+    public void doInit() {
         logger.debug("doInit called");
         user = new BasicAuth();
-        user.setName(prefs.getValue("wsusername", null));
-        user.setPassword(prefs.getValue("wspassword", null));
+        user.setName(username);
+        user.setPassword(password);
         isInit = true;
     }
 
@@ -359,7 +367,7 @@ public class SessionService
         sessionDao.saveSession(session);
     }
 
-    public void notifyModerators(PortletPreferences prefs, User creator, Session session, List<User> users,String launchUrl) throws Exception {
+    public void notifyModerators(User creator, Session session, List<User> users,String launchUrl) throws Exception {
         logger.debug("notifyModerators called");
         String[] substitutions;
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy HH:mm");
@@ -456,7 +464,7 @@ public class SessionService
         logger.debug("finished");
     }
 
-    public void notifyIntParticipants(PortletPreferences prefs, User creator, Session session, List<User> users, String launchUrl) throws Exception {
+    public void notifyIntParticipants(User creator, Session session, List<User> users, String launchUrl) throws Exception {
         logger.debug("notifyIntParticipants called");
         String[] substitutions;
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy HH:mm");
@@ -472,7 +480,7 @@ public class SessionService
         logger.debug("finished");
     }
 
-    public void notifyExtParticipants(PortletPreferences prefs, User creator, Session session, List<User> users) throws Exception {
+    public void notifyExtParticipants(User creator, Session session, List<User> users) throws Exception {
         logger.debug("notifyExtParticipants called");
         String[] substitutions;
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy HH:mm");
@@ -484,7 +492,7 @@ public class SessionService
         sessionUrlId = new SessionUrlId();
         sessionUrlId.setSessionId(session.getSessionId());
         sessionUrlId.setDisplayName("Guest");
-        sessionUrl = this.getSessionUrl(sessionUrlId, prefs);       
+        sessionUrl = this.getSessionUrl(sessionUrlId);       
         String extParticipantUrl;
         for (int i = 0; i < users.size(); i++) {
             toList = new ArrayList<String>();
@@ -526,10 +534,10 @@ public class SessionService
         }
     }
 
-    public void deleteSessionPresentation(PortletPreferences prefs, long sessionId, long presentationId) throws Exception {
+    public void deleteSessionPresentation(long sessionId, long presentationId) throws Exception {
         logger.debug("deleteSessionPresentation called");
         if (!this.isInit()) {
-            doInit(prefs);
+            doInit();
         }
 
         try {
@@ -550,10 +558,10 @@ public class SessionService
         }
     }
 
-    public void addSessionPresentation(String uid, PortletPreferences prefs, long sessionId, MultipartFile file) throws Exception {
+    public void addSessionPresentation(String uid, long sessionId, MultipartFile file) throws Exception {
         logger.debug("addSessionPresentation called");
         if (!this.isInit()) {
-            doInit(prefs);
+            doInit();
         }
 
         try { // Call Web Service Operation
@@ -595,11 +603,11 @@ public class SessionService
         }
     }
 
-    public void deleteSessionMultimedia(PortletPreferences prefs, long sessionId) throws Exception {
+    public void deleteSessionMultimedia(long sessionId) throws Exception {
         logger.debug("deleteSessionMultimediaFiles called");
         List<SessionMultimedia> sessionMultimediaList = this.getSessionMultimedia(sessionId);
         if (!this.isInit()) {
-            doInit(prefs);
+            doInit();
         }
 
         try { // Call Web Service Operation
@@ -623,12 +631,11 @@ public class SessionService
         }
     }
 
-    public void deleteSessionMultimediaFiles(PortletPreferences prefs, long sessionId, String[] multimediaIds) throws Exception {
+    public void deleteSessionMultimediaFiles(long sessionId, String[] multimediaIds) throws Exception {
         logger.debug("deleteSessionMultimediaFiles called");
-        List<SessionMultimedia> sessionMultimediaList = this.getSessionMultimedia(sessionId);
 
         if (!this.isInit()) {
-            doInit(prefs);
+            doInit();
         }
 
         /* Call set session to remove the old ids, then remove them from
@@ -662,10 +669,10 @@ public class SessionService
         return sessionMultimediaDao.getSessionMultimedia(Long.toString(sessionId));
     }
 
-    public void addSessionMultimedia(String uid, PortletPreferences prefs, long sessionId, MultipartFile file) throws Exception {
+    public void addSessionMultimedia(String uid, long sessionId, MultipartFile file) throws Exception {
         logger.debug("addSessionMultimedia called");
         if (!this.isInit()) {
-            doInit(prefs);
+            doInit();
         }
 
         try { // Call Web Service Operation
