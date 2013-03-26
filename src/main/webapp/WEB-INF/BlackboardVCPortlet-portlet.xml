@@ -34,6 +34,6 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
    <context:annotation-config />
    <context:component-scan base-package="org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr" />
     <bean class="org.springframework.web.portlet.mvc.annotation.DefaultAnnotationHandlerMapping">
-    	<property name="interceptors"><bean class="org.jasig.portlet.blackboardvcportlet.portlet.interceptor.MinimizedStateHandlerInterceptor"/></property>
+    	<property name="interceptors"><bean class="org.jasig.web.portlet.handler.MinimizedStateHandlerInterceptor"/></property>
     </bean>
 </beans>

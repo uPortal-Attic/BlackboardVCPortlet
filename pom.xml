@@ -82,8 +82,10 @@
         <hibernate.ejb-persistence.version>1.0.2.GA</hibernate.ejb-persistence.version>
         <jackson.version>1.9.7</jackson.version>
         <jaxb2basics.version>0.6.3</jaxb2basics.version>
+        <portlet-utils.version>1.1.0</portlet-utils.version>
         <resource-server.version>1.0.25</resource-server.version>
         <slf4j.version>1.7.4</slf4j.version>
+        
         
         <project.build.sourceVersion>1.6</project.build.sourceVersion>
         <project.build.targetVersion>1.6</project.build.targetVersion>
@@ -374,8 +376,14 @@
         <dependency>
             <groupId>org.jasig.portlet.utils</groupId>
             <artifactId>portlet-ws-util</artifactId>
-            <version>1.1.0</version>
+            <version>${portlet-utils.version}</version>
         </dependency>
+        <dependency>
+         	<groupId>org.jasig.portlet.utils</groupId>
+         	<artifactId>portlet-mvc-util</artifactId>
+         	<version>${portlet-utils.version}</version>
+        </dependency>
+        
         <!-- Unit test dependencies. -->
 		<dependency>
 			<groupId>junit</groupId>
