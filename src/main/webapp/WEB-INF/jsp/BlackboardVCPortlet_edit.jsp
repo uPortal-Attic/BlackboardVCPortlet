@@ -65,7 +65,7 @@
     <portlet:param name="action" value="addExternalParticipant"/>
 </portlet:renderURL>
 
-<form:form commandName="sessionForm" name="createSession" action="${formActionUrl}" method="POST" enctype="multipart/form-data">
+<form name="createSession" action="${formActionUrl}" method="POST" enctype="multipart/form-data" >
     <c:if test="${!empty session.sessionId}">
         <input type="hidden" name="sessionId" value="${session.sessionId}"/>
     </c:if>
@@ -425,7 +425,7 @@
     </tbody>
 
 </table>
-</form:form>     
+</form>     
 <script type="text/javascript">
 up.jQuery(function() {
     var $ = up.jQuery;

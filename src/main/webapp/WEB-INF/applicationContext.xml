@@ -41,7 +41,10 @@
     
     <context:annotation-config />
     <context:property-placeholder location="classpath:/webapp.properties" />
-    <context:component-scan base-package="org.jasig.portlet.blackboardvcportlet" />    
+    
+    <context:component-scan base-package="org.jasig.portlet.blackboardvcportlet.dao.impl" />    
+    <context:component-scan base-package="org.jasig.portlet.blackboardvcportlet.data" />
+    <context:component-scan base-package="org.jasig.portlet.blackboardvcportlet.service" />
 
     <!-- Set the datasource details to the database where you want to cache Collaborate data --> 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
