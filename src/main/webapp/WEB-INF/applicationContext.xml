@@ -42,12 +42,15 @@
     <context:annotation-config />
     <context:property-placeholder location="classpath:/webapp.properties" />
     
-    <context:component-scan base-package="org.jasig.portlet.blackboardvcportlet.dao.impl" />    
+    <context:component-scan base-package="org.jasig.portlet.blackboardvcportlet.dao.impl" />
     <context:component-scan base-package="org.jasig.portlet.blackboardvcportlet.data" />
     <context:component-scan base-package="org.jasig.portlet.blackboardvcportlet.service.impl" />
 
     <!-- Set the datasource details to the database where you want to cache Collaborate data --> 
     <bean id="dataSource" class="org.jasig.portlet.utils.jdbc.TomcatDataSourceFactory">
+        <property name="baseObjectName" value="uPortal:section=DataSource,name=" />
+        <property name="mBeanServer" ref="mbeanServer" />
+
         <property name="driverClassName" value="${bbc.db.driverClassName}"/>
         <property name="url" value="${bbc.db.jdbc}"/>
         <property name="username" value="${bbc.db.username}"/>
