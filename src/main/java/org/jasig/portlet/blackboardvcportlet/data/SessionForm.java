@@ -16,17 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portlet.blackboardvcportlet.service;
+package org.jasig.portlet.blackboardvcportlet.data;
 
-import java.util.List;
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
  * @author rgood
  */
-@Service("sessionForm")
 public class SessionForm {
     
     MultipartFile presentationUpload;

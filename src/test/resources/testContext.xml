@@ -38,7 +38,7 @@
      <property name="queueCapacity" value="25" />
     </bean>
 
-    <bean id="mailTemplateService" class="org.jasig.portlet.blackboardvcportlet.service.MailTemplateService">
+    <bean id="mailTemplateService" class="org.jasig.portlet.blackboardvcportlet.service.impl.MailTemplateServiceImpl">
       <constructor-arg ref="taskExecutor" />
     </bean>
     

@@ -44,7 +44,7 @@
     
     <context:component-scan base-package="org.jasig.portlet.blackboardvcportlet.dao.impl" />    
     <context:component-scan base-package="org.jasig.portlet.blackboardvcportlet.data" />
-    <context:component-scan base-package="org.jasig.portlet.blackboardvcportlet.service" />
+    <context:component-scan base-package="org.jasig.portlet.blackboardvcportlet.service.impl" />
 
     <!-- Set the datasource details to the database where you want to cache Collaborate data --> 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
@@ -106,7 +106,7 @@
      <property name="queueCapacity" value="25" />
     </bean>
 
-    <bean id="jasigMailTemplateService" class="org.jasig.portlet.blackboardvcportlet.service.MailTemplateService">
+    <bean id="jasigMailTemplateService" class="org.jasig.portlet.blackboardvcportlet.service.impl.MailTemplateServiceImpl">
       <constructor-arg ref="taskExecutor" />
     </bean>
     
