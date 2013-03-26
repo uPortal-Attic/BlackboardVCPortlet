@@ -375,7 +375,7 @@
         </dependency>
         <dependency>
             <groupId>org.jasig.portlet.utils</groupId>
-            <artifactId>portlet-ws-util</artifactId>
+            <artifactId>portlet-jdbc-util</artifactId>
             <version>${portlet-utils.version}</version>
         </dependency>
         <dependency>
@@ -383,7 +383,12 @@
          	<artifactId>portlet-mvc-util</artifactId>
          	<version>${portlet-utils.version}</version>
         </dependency>
-        
+        <dependency>
+            <groupId>org.jasig.portlet.utils</groupId>
+            <artifactId>portlet-ws-util</artifactId>
+            <version>${portlet-utils.version}</version>
+        </dependency>
+
         <!-- Unit test dependencies. -->
 		<dependency>
 			<groupId>junit</groupId>

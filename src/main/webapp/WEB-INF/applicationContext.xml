@@ -47,21 +47,29 @@
     <context:component-scan base-package="org.jasig.portlet.blackboardvcportlet.service.impl" />
 
     <!-- Set the datasource details to the database where you want to cache Collaborate data --> 
-    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-	    <property name="driverClassName" >
-	    	<value>${bbc.db.driverClassName}</value>
-	    </property>
-	    <property name="url">
-	    	<value>${bbc.db.jdbc}</value>
-	    </property>
-	    <property name="username" >
-	    	<value>${bbc.db.username}</value>
-	    </property>
-	    <property name="password">
-	    	<value>${bbc.db.password}</value>
-	    </property>
-    </bean>   
-      
+    <bean id="dataSource" class="org.jasig.portlet.utils.jdbc.TomcatDataSourceFactory">
+        <property name="driverClassName" value="${bbc.db.driverClassName}"/>
+        <property name="url" value="${bbc.db.jdbc}"/>
+        <property name="username" value="${bbc.db.username}"/>
+        <property name="password" value="${bbc.db.password}"/>
+        <property name="initialSize" value="1" />
+        <property name="minIdle" value="1" />
+        <property name="maxActive" value="75" />
+        <property name="maxIdle" value="50" />
+        <property name="maxWait" value="5000" /> <!-- 5 seconds -->
+        <property name="maxAge" value="3600000" /> <!-- 1 hour -->
+        <property name="minEvictableIdleTimeMillis" value="300000" /> <!-- 5 minutes -->
+
+        <property name="abandonWhenPercentageFull" value="70" />
+        <property name="removeAbandoned" value="true" />
+        <property name="removeAbandonedTimeout" value="300" />
+
+        <property name="jdbcInterceptors" value="ConnectionState(useEquals=true);ResetAbandonedTimer"/>
+        <property name="testWhileIdle" value="true" />
+        <property name="testOnBorrow" value="true" />
+        <property name="connectionProperties" value="oracle.net.CONNECT_TIMEOUT=5000;oracle.net.READ_TIMEOUT=30000;oracle.jdbc.ReadTimeout=30000" />
+    </bean>
+
     <bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
 		<property name="annotatedClasses">
