@@ -18,17 +18,10 @@
  */
 package org.jasig.portlet.blackboardvcportlet.service;
 
-import java.util.List;
-
-import javax.portlet.PortletPreferences;
-
-import org.jasig.portlet.blackboardvcportlet.data.Session;
-import org.jasig.portlet.blackboardvcportlet.data.SessionMultimedia;
-import org.jasig.portlet.blackboardvcportlet.data.SessionPresentation;
-import org.jasig.portlet.blackboardvcportlet.data.SessionUrl;
-import org.jasig.portlet.blackboardvcportlet.data.SessionUrlId;
-import org.jasig.portlet.blackboardvcportlet.data.User;
+import org.jasig.portlet.blackboardvcportlet.data.*;
 import org.springframework.web.multipart.MultipartFile;
+import javax.portlet.PortletPreferences;
+import java.util.List;
 
 /**
  * Service class for manipulating Collaborate sessions and their persistent
@@ -41,39 +34,43 @@ public interface SessionService
 {
 	public List<Session> getSessionsForUser(String uid);
 
-    public Session getSession(long sessionId);
+	public Session getSession(long sessionId);
 
-    public SessionUrl getSessionUrl(SessionUrlId sessionUrlId);
-    
-    public void deleteSession(long sessionId) throws Exception;
-    
-    public List<Session> getAllSessions();
+	public SessionUrl getSessionUrl(SessionUrlId sessionUrlId);
 
-    public void createEditSession(Session session, PortletPreferences prefs, List<User> extParticipantList) throws Exception ;
-    public User getExtParticipant(long sessionId, String email);
+	public void deleteSession(long sessionId) throws Exception;
 
-    public boolean isInit();
+	public List<Session> getAllSessions();
 
-    public void doInit();
+	public void createEditSession(Session session, PortletPreferences prefs, List<User> extParticipantList) throws Exception;
 
-    public void storeSession(Session session);
+	public User getExtParticipant(long sessionId, String email);
 
-    public void notifyModerators(User creator, Session session, List<User> users,String launchUrl) throws Exception;
-    
-    public void notifyOfDeletion(Session session) throws Exception ;
-    public void notifyIntParticipants(User creator, Session session, List<User> users, String launchUrl) throws Exception ;
-    public void notifyExtParticipants(User creator, Session session, List<User> users) throws Exception ;
+	public void storeSession(Session session);
 
-    public void addExtParticipant(User user, long sessionId) ;
-    public void deleteExtParticipants(long sessionId) ;
+	public void notifyModerators(User creator, Session session, List<User> users, String launchUrl) throws Exception;
 
-    public SessionPresentation getSessionPresentation(String sessionId) ;
-    public void deleteSessionPresentation(long sessionId, long presentationId) throws Exception ;
-    public void addSessionPresentation(String uid, long sessionId, MultipartFile file) throws Exception ;
-    public void deleteSessionMultimedia(long sessionId) throws Exception ;
-    public void deleteSessionMultimediaFiles(long sessionId, String[] multimediaIds) throws Exception ;
-    
-    public List<SessionMultimedia> getSessionMultimedia(long sessionId) ;
+	public void notifyOfDeletion(Session session) throws Exception;
 
-    public void addSessionMultimedia(String uid, long sessionId, MultipartFile file) throws Exception ;
+	public void notifyIntParticipants(User creator, Session session, List<User> users, String launchUrl) throws Exception;
+
+	public void notifyExtParticipants(User creator, Session session, List<User> users) throws Exception;
+
+	public void addExtParticipant(User user, long sessionId);
+
+	public void deleteExtParticipants(long sessionId);
+
+	public SessionPresentation getSessionPresentation(String sessionId);
+
+	public void deleteSessionPresentation(long sessionId, long presentationId) throws Exception;
+
+	public void addSessionPresentation(String uid, long sessionId, MultipartFile file) throws Exception;
+
+	public void deleteSessionMultimedia(long sessionId) throws Exception;
+
+	public void deleteSessionMultimediaFiles(long sessionId, String[] multimediaIds) throws Exception;
+
+	public List<SessionMultimedia> getSessionMultimedia(long sessionId);
+
+	public void addSessionMultimedia(String uid, long sessionId, MultipartFile file) throws Exception;
 }

@@ -1,11 +1,8 @@
 package org.jasig.portlet.blackboardvcportlet.service.impl;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
-import javax.portlet.PortletPreferences;
-
+import com.elluminate.sas.GetServerConfigurationResponseCollection;
+import com.elluminate.sas.ObjectFactory;
+import com.elluminate.sas.ServerConfigurationResponse;
 import org.jasig.portlet.blackboardvcportlet.dao.ServerConfigurationDao;
 import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
 import org.jasig.portlet.blackboardvcportlet.service.ServerConfigurationService;
@@ -13,26 +10,17 @@ import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import com.elluminate.sas.BasicAuth;
-import com.elluminate.sas.GetServerConfigurationResponseCollection;
-import com.elluminate.sas.ObjectFactory;
-import com.elluminate.sas.ServerConfigurationResponse;
+import javax.portlet.PortletPreferences;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 @Service("serverConfigurationService")
-public class ServerConfigurationServiceImpl implements ServerConfigurationService {
+public class ServerConfigurationServiceImpl implements ServerConfigurationService
+{
 	private static final Logger logger = LoggerFactory.getLogger(ServerConfigurationServiceImpl.class);
-	private boolean isInit = false;
-    private BasicAuth user;
-    
-    @Value("${bbc.username}")
-    private String username;
-    
-    @Value("${bbc.password}")
-    private String password;
-    
+
     @Autowired
     ServerConfigurationDao serverConfigurationDao;
 
@@ -77,11 +65,6 @@ public class ServerConfigurationServiceImpl implements ServerConfigurationServic
 		{
 
 			logger.debug("refreshing server configuration");
-			if (!this.isInit())
-			{
-				doInit(prefs);
-			}
-
 			try
 			{ // Call Web Service Operation
 				com.elluminate.sas.ServerConfiguration sc = objectFactory.createServerConfiguration();
@@ -136,20 +119,4 @@ public class ServerConfigurationServiceImpl implements ServerConfigurationServic
 			logger.debug("Configuration doesn't need refreshed.");
 		}
 	}
-    
-    private boolean isInit() {
-        return this.isInit;
-    }
-
-    /**
-     * Init method for basic auth user.
-     * @param prefs PortletPreferences
-     */
-    private void doInit(PortletPreferences prefs) {
-        logger.debug("doInit called");
-        user = new BasicAuth();
-        user.setName(username);
-        user.setPassword(password);
-        isInit = true;
-    }
 }

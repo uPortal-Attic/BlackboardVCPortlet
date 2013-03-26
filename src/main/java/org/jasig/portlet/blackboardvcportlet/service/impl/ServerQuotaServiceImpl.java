@@ -1,6 +1,9 @@
 package org.jasig.portlet.blackboardvcportlet.service.impl;
 
-import com.elluminate.sas.*;
+import com.elluminate.sas.GetServerQuotasResponseCollection;
+import com.elluminate.sas.ObjectFactory;
+import com.elluminate.sas.ServerQuotas;
+import com.elluminate.sas.ServerQuotasResponse;
 import org.jasig.portlet.blackboardvcportlet.dao.ServerQuotaDao;
 import org.jasig.portlet.blackboardvcportlet.data.ServerQuota;
 import org.jasig.portlet.blackboardvcportlet.service.ServerQuotaService;
@@ -8,7 +11,6 @@ import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import javax.portlet.PortletPreferences;
 import java.util.Calendar;
@@ -23,15 +25,7 @@ import java.util.List;
 public class ServerQuotaServiceImpl implements ServerQuotaService
 {
 	private static final Logger logger = LoggerFactory.getLogger(ServerQuotaServiceImpl.class);
-    private boolean isInit=false;
-    private BasicAuth user;
-    
-    @Value("${bbc.username}")
-    private String username;
-    
-    @Value("${bbc.password}")
-    private String password;
-    
+
     @Autowired
     private ServerQuotaDao serverQuotaDao;
 
@@ -66,9 +60,6 @@ public class ServerQuotaServiceImpl implements ServerQuotaService
 		if (serverQuota == null || serverQuota.getLastUpdated().before(date))
 		{
 			logger.debug("Quota being refreshed");
-			if (!this.isInit())
-				doInit(prefs);
-
 			try
 			{
 				// Call Web Service Operation
@@ -104,21 +95,4 @@ public class ServerQuotaServiceImpl implements ServerQuotaService
 			logger.debug("Quota doesn't need refreshed");
 		}
 	}
-    
-    private boolean isInit()
-    {
-        return this.isInit;
-    }
-    
-    /**
-     * Init method for Basic Auth user
-     * @param prefs PortletPreferences
-     */
-    private void doInit(PortletPreferences prefs)
-    {
-        logger.debug("doInit called");
-        user = new BasicAuth();
-        user.setName(username);
-        user.setPassword(password);
-    }
 }

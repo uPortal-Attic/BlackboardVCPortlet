@@ -1,29 +1,9 @@
 package org.jasig.portlet.blackboardvcportlet.service.impl;
 
-import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.activation.DataHandler;
-import javax.mail.util.ByteArrayDataSource;
-import javax.portlet.PortletPreferences;
-
-import org.jasig.portlet.blackboardvcportlet.dao.SessionDao;
-import org.jasig.portlet.blackboardvcportlet.dao.SessionExtParticipantDao;
-import org.jasig.portlet.blackboardvcportlet.dao.SessionMultimediaDao;
-import org.jasig.portlet.blackboardvcportlet.dao.SessionPresentationDao;
-import org.jasig.portlet.blackboardvcportlet.dao.SessionUrlDao;
-import org.jasig.portlet.blackboardvcportlet.data.RecordingShort;
-import org.jasig.portlet.blackboardvcportlet.data.Session;
-import org.jasig.portlet.blackboardvcportlet.data.SessionExtParticipant;
-import org.jasig.portlet.blackboardvcportlet.data.SessionExtParticipantId;
-import org.jasig.portlet.blackboardvcportlet.data.SessionMultimedia;
-import org.jasig.portlet.blackboardvcportlet.data.SessionPresentation;
-import org.jasig.portlet.blackboardvcportlet.data.SessionUrl;
-import org.jasig.portlet.blackboardvcportlet.data.SessionUrlId;
-import org.jasig.portlet.blackboardvcportlet.data.User;
+import com.elluminate.sas.*;
+import freemarker.template.utility.StringUtil;
+import org.jasig.portlet.blackboardvcportlet.dao.*;
+import org.jasig.portlet.blackboardvcportlet.data.*;
 import org.jasig.portlet.blackboardvcportlet.service.MailTemplateService;
 import org.jasig.portlet.blackboardvcportlet.service.RecordingService;
 import org.jasig.portlet.blackboardvcportlet.service.SessionService;
@@ -32,48 +12,22 @@ import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
-import com.elluminate.sas.BasicAuth;
-import com.elluminate.sas.BuildSessionUrl;
-import com.elluminate.sas.MultimediaResponse;
-import com.elluminate.sas.MultimediaResponseCollection;
-import com.elluminate.sas.ObjectFactory;
-import com.elluminate.sas.PresentationResponse;
-import com.elluminate.sas.PresentationResponseCollection;
-import com.elluminate.sas.RemoveRepositoryMultimedia;
-import com.elluminate.sas.RemoveRepositoryPresentation;
-import com.elluminate.sas.RemoveSession;
-import com.elluminate.sas.RemoveSessionMultimedia;
-import com.elluminate.sas.RemoveSessionPresentation;
-import com.elluminate.sas.SessionResponse;
-import com.elluminate.sas.SessionResponseCollection;
-import com.elluminate.sas.SetApiCallbackUrl;
-import com.elluminate.sas.SetSession;
-import com.elluminate.sas.SetSessionMultimedia;
-import com.elluminate.sas.SetSessionPresentation;
-import com.elluminate.sas.SuccessResponse;
-import com.elluminate.sas.UpdateSession;
-import com.elluminate.sas.UploadRepositoryContent;
-import com.elluminate.sas.UrlResponse;
-
-import freemarker.template.utility.StringUtil;
+import javax.activation.DataHandler;
+import javax.mail.util.ByteArrayDataSource;
+import javax.portlet.PortletPreferences;
+import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Service
 public class SessionServiceImpl implements SessionService {
 	
 	private static final Logger logger = LoggerFactory.getLogger(SessionService.class);
-    private boolean isInit = false;
-    private BasicAuth user;
-    
-    @Value("${bbc.username}")
-    private String username;
-    
-    @Value("${bbc.password}")
-    private String password;
-    
+
     @Autowired
     SessionDao sessionDao;
     @Autowired
@@ -137,10 +91,6 @@ public class SessionServiceImpl implements SessionService {
             sessionUrl.setUserId(sessionUrlId.getUserId());
         }
 
-        if (!this.isInit()) {
-            doInit();
-        }
-
         try {
             logger.debug("getting session url from Collaborate");
 			BuildSessionUrl buildSessionUrl = objectFactory.createBuildSessionUrl();
@@ -166,11 +116,7 @@ public class SessionServiceImpl implements SessionService {
 
     public void deleteSession(long sessionId) throws Exception {
         logger.debug("deleteSession called for :" + sessionId);
-        if (!this.isInit()) {
-            doInit();
-        }     
-
-        try { 
+        try {
             
             Session session = sessionDao.getSession(sessionId);
             
@@ -225,9 +171,6 @@ public class SessionServiceImpl implements SessionService {
     }
 
     public void createEditSession(Session session, PortletPreferences prefs, List<User> extParticipantList) throws Exception {
-        if (!this.isInit()) {
-            doInit();
-        }
 
         try { // Call Web Service Operation
             logger.debug("Setup session web service call");
@@ -366,18 +309,6 @@ public class SessionServiceImpl implements SessionService {
         }
 
         return extParticipant;
-    }
-
-    public boolean isInit() {
-        return this.isInit;
-    }
-
-    public void doInit() {
-        logger.debug("doInit called");
-        user = new BasicAuth();
-        user.setName(username);
-        user.setPassword(password);
-        isInit = true;
     }
 
     public void storeSession(Session session) {
@@ -553,9 +484,6 @@ public class SessionServiceImpl implements SessionService {
 
     public void deleteSessionPresentation(long sessionId, long presentationId) throws Exception {
         logger.debug("deleteSessionPresentation called");
-        if (!this.isInit()) {
-            doInit();
-        }
 
         try {
             logger.debug("Setup session web service call");
@@ -577,9 +505,6 @@ public class SessionServiceImpl implements SessionService {
 
     public void addSessionPresentation(String uid, long sessionId, MultipartFile file) throws Exception {
         logger.debug("addSessionPresentation called");
-        if (!this.isInit()) {
-            doInit();
-        }
 
         try { // Call Web Service Operation
             logger.debug("Setup session web service call");
@@ -623,9 +548,6 @@ public class SessionServiceImpl implements SessionService {
     public void deleteSessionMultimedia(long sessionId) throws Exception {
         logger.debug("deleteSessionMultimediaFiles called");
         List<SessionMultimedia> sessionMultimediaList = this.getSessionMultimedia(sessionId);
-        if (!this.isInit()) {
-            doInit();
-        }
 
         try { // Call Web Service Operation
             logger.debug("Setup session web service call");
@@ -650,10 +572,6 @@ public class SessionServiceImpl implements SessionService {
 
     public void deleteSessionMultimediaFiles(long sessionId, String[] multimediaIds) throws Exception {
         logger.debug("deleteSessionMultimediaFiles called");
-
-        if (!this.isInit()) {
-            doInit();
-        }
 
         /* Call set session to remove the old ids, then remove them from
          the repository */
@@ -688,9 +606,6 @@ public class SessionServiceImpl implements SessionService {
 
     public void addSessionMultimedia(String uid, long sessionId, MultipartFile file) throws Exception {
         logger.debug("addSessionMultimedia called");
-        if (!this.isInit()) {
-            doInit();
-        }
 
         try { // Call Web Service Operation
             logger.debug("Setup session web service call");
