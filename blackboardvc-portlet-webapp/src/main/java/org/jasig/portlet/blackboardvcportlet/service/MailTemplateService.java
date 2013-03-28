@@ -22,19 +22,13 @@ import java.util.List;
 
 import javax.mail.MessagingException;
 
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.stereotype.Service;
-
 /**
  * Class which allows the sending of email from a template
  * @author Richard Good
  */
-@Service
+
 public interface MailTemplateService {
 
-    public void setBeanFactory(BeanFactory bf) throws BeansException;
-        
   /**
    * Public method to execute an asynchronous email send
    * @param from

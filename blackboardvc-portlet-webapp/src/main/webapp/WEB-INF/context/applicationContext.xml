@@ -21,6 +21,7 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
 	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:task="http://www.springframework.org/schema/task"
 	   xmlns:tx="http://www.springframework.org/schema/tx"
 	   xmlns:sws="http://www.springframework.org/schema/web-services"
 	   xmlns:context="http://www.springframework.org/schema/context"
@@ -30,7 +31,8 @@
            http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
-           http://www.springframework.org/schema/web-services http://www.springframework.org/schema/web-services/web-services-2.0.xsd 
+           http://www.springframework.org/schema/web-services http://www.springframework.org/schema/web-services/web-services-2.0.xsd
+           http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
            http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm.xsd
            http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring/ehcache-spring-1.1.xsd">
 
@@ -110,15 +112,7 @@
       <property name="port" value="${mail.port}" />
     </bean>
     
-    <bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
-     <property name="corePoolSize" value="5" />
-     <property name="maxPoolSize" value="10" />
-     <property name="queueCapacity" value="25" />
-    </bean>
-
-    <bean id="jasigMailTemplateService" class="org.jasig.portlet.blackboardvcportlet.service.impl.MailTemplateServiceImpl">
-      <constructor-arg ref="taskExecutor" />
-    </bean>
+	<task:scheduler id="scheduler" pool-size="10" />
     
     <!-- Define the four email templates which are to be used. -->
     <bean id="moderatorMailMessage" class="org.springframework.mail.SimpleMailMessage">

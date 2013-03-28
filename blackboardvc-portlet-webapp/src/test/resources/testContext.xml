@@ -22,25 +22,20 @@
 
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:task="http://www.springframework.org/schema/task"
     xmlns:lang="http://www.springframework.org/schema/lang"
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
                         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
-                        http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-2.5.xsd">
+                        http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-2.5.xsd
+                        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
 
     <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
       <property name="host" value="smtp.wiscmail.wisc.edu"/>
       <property name="port" value="25" />
     </bean>
     
-    <bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
-     <property name="corePoolSize" value="5" />
-     <property name="maxPoolSize" value="10" />
-     <property name="queueCapacity" value="25" />
-    </bean>
-
-    <bean id="mailTemplateService" class="org.jasig.portlet.blackboardvcportlet.service.impl.MailTemplateServiceImpl">
-      <constructor-arg ref="taskExecutor" />
-    </bean>
+    <bean class="org.jasig.portlet.blackboardvcportlet.service.impl.MailTemplateServiceImpl" />
+    
     
     <!-- Define the four email templates which are to be used. -->
     <bean id="testEmail" class="org.springframework.mail.SimpleMailMessage">
