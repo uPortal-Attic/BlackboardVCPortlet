@@ -33,7 +33,7 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/testContext.xml")
-public class MailTemplateServiceTest {
+public class MailTemplateServiceIT {
 	
 	@Autowired
 	private MailTemplateService mailTemplateService;
