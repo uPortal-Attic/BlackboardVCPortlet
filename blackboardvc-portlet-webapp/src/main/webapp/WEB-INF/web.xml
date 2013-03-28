@@ -41,7 +41,7 @@
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <init-param>
             <param-name>contextConfigLocation</param-name>
-            <param-value>/context/servlet/callbackDispatcher-servlet.xml</param-value>
+            <param-value>/WEB-INF/context/servlet/callbackDispatcher-servlet.xml</param-value>
         </init-param>
         <load-on-startup>2</load-on-startup>
     </servlet>
