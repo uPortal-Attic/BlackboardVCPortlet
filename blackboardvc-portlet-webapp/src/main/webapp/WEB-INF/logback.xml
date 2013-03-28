@@ -38,7 +38,7 @@
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>[%d{ISO8601}] %-5level [%thread] %logger - %msg%n</pattern>
+            <pattern>[%d{ISO8601}] %level [%thread] %logger - %msg%n</pattern>
         </encoder>
     </appender>
 
@@ -48,7 +48,7 @@
         <!--for further documentation-->
         <File>${BlackboardVCPortlet.webapp.root}/../../logs/BlackboardVCPortlet.log</File>
         <encoder>
-            <pattern>[%d{ISO8601}] %-5level [%thread] %logger - %msg%n</pattern>
+            <pattern>[%d{ISO8601}] %level [%thread] %logger - %msg%n</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${BlackboardVCPortlet.webapp.root}/../../logs/BlackboardVCPortlet.log.%d{yyyy-MM-dd}</fileNamePattern>
