@@ -459,21 +459,6 @@
 
     <build>
         <finalName>BlackboardVCPortlet</finalName>
-        <resources>
-            <resource>
-                <directory>blackboardvc-portlet-webapp/src/main/webapp/WEB-INF</directory>
-                <filtering>true</filtering>
-                <includes>
-                    <include>**.xml</include>
-                </includes>
-            </resource>
-            <resource>
-                <directory>blackboardvc-portlet-webapp/src/main/resources</directory>
-                <includes>
-                    <include>**.properties</include>
-                </includes>
-            </resource>
-        </resources>
         <plugins>
             <plugin>
                 <groupId>org.jasig.maven</groupId>
@@ -560,14 +545,6 @@
                 <configuration>
                     <source>1.6</source>
                     <target>1.6</target>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>2.4.3</version>
-                <configuration>
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
