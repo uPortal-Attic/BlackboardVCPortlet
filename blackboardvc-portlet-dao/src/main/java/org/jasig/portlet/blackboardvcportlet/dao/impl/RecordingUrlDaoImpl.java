@@ -18,16 +18,18 @@
  */
 package org.jasig.portlet.blackboardvcportlet.dao.impl;
 
-import java.util.List;
 import org.hibernate.Criteria;
+import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
+import org.jasig.portlet.blackboardvcportlet.dao.RecordingUrlDao;
+import org.jasig.portlet.blackboardvcportlet.data.RecordingUrl;
+import org.jasig.portlet.blackboardvcportlet.data.RecordingUrlId;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.jasig.portlet.blackboardvcportlet.dao.RecordingUrlDao;
-import org.jasig.portlet.blackboardvcportlet.data.RecordingUrl;
-import org.jasig.portlet.blackboardvcportlet.data.RecordingUrlId;
+import java.util.List;
 
 /**
  * Implementation of the RecordingUrlDao interface. Allows storage, deletion
@@ -38,8 +40,13 @@ import org.jasig.portlet.blackboardvcportlet.data.RecordingUrlId;
 @Scope("singleton")
 @Component("recordingUrlDao")
 public class RecordingUrlDaoImpl extends HibernateDaoSupport implements RecordingUrlDao {
-    
-    /**
+
+	@Autowired
+	public void init(SessionFactory factory) {
+		setSessionFactory(factory);
+	}
+
+	/**
      * Gets all recording urls for a recordingId.
      * @param recordingId The recordingId to retrieve urls for
      * @return List<RecordingUrl>

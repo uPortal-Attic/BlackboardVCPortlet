@@ -18,15 +18,17 @@
  */
 package org.jasig.portlet.blackboardvcportlet.dao.impl;
 
-import java.util.List;
 import org.hibernate.Criteria;
+import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
+import org.jasig.portlet.blackboardvcportlet.dao.SessionPresentationDao;
+import org.jasig.portlet.blackboardvcportlet.data.SessionPresentation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.jasig.portlet.blackboardvcportlet.dao.SessionPresentationDao;
-import org.jasig.portlet.blackboardvcportlet.data.SessionPresentation;
+import java.util.List;
 
 /**
  * Implementation of the SessionPresentationDao interface. Supports storage
@@ -38,7 +40,12 @@ import org.jasig.portlet.blackboardvcportlet.data.SessionPresentation;
 @Component("sessionPresentationDao")
 public class SessionPresentationDaoImpl extends HibernateDaoSupport implements SessionPresentationDao {
 
-    /**
+	@Autowired
+	public void init(SessionFactory factory) {
+		setSessionFactory(factory);
+	}
+
+	/**
      * Deletes a SessionPresentation
      * @param presentationId The ID of the SessionPresentation to delete
      */

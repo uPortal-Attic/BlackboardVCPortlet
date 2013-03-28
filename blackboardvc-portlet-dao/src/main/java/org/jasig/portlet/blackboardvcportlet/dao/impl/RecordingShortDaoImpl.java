@@ -19,9 +19,11 @@
 package org.jasig.portlet.blackboardvcportlet.dao.impl;
 
 import org.hibernate.Criteria;
+import org.hibernate.SessionFactory;
 import org.hibernate.criterion.*;
 import org.jasig.portlet.blackboardvcportlet.dao.RecordingShortDao;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingShort;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 import org.springframework.stereotype.Component;
@@ -38,9 +40,12 @@ import java.util.List;
 @Scope("singleton")
 @Component("recordingShortDao")
 public class RecordingShortDaoImpl extends HibernateDaoSupport implements RecordingShortDao {
-    
-    
-    
+
+	@Autowired
+	public void init(SessionFactory factory) {
+		setSessionFactory(factory);
+	}
+
     /**
      * Deletes a recordingShort
      * @param recordingId The recording ID to delete

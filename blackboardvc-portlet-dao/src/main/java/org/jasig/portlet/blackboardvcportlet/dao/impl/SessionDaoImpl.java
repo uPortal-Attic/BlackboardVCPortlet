@@ -18,20 +18,18 @@
  */
 package org.jasig.portlet.blackboardvcportlet.dao.impl;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.hibernate.Criteria;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Disjunction;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.*;
+import org.jasig.portlet.blackboardvcportlet.dao.SessionDao;
+import org.jasig.portlet.blackboardvcportlet.data.Session;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.jasig.portlet.blackboardvcportlet.dao.SessionDao;
-import org.jasig.portlet.blackboardvcportlet.data.Session;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Implementation of the SessionDao interface, allows the storage, retrieval and 
@@ -42,8 +40,13 @@ import org.jasig.portlet.blackboardvcportlet.data.Session;
 @Scope("singleton")
 @Component("sessionDao")
 public class SessionDaoImpl extends HibernateDaoSupport implements SessionDao {
-    
-    /**
+
+	@Autowired
+	public void init(SessionFactory factory) {
+		setSessionFactory(factory);
+	}
+
+	/**
      * Gets a session.
      * @param sessionId The ID of the session to retrieve
      * @return Session

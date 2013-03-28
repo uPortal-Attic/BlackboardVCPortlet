@@ -32,9 +32,7 @@
            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
            http://www.springframework.org/schema/web-services http://www.springframework.org/schema/web-services/web-services-2.0.xsd 
            http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm.xsd
-           http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring/ehcache-spring-1.1.xsd"
-      default-autowire="byName">
-
+           http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring/ehcache-spring-1.1.xsd">
 
     <tx:annotation-driven transaction-manager="transactionManager" />
     <sws:annotation-driven  />
@@ -49,8 +47,9 @@
     <!-- Set the datasource details to the database where you want to cache Collaborate data --> 
     <bean id="dataSource" class="org.jasig.portlet.utils.jdbc.TomcatDataSourceFactory">
         <property name="baseObjectName" value="BlacboardCollaboratePortlet:section=DataSource,name=" />
+<!--
         <property name="mBeanServer" ref="mbeanServer" />
-
+-->
         <property name="driverClassName" value="${bbc.db.driverClassName}"/>
         <property name="url" value="${bbc.db.jdbc}"/>
         <property name="username" value="${bbc.db.username}"/>

@@ -19,7 +19,9 @@
 package org.jasig.portlet.blackboardvcportlet.dao.impl;
 
 import org.hibernate.Criteria;
+import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 import org.springframework.stereotype.Component;
@@ -38,7 +40,12 @@ import org.jasig.portlet.blackboardvcportlet.data.SessionExtParticipantId;
 @Component("sessionExtParticipant")
 public class SessionExtParticipantDaoImpl extends HibernateDaoSupport implements SessionExtParticipantDao {
 
-    /**
+	@Autowired
+	public void init(SessionFactory factory) {
+		setSessionFactory(factory);
+	}
+
+	/**
      * Stores a SessionExtParticipant
      * @param sessionExtParticipant The SessionExtParticipant to store
      */

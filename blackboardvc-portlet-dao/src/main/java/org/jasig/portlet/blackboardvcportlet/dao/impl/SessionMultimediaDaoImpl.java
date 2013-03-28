@@ -18,15 +18,17 @@
  */
 package org.jasig.portlet.blackboardvcportlet.dao.impl;
 
-import java.util.List;
 import org.hibernate.Criteria;
+import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
+import org.jasig.portlet.blackboardvcportlet.dao.SessionMultimediaDao;
+import org.jasig.portlet.blackboardvcportlet.data.SessionMultimedia;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.jasig.portlet.blackboardvcportlet.dao.SessionMultimediaDao;
-import org.jasig.portlet.blackboardvcportlet.data.SessionMultimedia;
+import java.util.List;
 
 /**
  * Implementation of the SessionMultimediaDao interface. Allows the storage,
@@ -38,7 +40,12 @@ import org.jasig.portlet.blackboardvcportlet.data.SessionMultimedia;
 @Component("sessionMultimediaDao")
 public class SessionMultimediaDaoImpl extends HibernateDaoSupport implements SessionMultimediaDao{
 
-    /**
+	@Autowired
+	public void init(SessionFactory factory) {
+		setSessionFactory(factory);
+	}
+
+	/**
      * Deletes a particular SessionMultimedia
      * @param multimediaId The Id of the SessionMultimedia to delete
      */

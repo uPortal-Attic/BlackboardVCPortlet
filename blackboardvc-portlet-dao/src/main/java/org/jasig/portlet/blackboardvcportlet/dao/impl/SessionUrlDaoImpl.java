@@ -19,7 +19,9 @@
 package org.jasig.portlet.blackboardvcportlet.dao.impl;
 
 import org.hibernate.Criteria;
+import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 import org.springframework.stereotype.Component;
@@ -37,8 +39,13 @@ import org.jasig.portlet.blackboardvcportlet.data.SessionUrlId;
 @Scope("singleton")
 @Component("sessionUrlDao")
 public class SessionUrlDaoImpl extends HibernateDaoSupport implements SessionUrlDao {
-    
-    /**
+
+	@Autowired
+	public void init(SessionFactory factory) {
+		setSessionFactory(factory);
+	}
+
+	/**
      * Gets a Session URL
      * @param sessionUrlId The ID of the SessionUrl to retrieve.
      * @return SessionUrl

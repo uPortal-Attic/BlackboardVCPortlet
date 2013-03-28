@@ -18,14 +18,16 @@
  */
 package org.jasig.portlet.blackboardvcportlet.dao.impl;
 
-import java.util.List;
 import org.hibernate.Criteria;
+import org.hibernate.SessionFactory;
+import org.jasig.portlet.blackboardvcportlet.dao.ServerConfigurationDao;
+import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.jasig.portlet.blackboardvcportlet.dao.ServerConfigurationDao;
-import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
+import java.util.List;
 
 /**
  * Implementation of the ServerConfigurationDao interface. Allows storage, 
@@ -36,8 +38,13 @@ import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
 @Scope("singleton")
 @Component("serverConfigurationDao")
 public class ServerConfigurationDaoImpl extends HibernateDaoSupport implements ServerConfigurationDao{
-    
-    /**
+
+	@Autowired
+	public void init(SessionFactory factory) {
+		setSessionFactory(factory);
+	}
+
+	/**
      * Gets the ServerConfiguration
      * @return ServerConfiguration
      */

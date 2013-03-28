@@ -19,8 +19,10 @@
 package org.jasig.portlet.blackboardvcportlet.dao.impl;
 
 import org.hibernate.Criteria;
+import org.hibernate.SessionFactory;
 import org.jasig.portlet.blackboardvcportlet.dao.ServerQuotaDao;
 import org.jasig.portlet.blackboardvcportlet.data.ServerQuota;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 import org.springframework.stereotype.Component;
@@ -36,8 +38,13 @@ import java.util.List;
 @Scope("singleton")
 @Component("serverQuotaDao")
 public class ServerQuotaDaoImpl extends HibernateDaoSupport implements ServerQuotaDao {
-    
-    /**
+
+	@Autowired
+	public void init(SessionFactory factory) {
+		setSessionFactory(factory);
+	}
+
+	/**
      * Gets the ServerQuota
      * @return ServerQuota
      */
