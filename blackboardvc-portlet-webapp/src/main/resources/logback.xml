@@ -30,11 +30,22 @@
 <configuration scan="true" scanPeriod="30 seconds">
     <contextName>BlackboardVCPortlet</contextName>
 
-    <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
-        <resetJUL>true</resetJUL>
-    </contextListener>
+  <!-- 
+   | Propagate log levels to java.util.logging 
+   +-->
+  <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+    <resetJUL>true</resetJUL>
+  </contextListener>
 
-    <jmxConfigurator/>
+  <!-- 
+   | Expose the logback configuration via JMX 
+   +-->
+  <jmxConfigurator />
+
+  <!-- 
+   | Specify a local property that sets up the logging directory
+   +-->
+  <property scope="local" name="LOG_DIR" value="${uPortal.webapp.root}/../../logs/${CONTEXT_NAME}" />
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
@@ -46,12 +57,12 @@
         <!--See http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
         <!--and http://logback.qos.ch/manual/appenders.html#TimeBasedRollingPolicy-->
         <!--for further documentation-->
-        <File>${BlackboardVCPortlet.webapp.root}/../../logs/BlackboardVCPortlet.log</File>
+        <File>${LOG_DIR}/${CONTEXT_NAME}.log</File>
         <encoder>
             <pattern>[%d{ISO8601}] %-5level [%thread] %logger - %msg%n</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${BlackboardVCPortlet.webapp.root}/../../logs/BlackboardVCPortlet.log.%d{yyyy-MM-dd}</fileNamePattern>
+            <fileNamePattern>${LOG_DIR}/${CONTEXT_NAME}.log.%d{yyyy-MM-dd}</fileNamePattern>
         </rollingPolicy>
     </appender>
 
