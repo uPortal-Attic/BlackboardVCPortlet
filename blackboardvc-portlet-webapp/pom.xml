@@ -213,7 +213,7 @@
         <profile>
             <id>localdev</id>
             <build>
-                <finalName>CoursesPortlet</finalName>
+                <finalName>BlackboardVCPortlet</finalName>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.portals.pluto</groupId>
@@ -240,7 +240,7 @@
                         <groupId>org.jasig.portal</groupId>
                         <version>1.0.0-M4-SNAPSHOT</version>
                         <configuration>
-                            <contextName>CoursesPortlet</contextName>
+                            <contextName>BlackboardVCPortlet</contextName>
                             <artifactId>${project.artifactId}</artifactId>
                             <artifactGroupId>${project.groupId}</artifactGroupId>
                             <artifactVersion>${project.version}</artifactVersion>
