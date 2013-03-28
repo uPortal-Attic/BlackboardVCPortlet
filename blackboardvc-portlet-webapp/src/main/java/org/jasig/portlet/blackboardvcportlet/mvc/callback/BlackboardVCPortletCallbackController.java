@@ -18,12 +18,10 @@
  */
 package org.jasig.portlet.blackboardvcportlet.mvc.callback;
 
-import com.elluminate.sas.BasicAuth;
 import org.jasig.portlet.blackboardvcportlet.service.RecordingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -47,19 +45,10 @@ public class BlackboardVCPortletCallbackController implements ServletContextAwar
     
     @Autowired
     RecordingService recordingService;
-    
-    @Value("${bbc.username}")
-    private String username;
-    
-    @Value("${bbc.password}")
-    private String password;
-    
+
     /**
      * Callback method. Looks for a passed session_id and updates the recordings
-     * @param request
-     * @param response
-     * @return
-     * @throws Exception 
+     * @throws Exception
      */
     @ResourceMapping(value = "callback")
     public ModelAndView callback(@RequestParam String sessionId, @RequestParam String roomClosedMillis, @RequestParam String recPlaybackLink, @RequestParam String roomOpenedMillis) throws Exception {
@@ -77,11 +66,7 @@ public class BlackboardVCPortletCallbackController implements ServletContextAwar
         logger.debug("roomOpenedMillis:"+roomOpenedMillis);
         
         logger.debug("updating session recordings");
-        BasicAuth user = new BasicAuth();
-        
-        user.setName(username);
-        user.setPassword(password);
-        recordingService.updateSessionRecordings(user,Long.valueOf(sessionId));
+        recordingService.updateSessionRecordings(Long.valueOf(sessionId));
         logger.debug("done update");
         ModelAndView modelAndView = new ModelAndView("callback");
         

@@ -4,9 +4,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import javax.portlet.PortletPreferences;
-
 import org.jasig.portlet.blackboardvcportlet.dao.RecordingShortDao;
 import org.jasig.portlet.blackboardvcportlet.dao.RecordingUrlDao;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingShort;
@@ -19,8 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.elluminate.sas.BasicAuth;
 import com.elluminate.sas.BuildRecordingUrl;
 import com.elluminate.sas.ListRecordingShort;
 import com.elluminate.sas.ListRecordingShortResponseCollection;
@@ -184,11 +180,11 @@ public class RecordingServiceImpl implements RecordingService {
    
     /**
      * Updates the local recordings cache from Collaborate for a particular session
-     * @param user BasicAuth
-     * @param sessionId Long
-     * @return List<RecordingShort>
+     *
+	 * @param sessionId Long
+	 * @return List<RecordingShort>
      */
-    public List<RecordingShort> updateSessionRecordings(BasicAuth user,long sessionId)
+    public List<RecordingShort> updateSessionRecordings(long sessionId)
     {
         List<RecordingShort> recordingList = new ArrayList<RecordingShort>();
         try

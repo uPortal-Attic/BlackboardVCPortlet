@@ -18,14 +18,10 @@
  */
 package org.jasig.portlet.blackboardvcportlet.service;
 
-import java.util.List;
-
-import javax.portlet.PortletPreferences;
-
 import org.jasig.portlet.blackboardvcportlet.data.RecordingShort;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingUrl;
-
-import com.elluminate.sas.BasicAuth;
+import javax.portlet.PortletPreferences;
+import java.util.List;
 
 /**
  * Service Class for handling Recording interactions
@@ -83,9 +79,9 @@ public interface RecordingService
     
     /**
      * Updates the local recordings cache from Collaborate for a particular session
-     * @param user BasicAuth
-     * @param sessionId Long
-     * @return List<RecordingShort>
+     *
+	 * @param sessionId Long
+	 * @return List<RecordingShort>
      */
-    public List<RecordingShort> updateSessionRecordings(BasicAuth user,long sessionId);
+    public List<RecordingShort> updateSessionRecordings(long sessionId);
 }
