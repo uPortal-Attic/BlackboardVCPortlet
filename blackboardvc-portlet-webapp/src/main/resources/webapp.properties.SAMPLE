@@ -8,3 +8,4 @@ bbc.db.driverClassName=org.hsqldb.jdbcDriver
 mail.host=localhost
 mail.from=me@people.com
 mail.port=25
+sas.defaultUri=https://sas-int.elluminate.com/site/external/adapter/default/v3/webservice.event
