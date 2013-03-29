@@ -56,8 +56,7 @@ public class ServerQuotaServiceImpl implements ServerQuotaService
 		try
 		{
 			// Call Web Service Operation
-			ServerQuotas serverQuotas = objectFactory.createServerQuotas();
-			GetServerQuotasResponseCollection serverQuotasResponseCollection = (GetServerQuotasResponseCollection) sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/GetServerQuotas", serverQuotas);
+			GetServerQuotasResponseCollection serverQuotasResponseCollection = (GetServerQuotasResponseCollection)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/GetServerQuotas", objectFactory.createGetServerQuotas(null));
 			List<ServerQuotasResponse> quotaResult = serverQuotasResponseCollection.getServerQuotasResponses();
 			logger.debug("Result = " + quotaResult);
 			for (ServerQuotasResponse response : quotaResult)
