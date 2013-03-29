@@ -5,5 +5,5 @@
 <%@ page import="javax.portlet.*"%>
 <%@ taglib uri="http://java.sun.com/portlet" prefix="portlet"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<%@ taglib uri="http://www.springframework.org/tags/form"prefix="form" %>
-<%@ taglib uri = "http://www.springframework.org/tags" prefix = "spring" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix = "spring" %>
