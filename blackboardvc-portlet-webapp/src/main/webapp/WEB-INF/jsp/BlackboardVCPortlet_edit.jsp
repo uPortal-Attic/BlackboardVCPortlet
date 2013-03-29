@@ -83,77 +83,33 @@
         <tr>
             <td><span class="uportal-channel-strong">Start Date and Time: </span></td>
             <td><input style="width: 82px;" value="<fmt:formatDate value="${session.startTime}" pattern="dd-MM-yyyy" />" name="startdate" id="${namespace}startdatepicker" style="width: 70px;" type="text">&nbsp;               
-                <fmt:formatDate var="startHourValue" value="${session.startTime}" pattern="HH" />
+                <fmt:formatDate var="startHourValue" value="${session.startTime}" pattern="H" />
                 <select name="startHour">
-                    <option value="00" ${startHourValue == "00" ? 'selected' : ''}>00</option>
-                    <option value="01" ${startHourValue == "01" ? 'selected' : ''}>01</option>
-                    <option value="02" ${startHourValue == "02" ? 'selected' : ''}>02</option>
-                    <option value="03" ${startHourValue == "03" ? 'selected' : ''}>03</option>
-                    <option value="04" ${startHourValue == "04" ? 'selected' : ''}>04</option>
-                    <option value="05" ${startHourValue == "05" ? 'selected' : ''}>05</option>
-                    <option value="06" ${startHourValue == "06" ? 'selected' : ''}>06</option>
-                    <option value="07" ${startHourValue == "07" ? 'selected' : ''}>07</option>
-                    <option value="08" ${startHourValue == "08" ? 'selected' : ''}>08</option>
-                    <option value="09" ${startHourValue == "09" ? 'selected' : ''}>09</option>
-                    <option value="10" ${startHourValue == "10" ? 'selected' : ''}>10</option>
-                    <option value="11" ${startHourValue == "11" ? 'selected' : ''}>11</option>
-                    <option value="12" ${startHourValue == "12" ? 'selected' : ''}>12</option>
-                    <option value="13" ${startHourValue == "13" ? 'selected' : ''}>13</option>
-                    <option value="14" ${startHourValue == "14" ? 'selected' : ''}>14</option>
-                    <option value="15" ${startHourValue == "15" ? 'selected' : ''}>15</option>
-                    <option value="16" ${startHourValue == "16" ? 'selected' : ''}>16</option>
-                    <option value="17" ${startHourValue == "17" ? 'selected' : ''}>17</option>
-                    <option value="18" ${startHourValue == "18" ? 'selected' : ''}>18</option>
-                    <option value="19" ${startHourValue == "19" ? 'selected' : ''}>19</option>
-                    <option value="20" ${startHourValue == "20" ? 'selected' : ''}>20</option>
-                    <option value="21" ${startHourValue == "21" ? 'selected' : ''}>21</option>
-                    <option value="22" ${startHourValue == "22" ? 'selected' : ''}>22</option>
-                    <option value="23" ${startHourValue == "23" ? 'selected' : ''}>23</option>
+                	<c:forEach var="i" begin="0" end="23" step="1">
+                		<option value="${i}" ${startHourValue == i ? 'selected' : ''}>${i}</option>
+                	</c:forEach>
                 </select>:
-                <fmt:formatDate var="startMinuteValue" value='${session.startTime}' pattern='mm' />
+                <fmt:formatDate var="startMinuteValue" value='${session.startTime}' pattern='m' />
                 <select name="startMinute">
-                    <option value="00" ${startMinuteValue =="00" ? 'selected' : ''}>00</option>
-                    <option value="15" ${startMinuteValue =="15" ? 'selected' : ''}>15</option>
-                    <option value="30" ${startMinuteValue =="30" ? 'selected' : ''}>30</option>
-                    <option value="45" ${startMinuteValue =="45" ? 'selected' : ''}>45</option>
+                	<c:forEach var="i" begin="0" end="45" step="15">
+                		<option value="${i}" ${startMinuteValue == i ? 'selected' : ''}>${i}</option>
+                    </c:forEach>
                 </select>                   
             </td>
         </tr>
         <tr><td><span class="uportal-channel-strong">End Date and Time: </span></td>
             <td><input style="width: 82px;" value="<fmt:formatDate value="${session.endTime}" pattern="dd-MM-yyyy" />" name="enddate" id="${namespace}enddatepicker" style="width: 70px;" type="text">&nbsp;
-                <fmt:formatDate var="endHourValue" value="${session.endTime}" pattern="HH" />
+                <fmt:formatDate var="endHourValue" value="${session.endTime}" pattern="H" />
                 <select name="endHour">
-                    <option value="00" ${endHourValue == "00" ? 'selected' : ''}>00</option>
-                    <option value="01" ${endHourValue == "01" ? 'selected' : ''}>01</option>
-                    <option value="02" ${endHourValue == "02" ? 'selected' : ''}>02</option>
-                    <option value="03" ${endHourValue == "03" ? 'selected' : ''}>03</option>
-                    <option value="04" ${endHourValue == "04" ? 'selected' : ''}>04</option>
-                    <option value="05" ${endHourValue == "05" ? 'selected' : ''}>05</option>
-                    <option value="06" ${endHourValue == "06" ? 'selected' : ''}>06</option>
-                    <option value="07" ${endHourValue == "07" ? 'selected' : ''}>07</option>
-                    <option value="08" ${endHourValue == "08" ? 'selected' : ''}>08</option>
-                    <option value="09" ${endHourValue == "09" ? 'selected' : ''}>09</option>
-                    <option value="10" ${endHourValue == "10" ? 'selected' : ''}>10</option>
-                    <option value="11" ${endHourValue == "11" ? 'selected' : ''}>11</option>
-                    <option value="12" ${endHourValue == "12" ? 'selected' : ''}>12</option>
-                    <option value="13" ${endHourValue == "13" ? 'selected' : ''}>13</option>
-                    <option value="14" ${endHourValue == "14" ? 'selected' : ''}>14</option>
-                    <option value="15" ${endHourValue == "15" ? 'selected' : ''}>15</option>
-                    <option value="16" ${endHourValue== "16" ? 'selected' : ''}>16</option>
-                    <option value="17" ${endHourValue == "17" ? 'selected' : ''}>17</option>
-                    <option value="18" ${endHourValue == "18" ? 'selected' : ''}>18</option>
-                    <option value="19" ${endHourValue == "19" ? 'selected' : ''}>19</option>
-                    <option value="20" ${endHourValue == "20" ? 'selected' : ''}>20</option>
-                    <option value="21" ${endHourValue == "21" ? 'selected' : ''}>21</option>
-                    <option value="22" ${endHourValue == "22" ? 'selected' : ''}>22</option>
-                    <option value="23" ${endHourValue == "23" ? 'selected' : ''}>23</option>
+                	<c:forEach var="i" begin="0" end="23" step="1">
+                		<option value="${i}" ${endHourValue == i ? 'selected' : ''}>${i}</option>
+                    </c:forEach>
                 </select>:
-                <fmt:formatDate var="endMinuteValue" value='${session.endTime}' pattern='mm' />
+                <fmt:formatDate var="endMinuteValue" value='${session.endTime}' pattern='m' />
                 <select name="endMinute">
-                    <option value="00" ${endMinuteValue =="00" ? 'selected' : ''}>00</option>
-                    <option value="15" ${endMinuteValue =="15" ? 'selected' : ''}>15</option>
-                    <option value="30" ${endMinuteValue =="30" ? 'selected' : ''}>30</option>
-                    <option value="45" ${endMinuteValue =="45" ? 'selected' : ''}>45</option>
+                	<c:forEach var="i" begin="0" end="45" step="15">
+                		<option value="${i}" ${endMinuteValue == i ? 'selected' : ''}>${i}</option>
+                    </c:forEach>
                 </select>  
             </td>
         </tr>
@@ -178,12 +134,9 @@
                     <td><span class="uportal-channel-strong">Max Simultaneous Talkers: </span></td>
                     <td>
                         <select name="maxTalkers">
-                            <option  value="1" ${session.maxTalkers == "1" ? 'selected' : ''}>1</option>
-                            <option value="2" ${session.maxTalkers == "2" ? 'selected' : ''}>2</option>
-                            <option value="3" ${session.maxTalkers == "3" ? 'selected' : ''}>3</option>
-                            <option value="4" ${session.maxTalkers == "4" ? 'selected' : ''}>4</option>
-                            <option value="5" ${session.maxTalkers == "5" ? 'selected' : ''}>5</option>
-                            <option value="6" ${session.maxTalkers == "6" ? 'selected' : ''}>6</option>
+                        	<c:forEach var="i" begin="1" end="6" step="1">
+		                		<option value="${i}" ${session.maxTalkers == i ? 'selected' : ''}>${i}</option>
+		                    </c:forEach>
                         </select> 
                     </td>
                 </tr>
@@ -192,12 +145,9 @@
                     <td><span class="uportal-channel-strong">Max Cameras: </span></td>
                     <td>
                         <select name="maxCameras">
-                            <option value="1" ${session.maxCameras == "1" ? 'selected' : ''}>1</option>
-                            <option value="2" ${session.maxCameras == "2" ? 'selected' : ''}>2</option>
-                            <option value="3" ${session.maxCameras == "3" ? 'selected' : ''}>3</option>
-                            <option value="4" ${session.maxCameras == "4" ? 'selected' : ''}>4</option>
-                            <option value="5" ${session.maxCameras == "5" ? 'selected' : ''}>5</option>
-                            <option value="6" ${session.maxCameras == "6" ? 'selected' : ''}>6</option>
+                            <c:forEach var="i" begin="1" end="6" step="1">
+		                		<option value="${i}" ${session.maxCameras == i ? 'selected' : ''}>${i}</option>
+		                    </c:forEach>
                         </select> 
                     </td>
                 </tr>
