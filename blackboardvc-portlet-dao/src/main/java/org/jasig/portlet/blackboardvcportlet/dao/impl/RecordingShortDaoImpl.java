@@ -18,18 +18,24 @@
  */
 package org.jasig.portlet.blackboardvcportlet.dao.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.*;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.jasig.portlet.blackboardvcportlet.dao.RecordingShortDao;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingShort;
+import org.jasig.portlet.blackboardvcportlet.data.RecordingShortImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Implementation of RecordingShortDao interface. Allows storage, deletion
@@ -53,7 +59,7 @@ public class RecordingShortDaoImpl extends HibernateDaoSupport implements Record
     @Override
     public void deleteRecordingShort(long recordingId)
     {
-        this.getHibernateTemplate().delete(this.getHibernateTemplate().get(RecordingShort.class,recordingId));
+        this.getHibernateTemplate().delete(this.getHibernateTemplate().get(RecordingShortImpl.class,recordingId));
     }
     
     /**
@@ -73,7 +79,7 @@ public class RecordingShortDaoImpl extends HibernateDaoSupport implements Record
     @Override
     public void deleteAllRecordingShort(long sessionId)
     {
-        this.getHibernateTemplate().deleteAll(this.getHibernateTemplate().getSessionFactory().getCurrentSession().createCriteria(RecordingShort.class).add(Restrictions.eq("sessionId",sessionId)).list());                
+        this.getHibernateTemplate().deleteAll(this.getHibernateTemplate().getSessionFactory().getCurrentSession().createCriteria(RecordingShortImpl.class).add(Restrictions.eq("sessionId",sessionId)).list());                
     }
     
     /**
@@ -83,7 +89,7 @@ public class RecordingShortDaoImpl extends HibernateDaoSupport implements Record
     @Override
     public List<RecordingShort> getAllRecordings()
     {
-         Criteria criteria =this.getSession().createCriteria(RecordingShort.class);
+         Criteria criteria =this.getSession().createCriteria(RecordingShortImpl.class);
          criteria.addOrder(Order.desc("creationDate"));
          return criteria.list();
     }
@@ -97,7 +103,7 @@ public class RecordingShortDaoImpl extends HibernateDaoSupport implements Record
     @Override
     public List<RecordingShort> getRecordingsForUser(String uid) {
         List<RecordingShort> recordings;
-        Criteria criteria = this.getSession().createCriteria(RecordingShort.class);
+        Criteria criteria = this.getSession().createCriteria(RecordingShortImpl.class);
         Criterion chairCriteria = Restrictions.ilike("chairList", uid, MatchMode.ANYWHERE);
         Criterion nonChairCriteria = Restrictions.ilike("nonChairList", uid, MatchMode.ANYWHERE);      
         Criterion chairEndCriteria = Restrictions.ilike("chairList", uid,MatchMode.END);     
@@ -129,7 +135,7 @@ public class RecordingShortDaoImpl extends HibernateDaoSupport implements Record
     public List<RecordingShort> getAllSessionRecordings(long sessionId) {
         
         List<RecordingShort> recordings;
-        Criteria criteria = this.getSession().createCriteria(RecordingShort.class).add(Restrictions.eq("sessionId",sessionId));
+        Criteria criteria = this.getSession().createCriteria(RecordingShortImpl.class).add(Restrictions.eq("sessionId",sessionId));
         recordings = criteria.list();
         if (recordings==null)
         {
@@ -143,7 +149,7 @@ public class RecordingShortDaoImpl extends HibernateDaoSupport implements Record
 
     @Override
     public RecordingShort getRecording(long recordingShortId) {
-        return (RecordingShort)this.getHibernateTemplate().get(RecordingShort.class, recordingShortId);
+        return (RecordingShort)this.getHibernateTemplate().get(RecordingShortImpl.class, recordingShortId);
     }
   
 }

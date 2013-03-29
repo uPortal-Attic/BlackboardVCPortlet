@@ -28,6 +28,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.jasig.portlet.blackboardvcportlet.dao.SessionUrlDao;
 import org.jasig.portlet.blackboardvcportlet.data.SessionUrl;
+import org.jasig.portlet.blackboardvcportlet.data.SessionUrlImpl;
 import org.jasig.portlet.blackboardvcportlet.data.SessionUrlId;
 
 /**
@@ -53,7 +54,7 @@ public class SessionUrlDaoImpl extends HibernateDaoSupport implements SessionUrl
     @Override
     public SessionUrl getSessionUrl(SessionUrlId sessionUrlId)
     {
-      return (SessionUrl)this.getHibernateTemplate().get(SessionUrl.class, sessionUrlId);
+      return (SessionUrl)this.getHibernateTemplate().get(SessionUrlImpl.class, sessionUrlId);
     }
     
     /**
@@ -73,7 +74,7 @@ public class SessionUrlDaoImpl extends HibernateDaoSupport implements SessionUrl
     @Override
     public void deleteSessionUrl(SessionUrlId sessionUrlId)
     {
-        this.getHibernateTemplate().delete(this.getHibernateTemplate().get(SessionUrl.class,sessionUrlId));
+        this.getHibernateTemplate().delete(this.getHibernateTemplate().get(SessionUrlImpl.class,sessionUrlId));
     }
     
     /**
@@ -83,7 +84,7 @@ public class SessionUrlDaoImpl extends HibernateDaoSupport implements SessionUrl
     @Override
     public void deleteSessionUrls(long sessionId)
     {
-        Criteria criteria = this.getSession().createCriteria(SessionUrl.class).add(Restrictions.eq("sessionUrlId.sessionId",sessionId));
+        Criteria criteria = this.getSession().createCriteria(SessionUrlImpl.class).add(Restrictions.eq("sessionUrlId.sessionId",sessionId));
         this.getHibernateTemplate().deleteAll(criteria.list());
     }
     

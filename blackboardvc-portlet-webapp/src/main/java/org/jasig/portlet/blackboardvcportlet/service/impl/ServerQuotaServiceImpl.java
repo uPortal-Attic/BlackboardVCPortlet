@@ -6,6 +6,7 @@ import com.elluminate.sas.ServerQuotas;
 import com.elluminate.sas.ServerQuotasResponse;
 import org.jasig.portlet.blackboardvcportlet.dao.ServerQuotaDao;
 import org.jasig.portlet.blackboardvcportlet.data.ServerQuota;
+import org.jasig.portlet.blackboardvcportlet.data.ServerQuotaImpl;
 import org.jasig.portlet.blackboardvcportlet.service.ServerQuotaService;
 import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceTemplate;
 import org.slf4j.Logger;
@@ -69,7 +70,7 @@ public class ServerQuotaServiceImpl implements ServerQuotaService
 				logger.debug("Result = " + quotaResult);
 				for (ServerQuotasResponse response : quotaResult)
 				{
-					ServerQuota quota = new ServerQuota();
+					ServerQuota quota = new ServerQuotaImpl();
 					quota.setDiskQuota(response.getDiskQuota());
 					quota.setDiskQuotaAvailable(response.getDiskQuotaAvailable());
 					quota.setSessionQuota(response.getSessionQuota());

@@ -18,10 +18,17 @@
  */
 package org.jasig.portlet.blackboardvcportlet.service;
 
-import org.jasig.portlet.blackboardvcportlet.data.*;
-import org.springframework.web.multipart.MultipartFile;
-import javax.portlet.PortletPreferences;
 import java.util.List;
+
+import javax.portlet.PortletPreferences;
+
+import org.jasig.portlet.blackboardvcportlet.data.Session;
+import org.jasig.portlet.blackboardvcportlet.data.SessionMultimedia;
+import org.jasig.portlet.blackboardvcportlet.data.SessionPresentation;
+import org.jasig.portlet.blackboardvcportlet.data.SessionUrl;
+import org.jasig.portlet.blackboardvcportlet.data.SessionUrlId;
+import org.jasig.portlet.blackboardvcportlet.data.User;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Service class for manipulating Collaborate sessions and their persistent

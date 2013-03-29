@@ -18,8 +18,8 @@
  */
 package org.jasig.portlet.blackboardvcportlet.data;
 
-import java.io.Serializable;
 import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -33,8 +33,9 @@ import javax.persistence.Transient;
  */
 @Entity
 @Table(name="VC_SESSION")
-public class Session implements Serializable {
-    
+public class SessionImpl implements Session {
+    private static final long serialVersionUID = 1L;
+
     @Id
     @Column(name="SESSION_ID")
     protected long sessionId;
@@ -123,226 +124,282 @@ public class Session implements Serializable {
     @Transient
     protected boolean currUserCanEdit;
 
+    @Override
     public boolean isCurrUserCanEdit() {
         return currUserCanEdit;
     }
 
+    @Override
     public void setCurrUserCanEdit(boolean currUserCanEdit) {
         this.currUserCanEdit = currUserCanEdit;
     }
     
+    @Override
     public String getCreatorOrgUnit() {
         return creatorOrgUnit;
     }
 
+    @Override
     public void setCreatorOrgUnit(String creatorOrgUnit) {
         this.creatorOrgUnit = creatorOrgUnit;
     }
 
+    @Override
     public long getAccessType() {
         return accessType;
     }
 
+    @Override
     public void setAccessType(long accessType) {
         this.accessType = accessType;
     }
 
+    @Override
     public boolean isAllowInSessionInvites() {
         return allowInSessionInvites;
     }
 
+    @Override
     public void setAllowInSessionInvites(boolean allowInSessionInvites) {
         this.allowInSessionInvites = allowInSessionInvites;
     }
 
+    @Override
     public int getBoundaryTime() {
         return boundaryTime;
     }
 
+    @Override
     public void setBoundaryTime(int boundaryTime) {
         this.boundaryTime = boundaryTime;
     }
 
+    @Override
     public String getChairList() {
         return chairList;
     }
 
+    @Override
     public void setChairList(String chairList) {
         this.chairList = chairList;
     }
 
+    @Override
     public String getChairNotes() {
         return chairNotes;
     }
 
+    @Override
     public void setChairNotes(String chairNotes) {
         this.chairNotes = chairNotes;
     }
 
+    @Override
     public String getCreatorId() {
         return creatorId;
     }
 
+    @Override
     public void setCreatorId(String creatorId) {
         this.creatorId = creatorId;
     }
 
+    @Override
     public Date getEndTime() {
         return endTime;
     }
 
+    @Override
     public void setEndTime(Date endTime) {
         this.endTime = endTime;
     }
 
+    @Override
     public String getGroupingList() {
         return groupingList;
     }
 
+    @Override
     public void setGroupingList(String groupingList) {
         this.groupingList = groupingList;
     }
 
+    @Override
     public boolean isHideParticipantNames() {
         return hideParticipantNames;
     }
 
+    @Override
     public void setHideParticipantNames(boolean hideParticipantNames) {
         this.hideParticipantNames = hideParticipantNames;
     }
 
+    @Override
     public Date getLastUpdated() {
         return lastUpdated;
     }
 
+    @Override
     public void setLastUpdated(Date lastUpdated) {
         this.lastUpdated = lastUpdated;
     }
 
+    @Override
     public int getMaxCameras() {
         return maxCameras;
     }
 
+    @Override
     public void setMaxCameras(int maxCameras) {
         this.maxCameras = maxCameras;
     }
 
+    @Override
     public int getMaxTalkers() {
         return maxTalkers;
     }
 
+    @Override
     public void setMaxTalkers(int maxTalkers) {
         this.maxTalkers = maxTalkers;
     }
 
+    @Override
     public boolean isMustBeSupervised() {
         return mustBeSupervised;
     }
 
+    @Override
     public void setMustBeSupervised(boolean mustBeSupervised) {
         this.mustBeSupervised = mustBeSupervised;
     }
 
+    @Override
     public String getNonChairList() {
         return nonChairList;
     }
 
+    @Override
     public void setNonChairList(String nonChairList) {
         this.nonChairList = nonChairList;
     }
 
+    @Override
     public String getNonChairNotes() {
         return nonChairNotes;
     }
 
+    @Override
     public void setNonChairNotes(String nonChairNotes) {
         this.nonChairNotes = nonChairNotes;
     }
 
+    @Override
     public boolean isOpenChair() {
         return openChair;
     }
 
+    @Override
     public void setOpenChair(boolean openChair) {
         this.openChair = openChair;
     }
 
+    @Override
     public boolean isPermissionsOn() {
         return permissionsOn;
     }
 
+    @Override
     public void setPermissionsOn(boolean permissionsOn) {
         this.permissionsOn = permissionsOn;
     }
 
+    @Override
     public boolean isRaiseHandOnEnter() {
         return raiseHandOnEnter;
     }
 
+    @Override
     public void setRaiseHandOnEnter(boolean raiseHandOnEnter) {
         this.raiseHandOnEnter = raiseHandOnEnter;
     }
 
+    @Override
     public long getRecordingModeType() {
         return recordingModeType;
     }
 
+    @Override
     public void setRecordingModeType(long recordingModeType) {
         this.recordingModeType = recordingModeType;
     }
 
+    @Override
     public boolean isRecordings() {
         return recordings;
     }
 
+    @Override
     public void setRecordings(boolean recordings) {
         this.recordings = recordings;
     }
 
+    @Override
     public int getReserveSeats() {
         return reserveSeats;
     }
 
+    @Override
     public void setReserveSeats(int reserveSeats) {
         this.reserveSeats = reserveSeats;
     }
 
+    @Override
     public boolean isSecureSignOn() {
         return secureSignOn;
     }
 
+    @Override
     public void setSecureSignOn(boolean secureSignOn) {
         this.secureSignOn = secureSignOn;
     }
 
+    @Override
     public long getSessionId() {
         return sessionId;
     }
 
+    @Override
     public void setSessionId(long sessionId) {
         this.sessionId = sessionId;
     }
 
+    @Override
     public String getSessionName() {
         return sessionName;
     }
 
+    @Override
     public void setSessionName(String sessionName) {
         this.sessionName = sessionName;
     }
 
+    @Override
     public Date getStartTime() {
         return startTime;
     }
 
+    @Override
     public void setStartTime(Date startTime) {
         this.startTime = startTime;
     }
 
+    @Override
     public long getVersionId() {
         return versionId;
     }
 
+    @Override
     public void setVersionId(long versionId) {
         this.versionId = versionId;
     }

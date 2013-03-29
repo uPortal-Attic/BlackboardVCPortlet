@@ -78,15 +78,15 @@
 		<property name="dataSource" ref="dataSource" />
 		<property name="annotatedClasses">
 	        <list>
-	            <value>org.jasig.portlet.blackboardvcportlet.data.ServerQuota</value>
-                <value>org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration</value>
-                <value>org.jasig.portlet.blackboardvcportlet.data.Session</value>
-                <value>org.jasig.portlet.blackboardvcportlet.data.SessionUrl</value>
-                <value>org.jasig.portlet.blackboardvcportlet.data.RecordingUrl</value>
-                <value>org.jasig.portlet.blackboardvcportlet.data.RecordingShort</value>
-                <value>org.jasig.portlet.blackboardvcportlet.data.SessionMultimedia</value>
-                <value>org.jasig.portlet.blackboardvcportlet.data.SessionPresentation</value>
-                <value>org.jasig.portlet.blackboardvcportlet.data.SessionExtParticipant</value>
+	            <value>org.jasig.portlet.blackboardvcportlet.dao.impl.RecordingShortDaoImpl</value>
+	            <value>org.jasig.portlet.blackboardvcportlet.dao.impl.RecordingUrlDaoImpl</value>
+	            <value>org.jasig.portlet.blackboardvcportlet.dao.impl.ServerConfigurationDaoImpl</value>
+	            <value>org.jasig.portlet.blackboardvcportlet.dao.impl.ServerQuotaDaoImpl</value>
+	            <value>org.jasig.portlet.blackboardvcportlet.dao.impl.SessionDaoImpl</value>
+	            <value>org.jasig.portlet.blackboardvcportlet.dao.impl.SessionExtParticipantDaoImpl</value>
+	            <value>org.jasig.portlet.blackboardvcportlet.dao.impl.SessionMultimediaDaoImpl</value>
+	            <value>org.jasig.portlet.blackboardvcportlet.dao.impl.SessionPresentationDaoImpl</value>
+	            <value>org.jasig.portlet.blackboardvcportlet.dao.impl.SessionUrlDaoImpl</value>
 	        </list>
 	    </property>
 		<property name="hibernateProperties">

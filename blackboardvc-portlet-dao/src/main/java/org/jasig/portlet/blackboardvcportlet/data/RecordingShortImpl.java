@@ -18,9 +18,13 @@
  */
 package org.jasig.portlet.blackboardvcportlet.data;
 
-import javax.persistence.*;
-import java.io.Serializable;
 import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * Entity class for storing recordings.
@@ -28,8 +32,9 @@ import java.util.Date;
  */
 @Entity
 @Table(name="VC_RECORDING_SHORT")
-public class RecordingShort implements Serializable{
-    
+public class RecordingShortImpl implements RecordingShort {
+    private static final long serialVersionUID = 1L;
+
     @Id
     @Column(name="RECORDING_ID")
     protected long recordingId;
@@ -64,90 +69,112 @@ public class RecordingShort implements Serializable{
     @Transient 
     protected String readableFileSize;
 
+    @Override
     public String getReadableFileSize() {
         return readableFileSize;
     }
 
+    @Override
     public void setReadableFileSize(String readableFileSize) {
         this.readableFileSize = readableFileSize;
     }
 
+    @Override
     public String getChairList() {
         return chairList;
     }
 
+    @Override
     public void setChairList(String chairList) {
         this.chairList = chairList;
     }
 
+    @Override
     public String getNonChairList() {
         return nonChairList;
     }
 
+    @Override
     public void setNonChairList(String nonChairList) {
         this.nonChairList = nonChairList;
     }
   
+    @Override
     public Date getCreatedDate() {
         return createdDate;
     }
 
+    @Override
     public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
     }
     
+    @Override
     public boolean isCurrUserCanDelete() {
         return currUserCanDelete;
     }
 
+    @Override
     public void setCurrUserCanDelete(boolean currUserCanDelete) {
         this.currUserCanDelete = currUserCanDelete;
     }
     
+    @Override
     public String getRecordingUrl() {
         return recordingUrl;
     }
 
+    @Override
     public void setRecordingUrl(String recordingUrl) {
         this.recordingUrl = recordingUrl;
     }
     
+    @Override
     public long getCreationDate() {
         return creationDate;
     }
 
+    @Override
     public void setCreationDate(long creationDate) {
         this.creationDate = creationDate;
     }
 
+    @Override
     public long getRecordingId() {
         return recordingId;
     }
 
+    @Override
     public void setRecordingId(long recordingId) {
         this.recordingId = recordingId;
     }
 
+    @Override
     public long getRecordingSize() {
         return recordingSize;
     }
 
+    @Override
     public void setRecordingSize(long recordingSize) {
         this.recordingSize = recordingSize;
     }
 
+    @Override
     public String getRoomName() {
         return roomName;
     }
 
+    @Override
     public void setRoomName(String roomName) {
         this.roomName = roomName;
     }
 
+    @Override
     public long getSessionId() {
         return sessionId;
     }
 
+    @Override
     public void setSessionId(long sessionId) {
         this.sessionId = sessionId;
     }

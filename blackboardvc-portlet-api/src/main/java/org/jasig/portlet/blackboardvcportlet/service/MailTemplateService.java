@@ -16,24 +16,32 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portlet.blackboardvcportlet.dao;
+package org.jasig.portlet.blackboardvcportlet.service;
 
 import java.util.List;
-import org.jasig.portlet.blackboardvcportlet.data.RecordingUrl;
-import org.jasig.portlet.blackboardvcportlet.data.RecordingUrlId;
+
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.stereotype.Service;
 
 /**
- * DAO interface class for RecordingUrl
- * @author Richard good
+ * Class which allows the sending of email from a template
+ * @author Richard Good
  */
-public interface RecordingUrlDao {
-    
-    public List<RecordingUrl>getRecordingUrls(Long recordingId);
-    
-    public void saveRecordingUrl(RecordingUrl recordingUrl);
-    
-    public void deleteRecordingUrl(RecordingUrlId recordingUrlId);
-    
-    public void deleteRecordingUrls(Long recordingId);
-    
+@Service
+public interface MailTemplateService {
+
+    public void setBeanFactory(BeanFactory bf) throws BeansException;
+        
+  /**
+   * Public method to execute an asynchronous email send
+   * @param from
+   * @param to
+   * @param subject
+   * @param substitutions
+   * @param template
+   * @throws MessagingException 
+   */
+  public void sendEmailUsingTemplate(String from, List<String> to, String subject, String[] substitutions, String template);
+  
 }

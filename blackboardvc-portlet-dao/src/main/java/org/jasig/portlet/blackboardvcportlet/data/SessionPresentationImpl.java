@@ -18,8 +18,8 @@
  */
 package org.jasig.portlet.blackboardvcportlet.data;
 
-import java.io.Serializable;
 import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -27,16 +27,17 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 
 /**
- * Entity class for session multimedia
+ * Entity class for storing session presentations
  * @author Richard Good
  */
 @Entity
-@Table(name="VC_SESSION_MULTIMEDIA")
-public class SessionMultimedia implements Serializable{
-    
+@Table(name="VC_SESSION_PRESENTATION")
+public class SessionPresentationImpl implements SessionPresentation {
+    private static final long serialVersionUID = 1L;
+
     @Id
-    @Column(name="MULTIMEDIA_ID")
-    long multimediaId;
+    @Column(name="PRESENTATION_ID")
+    long presentationId;
     
     @Column(name="SESSION_ID")
     String sessionId;
@@ -54,54 +55,64 @@ public class SessionMultimedia implements Serializable{
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     Date dateUploaded;
 
-    public long getMultimediaId() {
-        return multimediaId;
+    @Override
+    public long getPresentationId() {
+        return presentationId;
     }
 
-    public void setMultimediaId(long multimediaId) {
-        this.multimediaId = multimediaId;
+    @Override
+    public void setPresentationId(long presentationId) {
+        this.presentationId = presentationId;
     }
 
+    @Override
     public String getSessionId() {
         return sessionId;
     }
 
+    @Override
     public void setSessionId(String sessionId) {
         this.sessionId = sessionId;
     }
-
+    
+    @Override
     public String getFileName() {
         return fileName;
     }
 
+    @Override
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
 
+    @Override
     public void setDescription(String description) {
         this.description = description;
     }
 
+    @Override
     public String getCreatorId() {
         return creatorId;
     }
 
+    @Override
     public void setCreatorId(String creatorId) {
         this.creatorId = creatorId;
     }
 
+    @Override
     public Date getDateUploaded() {
         return dateUploaded;
     }
 
+    @Override
     public void setDateUploaded(Date dateUploaded) {
         this.dateUploaded = dateUploaded;
     }
-    
-    
     
 }

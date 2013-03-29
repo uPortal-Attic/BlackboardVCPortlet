@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import javax.mail.MessagingException;
-
 import org.jasig.portlet.blackboardvcportlet.service.MailTemplateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -144,7 +142,7 @@ public class MailTemplateServiceImpl implements BeanFactoryAware, MailTemplateSe
 	    }
 	  
 	  
-	  public void sendEmailUsingTemplate(String from, List<String> to, String subject, String[] substitutions, String template) throws MessagingException
+	  public void sendEmailUsingTemplate(String from, List<String> to, String subject, String[] substitutions, String template)
 	  {
 	      theQueue.add(new MailTask(from,to,subject,substitutions,template));
 	  }

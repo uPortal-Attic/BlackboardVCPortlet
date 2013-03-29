@@ -22,6 +22,7 @@ import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.jasig.portlet.blackboardvcportlet.dao.ServerQuotaDao;
 import org.jasig.portlet.blackboardvcportlet.data.ServerQuota;
+import org.jasig.portlet.blackboardvcportlet.data.ServerQuotaImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
@@ -51,8 +52,8 @@ public class ServerQuotaDaoImpl extends HibernateDaoSupport implements ServerQuo
     @Override
     public ServerQuota getServerQuota(){
         
-        Criteria criteria = this.getSession().createCriteria(ServerQuota.class);
-        List<ServerQuota> quotaList = criteria.list();
+        Criteria criteria = this.getSession().createCriteria(ServerQuotaImpl.class);
+        List<ServerQuotaImpl> quotaList = criteria.list();
         if (quotaList!=null&&quotaList.size()>0)
         {
            return (ServerQuota)criteria.list().get(0); 
@@ -79,7 +80,7 @@ public class ServerQuotaDaoImpl extends HibernateDaoSupport implements ServerQuo
      */
     @Override
     public void deleteServerQuota(){
-        Criteria criteria = this.getSession().createCriteria(ServerQuota.class);
+        Criteria criteria = this.getSession().createCriteria(ServerQuotaImpl.class);
         this.getHibernateTemplate().deleteAll(criteria.list());
     }
     

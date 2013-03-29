@@ -18,71 +18,65 @@
  */
 package org.jasig.portlet.blackboardvcportlet.data;
 
-import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
 
 /**
- * Entity class for storing session URLs
+ * Entity class for storing recording URLs
  * @author Richard Good
  */
 @Entity
-@Table(name="VC_SESSION_URL")
-public class SessionUrl implements Serializable {
-    
+@Table(name="VC_RECORDING_URL")
+public class RecordingUrlImpl implements RecordingUrl {
+    private static final long serialVersionUID = 1L;
+
     @EmbeddedId
-    protected SessionUrlId sessionUrlId;
-       
-    @Column(name="URL")
-    protected String url;
+    protected RecordingUrlId recordingUrlId;
     
     @Column(name="LAST_UPDATED")
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     protected Date lastUpdated;
 
-    public SessionUrl()
+    public RecordingUrlImpl()
     {
-        sessionUrlId = new SessionUrlId();
+        recordingUrlId = new RecordingUrlId();
     }
     
-    public String getDisplayName() {
-        return this.sessionUrlId.displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.sessionUrlId.displayName = displayName;
-    }
-
+    @Override
     public Date getLastUpdated() {
         return lastUpdated;
     }
 
+    @Override
     public void setLastUpdated(Date lastUpdated) {
         this.lastUpdated = lastUpdated;
     }
-
-    public long getSessionId() {
-        return this.sessionUrlId.sessionId;
+    
+    @Override
+    public void setRecordingId(Long recordingId)
+    {
+        this.recordingUrlId.recordingId=recordingId;
     }
-
-    public void setSessionId(long sessionId) {
-        this.sessionUrlId.sessionId = sessionId;
+    
+    @Override
+    public Long getRecordingId()
+    {
+        return this.recordingUrlId.recordingId;
     }
-
-    public String getUrl() {
-        return url;
+    
+    @Override
+    public String getUrl()
+    {
+        return this.recordingUrlId.url;
     }
-
-    public void setUrl(String url) {
-        this.url = url;
+    
+    @Override
+    public void setUrl(String url)
+    {
+        this.recordingUrlId.url=url;
     }
-
-    public String getUserId() {
-        return this.sessionUrlId.userId;
-    }
-
-    public void setUserId(String userId) {
-        this.sessionUrlId.userId = userId;
-    }
-       
 }

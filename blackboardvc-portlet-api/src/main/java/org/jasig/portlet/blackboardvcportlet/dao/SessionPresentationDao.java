@@ -16,23 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portlet.blackboardvcportlet.data;
+package org.jasig.portlet.blackboardvcportlet.dao;
 
-import java.io.Serializable;
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import java.util.List;
+
+import org.jasig.portlet.blackboardvcportlet.data.SessionPresentation;
 
 /**
- * Embedded id for Recording URLs
+ * Dao interface for SessionPresentation
  * @author Richard Good
  */
-@Embeddable
-public class RecordingUrlId implements Serializable {
+public interface SessionPresentationDao {
     
-     @Column(name="RECORDING_ID")
-     protected long recordingId;
-     
-     @Column(name="URL")
-     protected String url;
+    public void deleteSessionPresentation(String presentationId);
+    
+    public void storeSessionPresentation(SessionPresentation sessionPresentation);
+    
+    public List<SessionPresentation> getSessionPresentation(String sessionId);
     
 }

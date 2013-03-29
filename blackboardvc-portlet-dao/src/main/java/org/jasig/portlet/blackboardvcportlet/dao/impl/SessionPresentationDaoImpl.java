@@ -23,6 +23,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.jasig.portlet.blackboardvcportlet.dao.SessionPresentationDao;
 import org.jasig.portlet.blackboardvcportlet.data.SessionPresentation;
+import org.jasig.portlet.blackboardvcportlet.data.SessionPresentationImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
@@ -51,7 +52,7 @@ public class SessionPresentationDaoImpl extends HibernateDaoSupport implements S
      */
     @Override
     public void deleteSessionPresentation(String presentationId) {
-        this.getHibernateTemplate().delete(this.getHibernateTemplate().get(SessionPresentation.class,Long.valueOf(presentationId)));
+        this.getHibernateTemplate().delete(this.getHibernateTemplate().get(SessionPresentationImpl.class,Long.valueOf(presentationId)));
     }
 
     /**
@@ -70,7 +71,7 @@ public class SessionPresentationDaoImpl extends HibernateDaoSupport implements S
      */
     @Override
     public List<SessionPresentation> getSessionPresentation(String sessionId) {
-        Criteria criteria = this.getSession().createCriteria(SessionPresentation.class).add(Restrictions.eq("sessionId",sessionId));
+        Criteria criteria = this.getSession().createCriteria(SessionPresentationImpl.class).add(Restrictions.eq("sessionId",sessionId));
         return criteria.list();
     }
     

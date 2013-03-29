@@ -23,6 +23,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.jasig.portlet.blackboardvcportlet.dao.SessionMultimediaDao;
 import org.jasig.portlet.blackboardvcportlet.data.SessionMultimedia;
+import org.jasig.portlet.blackboardvcportlet.data.SessionMultimediaImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
@@ -51,7 +52,7 @@ public class SessionMultimediaDaoImpl extends HibernateDaoSupport implements Ses
      */
     @Override
     public void deleteSessionMultimedia(long multimediaId) {
-        this.getHibernateTemplate().delete(this.getHibernateTemplate().get(SessionMultimedia.class,multimediaId));
+        this.getHibernateTemplate().delete(this.getHibernateTemplate().get(SessionMultimediaImpl.class,multimediaId));
     }
 
     /**
@@ -61,7 +62,7 @@ public class SessionMultimediaDaoImpl extends HibernateDaoSupport implements Ses
      */
     @Override
     public List<SessionMultimedia> getSessionMultimedia(String sessionId) {
-        Criteria criteria = this.getSession().createCriteria(SessionMultimedia.class).add(Restrictions.eq("sessionId",sessionId));
+        Criteria criteria = this.getSession().createCriteria(SessionMultimediaImpl.class).add(Restrictions.eq("sessionId",sessionId));
         return criteria.list();
     }
 

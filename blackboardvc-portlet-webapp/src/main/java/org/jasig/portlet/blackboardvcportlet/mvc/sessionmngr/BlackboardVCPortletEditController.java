@@ -18,10 +18,36 @@
  */
 package org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr;
 
-import freemarker.template.utility.StringUtil;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.StringTokenizer;
+
+import javax.portlet.ActionRequest;
+import javax.portlet.ActionResponse;
+import javax.portlet.PortletMode;
+import javax.portlet.PortletPreferences;
+import javax.portlet.PortletRequest;
+import javax.portlet.RenderRequest;
+import javax.portlet.RenderResponse;
+
 import org.apache.commons.lang.StringUtils;
-import org.jasig.portlet.blackboardvcportlet.data.*;
-import org.jasig.portlet.blackboardvcportlet.service.*;
+import org.jasig.portlet.blackboardvcportlet.data.RecordingShort;
+import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
+import org.jasig.portlet.blackboardvcportlet.data.Session;
+import org.jasig.portlet.blackboardvcportlet.data.SessionImpl;
+import org.jasig.portlet.blackboardvcportlet.data.SessionMultimedia;
+import org.jasig.portlet.blackboardvcportlet.data.SessionPresentation;
+import org.jasig.portlet.blackboardvcportlet.data.User;
+import org.jasig.portlet.blackboardvcportlet.service.AuthorisationService;
+import org.jasig.portlet.blackboardvcportlet.service.RecordingService;
+import org.jasig.portlet.blackboardvcportlet.service.ServerConfigurationService;
+import org.jasig.portlet.blackboardvcportlet.service.SessionService;
+import org.jasig.portlet.blackboardvcportlet.service.UserService;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.slf4j.Logger;
@@ -32,9 +58,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
-import javax.portlet.*;
-import java.text.SimpleDateFormat;
-import java.util.*;
+
+import freemarker.template.utility.StringUtil;
 
 /**
  * Controller class for Portlet EDIT related actions and render
@@ -84,7 +109,7 @@ public class BlackboardVCPortletEditController
 		{
 			logger.debug("mView is empty");
 			ServerConfiguration serverConfiguration = serverConfigurationService.getServerConfiguration(prefs);
-			Session session = new Session();
+			Session session = new SessionImpl();
 			logger.debug("session id:" + session.getSessionId());
 
 			if (authService.isAdminAccess(request) || authService.isFullAccess(request))
@@ -904,7 +929,7 @@ public class BlackboardVCPortletEditController
 
 		logger.debug("saveSession called");
 		boolean noErrors = true;
-		Session session = new Session();
+		Session session = new SessionImpl();
 		boolean newSession = false;
 
 		if (!request.getParameter("sessionId").equals("") && !request.getParameter("sessionId").equals("0"))
@@ -1259,7 +1284,7 @@ public class BlackboardVCPortletEditController
 	{
 		logger.debug("addSessionToModel called");
 
-		Session session = new Session();
+		Session session = new SessionImpl();
 
 		if (!request.getParameter("sessionId").equals(""))
 		{

@@ -28,6 +28,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.jasig.portlet.blackboardvcportlet.dao.SessionExtParticipantDao;
 import org.jasig.portlet.blackboardvcportlet.data.SessionExtParticipant;
+import org.jasig.portlet.blackboardvcportlet.data.SessionExtParticipantImpl;
 import org.jasig.portlet.blackboardvcportlet.data.SessionExtParticipantId;
 
 /**
@@ -61,7 +62,7 @@ public class SessionExtParticipantDaoImpl extends HibernateDaoSupport implements
      */
     @Override
     public SessionExtParticipant getSessionExtParticipant(SessionExtParticipantId sessionExtParticipantId) {
-        return (SessionExtParticipant)this.getHibernateTemplate().get(SessionExtParticipant.class, sessionExtParticipantId);
+        return (SessionExtParticipant)this.getHibernateTemplate().get(SessionExtParticipantImpl.class, sessionExtParticipantId);
     }
 
     /**
@@ -79,7 +80,7 @@ public class SessionExtParticipantDaoImpl extends HibernateDaoSupport implements
      */
     @Override
     public void deleteAllExtParticipants(long sessionId) {
-        Criteria criteria = this.getSession().createCriteria(SessionExtParticipant.class).add(Restrictions.eq("sessionExtParticipantId.sessionId",sessionId));
+        Criteria criteria = this.getSession().createCriteria(SessionExtParticipantImpl.class).add(Restrictions.eq("sessionExtParticipantId.sessionId",sessionId));
         this.getHibernateTemplate().deleteAll(criteria.list());
     }
     

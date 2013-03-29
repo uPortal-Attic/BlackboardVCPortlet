@@ -23,6 +23,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.jasig.portlet.blackboardvcportlet.dao.RecordingUrlDao;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingUrl;
+import org.jasig.portlet.blackboardvcportlet.data.RecordingUrlImpl;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingUrlId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -54,9 +55,9 @@ public class RecordingUrlDaoImpl extends HibernateDaoSupport implements Recordin
     @Override
     public List<RecordingUrl>getRecordingUrls(Long recordingId)
     {
-        Criteria criteria = this.getSession().createCriteria(RecordingUrl.class).add(Restrictions.eq("recordingUrlId.recordingId",recordingId));
+        Criteria criteria = this.getSession().createCriteria(RecordingUrlImpl.class).add(Restrictions.eq("recordingUrlId.recordingId",recordingId));
         
-        return (List<RecordingUrl>)criteria.list();
+        return criteria.list();
     }
     
     /**
@@ -76,7 +77,7 @@ public class RecordingUrlDaoImpl extends HibernateDaoSupport implements Recordin
     @Override
     public void deleteRecordingUrl(RecordingUrlId recordingUrlId)
     {
-        this.getHibernateTemplate().delete(this.getHibernateTemplate().get(RecordingUrl.class,recordingUrlId));
+        this.getHibernateTemplate().delete(this.getHibernateTemplate().get(RecordingUrlImpl.class,recordingUrlId));
     }
     
     /**
@@ -86,7 +87,7 @@ public class RecordingUrlDaoImpl extends HibernateDaoSupport implements Recordin
     @Override
     public void deleteRecordingUrls(Long recordingId)
     {
-        Criteria criteria = this.getSession().createCriteria(RecordingUrl.class).add(Restrictions.eq("recordingUrlId.recordingId",recordingId));
+        Criteria criteria = this.getSession().createCriteria(RecordingUrlImpl.class).add(Restrictions.eq("recordingUrlId.recordingId",recordingId));
         this.getHibernateTemplate().deleteAll(criteria.list());
     }
       

@@ -19,6 +19,7 @@
 package org.jasig.portlet.blackboardvcportlet.dao;
 
 import java.util.List;
+
 import org.jasig.portlet.blackboardvcportlet.data.SessionMultimedia;
 
 /**

@@ -18,8 +18,8 @@
  */
 package org.jasig.portlet.blackboardvcportlet.data;
 
-import java.io.Serializable;
 import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -32,8 +32,9 @@ import javax.persistence.Temporal;
  */
 @Entity
 @Table(name="VC_SERVER_CONFIGURATION")
-public class ServerConfiguration implements Serializable{
-    
+public class ServerConfigurationImpl implements ServerConfiguration {
+    private static final long serialVersionUID = 1L;
+
     @Id
     @Column(name="BOUNDARY_TIME")
     protected int boundaryTime;
@@ -60,66 +61,82 @@ public class ServerConfiguration implements Serializable{
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     protected Date lastUpdated;
 
+    @Override
     public Date getLastUpdated() {
         return lastUpdated;
     }
 
+    @Override
     public void setLastUpdated(Date lastUpdated) {
         this.lastUpdated = lastUpdated;
     }
 
+    @Override
     public int getBoundaryTime() {
         return boundaryTime;
     }
 
+    @Override
     public void setBoundaryTime(int boundaryTime) {
         this.boundaryTime = boundaryTime;
     }
 
+    @Override
     public int getMaxAvailableCameras() {
         return maxAvailableCameras;
     }
 
+    @Override
     public void setMaxAvailableCameras(int maxAvailableCameras) {
         this.maxAvailableCameras = maxAvailableCameras;
     }
 
+    @Override
     public int getMaxAvailableTalkers() {
         return maxAvailableTalkers;
     }
 
+    @Override
     public void setMaxAvailableTalkers(int maxAvailableTalkers) {
         this.maxAvailableTalkers = maxAvailableTalkers;
     }
 
+    @Override
     public char getMayUseSecureSignOn() {
         return mayUseSecureSignOn;
     }
 
+    @Override
     public void setMayUseSecureSignOn(char mayUseSecureSignOn) {
         this.mayUseSecureSignOn = mayUseSecureSignOn;
     }
 
+    @Override
     public char getMustReserveSeats() {
         return mustReserveSeats;
     }
 
+    @Override
     public void setMustReserveSeats(char mustReserveSeats) {
         this.mustReserveSeats = mustReserveSeats;
     }
 
+    @Override
     public char getRaiseHandOnEnter() {
         return raiseHandOnEnter;
     }
 
+    @Override
     public void setRaiseHandOnEnter(char raiseHandOnEnter) {
         this.raiseHandOnEnter = raiseHandOnEnter;
     }
 
+    @Override
     public String getTimezone() {
         return timezone;
     }
 
+    @Override
     public void setTimezone(String timezone) {
         this.timezone = timezone;
     }

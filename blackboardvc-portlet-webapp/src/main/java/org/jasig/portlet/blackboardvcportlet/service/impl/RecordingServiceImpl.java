@@ -4,11 +4,15 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import javax.portlet.PortletPreferences;
+
 import org.jasig.portlet.blackboardvcportlet.dao.RecordingShortDao;
 import org.jasig.portlet.blackboardvcportlet.dao.RecordingUrlDao;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingShort;
+import org.jasig.portlet.blackboardvcportlet.data.RecordingShortImpl;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingUrl;
+import org.jasig.portlet.blackboardvcportlet.data.RecordingUrlImpl;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.service.RecordingService;
 import org.jasig.portlet.blackboardvcportlet.service.SessionService;
@@ -17,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.elluminate.sas.BuildRecordingUrl;
 import com.elluminate.sas.ListRecordingShort;
 import com.elluminate.sas.ListRecordingShortResponseCollection;
@@ -194,12 +199,12 @@ public class RecordingServiceImpl implements RecordingService {
 			ListRecordingShortResponseCollection listRecordingShortResponseCollection = (ListRecordingShortResponseCollection)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/ListRecordingShort", listRecordingShort);
 			List<RecordingShortResponse> recordingShortResponses = listRecordingShortResponseCollection.getRecordingShortResponses();
 
-			RecordingShort recordingShort;
+			RecordingShortImpl recordingShort;
 			RecordingUrl recordingUrl;
 			Session session = sessionService.getSession(sessionId);
 			for (RecordingShortResponse shortResponse : recordingShortResponses)
 			{
-				recordingShort = new RecordingShort();
+				recordingShort = new RecordingShortImpl();
 				recordingShort.setCreationDate(shortResponse.getCreationDate());
 				recordingShort.setRecordingId(shortResponse.getRecordingId());
 				recordingShort.setRecordingSize(shortResponse.getRecordingSize());
@@ -216,7 +221,7 @@ public class RecordingServiceImpl implements RecordingService {
 				buildRecordingUrl.setRecordingId(recordingShort.getRecordingId());
 				UrlResponse urlResponse = (UrlResponse) sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/BuildRecordingUrl", buildRecordingUrl);
 
-				recordingUrl = new RecordingUrl();
+				recordingUrl = new RecordingUrlImpl();
 				recordingUrl.setRecordingId(shortResponse.getRecordingId());
 				recordingUrl.setUrl(urlResponse.getUrl());
 				recordingUrl.setLastUpdated(new Date());

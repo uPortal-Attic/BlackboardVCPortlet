@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portlet.blackboardvcportlet.data;
+package org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr;
 
 import org.springframework.web.multipart.MultipartFile;
 

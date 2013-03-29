@@ -18,58 +18,49 @@
  */
 package org.jasig.portlet.blackboardvcportlet.data;
 
-import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
 
 /**
- * Entity class for storing recording URLs
+ * Entity class holding external participants to a session
  * @author Richard Good
  */
 @Entity
-@Table(name="VC_RECORDING_URL")
-public class RecordingUrl {
-    
+@Table(name="VC_SESSION_EXTPARTICIPANT")
+public class SessionExtParticipantImpl implements SessionExtParticipant {
+    private static final long serialVersionUID = 1L;
+
     @EmbeddedId
-    protected RecordingUrlId recordingUrlId;
+    protected SessionExtParticipantId sessionExtParticipantId;
     
-    @Column(name="LAST_UPDATED")
-    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-    protected Date lastUpdated;
+    @Column(name="DISPLAY_NAME")
+    String display_name;
 
-    public RecordingUrl()
+    public SessionExtParticipantImpl()
     {
-        recordingUrlId = new RecordingUrlId();
+        sessionExtParticipantId = new SessionExtParticipantId();
     }
     
-    public Date getLastUpdated() {
-        return lastUpdated;
+    @Override
+    public SessionExtParticipantId getSessionExtParticipantId() {
+        return sessionExtParticipantId;
     }
 
-    public void setLastUpdated(Date lastUpdated) {
-        this.lastUpdated = lastUpdated;
+    @Override
+    public void setSessionExtParticipantId(SessionExtParticipantId sessionExtParticipantId) {
+        this.sessionExtParticipantId = sessionExtParticipantId;
     }
-    
-    public void setRecordingId(Long recordingId)
-    {
-        this.recordingUrlId.recordingId=recordingId;
+
+    @Override
+    public String getDisplay_name() {
+        return display_name;
     }
-    
-    public Long getRecordingId()
-    {
-        return this.recordingUrlId.recordingId;
+
+    @Override
+    public void setDisplay_name(String display_name) {
+        this.display_name = display_name;
     }
-    
-    public String getUrl()
-    {
-        return this.recordingUrlId.url;
-    }
-    
-    public void setUrl(String url)
-    {
-        this.recordingUrlId.url=url;
-    }
+      
 }

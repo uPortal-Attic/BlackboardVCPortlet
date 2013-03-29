@@ -23,6 +23,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.*;
 import org.jasig.portlet.blackboardvcportlet.dao.SessionDao;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
+import org.jasig.portlet.blackboardvcportlet.data.SessionImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
@@ -55,7 +56,7 @@ public class SessionDaoImpl extends HibernateDaoSupport implements SessionDao {
     public Session getSession(Long sessionId)
     {
         logger.debug("getSession called for sessionId:"+sessionId);
-       return (Session)this.getHibernateTemplate().get(Session.class,sessionId);
+       return (Session)this.getHibernateTemplate().get(SessionImpl.class,sessionId);
     }
     
     /**
@@ -86,7 +87,7 @@ public class SessionDaoImpl extends HibernateDaoSupport implements SessionDao {
     public List<Session> getAllSesssions()
     {
         logger.debug("getAllSessions called");
-        Criteria criteria = this.getSession().createCriteria(Session.class).addOrder(Order.desc("startTime"));
+        Criteria criteria = this.getSession().createCriteria(SessionImpl.class).addOrder(Order.desc("startTime"));
         return criteria.list();
     }
 
@@ -100,7 +101,7 @@ public class SessionDaoImpl extends HibernateDaoSupport implements SessionDao {
     public List<Session> getSessionsForUser(String uid) {
         logger.debug("uid:"+uid);
         List<Session> sessions;
-        Criteria criteria = this.getSession().createCriteria(Session.class);
+        Criteria criteria = this.getSession().createCriteria(SessionImpl.class);
         Criterion chairCriteria = Restrictions.ilike("chairList", uid+",", MatchMode.ANYWHERE);
         Criterion chairEndCriteria = Restrictions.ilike("chairList", uid,MatchMode.END);
         Criterion nonChairCriteria = Restrictions.ilike("nonChairList", uid+",", MatchMode.ANYWHERE);

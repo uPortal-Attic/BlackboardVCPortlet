@@ -1,9 +1,34 @@
 package org.jasig.portlet.blackboardvcportlet.service.impl;
 
-import com.elluminate.sas.*;
-import freemarker.template.utility.StringUtil;
-import org.jasig.portlet.blackboardvcportlet.dao.*;
-import org.jasig.portlet.blackboardvcportlet.data.*;
+import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.activation.DataHandler;
+import javax.mail.util.ByteArrayDataSource;
+import javax.portlet.PortletPreferences;
+import javax.xml.bind.JAXBElement;
+
+import org.jasig.portlet.blackboardvcportlet.dao.SessionDao;
+import org.jasig.portlet.blackboardvcportlet.dao.SessionExtParticipantDao;
+import org.jasig.portlet.blackboardvcportlet.dao.SessionMultimediaDao;
+import org.jasig.portlet.blackboardvcportlet.dao.SessionPresentationDao;
+import org.jasig.portlet.blackboardvcportlet.dao.SessionUrlDao;
+import org.jasig.portlet.blackboardvcportlet.data.RecordingShort;
+import org.jasig.portlet.blackboardvcportlet.data.Session;
+import org.jasig.portlet.blackboardvcportlet.data.SessionExtParticipant;
+import org.jasig.portlet.blackboardvcportlet.data.SessionExtParticipantId;
+import org.jasig.portlet.blackboardvcportlet.data.SessionExtParticipantImpl;
+import org.jasig.portlet.blackboardvcportlet.data.SessionMultimedia;
+import org.jasig.portlet.blackboardvcportlet.data.SessionMultimediaImpl;
+import org.jasig.portlet.blackboardvcportlet.data.SessionPresentation;
+import org.jasig.portlet.blackboardvcportlet.data.SessionPresentationImpl;
+import org.jasig.portlet.blackboardvcportlet.data.SessionUrl;
+import org.jasig.portlet.blackboardvcportlet.data.SessionUrlId;
+import org.jasig.portlet.blackboardvcportlet.data.SessionUrlImpl;
+import org.jasig.portlet.blackboardvcportlet.data.User;
 import org.jasig.portlet.blackboardvcportlet.service.MailTemplateService;
 import org.jasig.portlet.blackboardvcportlet.service.RecordingService;
 import org.jasig.portlet.blackboardvcportlet.service.SessionService;
@@ -14,16 +39,30 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import javax.activation.DataHandler;
-import javax.mail.util.ByteArrayDataSource;
-import javax.portlet.PortletPreferences;
-import javax.xml.bind.JAXBElement;
 
-import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import com.elluminate.sas.BuildSessionUrl;
+import com.elluminate.sas.MultimediaResponse;
+import com.elluminate.sas.MultimediaResponseCollection;
+import com.elluminate.sas.ObjectFactory;
+import com.elluminate.sas.PresentationResponse;
+import com.elluminate.sas.PresentationResponseCollection;
+import com.elluminate.sas.RemoveRepositoryMultimedia;
+import com.elluminate.sas.RemoveRepositoryPresentation;
+import com.elluminate.sas.RemoveSession;
+import com.elluminate.sas.RemoveSessionMultimedia;
+import com.elluminate.sas.RemoveSessionPresentation;
+import com.elluminate.sas.SessionResponse;
+import com.elluminate.sas.SessionResponseCollection;
+import com.elluminate.sas.SetApiCallbackUrl;
+import com.elluminate.sas.SetSession;
+import com.elluminate.sas.SetSessionMultimedia;
+import com.elluminate.sas.SetSessionPresentation;
+import com.elluminate.sas.SuccessResponse;
+import com.elluminate.sas.UpdateSession;
+import com.elluminate.sas.UploadRepositoryContent;
+import com.elluminate.sas.UrlResponse;
+
+import freemarker.template.utility.StringUtil;
 
 @Service
 public class SessionServiceImpl implements SessionService {
@@ -86,7 +125,7 @@ public class SessionServiceImpl implements SessionService {
         } catch (Exception e) {
             logger.error("Error gettingSessionUrl()", e);
         }
-        SessionUrl sessionUrl = new SessionUrl();
+        SessionUrl sessionUrl = new SessionUrlImpl();
         sessionUrl.setDisplayName(sessionUrlId.getDisplayName());
         sessionUrl.setSessionId(sessionUrlId.getSessionId());
         if (!sessionUrlId.getUserId().equals("-1")) {
@@ -461,7 +500,7 @@ public class SessionServiceImpl implements SessionService {
     public void addExtParticipant(User user, long sessionId) {
         logger.debug("addExtParticipant called for session,user: (" + sessionId + "," + user.getEmail() + ")");
         SessionExtParticipantId sessionExtParticipantId = new SessionExtParticipantId();
-        SessionExtParticipant sessionExtParticipant = new SessionExtParticipant();
+        SessionExtParticipant sessionExtParticipant = new SessionExtParticipantImpl();
 
         sessionExtParticipantId.setParticipantEmail(user.getEmail());
         sessionExtParticipantId.setSessionId(sessionId);
@@ -530,7 +569,7 @@ public class SessionServiceImpl implements SessionService {
 
             if (presentationResponseCollection != null)
 			{
-                SessionPresentation sessionPresentation = new SessionPresentation();
+                SessionPresentation sessionPresentation = new SessionPresentationImpl();
                 sessionPresentation.setCreatorId(uid);
                 sessionPresentation.setDateUploaded(new Date());
                 sessionPresentation.setFileName(file.getOriginalFilename());
@@ -636,7 +675,7 @@ public class SessionServiceImpl implements SessionService {
             logger.debug("uploadRepositoryMultimedia called");
 
             if (multimediaResponseCollection != null) {
-                SessionMultimedia sessionMultimedia = new SessionMultimedia();
+                SessionMultimedia sessionMultimedia = new SessionMultimediaImpl();
                 sessionMultimedia.setCreatorId(uid);
                 sessionMultimedia.setDateUploaded(new Date());
                 sessionMultimedia.setFileName(file.getOriginalFilename());

@@ -5,6 +5,7 @@ import com.elluminate.sas.ObjectFactory;
 import com.elluminate.sas.ServerConfigurationResponse;
 import org.jasig.portlet.blackboardvcportlet.dao.ServerConfigurationDao;
 import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
+import org.jasig.portlet.blackboardvcportlet.data.ServerConfigurationImpl;
 import org.jasig.portlet.blackboardvcportlet.service.ServerConfigurationService;
 import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceTemplate;
 import org.slf4j.Logger;
@@ -75,7 +76,7 @@ public class ServerConfigurationServiceImpl implements ServerConfigurationServic
 				logger.debug("Result = " + configResult);
 				for (ServerConfigurationResponse response : configResult)
 				{
-					ServerConfiguration configuration = new ServerConfiguration();
+					ServerConfiguration configuration = new ServerConfigurationImpl();
 					configuration.setBoundaryTime(response.getBoundaryTime());
 					configuration.setLastUpdated(new Date());
 					configuration.setMaxAvailableCameras(response.getMaxAvailableCameras());

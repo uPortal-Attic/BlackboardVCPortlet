@@ -22,6 +22,7 @@ import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.jasig.portlet.blackboardvcportlet.dao.ServerConfigurationDao;
 import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
+import org.jasig.portlet.blackboardvcportlet.data.ServerConfigurationImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
@@ -51,8 +52,8 @@ public class ServerConfigurationDaoImpl extends HibernateDaoSupport implements S
     @Override
     public ServerConfiguration getServerConfiguration()
     {
-        Criteria criteria = this.getSession().createCriteria(ServerConfiguration.class);
-        List<ServerConfiguration> configurationList = criteria.list();
+        Criteria criteria = this.getSession().createCriteria(ServerConfigurationImpl.class);
+        List<ServerConfigurationImpl> configurationList = criteria.list();
         if (configurationList!=null&&configurationList.size()>0)
         {
             return (ServerConfiguration)criteria.list().get(0);
@@ -81,7 +82,7 @@ public class ServerConfigurationDaoImpl extends HibernateDaoSupport implements S
     @Override
     public void deleteServerConfiguration()
     {
-        Criteria criteria = this.getSession().createCriteria(ServerConfiguration.class);
+        Criteria criteria = this.getSession().createCriteria(ServerConfigurationImpl.class);
         this.getHibernateTemplate().deleteAll(criteria.list());
     }
     

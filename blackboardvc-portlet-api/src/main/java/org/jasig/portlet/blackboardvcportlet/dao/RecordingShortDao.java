@@ -19,18 +19,27 @@
 package org.jasig.portlet.blackboardvcportlet.dao;
 
 import java.util.List;
-import org.jasig.portlet.blackboardvcportlet.data.SessionPresentation;
+
+import org.jasig.portlet.blackboardvcportlet.data.RecordingShort;
 
 /**
- * Dao interface for SessionPresentation
+ * DAO Interface class for the RecordingShort
  * @author Richard Good
  */
-public interface SessionPresentationDao {
+public interface RecordingShortDao {
     
-    public void deleteSessionPresentation(String presentationId);
+    public RecordingShort getRecording(long recordingShortId);
     
-    public void storeSessionPresentation(SessionPresentation sessionPresentation);
+    public void deleteRecordingShort(long recordingShortId);
     
-    public List<SessionPresentation> getSessionPresentation(String sessionId);
+    public void saveRecordingShort(RecordingShort recordingShort);
+    
+    public void deleteAllRecordingShort(long sessionId);
+    
+    public List<RecordingShort> getAllRecordings();
+    
+    public List<RecordingShort> getRecordingsForUser(String uid);
+    
+    public List<RecordingShort> getAllSessionRecordings(long sessionId);
     
 }

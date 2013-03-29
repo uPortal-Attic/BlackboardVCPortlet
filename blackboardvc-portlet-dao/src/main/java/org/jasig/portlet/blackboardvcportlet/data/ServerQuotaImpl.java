@@ -18,8 +18,8 @@
  */
 package org.jasig.portlet.blackboardvcportlet.data;
 
-import java.io.Serializable;
 import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -32,8 +32,9 @@ import javax.persistence.Temporal;
  */
 @Entity
 @Table(name="VC_SERVER_QUOTA")
-public class ServerQuota implements Serializable {
-    
+public class ServerQuotaImpl implements ServerQuota {
+    private static final long serialVersionUID = 1L;
+
     @Id
     @Column(name="DISK_QUOTA")
     protected long diskQuota;
@@ -51,42 +52,52 @@ public class ServerQuota implements Serializable {
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     protected Date lastUpdated;
 
+    @Override
     public long getDiskQuota() {
         return diskQuota;
     }
 
+    @Override
     public void setDiskQuota(long diskQuota) {
         this.diskQuota = diskQuota;
     }
 
+    @Override
     public long getDiskQuotaAvailable() {
         return diskQuotaAvailable;
     }
 
+    @Override
     public void setDiskQuotaAvailable(long diskQuotaAvailable) {
         this.diskQuotaAvailable = diskQuotaAvailable;
     }
 
+    @Override
     public Date getLastUpdated() {
         return lastUpdated;
     }
 
+    @Override
     public void setLastUpdated(Date lastUpdated) {
         this.lastUpdated = lastUpdated;
     }
 
+    @Override
     public int getSessionQuota() {
         return sessionQuota;
     }
 
+    @Override
     public void setSessionQuota(int sessionQuota) {
         this.sessionQuota = sessionQuota;
     }
 
+    @Override
     public int getSessionQuotaAvailable() {
         return sessionQuotaAvailable;
     }
 
+    @Override
     public void setSessionQuotaAvailable(int sessionQuotaAvailable) {
         this.sessionQuotaAvailable = sessionQuotaAvailable;
     }
