@@ -12,9 +12,9 @@ import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import javax.portlet.PortletPreferences;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -48,52 +48,40 @@ public class ServerQuotaServiceImpl implements ServerQuotaService
      /**
       * Refresh the server quota, only goes to Collaborate if last update
       * was longer than an hour ago.
-      * @param prefs PortletPreferences
       */
-    public void refreshServerQuota(PortletPreferences prefs)
+	@Scheduled(fixedRate=3600000)
+    public void refreshServerQuota()
     {
-        // Quota will refresh on the hour
-        ServerQuota serverQuota = serverQuotaDao.getServerQuota();
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.HOUR_OF_DAY,-1);
-        Date date = calendar.getTime();
-
-		if (serverQuota == null || serverQuota.getLastUpdated().before(date))
+		logger.info("Server Quota being refreshed");
+		try
 		{
-			logger.debug("Quota being refreshed");
-			try
+			// Call Web Service Operation
+			ServerQuotas serverQuotas = objectFactory.createServerQuotas();
+			GetServerQuotasResponseCollection serverQuotasResponseCollection = (GetServerQuotasResponseCollection) sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/GetServerQuotas", serverQuotas);
+			List<ServerQuotasResponse> quotaResult = serverQuotasResponseCollection.getServerQuotasResponses();
+			logger.debug("Result = " + quotaResult);
+			for (ServerQuotasResponse response : quotaResult)
 			{
-				// Call Web Service Operation
-				ServerQuotas serverQuotas = objectFactory.createServerQuotas();
-				GetServerQuotasResponseCollection serverQuotasResponseCollection = (GetServerQuotasResponseCollection) sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/GetServerQuotas", serverQuotas);
-				List<ServerQuotasResponse> quotaResult = serverQuotasResponseCollection.getServerQuotasResponses();
-				logger.debug("Result = " + quotaResult);
-				for (ServerQuotasResponse response : quotaResult)
-				{
-					ServerQuota quota = new ServerQuotaImpl();
-					quota.setDiskQuota(response.getDiskQuota());
-					quota.setDiskQuotaAvailable(response.getDiskQuotaAvailable());
-					quota.setSessionQuota(response.getSessionQuota());
-					quota.setSessionQuotaAvailable(response.getSessionQuotaAvailable());
-					quota.setLastUpdated(new Date());
-					logger.debug("disk quota:" + quota.getDiskQuota());
-					logger.debug("disk quota available:" + quota.getDiskQuotaAvailable());
-					logger.debug("session quota:" + quota.getSessionQuota());
-					logger.debug("session quota available:" + quota.getSessionQuotaAvailable());
+				ServerQuota quota = new ServerQuotaImpl();
+				quota.setDiskQuota(response.getDiskQuota());
+				quota.setDiskQuotaAvailable(response.getDiskQuotaAvailable());
+				quota.setSessionQuota(response.getSessionQuota());
+				quota.setSessionQuotaAvailable(response.getSessionQuotaAvailable());
+				quota.setLastUpdated(new Date());
+				logger.debug("disk quota:" + quota.getDiskQuota());
+				logger.debug("disk quota available:" + quota.getDiskQuotaAvailable());
+				logger.debug("session quota:" + quota.getSessionQuota());
+				logger.debug("session quota available:" + quota.getSessionQuotaAvailable());
 
-					//ServerQuotaService serviceQuotaImpl = new ServerQuotaService();
-					/// serviceQuotaImpl.saveServerQuota(quota);
-					serverQuotaDao.deleteServerQuota();
-					serverQuotaDao.saveServerQuota(quota);
-				}
+				//ServerQuotaService serviceQuotaImpl = new ServerQuotaService();
+				/// serviceQuotaImpl.saveServerQuota(quota);
+				serverQuotaDao.deleteServerQuota();
+				serverQuotaDao.saveServerQuota(quota);
 			}
-			catch (Exception ex)
-			{
-				logger.error(ex.toString());
-			}
-		} else
+		}
+		catch (Exception ex)
 		{
-			logger.debug("Quota doesn't need refreshed");
+			logger.error("Error refreshing ServerQuota data: ", ex);
 		}
 	}
 }

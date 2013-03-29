@@ -55,9 +55,6 @@ public class BlackboardVCPortletViewController
 	private String eduPersonOrgUnitDn;
 
 	@Autowired
-	ServerQuotaService serverQuotaService;
-
-	@Autowired
 	SessionService sessionService;
 
 	@Autowired
@@ -79,15 +76,11 @@ public class BlackboardVCPortletViewController
 	@RenderMapping
 	public ModelAndView view(RenderRequest request, RenderResponse response)
 	{
-
 		logger.debug("view called");
-
 		logger.debug("feedbackMessage value:" + request.getParameter("feedbackMessage"));
 		ModelAndView modelAndView = new ModelAndView("BlackboardVCPortlet_view");
 
 		final PortletPreferences prefs = request.getPreferences();
-
-		serverQuotaService.refreshServerQuota(prefs);
 
 		Map<String, String> userInfo = (Map<String, String>) request.getAttribute(PortletRequest.USER_INFO);
 		uid = userInfo.get("uid");
@@ -335,13 +328,10 @@ public class BlackboardVCPortletViewController
 			}
 			stringWriter.flush();
 			stringWriter.close();
-
 		}
 		catch (Exception e)
 		{
 			logger.error("Exception caught building model for CSV download", e);
 		}
-
 	}
-
 }

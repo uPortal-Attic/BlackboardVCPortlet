@@ -18,8 +18,6 @@
  */
 package org.jasig.portlet.blackboardvcportlet.service;
 
-import javax.portlet.PortletPreferences;
-
 import org.springframework.stereotype.Service;
 
 /**
@@ -32,7 +30,6 @@ public interface ServerQuotaService
 	 /**
 	  * Refresh the server quota, only goes to Collaborate if last update
 	  * was longer than an hour ago.
-	  * @param prefs PortletPreferences
 	  */
-    public void refreshServerQuota(PortletPreferences prefs);
+    public void refreshServerQuota();
 }
