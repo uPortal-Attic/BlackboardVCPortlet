@@ -17,6 +17,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.activation.DataHandler;
 import javax.mail.util.ByteArrayDataSource;
 import javax.portlet.PortletPreferences;
+import javax.xml.bind.JAXBElement;
+
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -97,7 +99,8 @@ public class SessionServiceImpl implements SessionService {
 			buildSessionUrl.setSessionId(sessionUrl.getSessionId());
 			buildSessionUrl.setDisplayName(sessionUrl.getDisplayName());
 			buildSessionUrl.setUserId(sessionUrl.getUserId());
-			UrlResponse urlResponse = (UrlResponse)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/BuildSessionUrl", buildSessionUrl);
+			JAXBElement<UrlResponse> response = (JAXBElement<UrlResponse>)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/BuildSessionUrl", buildSessionUrl);
+			UrlResponse urlResponse = response.getValue();
 
             sessionUrl.setUrl(urlResponse.getUrl());
             sessionUrl.setLastUpdated(new Date());
@@ -135,7 +138,8 @@ public class SessionServiceImpl implements SessionService {
             try {
 				RemoveSession removeSession = objectFactory.createRemoveSession();
 				removeSession.setSessionId(sessionId);
-				SuccessResponse successResponse = (SuccessResponse)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/RemoveSession", removeSession);
+				JAXBElement<SuccessResponse> response = (JAXBElement<SuccessResponse>)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/RemoveSession", removeSession); 
+				SuccessResponse successResponse = response.getValue();
                 logger.debug("removeSession called, returned:" + successResponse.isSuccess());
             } catch (Exception e) {
                 logger.error("RemoveSession Error:", e);
@@ -201,7 +205,8 @@ public class SessionServiceImpl implements SessionService {
 				updateSession.setSecureSignOn(session.isSecureSignOn());
 				updateSession.setAllowInSessionInvites(session.isAllowInSessionInvites());
 				updateSession.setHideParticipantNames(session.isHideParticipantNames());
-				sessionResponseCollection = (SessionResponseCollection)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/UpdateSession", updateSession);
+				JAXBElement<SessionResponseCollection> response = (JAXBElement<SessionResponseCollection>)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/UpdateSession", updateSession);
+				sessionResponseCollection = response.getValue();
             } else {
                 logger.debug("New session, calling setSession");
 				SetSession setSession = objectFactory.createSetSession();
@@ -226,8 +231,8 @@ public class SessionServiceImpl implements SessionService {
 				setSession.setSecureSignOn(session.isSecureSignOn());
 				setSession.setAllowInSessionInvites(session.isAllowInSessionInvites());
 				setSession.setHideParticipantNames(session.isHideParticipantNames());
-
-				sessionResponseCollection = (SessionResponseCollection)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/SetSession", setSession);
+				JAXBElement<SessionResponseCollection> response = (JAXBElement<SessionResponseCollection>)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/SetSession", setSession);
+				sessionResponseCollection = (SessionResponseCollection)response.getValue();
                 logger.debug("setSession called, received response");
             }
 
@@ -283,7 +288,8 @@ public class SessionServiceImpl implements SessionService {
             if (callBackUrl != null) {
 				SetApiCallbackUrl setApiCallbackUrl = objectFactory.createSetApiCallbackUrl();
 				setApiCallbackUrl.setApiCallbackUrl(callBackUrl);
-				SuccessResponse successResponse = (SuccessResponse)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/SetApiCallbackUrl", setApiCallbackUrl);
+				JAXBElement<SuccessResponse> response = (JAXBElement<SuccessResponse>) sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/SetApiCallbackUrl", setApiCallbackUrl);
+				SuccessResponse successResponse = response.getValue();
                 logger.debug("callBackUrl response:" + successResponse.isSuccess());
             }
 
@@ -490,11 +496,13 @@ public class SessionServiceImpl implements SessionService {
 			RemoveSessionPresentation removeSessionPresentation = objectFactory.createRemoveSessionPresentation();
 			removeSessionPresentation.setSessionId(sessionId);
 			removeSessionPresentation.setPresentationId(presentationId);
-			SuccessResponse successResponse = (SuccessResponse)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/RemoveSessionPresentation", removeSessionPresentation);
+			JAXBElement<SuccessResponse> response = (JAXBElement<SuccessResponse>)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/RemoveSessionPresentation", removeSessionPresentation);  
+			SuccessResponse successResponse = response.getValue();
             logger.debug("removeSessionPresentation returned:" + successResponse.isSuccess());
 			RemoveRepositoryPresentation removeRepositoryPresentation = objectFactory.createRemoveRepositoryPresentation();
 			removeRepositoryPresentation.setPresentationId(presentationId);
-			successResponse = (SuccessResponse)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/RemoveRepositoryPresentation", removeRepositoryPresentation);
+			response = (JAXBElement<SuccessResponse>) sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/RemoveRepositoryPresentation", removeRepositoryPresentation);
+			successResponse = response.getValue();
             logger.debug("removeRepositoryPresentation returned:" + successResponse.isSuccess());
             sessionPresentationDao.deleteSessionPresentation(Long.toString(presentationId));
         } catch (Exception e) {
@@ -516,7 +524,8 @@ public class SessionServiceImpl implements SessionService {
 			uploadRepositoryContent.setCreatorId(uid);
 			uploadRepositoryContent.setFilename(file.getOriginalFilename());
 			uploadRepositoryContent.setContent(dataHandler);
-			PresentationResponseCollection presentationResponseCollection = (PresentationResponseCollection)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/UploadRepositoryPresentation", uploadRepositoryContent);
+			JAXBElement<PresentationResponseCollection> response = (JAXBElement<PresentationResponseCollection>) sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/UploadRepositoryPresentation", uploadRepositoryContent);
+			PresentationResponseCollection presentationResponseCollection = response.getValue();
             logger.debug("uploadRepositoryPresentation called");
 
             if (presentationResponseCollection != null)
@@ -531,7 +540,8 @@ public class SessionServiceImpl implements SessionService {
                  	SetSessionPresentation setSessionPresentation = objectFactory.createSetSessionPresentation();
 					setSessionPresentation.setSessionId(sessionId);
 					setSessionPresentation.setPresentationId(presentationResponse.getPresentationId());
-					SuccessResponse successResponse = (SuccessResponse)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/SetSessionPresentation", setSessionPresentation);
+					JAXBElement<SuccessResponse> response2 = (JAXBElement<SuccessResponse>)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/SetSessionPresentation", setSessionPresentation);
+					SuccessResponse successResponse = response2.getValue();
                     if (successResponse.isSuccess()) {
                         sessionPresentation.setPresentationId(presentationResponse.getPresentationId());
                         sessionPresentationDao.storeSessionPresentation(sessionPresentation);
@@ -556,11 +566,13 @@ public class SessionServiceImpl implements SessionService {
 				RemoveSessionMultimedia removeSessionMultimedia = objectFactory.createRemoveSessionMultimedia();
 				removeSessionMultimedia.setSessionId(sessionId);
 				removeSessionMultimedia.setMultimediaId(sessionMultimedia.getMultimediaId());
-				SuccessResponse successResponse = (SuccessResponse)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/RemoveSessionMultimedia", removeSessionMultimedia);
+				JAXBElement<SuccessResponse> response = (JAXBElement<SuccessResponse>)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/RemoveSessionMultimedia", removeSessionMultimedia);
+				SuccessResponse successResponse = response.getValue();
                 logger.debug("deleteSessionMultimedia returned:" + successResponse.isSuccess());
 				RemoveRepositoryMultimedia removeRepositoryMultimedia = objectFactory.createRemoveRepositoryMultimedia();
 				removeRepositoryMultimedia.setMultimediaId(sessionMultimedia.getMultimediaId());
-				successResponse = (SuccessResponse)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/RemoveRepositoryMultimedia", removeRepositoryMultimedia);
+				JAXBElement<SuccessResponse> response2 = (JAXBElement<SuccessResponse>)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/RemoveRepositoryMultimedia", removeRepositoryMultimedia);
+				successResponse = response2.getValue();
                 logger.debug("delete multimediaId (" + sessionMultimedia.getMultimediaId() + " returned:" + successResponse.isSuccess());
                 sessionMultimediaDao.deleteSessionMultimedia(sessionMultimedia.getMultimediaId());
             }
@@ -582,12 +594,14 @@ public class SessionServiceImpl implements SessionService {
                 RemoveSessionMultimedia removeSessionMultimedia = objectFactory.createRemoveSessionMultimedia();
 				removeSessionMultimedia.setSessionId(sessionId);
 				removeSessionMultimedia.setMultimediaId(Long.valueOf(multiMediaId));
-				SuccessResponse successResponse = (SuccessResponse)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/RemoveSessionMultimedia", removeSessionMultimedia);
+				JAXBElement<SuccessResponse> response = (JAXBElement<SuccessResponse>)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/RemoveSessionMultimedia", removeSessionMultimedia); 
+				SuccessResponse successResponse = response.getValue();
                 if (successResponse.isSuccess()) {
 					RemoveRepositoryMultimedia removeRepositoryMultimedia = objectFactory.createRemoveRepositoryMultimedia();
 					removeRepositoryMultimedia.setMultimediaId(Long.valueOf(multiMediaId));
-					SuccessResponse response = (SuccessResponse)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/RemoveRepositoryMultimedia", removeRepositoryMultimedia);
-                    logger.debug("delete multimediaId (" + multiMediaId + " returned:" + response.isSuccess());
+					JAXBElement<SuccessResponse> response2 = (JAXBElement<SuccessResponse>)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/RemoveRepositoryMultimedia", removeRepositoryMultimedia);
+					successResponse = response2.getValue();
+                    logger.debug("delete multimediaId (" + multiMediaId + " returned:" + successResponse.isSuccess());
                     sessionMultimediaDao.deleteSessionMultimedia(Long.valueOf(multiMediaId));
                 } else {
                     throw new Exception("Error deleting session multimedia.");
@@ -617,7 +631,8 @@ public class SessionServiceImpl implements SessionService {
 			uploadRepositoryContent.setCreatorId(uid);
 			uploadRepositoryContent.setFilename(file.getOriginalFilename());
 			uploadRepositoryContent.setContent(dataHandler);
-            MultimediaResponseCollection multimediaResponseCollection = (MultimediaResponseCollection)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/UploadRepositoryMultimedia", uploadRepositoryContent);
+			JAXBElement<MultimediaResponseCollection> jaxBmrc = (JAXBElement<MultimediaResponseCollection>)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/UploadRepositoryMultimedia", uploadRepositoryContent);  
+            MultimediaResponseCollection multimediaResponseCollection = jaxBmrc.getValue();
             logger.debug("uploadRepositoryMultimedia called");
 
             if (multimediaResponseCollection != null) {
@@ -639,7 +654,8 @@ public class SessionServiceImpl implements SessionService {
 					SetSessionMultimedia setSessionMultimedia = objectFactory.createSetSessionMultimedia();
 					setSessionMultimedia.setSessionId(sessionId);
 					setSessionMultimedia.setMultimediaIds(multimediaIds);
-					SuccessResponse successResponse = (SuccessResponse)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/SetSessionMultimedia", setSessionMultimedia);
+					JAXBElement<SuccessResponse> jaxBsuccessResponse = (JAXBElement<SuccessResponse>)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/SetSessionMultimedia", setSessionMultimedia);  
+					SuccessResponse successResponse = jaxBsuccessResponse.getValue();
                     if (successResponse.isSuccess()) {
                         sessionMultimediaDao.saveSessionMultimedia(sessionMultimedia);
                     }
