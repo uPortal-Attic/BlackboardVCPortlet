@@ -45,6 +45,11 @@
     <context:component-scan base-package="org.jasig.portlet.blackboardvcportlet.dao.impl" />
     <context:component-scan base-package="org.jasig.portlet.blackboardvcportlet.data" />
     <context:component-scan base-package="org.jasig.portlet.blackboardvcportlet.service.impl" />
+    
+    
+    <!-- Task scheduling -->
+    <task:annotation-driven scheduler="taskScheduler"/>
+    <task:scheduler id="taskScheduler" pool-size="10" />
 
     <!-- Set the datasource details to the database where you want to cache Collaborate data --> 
     <bean id="dataSource" class="org.jasig.portlet.utils.jdbc.TomcatDataSourceFactory">
@@ -111,8 +116,6 @@
       <property name="host" value="${mail.host}"/>
       <property name="port" value="${mail.port}" />
     </bean>
-    
-	<task:scheduler id="scheduler" pool-size="10" />
     
     <!-- Define the four email templates which are to be used. -->
     <bean id="moderatorMailMessage" class="org.springframework.mail.SimpleMailMessage">
