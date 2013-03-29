@@ -19,19 +19,8 @@
 
 --%>
 
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@page contentType="text/html" isELIgnored="false"%>
-<%@page pageEncoding="UTF-8"%>
-<%@ page trimDirectiveWhitespaces="true" %>
-<%@ page import="javax.portlet.*"%>
-<%@ taglib uri="http://java.sun.com/portlet" prefix="portlet"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri = "http://www.springframework.org/tags" prefix = "spring" %>
+<%@ include file="/WEB-INF/jsp/header.jsp"%>
 
-<link rel="stylesheet" href="/BlackboardVCPortlet/css/portlet.css" type="text/css"/>
-
-<portlet:defineObjects />
 <c:set var="namespace"><portlet:namespace/></c:set>
 <c:if test="${!empty feedbackMessage}">
     <div class="uportal-channel-success"><spring:message code="${feedbackMessage}"/></div>
@@ -48,7 +37,7 @@
             </portlet:actionURL>
 
             <td align="left"><input value="Schedule Session" name="Schedule Session" class="uportal-button" type="button" onclick="window.location='${editUrl}'"></td>
-            <form  name="deleteSessions" action="${deleteSessionActionUrl}" method="POST">
+            <form  name="deleteSessions" action="${deleteSessionActionUrl}" method="post">
             <td align="right"><input id="dialog-confirm" value="Delete Session(s)" name="Delete" style="text-transform: none;" class="uportal-button" onclick="javascript:return confirm('Are you sure you wish to delete the session(s)?');" type="submit"></td>   
         </tr>
     </tbody></table>

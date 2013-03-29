@@ -19,16 +19,8 @@
 
 --%>
 
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@page contentType="text/html" isELIgnored="false"%>
-<%@page pageEncoding="UTF-8"%>
-<%@ page trimDirectiveWhitespaces="true" %>
-<%@ page import="javax.portlet.*"%>
-<%@ taglib uri="http://java.sun.com/portlet" prefix="portlet"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ include file="/WEB-INF/jsp/header.jsp"%>
 
-<portlet:defineObjects />
 <%PortletPreferences prefs = renderRequest.getPreferences();%> 
 <c:set var="context" value="${pageContext.request.contextPath}"/>
 <c:choose>

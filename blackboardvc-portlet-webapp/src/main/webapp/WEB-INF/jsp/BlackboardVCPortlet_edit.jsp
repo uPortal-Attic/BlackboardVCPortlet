@@ -19,20 +19,7 @@
 
 --%>
 
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@page contentType="text/html"%>
-<%@page pageEncoding="UTF-8" isELIgnored="false"%>
-<%@ page import="javax.portlet.*"%>
-<%@ taglib uri="http://java.sun.com/portlet" prefix="portlet"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<%@ taglib uri="http://www.springframework.org/tags/form"prefix="form" %>
-<%@ taglib uri = "http://www.springframework.org/tags" prefix = "spring" %>
-<%@ page trimDirectiveWhitespaces="true" %>
-
-<link rel="stylesheet" href="/BlackboardVCPortlet/css/portlet.css" type="text/css"/>
-
-<portlet:defineObjects />
+<%@ include file="/WEB-INF/jsp/header.jsp"%>
 
 <c:set var="namespace"><portlet:namespace/></c:set>
 <c:if test="${!empty feedbackMessage}">
@@ -56,16 +43,21 @@
 <hr>
 
 <%-- Define the main action and render URLs --%>
-<portlet:actionURL portletMode="EDIT" var="formActionUrl" />
+<%--<portlet:actionURL portletMode="EDIT" var="formActionUrl" />--%>
+
+<portlet:actionURL portletMode="EDIT" var="formActionUrl">
+   <portlet:param name="action" value="saveSession"/>
+</portlet:actionURL>
 
 <portlet:actionURL portletMode="EDIT" var="addIntParticipantUrl">
     <portlet:param name="action" value="addInternalParticipant"/>
 </portlet:actionURL>
+
 <portlet:renderURL portletMode="EDIT" var="addExtParticipantUrl">
     <portlet:param name="action" value="addExternalParticipant"/>
 </portlet:renderURL>
 
-<form name="createSession" action="${formActionUrl}" method="POST" enctype="multipart/form-data" >
+<form action="${formActionUrl}" method="post">
     <c:if test="${!empty session.sessionId}">
         <input type="hidden" name="sessionId" value="${session.sessionId}"/>
     </c:if>
