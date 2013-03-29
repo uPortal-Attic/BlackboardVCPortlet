@@ -18,6 +18,12 @@
             <xjc:simple />
         </jaxb:globalBindings>
     </jaxb:bindings>
+      
+    <jaxb:bindings schemaLocation="../resources/xsd/elluminate/misc.xsd">
+        <jaxb:schemaBindings>
+            <jaxb:package name="com.elluminate.sas" />
+        </jaxb:schemaBindings>
+    </jaxb:bindings>
 
     <jaxb:bindings schemaLocation="../resources/xsd/elluminate/sas-int-v3.xsd">
         <jaxb:schemaBindings>
