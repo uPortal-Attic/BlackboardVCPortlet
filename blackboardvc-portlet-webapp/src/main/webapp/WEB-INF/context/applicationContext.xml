@@ -78,24 +78,24 @@
 		<property name="dataSource" ref="dataSource" />
 		<property name="annotatedClasses">
 	        <list>
-	            <value>org.jasig.portlet.blackboardvcportlet.dao.impl.RecordingShortDaoImpl</value>
-	            <value>org.jasig.portlet.blackboardvcportlet.dao.impl.RecordingUrlDaoImpl</value>
-	            <value>org.jasig.portlet.blackboardvcportlet.dao.impl.ServerConfigurationDaoImpl</value>
-	            <value>org.jasig.portlet.blackboardvcportlet.dao.impl.ServerQuotaDaoImpl</value>
-	            <value>org.jasig.portlet.blackboardvcportlet.dao.impl.SessionDaoImpl</value>
-	            <value>org.jasig.portlet.blackboardvcportlet.dao.impl.SessionExtParticipantDaoImpl</value>
-	            <value>org.jasig.portlet.blackboardvcportlet.dao.impl.SessionMultimediaDaoImpl</value>
-	            <value>org.jasig.portlet.blackboardvcportlet.dao.impl.SessionPresentationDaoImpl</value>
-	            <value>org.jasig.portlet.blackboardvcportlet.dao.impl.SessionUrlDaoImpl</value>
+	            <value>org.jasig.portlet.blackboardvcportlet.data.RecordingShortImpl</value>
+	            <value>org.jasig.portlet.blackboardvcportlet.data.RecordingUrlImpl</value>
+	            <value>org.jasig.portlet.blackboardvcportlet.data.ServerConfigurationImpl</value>
+	            <value>org.jasig.portlet.blackboardvcportlet.data.ServerQuotaImpl</value>
+	            <value>org.jasig.portlet.blackboardvcportlet.data.SessionExtParticipantImpl</value>
+	            <value>org.jasig.portlet.blackboardvcportlet.data.SessionImpl</value>
+	            <value>org.jasig.portlet.blackboardvcportlet.data.SessionMultimediaImpl</value>
+	            <value>org.jasig.portlet.blackboardvcportlet.data.SessionPresentationImpl</value>
+	            <value>org.jasig.portlet.blackboardvcportlet.data.SessionUrlImpl</value>
 	        </list>
 	    </property>
 		<property name="hibernateProperties">
 			<props>
 				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
 				<prop key="hibernate.show_sql">false</prop>
-                                <prop key="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</prop>
-								<!-- For first run, uncommenting this out will autocreate the DB schema objects for you-->
-                                <prop key="hibernate.hbm2ddl.auto">update</prop>
+                <prop key="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</prop>
+<!-- For first run, uncommenting this out will autocreate the DB schema objects for you-->
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
 			</props>
 		</property>
     </bean> 
