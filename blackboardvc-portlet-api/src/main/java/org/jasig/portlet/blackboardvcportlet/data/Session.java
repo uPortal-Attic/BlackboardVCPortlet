@@ -1,7 +1,8 @@
 package org.jasig.portlet.blackboardvcportlet.data;
 
 import java.io.Serializable;
-import java.util.Date;
+
+import org.joda.time.DateTime;
 
 public interface Session extends Serializable {
 
@@ -37,9 +38,9 @@ public interface Session extends Serializable {
 
     void setCreatorId(String creatorId);
 
-    Date getEndTime();
+    DateTime getEndTime();
 
-    void setEndTime(Date endTime);
+    void setEndTime(DateTime endTime);
 
     String getGroupingList();
 
@@ -49,9 +50,9 @@ public interface Session extends Serializable {
 
     void setHideParticipantNames(boolean hideParticipantNames);
 
-    Date getLastUpdated();
+    DateTime getLastUpDateTimed();
 
-    void setLastUpdated(Date lastUpdated);
+    void setLastUpDateTimed(DateTime lastUpDateTimed);
 
     int getMaxCameras();
 
@@ -109,9 +110,9 @@ public interface Session extends Serializable {
 
     void setSessionName(String sessionName);
 
-    Date getStartTime();
+    DateTime getStartTime();
 
-    void setStartTime(Date startTime);
+    void setStartTime(DateTime startTime);
 
     long getVersionId();
 

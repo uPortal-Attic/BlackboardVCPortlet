@@ -1063,7 +1063,7 @@ public class BlackboardVCPortletEditController
 			}
 
 			logger.debug("Set hideParticipantNames");
-			session.setLastUpdated(new Date());
+			session.setLastUpdated(DateTime.now());
 
 			session.setMaxCameras(new Integer(request.getParameter("maxCameras")));
 
