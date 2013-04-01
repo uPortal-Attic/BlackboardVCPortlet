@@ -22,7 +22,7 @@ import java.util.List;
 
 import javax.portlet.PortletPreferences;
 
-import org.jasig.portlet.blackboardvcportlet.data.Session;
+import org.jasig.portlet.blackboardvcportlet.data.BlackboardSession;
 import org.jasig.portlet.blackboardvcportlet.data.SessionMultimedia;
 import org.jasig.portlet.blackboardvcportlet.data.SessionPresentation;
 import org.jasig.portlet.blackboardvcportlet.data.SessionUrl;
@@ -39,29 +39,29 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface SessionService
 {
-	public List<Session> getSessionsForUser(String uid);
+	public List<BlackboardSession> getSessionsForUser(String uid);
 
-	public Session getSession(long sessionId);
+	public BlackboardSession getSession(long sessionId);
 
 	public SessionUrl getSessionUrl(SessionUrlId sessionUrlId);
 
 	public void deleteSession(long sessionId) throws Exception;
 
-	public List<Session> getAllSessions();
+	public List<BlackboardSession> getAllSessions();
 
-	public void createEditSession(Session session, PortletPreferences prefs, List<User> extParticipantList) throws Exception;
+	public void createEditSession(BlackboardSession session, PortletPreferences prefs, List<User> extParticipantList) throws Exception;
 
 	public User getExtParticipant(long sessionId, String email);
 
-	public void storeSession(Session session);
+	public void storeSession(BlackboardSession session);
 
-	public void notifyModerators(User creator, Session session, List<User> users, String launchUrl) throws Exception;
+	public void notifyModerators(User creator, BlackboardSession session, List<User> users, String launchUrl) throws Exception;
 
-	public void notifyOfDeletion(Session session) throws Exception;
+	public void notifyOfDeletion(BlackboardSession session) throws Exception;
 
-	public void notifyIntParticipants(User creator, Session session, List<User> users, String launchUrl) throws Exception;
+	public void notifyIntParticipants(User creator, BlackboardSession session, List<User> users, String launchUrl) throws Exception;
 
-	public void notifyExtParticipants(User creator, Session session, List<User> users) throws Exception;
+	public void notifyExtParticipants(User creator, BlackboardSession session, List<User> users) throws Exception;
 
 	public void addExtParticipant(User user, long sessionId);
 

@@ -20,7 +20,7 @@ package org.jasig.portlet.blackboardvcportlet.dao;
 
 import java.util.List;
 
-import org.jasig.portlet.blackboardvcportlet.data.Session;
+import org.jasig.portlet.blackboardvcportlet.data.BlackboardSession;
 
 /**
  * DAO interface for Session
@@ -28,14 +28,14 @@ import org.jasig.portlet.blackboardvcportlet.data.Session;
  */
 public interface SessionDao {
     
-    public Session getSession(Long sessionId);
+    public BlackboardSession getSession(Long sessionId);
     
-    public void saveSession(Session session);
+    public void saveSession(BlackboardSession session);
     
     public void deleteSession(Long sessionId);
     
-    public List<Session> getAllSesssions();
+    public List<BlackboardSession> getAllSesssions();
     
-    public List<Session> getSessionsForUser(String uid);
+    public List<BlackboardSession> getSessionsForUser(String uid);
     
 }

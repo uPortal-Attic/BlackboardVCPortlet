@@ -38,8 +38,8 @@ import javax.portlet.RenderResponse;
 import org.apache.commons.lang.StringUtils;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingShort;
 import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
-import org.jasig.portlet.blackboardvcportlet.data.Session;
-import org.jasig.portlet.blackboardvcportlet.data.SessionImpl;
+import org.jasig.portlet.blackboardvcportlet.data.BlackboardSession;
+import org.jasig.portlet.blackboardvcportlet.data.BlackboardSessionImpl;
 import org.jasig.portlet.blackboardvcportlet.data.SessionMultimedia;
 import org.jasig.portlet.blackboardvcportlet.data.SessionPresentation;
 import org.jasig.portlet.blackboardvcportlet.data.User;
@@ -109,7 +109,7 @@ public class BlackboardVCPortletEditController
 		{
 			logger.debug("mView is empty");
 			ServerConfiguration serverConfiguration = serverConfigurationService.getServerConfiguration(prefs);
-			Session session = new SessionImpl();
+			BlackboardSession session = new BlackboardSessionImpl();
 			logger.debug("session id:" + session.getSessionId());
 
 			if (authService.isAdminAccess(request) || authService.isFullAccess(request))
@@ -182,7 +182,7 @@ public class BlackboardVCPortletEditController
 					modelAndView.addObject("warningMessage", pairs.getValue());
 				} else if (pairs.getKey().equals("session"))
 				{
-					Session session = (Session) pairs.getValue();
+					BlackboardSession session = (BlackboardSession) pairs.getValue();
 					modelAndView.addObject("session", session);
 				} else if (pairs.getKey().equals("extParticipants"))
 				{
@@ -274,7 +274,7 @@ public class BlackboardVCPortletEditController
 		try
 		{
 			logger.debug("calling sessionService.getSession");
-			Session session = sessionService.getSession(Long.valueOf(sessionId));
+			BlackboardSession session = sessionService.getSession(Long.valueOf(sessionId));
 			logger.debug("done call");
 			if (session == null)
 			{
@@ -929,7 +929,7 @@ public class BlackboardVCPortletEditController
 
 		logger.debug("saveSession called");
 		boolean noErrors = true;
-		Session session = new SessionImpl();
+		BlackboardSession session = new BlackboardSessionImpl();
 		boolean newSession = false;
 
 		if (!request.getParameter("sessionId").equals("") && !request.getParameter("sessionId").equals("0"))
@@ -1284,7 +1284,7 @@ public class BlackboardVCPortletEditController
 	{
 		logger.debug("addSessionToModel called");
 
-		Session session = new SessionImpl();
+		BlackboardSession session = new BlackboardSessionImpl();
 
 		if (!request.getParameter("sessionId").equals(""))
 		{

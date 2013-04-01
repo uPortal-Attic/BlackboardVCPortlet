@@ -22,8 +22,8 @@ import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.*;
 import org.jasig.portlet.blackboardvcportlet.dao.SessionDao;
-import org.jasig.portlet.blackboardvcportlet.data.Session;
-import org.jasig.portlet.blackboardvcportlet.data.SessionImpl;
+import org.jasig.portlet.blackboardvcportlet.data.BlackboardSession;
+import org.jasig.portlet.blackboardvcportlet.data.BlackboardSessionImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
@@ -53,10 +53,10 @@ public class SessionDaoImpl extends HibernateDaoSupport implements SessionDao {
      * @return Session
      */
     @Override
-    public Session getSession(Long sessionId)
+    public BlackboardSession getSession(Long sessionId)
     {
         logger.debug("getSession called for sessionId:"+sessionId);
-       return (Session)this.getHibernateTemplate().get(SessionImpl.class,sessionId);
+       return (BlackboardSession)this.getHibernateTemplate().get(BlackboardSessionImpl.class,sessionId);
     }
     
     /**
@@ -64,7 +64,7 @@ public class SessionDaoImpl extends HibernateDaoSupport implements SessionDao {
      * @param session The session to store
      */
     @Override
-    public void saveSession(Session session)
+    public void saveSession(BlackboardSession session)
     {
         this.getHibernateTemplate().saveOrUpdate(session);
     }
@@ -84,10 +84,10 @@ public class SessionDaoImpl extends HibernateDaoSupport implements SessionDao {
      * @return List<Session>
      */
     @Override
-    public List<Session> getAllSesssions()
+    public List<BlackboardSession> getAllSesssions()
     {
         logger.debug("getAllSessions called");
-        Criteria criteria = this.getSession().createCriteria(SessionImpl.class).addOrder(Order.desc("startTime"));
+        Criteria criteria = this.getSession().createCriteria(BlackboardSessionImpl.class).addOrder(Order.desc("startTime"));
         return criteria.list();
     }
 
@@ -98,10 +98,10 @@ public class SessionDaoImpl extends HibernateDaoSupport implements SessionDao {
      * @return List<Session>
      */
     @Override
-    public List<Session> getSessionsForUser(String uid) {
+    public List<BlackboardSession> getSessionsForUser(String uid) {
         logger.debug("uid:"+uid);
-        List<Session> sessions;
-        Criteria criteria = this.getSession().createCriteria(SessionImpl.class);
+        List<BlackboardSession> sessions;
+        Criteria criteria = this.getSession().createCriteria(BlackboardSessionImpl.class);
         Criterion chairCriteria = Restrictions.ilike("chairList", uid+",", MatchMode.ANYWHERE);
         Criterion chairEndCriteria = Restrictions.ilike("chairList", uid,MatchMode.END);
         Criterion nonChairCriteria = Restrictions.ilike("nonChairList", uid+",", MatchMode.ANYWHERE);
@@ -120,7 +120,7 @@ public class SessionDaoImpl extends HibernateDaoSupport implements SessionDao {
         if (sessions==null)
         {
             logger.debug("No sessions found, creating blank list");
-            sessions = new ArrayList<Session>();
+            sessions = new ArrayList<BlackboardSession>();
         }
        
         return sessions;

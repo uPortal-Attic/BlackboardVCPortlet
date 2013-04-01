@@ -13,7 +13,7 @@ import org.jasig.portlet.blackboardvcportlet.data.RecordingShort;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingShortImpl;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingUrl;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingUrlImpl;
-import org.jasig.portlet.blackboardvcportlet.data.Session;
+import org.jasig.portlet.blackboardvcportlet.data.BlackboardSession;
 import org.jasig.portlet.blackboardvcportlet.service.RecordingService;
 import org.jasig.portlet.blackboardvcportlet.service.SessionService;
 import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceTemplate;
@@ -201,7 +201,7 @@ public class RecordingServiceImpl implements RecordingService {
 
 			RecordingShortImpl recordingShort;
 			RecordingUrl recordingUrl;
-			Session session = sessionService.getSession(sessionId);
+			BlackboardSession session = sessionService.getSession(sessionId);
 			for (RecordingShortResponse shortResponse : recordingShortResponses)
 			{
 				recordingShort = new RecordingShortImpl();

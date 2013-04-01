@@ -17,7 +17,7 @@ import org.jasig.portlet.blackboardvcportlet.dao.SessionMultimediaDao;
 import org.jasig.portlet.blackboardvcportlet.dao.SessionPresentationDao;
 import org.jasig.portlet.blackboardvcportlet.dao.SessionUrlDao;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingShort;
-import org.jasig.portlet.blackboardvcportlet.data.Session;
+import org.jasig.portlet.blackboardvcportlet.data.BlackboardSession;
 import org.jasig.portlet.blackboardvcportlet.data.SessionExtParticipant;
 import org.jasig.portlet.blackboardvcportlet.data.SessionExtParticipantId;
 import org.jasig.portlet.blackboardvcportlet.data.SessionExtParticipantImpl;
@@ -90,8 +90,8 @@ public class SessionServiceImpl implements SessionService {
 	@Autowired
 	private ObjectFactory objectFactory;
 
-	public List<Session> getSessionsForUser(String uid) {
-        List<Session> sessionList = sessionDao.getSessionsForUser(uid);
+	public List<BlackboardSession> getSessionsForUser(String uid) {
+        List<BlackboardSession> sessionList = sessionDao.getSessionsForUser(uid);
         for (int i = 0; i < sessionList.size(); i++) {
             
             if ((sessionList.get(i).getChairList()!=null&&sessionList.get(i).getChairList().indexOf(uid+",") != -1)||(sessionList.get(i).getCreatorId().equals(uid))||(sessionList.get(i).getChairList()!=null&&sessionList.get(i).getChairList().endsWith(uid)))
@@ -106,7 +106,7 @@ public class SessionServiceImpl implements SessionService {
         return sessionList;
     }
 
-    public Session getSession(long sessionId) {
+    public BlackboardSession getSession(long sessionId) {
         logger.debug("getSession called");
         return sessionDao.getSession(sessionId);
     }
@@ -160,7 +160,7 @@ public class SessionServiceImpl implements SessionService {
         logger.debug("deleteSession called for :" + sessionId);
         try {
             
-            Session session = sessionDao.getSession(sessionId);
+            BlackboardSession session = sessionDao.getSession(sessionId);
             
             // Call Web Service Operation
             logger.debug("deleting session multimedia");
@@ -204,16 +204,16 @@ public class SessionServiceImpl implements SessionService {
 
     }
 
-    public List<Session> getAllSessions() {
+    public List<BlackboardSession> getAllSessions() {
         logger.debug("getAllSessions called");
-        List<Session> sessions = sessionDao.getAllSesssions();
-        for (Session session : sessions) {
+        List<BlackboardSession> sessions = sessionDao.getAllSesssions();
+        for (BlackboardSession session : sessions) {
             session.setCurrUserCanEdit(true);
         }
         return sessions;
     }
 
-    public void createEditSession(Session session, PortletPreferences prefs, List<User> extParticipantList) throws Exception {
+    public void createEditSession(BlackboardSession session, PortletPreferences prefs, List<User> extParticipantList) throws Exception {
 
         try { // Call Web Service Operation
             logger.debug("Setup session web service call");
@@ -356,11 +356,11 @@ public class SessionServiceImpl implements SessionService {
         return extParticipant;
     }
 
-    public void storeSession(Session session) {
+    public void storeSession(BlackboardSession session) {
         sessionDao.saveSession(session);
     }
 
-    public void notifyModerators(User creator, Session session, List<User> users,String launchUrl) throws Exception {
+    public void notifyModerators(User creator, BlackboardSession session, List<User> users,String launchUrl) throws Exception {
         logger.debug("notifyModerators called");
         String[] substitutions;
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy HH:mm");
@@ -380,7 +380,7 @@ public class SessionServiceImpl implements SessionService {
         logger.debug("finished");
     }
     
-    public void notifyOfDeletion(Session session) throws Exception {
+    public void notifyOfDeletion(BlackboardSession session) throws Exception {
         logger.debug("notifyOfDeletion called");
         String[] substitutions;
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy HH:mm");
@@ -457,7 +457,7 @@ public class SessionServiceImpl implements SessionService {
         logger.debug("finished");
     }
 
-    public void notifyIntParticipants(User creator, Session session, List<User> users, String launchUrl) throws Exception {
+    public void notifyIntParticipants(User creator, BlackboardSession session, List<User> users, String launchUrl) throws Exception {
         logger.debug("notifyIntParticipants called");
         String[] substitutions;
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy HH:mm");
@@ -473,7 +473,7 @@ public class SessionServiceImpl implements SessionService {
         logger.debug("finished");
     }
 
-    public void notifyExtParticipants(User creator, Session session, List<User> users) throws Exception {
+    public void notifyExtParticipants(User creator, BlackboardSession session, List<User> users) throws Exception {
         logger.debug("notifyExtParticipants called");
         String[] substitutions;
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy HH:mm");

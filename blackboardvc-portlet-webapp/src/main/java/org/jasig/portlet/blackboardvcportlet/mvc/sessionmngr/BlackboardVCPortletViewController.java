@@ -95,7 +95,7 @@ public class BlackboardVCPortletViewController
 		logger.debug("eduPersonAffiliation:" + eduPersonAffiliation);
 		logger.debug("eduPersonOrgUnitDN:" + eduPersonOrgUnitDn);
 		isAdmin = authService.isAdminAccess(request);
-		List<Session> sessions;
+		List<BlackboardSession> sessions;
 		if (isAdmin)
 		{
 			sessions = sessionService.getAllSessions();
@@ -154,7 +154,7 @@ public class BlackboardVCPortletViewController
 		try
 		{
 			logger.debug("calling sessionService.getSession");
-			Session session = sessionService.getSession(Long.valueOf(sessionId));
+			BlackboardSession session = sessionService.getSession(Long.valueOf(sessionId));
 
 			logger.debug("done call");
 			if (session == null)
@@ -262,7 +262,7 @@ public class BlackboardVCPortletViewController
 			//ByteArrayOutputStream outputStream = new ByteArrayOutputStream(response.getPortletOutputStream());
 			stringWriter.println("UID,Display Name,Email address,Participant type");
 			logger.debug("calling sessionService.getSession");
-			Session session = sessionService.getSession(Long.valueOf(sessionId));
+			BlackboardSession session = sessionService.getSession(Long.valueOf(sessionId));
 			logger.debug("done call");
 			if (session == null)
 			{

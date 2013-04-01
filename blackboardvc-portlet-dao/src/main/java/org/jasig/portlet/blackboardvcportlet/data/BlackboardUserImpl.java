@@ -2,15 +2,18 @@ package org.jasig.portlet.blackboardvcportlet.data;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -67,6 +70,13 @@ public class BlackboardUserImpl implements BlackboardUser {
             joinColumns=@JoinColumn(name="USER_ID"),
             uniqueConstraints=@UniqueConstraint(columnNames={"USER_ID", "ATTR_NAME", "ATTR_VALUE"}))
     private final Map<String, String> attributes = new HashMap<String, String>(0);
+    
+
+    @ManyToMany(targetEntity = BlackboardSessionImpl.class, fetch = FetchType.LAZY, mappedBy = "chairs")
+    private Set<BlackboardSession> chairedSessions;
+    
+    @ManyToMany(targetEntity = BlackboardSessionImpl.class, fetch = FetchType.LAZY, mappedBy = "nonChairs")
+    private Set<BlackboardSession> participatingSessions;
     
     /**
      * needed by hibernate
