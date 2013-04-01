@@ -235,7 +235,7 @@ public class BlackboardVCPortletViewController
 	 * @param request
 	 * @param response
 	 */
-	@ResourceMapping(value = "/csvDownload")
+	@ResourceMapping(value = "csvDownload")
 	public void csvDownload(ResourceRequest request, ResourceResponse response)
 	{
 		logger.debug("csvDownload called");

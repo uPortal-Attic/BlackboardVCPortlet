@@ -37,8 +37,7 @@
 <table width="100%">
 	<tbody>
 		<tr>
-			<portlet:renderURL var="editUrl" portletMode="EDIT"
-				windowState="MAXIMIZED" />
+			<portlet:renderURL var="editUrl" portletMode="EDIT" windowState="MAXIMIZED" />
 
 			<portlet:actionURL portletMode="EDIT" var="deleteSessionActionUrl">
 				<portlet:param name="action" value="deleteSessions" />

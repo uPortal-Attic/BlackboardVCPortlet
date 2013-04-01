@@ -50,7 +50,8 @@
             
         <c:if test="${! empty showCSVDownload}">
         <div>
-            <form target="_blank" action="/BlackboardVCPortlet/csvDownload" method="POST">
+        	<portlet:resourceURL var="csvDownloadURL" id="csvDownload" />
+            <form target="_blank" action="${csvDownloadURL}" method="post">
                 <input type="hidden" name="sessionId" value="${session.sessionId}"/>
                 <input type="hidden" name="uid" value="${uid}"/>
                 <input type="submit" name="downloadSubmit" value="Download participant list (CSV file)"/>
