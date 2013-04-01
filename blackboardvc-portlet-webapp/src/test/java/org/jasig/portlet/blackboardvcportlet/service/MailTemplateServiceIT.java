@@ -19,36 +19,60 @@
 
 package org.jasig.portlet.blackboardvcportlet.service;
 
+import org.jasig.portlet.blackboardvcportlet.service.impl.MailTemplateServiceImpl;
+import org.jasig.portlet.blackboardvcportlet.service.util.MailMessages;
+import org.jasig.portlet.blackboardvcportlet.service.util.MailTask;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "/testContext.xml")
-public class MailTemplateServiceIT {
-	
+@ContextConfiguration(locations = "/test-emailContext.xml")
+public class MailTemplateServiceIT
+{
+	private static final Logger logger = LoggerFactory.getLogger(MailTemplateService.class);
+
 	@Autowired
-	private MailTemplateService mailTemplateService;
+	private MailTemplateServiceImpl mailTemplateService;
 	
 	@Mock
 	private JavaMailSenderImpl mailSender;
 	
 	@Test
-	public void testDownloadAKey() throws Exception
+	public void testBuildEmailMessage() throws Exception
 	{
+		logger.info("testBuildEmailMessage() starts...");
 		assertNotNull(mailTemplateService);
-		List <String> toList = new ArrayList<String> ();
-		toList.add("levett@wisc.edu");
-		// TODO Refactor to support new Method Signature
-//		mailTemplateService.sendEmailUsingTemplate("test@wisc.edu", toList, "Test Email", null, "testEmail");
-		assertTrue(true);
+
+		String from = "from@wisc.edu";
+		List<String> to = new ArrayList<String>();
+		to.add("to@wisc.edu");
+
+		Map<String, String> subs = new HashMap<String, String>();
+		subs.put("displayName", "Display Name");
+		subs.put("creatorDetails", "Creator Details");
+		subs.put("sessionName", "Session Name");
+		subs.put("sessionStartTime", "12 PM on 4/1/2013");
+		subs.put("sessionEndTime", "3 PM on 4/1/2013");
+		subs.put("launchURL", "http://www.wisc.edu");
+
+		MailTask mailTask = new MailTask(from, to, null, subs, MailMessages.MODERATOR);
+		assertNotNull(mailTask);
+
+		String message = mailTemplateService.buildEmailMessage(mailTask);
+		assertNotNull(message);
+		logger.info("Email Message: {}", message);
+		logger.info("testBuildEmailMessage() ends.");
 	}
 }

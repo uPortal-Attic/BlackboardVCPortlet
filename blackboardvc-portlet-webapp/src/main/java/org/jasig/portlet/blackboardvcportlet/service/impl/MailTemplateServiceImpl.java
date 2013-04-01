@@ -3,6 +3,7 @@ package org.jasig.portlet.blackboardvcportlet.service.impl;
 import org.apache.velocity.app.VelocityEngine;
 import org.jasig.portlet.blackboardvcportlet.service.MailTemplateService;
 import org.jasig.portlet.blackboardvcportlet.service.util.MailMessages;
+import org.jasig.portlet.blackboardvcportlet.service.util.MailTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -70,75 +71,6 @@ public class MailTemplateServiceImpl implements BeanFactoryAware, MailTemplateSe
 		this.velocityEngine = velocityEngine;
 	}
 
-	private static class MailTask
-	{
-
-		private String from;
-		private List<String> to;
-		private String subject;
-		private Map substitutions;
-		private MailMessages template;
-
-		public MailTask(String from, List<String> to, String subject, Map substitutions, MailMessages template)
-		{
-			this.setFrom(from);
-			this.setTo(to);
-			this.setSubject(subject);
-			this.setSubstitutions(substitutions);
-			this.setTemplate(template);
-		}
-
-		public String getFrom()
-		{
-			return from;
-		}
-
-		public void setFrom(String from)
-		{
-			this.from = from;
-		}
-
-		public List<String> getTo()
-		{
-			return to;
-		}
-
-		public void setTo(List<String> to)
-		{
-			this.to = to;
-		}
-
-		public String getSubject()
-		{
-			return subject;
-		}
-
-		public void setSubject(String subject)
-		{
-			this.subject = subject;
-		}
-
-		public Map getSubstitutions()
-		{
-			return substitutions;
-		}
-
-		public void setSubstitutions(Map substitutions)
-		{
-			this.substitutions = substitutions;
-		}
-
-		public MailMessages getTemplate()
-		{
-			return template;
-		}
-
-		public void setTemplate(MailMessages template)
-		{
-			this.template = template;
-		}
-	}
-
 	/**
 	 * Clear the queue every 1 second after last completion
 	 */
@@ -201,8 +133,7 @@ public class MailTemplateServiceImpl implements BeanFactoryAware, MailTemplateSe
 						}
 					}
 
-					String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, mt.getTemplate().getTemplateName(), "UTF-8", mt.getSubstitutions());
-					message.setText(text, true);
+					message.setText(buildEmailMessage(mt), true);
 				}
 			};
 			mailSender.send(messagePreparator);
@@ -216,5 +147,15 @@ public class MailTemplateServiceImpl implements BeanFactoryAware, MailTemplateSe
 	public void sendEmailUsingTemplate(String from, List<String> to, String subject, Map substitutions, MailMessages template)
 	{
 		theQueue.add(new MailTask(from, to, subject, substitutions, template));
+	}
+
+	public String buildEmailMessage(final MailTask mailTask)
+	{
+		return VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, getVelocityTemplatePath(mailTask.getTemplate()), "UTF-8", mailTask.getSubstitutions());
+	}
+
+	private String getVelocityTemplatePath(MailMessages messages)
+	{
+		return  "/mail/" + messages.getTemplateName() + ".vm";
 	}
 }
