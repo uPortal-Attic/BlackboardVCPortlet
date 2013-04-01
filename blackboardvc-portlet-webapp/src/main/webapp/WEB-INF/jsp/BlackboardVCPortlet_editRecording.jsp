@@ -45,7 +45,9 @@
             <td><span class="uportal-channel-strong">Recording name*: </span></td>
             <td><input name="roomName" style="width: 50%;" class="uportal-input-text" value="${recording.roomName}"/></td>            
         </tr>
-        <tr><td><span class="uportal-channel-strong">Start Time: </span></td><td><fmt:formatDate value="${recording.createdDate}" pattern="dd-MM-yyyy HH:mm" /></td>
+        <tr>
+        	<td><span class="uportal-channel-strong">Start Time: </span></td>
+        	<td><fmt:formatDate value="${recording.createdDate}" pattern="dd-MM-yyyy HH:mm" /></td>
         </tr>
         <tr>
             <td><span class="uportal-channel-strong">Size:</span></td><td>${recording.readableFileSize}</td>
