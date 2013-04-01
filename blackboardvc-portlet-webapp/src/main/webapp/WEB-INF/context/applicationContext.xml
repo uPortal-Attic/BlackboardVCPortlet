@@ -116,7 +116,16 @@
       <property name="host" value="${mail.host}"/>
       <property name="port" value="${mail.port}" />
     </bean>
-    
+
+    <bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
+        <property name="velocityProperties">
+            <props>
+                <prop key="resource.loader">class</prop>
+                <prop key="class.resource.loader.class">org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader</prop>
+            </props>
+        </property>
+    </bean>
+
     <!-- Define the four email templates which are to be used. -->
     <bean id="moderatorMailMessage" class="org.springframework.mail.SimpleMailMessage">
 	<property name="from" value="${mail.from}" />

@@ -1,9 +1,6 @@
 package org.jasig.portlet.blackboardvcportlet.service.impl;
 
-import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-
+import org.apache.velocity.app.VelocityEngine;
 import org.jasig.portlet.blackboardvcportlet.service.MailTemplateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,20 +8,27 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.velocity.VelocityEngineUtils;
+import javax.mail.internet.MimeMessage;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Service("jasigMailTemplateService")
-public class MailTemplateServiceImpl implements BeanFactoryAware, MailTemplateService {
+public class MailTemplateServiceImpl implements BeanFactoryAware, MailTemplateService
+{
 		private static final Logger logger = LoggerFactory.getLogger(MailTemplateServiceImpl.class);
 		
 		final private Queue<MailTask> theQueue = new ConcurrentLinkedQueue<MailTask>();
-
 	    private JavaMailSender mailSender;
-	    
 	    private BeanFactory beanFactory;
+		private VelocityEngine velocityEngine;
 	    
 	    public MailTemplateServiceImpl () {
 	    	super();
@@ -39,17 +43,22 @@ public class MailTemplateServiceImpl implements BeanFactoryAware, MailTemplateSe
 	    public void setJavaMailSender (JavaMailSender ms) {
 	    	this.mailSender = ms;
 	    }
-	    
-	    
-	    private static class MailTask {
+
+	@Autowired
+	public void setVelocityEngine(VelocityEngine velocityEngine)
+	{
+		this.velocityEngine = velocityEngine;
+	}
+
+	private static class MailTask {
 	        
 		    private String from;
 		    private List<String> to;
 		    private String subject;
-		    private Object[] substitutions;
+		    private Map substitutions;
 		    private String template;
 	
-		    public MailTask(String from, List<String> to, String subject, String[] substitutions, String template) {
+		    public MailTask(String from, List<String> to, String subject, Map substitutions, String template) {
 		        this.setFrom(from);
 		        this.setTo(to);
 		        this.setSubject(subject);
@@ -81,11 +90,11 @@ public class MailTemplateServiceImpl implements BeanFactoryAware, MailTemplateSe
 				this.subject = subject;
 			}
 
-			public Object[] getSubstitutions() {
+			public Map getSubstitutions() {
 				return substitutions;
 			}
 
-			public void setSubstitutions(Object[] substitutions) {
+			public void setSubstitutions(Map substitutions) {
 				this.substitutions = substitutions;
 			}
 
@@ -110,41 +119,38 @@ public class MailTemplateServiceImpl implements BeanFactoryAware, MailTemplateSe
 		  }
 	  }
 	  
-	  private void sendMail(MailTask mt) {
+	  private void sendMail(final MailTask mt) {
 	      try {
-	            SimpleMailMessage message = new SimpleMailMessage((SimpleMailMessage)beanFactory.getBean(mt.getTemplate()));
-	           
-	            if (mt.getFrom() != null)
-	            {
-	                message.setFrom(mt.getFrom());
-	            }
-	            if (mt.getTo() != null)
-	            {
-	                String[] toArray = (String[]) mt.getTo().toArray(new String[mt.getTo().size()]);  
-	                message.setTo(toArray);
-	            }
-	            if (mt.getSubject() != null)
-	            {
-	                message.setSubject(mt.getSubject());
-	            }
-	            
-	            if (mt.getSubstitutions() != null)
-	            {
-	                message.setText(String.format(message.getText(), mt.getSubstitutions()));
-	            }
-	           
-	            mailSender.send(message);
-	                       
+			  MimeMessagePreparator messagePreparator = new MimeMessagePreparator() {
+				  public void prepare(MimeMessage mimeMessage) throws Exception {
+					  MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
+
+					  if (mt.getFrom() != null)
+					  {
+						  message.setFrom(mt.getFrom());
+					  }
+					  if (mt.getTo() != null)
+					  {
+						  String[] toArray = mt.getTo().toArray(new String[mt.getTo().size()]);
+						  message.setTo(toArray);
+					  }
+					  if (mt.getSubject() != null)
+					  {
+						  message.setSubject(mt.getSubject());
+					  }
+
+					  String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, mt.getTemplate(), "UTF-8", mt.getSubstitutions());
+					  message.setText(text, true);
+				  }
+			  };
+            mailSender.send(messagePreparator);
 	      } catch (Exception e) {
 	          logger.error("Issue with sending email",e);
 	      }
-	            
 	    }
-	  
-	  
-	  public void sendEmailUsingTemplate(String from, List<String> to, String subject, String[] substitutions, String template)
+
+	  public void sendEmailUsingTemplate(String from, List<String> to, String subject, Map substitutions, String template)
 	  {
 	      theQueue.add(new MailTask(from,to,subject,substitutions,template));
 	  }
-
 }

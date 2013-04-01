@@ -1,0 +1,11 @@
+Dear ${displayName}
+
+${creatorDetails} invited you to participate in the following Collaborate session: ${sessionName}
+
+Session Details
+Start Date and Time: ${sessionStartTime}
+End Date and Time: ${sessionEndTime}
+
+This session has now been cancelled.
+
+Please contact ${creatorDetails} if you have any questions.

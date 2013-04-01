@@ -1,34 +1,9 @@
 package org.jasig.portlet.blackboardvcportlet.service.impl;
 
-import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.activation.DataHandler;
-import javax.mail.util.ByteArrayDataSource;
-import javax.portlet.PortletPreferences;
-import javax.xml.bind.JAXBElement;
-
-import org.jasig.portlet.blackboardvcportlet.dao.SessionDao;
-import org.jasig.portlet.blackboardvcportlet.dao.SessionExtParticipantDao;
-import org.jasig.portlet.blackboardvcportlet.dao.SessionMultimediaDao;
-import org.jasig.portlet.blackboardvcportlet.dao.SessionPresentationDao;
-import org.jasig.portlet.blackboardvcportlet.dao.SessionUrlDao;
-import org.jasig.portlet.blackboardvcportlet.data.RecordingShort;
-import org.jasig.portlet.blackboardvcportlet.data.Session;
-import org.jasig.portlet.blackboardvcportlet.data.SessionExtParticipant;
-import org.jasig.portlet.blackboardvcportlet.data.SessionExtParticipantId;
-import org.jasig.portlet.blackboardvcportlet.data.SessionExtParticipantImpl;
-import org.jasig.portlet.blackboardvcportlet.data.SessionMultimedia;
-import org.jasig.portlet.blackboardvcportlet.data.SessionMultimediaImpl;
-import org.jasig.portlet.blackboardvcportlet.data.SessionPresentation;
-import org.jasig.portlet.blackboardvcportlet.data.SessionPresentationImpl;
-import org.jasig.portlet.blackboardvcportlet.data.SessionUrl;
-import org.jasig.portlet.blackboardvcportlet.data.SessionUrlId;
-import org.jasig.portlet.blackboardvcportlet.data.SessionUrlImpl;
-import org.jasig.portlet.blackboardvcportlet.data.User;
+import com.elluminate.sas.*;
+import freemarker.template.utility.StringUtil;
+import org.jasig.portlet.blackboardvcportlet.dao.*;
+import org.jasig.portlet.blackboardvcportlet.data.*;
 import org.jasig.portlet.blackboardvcportlet.service.MailTemplateService;
 import org.jasig.portlet.blackboardvcportlet.service.RecordingService;
 import org.jasig.portlet.blackboardvcportlet.service.SessionService;
@@ -39,30 +14,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
-import com.elluminate.sas.BuildSessionUrl;
-import com.elluminate.sas.MultimediaResponse;
-import com.elluminate.sas.MultimediaResponseCollection;
-import com.elluminate.sas.ObjectFactory;
-import com.elluminate.sas.PresentationResponse;
-import com.elluminate.sas.PresentationResponseCollection;
-import com.elluminate.sas.RemoveRepositoryMultimedia;
-import com.elluminate.sas.RemoveRepositoryPresentation;
-import com.elluminate.sas.RemoveSession;
-import com.elluminate.sas.RemoveSessionMultimedia;
-import com.elluminate.sas.RemoveSessionPresentation;
-import com.elluminate.sas.SessionResponse;
-import com.elluminate.sas.SessionResponseCollection;
-import com.elluminate.sas.SetApiCallbackUrl;
-import com.elluminate.sas.SetSession;
-import com.elluminate.sas.SetSessionMultimedia;
-import com.elluminate.sas.SetSessionPresentation;
-import com.elluminate.sas.SuccessResponse;
-import com.elluminate.sas.UpdateSession;
-import com.elluminate.sas.UploadRepositoryContent;
-import com.elluminate.sas.UrlResponse;
-
-import freemarker.template.utility.StringUtil;
+import javax.activation.DataHandler;
+import javax.mail.util.ByteArrayDataSource;
+import javax.portlet.PortletPreferences;
+import javax.xml.bind.JAXBElement;
+import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class SessionServiceImpl implements SessionService {
@@ -362,20 +320,26 @@ public class SessionServiceImpl implements SessionService {
 
     public void notifyModerators(User creator, Session session, List<User> users,String launchUrl) throws Exception {
         logger.debug("notifyModerators called");
-        String[] substitutions;
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy HH:mm");
         String creatorDetails = creator.getDisplayName() + " (" + creator.getEmail() + ")";
        
         List<String> toList;
-        for (int i = 0; i < users.size(); i++) {
-            logger.debug("user name:" + users.get(i).getDisplayName());
-            logger.debug("user email:" + users.get(i).getDisplayName());
+        for (User user : users)
+		{
+            logger.debug("user name:" + user.getDisplayName());
+            logger.debug("user email:" + user.getDisplayName());
 
-            toList = new ArrayList<String>();
-            toList.add(users.get(i).getEmail());
+			Map<String, String> subs = new HashMap<String, String>();
+			subs.put("displayName", user.getDisplayName());
+			subs.put("creatorDetails", creatorDetails);
+			subs.put("sessionName", session.getSessionName());
+			subs.put("sessionStartTime", dateFormat.format(session.getStartTime()));
+			subs.put("sessionEndTime", dateFormat.format(session.getEndTime()));
+			subs.put("launchURL", launchUrl);
 
-            substitutions = new String[]{users.get(i).getDisplayName(), creatorDetails, session.getSessionName(), dateFormat.format(session.getStartTime()), dateFormat.format(session.getEndTime()), launchUrl, creatorDetails};
-			jasigMailTemplateService.sendEmailUsingTemplate(creator.getEmail(), toList, null, substitutions, "moderatorMailMessage");
+			toList = new ArrayList<String>();
+            toList.add(user.getEmail());
+			jasigMailTemplateService.sendEmailUsingTemplate(creator.getEmail(), toList, null, subs, "moderatorMailMessage");
         }
         logger.debug("finished");
     }
@@ -443,18 +407,21 @@ public class SessionServiceImpl implements SessionService {
                           
         }
         
-        List<String> toList;
-        for (int i = 0; i < users.size(); i++) {
-            logger.debug("user name:" + users.get(i).getDisplayName());
-            logger.debug("user email:" + users.get(i).getDisplayName());
+		List<String> toList;
+		for (User user : users)
+		{
+			Map<String, String> subs = new HashMap<String, String>();
+			subs.put("displayName", user.getDisplayName());
+			subs.put("creatorDetails", creatorDetails);
+			subs.put("sessionName", session.getSessionName());
+			subs.put("sessionStartTime", dateFormat.format(session.getStartTime()));
+			subs.put("sessionEndTime", dateFormat.format(session.getEndTime()));
 
-            toList = new ArrayList<String>();
-            toList.add(users.get(i).getEmail());
-
-            substitutions = new String[]{users.get(i).getDisplayName(), creatorDetails, session.getSessionName(), dateFormat.format(session.getStartTime()), dateFormat.format(session.getEndTime()), creatorDetails};
-			jasigMailTemplateService.sendEmailUsingTemplate(creator.getEmail(), toList, null, substitutions, "sessionDeletionMessage");
-        }
-        logger.debug("finished");
+			toList = new ArrayList<String>();
+			toList.add(user.getEmail());
+			jasigMailTemplateService.sendEmailUsingTemplate(creator.getEmail(), toList, null, subs, "sessionDeletionMessage");
+		}
+		logger.debug("finished");
     }
 
     public void notifyIntParticipants(User creator, Session session, List<User> users, String launchUrl) throws Exception {
@@ -464,11 +431,19 @@ public class SessionServiceImpl implements SessionService {
         String creatorDetails = creator.getDisplayName() + " (" + creator.getEmail() + ")";
 
         List<String> toList;
-        for (int i = 0; i < users.size(); i++) {
-            toList = new ArrayList<String>();
-            toList.add(users.get(i).getEmail());
-            substitutions = new String[]{users.get(i).getDisplayName(), creatorDetails, session.getSessionName(), dateFormat.format(session.getStartTime()), dateFormat.format(session.getEndTime()), launchUrl, creatorDetails};
-			jasigMailTemplateService.sendEmailUsingTemplate(creator.getEmail(), toList, null, substitutions, "intParticipantMailMessage");
+        for (User user : users)
+		{
+			Map<String, String> subs = new HashMap<String, String>();
+			subs.put("displayName", user.getDisplayName());
+			subs.put("creatorDetails", creatorDetails);
+			subs.put("sessionName", session.getSessionName());
+			subs.put("sessionStartTime", dateFormat.format(session.getStartTime()));
+			subs.put("sessionEndTime", dateFormat.format(session.getEndTime()));
+			subs.put("launchURL", launchUrl);
+
+			toList = new ArrayList<String>();
+			toList.add(user.getEmail());
+			jasigMailTemplateService.sendEmailUsingTemplate(creator.getEmail(), toList, null, subs, "intParticipantMailMessage");
         }
         logger.debug("finished");
     }
@@ -485,16 +460,26 @@ public class SessionServiceImpl implements SessionService {
         sessionUrlId = new SessionUrlId();
         sessionUrlId.setSessionId(session.getSessionId());
         sessionUrlId.setDisplayName("Guest");
-        sessionUrl = this.getSessionUrl(sessionUrlId);       
+        sessionUrl = getSessionUrl(sessionUrlId);
         String extParticipantUrl;
-        for (int i = 0; i < users.size(); i++) {
-            toList = new ArrayList<String>();
-            toList.add(users.get(i).getEmail());
-            extParticipantUrl = sessionUrl.getUrl().replaceFirst("Guest",URLEncoder.encode(users.get(i).getDisplayName(), "UTF-8"));
-            substitutions = new String[]{users.get(i).getDisplayName(), creatorDetails, session.getSessionName(), dateFormat.format(session.getStartTime()), dateFormat.format(session.getEndTime()), extParticipantUrl, creatorDetails};
-			jasigMailTemplateService.sendEmailUsingTemplate(creator.getEmail(), toList, null, substitutions, "extParticipantMailMessage");
-        }
-        logger.debug("finished");
+		for (User user : users)
+		{
+			extParticipantUrl = sessionUrl.getUrl().replaceFirst("Guest", URLEncoder.encode(user.getDisplayName(), "UTF-8"));
+
+			Map<String, String> subs = new HashMap<String, String>();
+			subs.put("displayName", user.getDisplayName());
+			subs.put("creatorDetails", creatorDetails);
+			subs.put("sessionName", session.getSessionName());
+			subs.put("sessionStartTime", dateFormat.format(session.getStartTime()));
+			subs.put("sessionEndTime", dateFormat.format(session.getEndTime()));
+			subs.put("extParticipantUrl", extParticipantUrl);
+
+			toList = new ArrayList<String>();
+			toList.add(user.getEmail());
+			jasigMailTemplateService.sendEmailUsingTemplate(creator.getEmail(), toList, null, subs, "extParticipantMailMessage");
+		}
+
+		logger.debug("finished");
     }
 
     public void addExtParticipant(User user, long sessionId) {
