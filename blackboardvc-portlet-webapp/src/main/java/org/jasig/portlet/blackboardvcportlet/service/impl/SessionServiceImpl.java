@@ -8,6 +8,7 @@ import org.jasig.portlet.blackboardvcportlet.service.MailTemplateService;
 import org.jasig.portlet.blackboardvcportlet.service.RecordingService;
 import org.jasig.portlet.blackboardvcportlet.service.SessionService;
 import org.jasig.portlet.blackboardvcportlet.service.UserService;
+import org.jasig.portlet.blackboardvcportlet.service.util.MailMessages;
 import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,8 +24,8 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
-public class SessionServiceImpl implements SessionService {
-	
+public class SessionServiceImpl implements SessionService
+{
 	private static final Logger logger = LoggerFactory.getLogger(SessionService.class);
 
     @Autowired
@@ -339,7 +340,7 @@ public class SessionServiceImpl implements SessionService {
 
 			toList = new ArrayList<String>();
             toList.add(user.getEmail());
-			jasigMailTemplateService.sendEmailUsingTemplate(creator.getEmail(), toList, null, subs, "moderatorMailMessage");
+			jasigMailTemplateService.sendEmailUsingTemplate(creator.getEmail(), toList, null, subs, MailMessages.MODERATOR);
         }
         logger.debug("finished");
     }
@@ -419,7 +420,7 @@ public class SessionServiceImpl implements SessionService {
 
 			toList = new ArrayList<String>();
 			toList.add(user.getEmail());
-			jasigMailTemplateService.sendEmailUsingTemplate(creator.getEmail(), toList, null, subs, "sessionDeletionMessage");
+			jasigMailTemplateService.sendEmailUsingTemplate(creator.getEmail(), toList, null, subs, MailMessages.SESSION_DELETION);
 		}
 		logger.debug("finished");
     }
@@ -443,7 +444,7 @@ public class SessionServiceImpl implements SessionService {
 
 			toList = new ArrayList<String>();
 			toList.add(user.getEmail());
-			jasigMailTemplateService.sendEmailUsingTemplate(creator.getEmail(), toList, null, subs, "intParticipantMailMessage");
+			jasigMailTemplateService.sendEmailUsingTemplate(creator.getEmail(), toList, null, subs, MailMessages.INTERNAL_PARTICIPANT);
         }
         logger.debug("finished");
     }
@@ -476,7 +477,7 @@ public class SessionServiceImpl implements SessionService {
 
 			toList = new ArrayList<String>();
 			toList.add(user.getEmail());
-			jasigMailTemplateService.sendEmailUsingTemplate(creator.getEmail(), toList, null, subs, "extParticipantMailMessage");
+			jasigMailTemplateService.sendEmailUsingTemplate(creator.getEmail(), toList, null, subs, MailMessages.EXTERNAL_PARTICIPANT);
 		}
 
 		logger.debug("finished");

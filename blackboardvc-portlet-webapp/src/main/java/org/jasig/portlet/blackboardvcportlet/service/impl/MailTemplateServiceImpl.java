@@ -2,12 +2,14 @@ package org.jasig.portlet.blackboardvcportlet.service.impl;
 
 import org.apache.velocity.app.VelocityEngine;
 import org.jasig.portlet.blackboardvcportlet.service.MailTemplateService;
+import org.jasig.portlet.blackboardvcportlet.service.util.MailMessages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
@@ -23,26 +25,44 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 @Service("jasigMailTemplateService")
 public class MailTemplateServiceImpl implements BeanFactoryAware, MailTemplateService
 {
-		private static final Logger logger = LoggerFactory.getLogger(MailTemplateServiceImpl.class);
-		
-		final private Queue<MailTask> theQueue = new ConcurrentLinkedQueue<MailTask>();
-	    private JavaMailSender mailSender;
-	    private BeanFactory beanFactory;
-		private VelocityEngine velocityEngine;
-	    
-	    public MailTemplateServiceImpl () {
-	    	super();
-	    }
+	private static final Logger logger = LoggerFactory.getLogger(MailTemplateServiceImpl.class);
 
-	    @Autowired
-	    public void setBeanFactory(BeanFactory bf) throws BeansException {
-	        beanFactory = bf;
-	    }
-	    
-	    @Autowired
-	    public void setJavaMailSender (JavaMailSender ms) {
-	    	this.mailSender = ms;
-	    }
+	final private Queue<MailTask> theQueue = new ConcurrentLinkedQueue<MailTask>();
+	private JavaMailSender mailSender;
+	private BeanFactory beanFactory;
+	private VelocityEngine velocityEngine;
+
+	@Value("mail.from")
+	private String defaultFromAddress;
+
+	@Value("mail.extParticipantMailMessage.subject")
+	private String externalParticipantSubject;
+	@Value("mail.intParticipantMailMessage.subject")
+	private String internalParticipantSubject;
+	@Value("mail.moderatorMailMessage.subject")
+	private String moderatorSubject;
+	@Value("mail.sessionDeletionMessage.subject")
+	private String sessionDeletionSubject;
+
+	/**
+	 * Default Constructor
+	 */
+	public MailTemplateServiceImpl()
+	{
+		super();
+	}
+
+	@Autowired
+	public void setBeanFactory(BeanFactory bf) throws BeansException
+	{
+		beanFactory = bf;
+	}
+
+	@Autowired
+	public void setJavaMailSender(JavaMailSender ms)
+	{
+		this.mailSender = ms;
+	}
 
 	@Autowired
 	public void setVelocityEngine(VelocityEngine velocityEngine)
@@ -50,107 +70,151 @@ public class MailTemplateServiceImpl implements BeanFactoryAware, MailTemplateSe
 		this.velocityEngine = velocityEngine;
 	}
 
-	private static class MailTask {
-	        
-		    private String from;
-		    private List<String> to;
-		    private String subject;
-		    private Map substitutions;
-		    private String template;
-	
-		    public MailTask(String from, List<String> to, String subject, Map substitutions, String template) {
-		        this.setFrom(from);
-		        this.setTo(to);
-		        this.setSubject(subject);
-		        this.setSubstitutions(substitutions);
-		        this.setTemplate(template);
-		    }
+	private static class MailTask
+	{
 
-			public String getFrom() {
-				return from;
-			}
+		private String from;
+		private List<String> to;
+		private String subject;
+		private Map substitutions;
+		private MailMessages template;
 
-			public void setFrom(String from) {
-				this.from = from;
-			}
+		public MailTask(String from, List<String> to, String subject, Map substitutions, MailMessages template)
+		{
+			this.setFrom(from);
+			this.setTo(to);
+			this.setSubject(subject);
+			this.setSubstitutions(substitutions);
+			this.setTemplate(template);
+		}
 
-			public List<String> getTo() {
-				return to;
-			}
+		public String getFrom()
+		{
+			return from;
+		}
 
-			public void setTo(List<String> to) {
-				this.to = to;
-			}
+		public void setFrom(String from)
+		{
+			this.from = from;
+		}
 
-			public String getSubject() {
-				return subject;
-			}
+		public List<String> getTo()
+		{
+			return to;
+		}
 
-			public void setSubject(String subject) {
-				this.subject = subject;
-			}
+		public void setTo(List<String> to)
+		{
+			this.to = to;
+		}
 
-			public Map getSubstitutions() {
-				return substitutions;
-			}
+		public String getSubject()
+		{
+			return subject;
+		}
 
-			public void setSubstitutions(Map substitutions) {
-				this.substitutions = substitutions;
-			}
+		public void setSubject(String subject)
+		{
+			this.subject = subject;
+		}
 
-			public String getTemplate() {
-				return template;
-			}
+		public Map getSubstitutions()
+		{
+			return substitutions;
+		}
 
-			public void setTemplate(String template) {
-				this.template = template;
-			}
-	  }
-	  
-	  /**
-	   * Clear the queue every 1 second after last completion
-	   */
-	  @Scheduled(fixedDelay=1000)
-	  private void clearQueue() {
-		  MailTask cur = theQueue.poll();
-		  while(cur != null) {
-			  sendMail(cur);
-			  cur = theQueue.poll();
-		  }
-	  }
-	  
-	  private void sendMail(final MailTask mt) {
-	      try {
-			  MimeMessagePreparator messagePreparator = new MimeMessagePreparator() {
-				  public void prepare(MimeMessage mimeMessage) throws Exception {
-					  MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
+		public void setSubstitutions(Map substitutions)
+		{
+			this.substitutions = substitutions;
+		}
 
-					  if (mt.getFrom() != null)
-					  {
-						  message.setFrom(mt.getFrom());
-					  }
-					  if (mt.getTo() != null)
-					  {
-						  String[] toArray = mt.getTo().toArray(new String[mt.getTo().size()]);
-						  message.setTo(toArray);
-					  }
-					  if (mt.getSubject() != null)
-					  {
-						  message.setSubject(mt.getSubject());
-					  }
+		public MailMessages getTemplate()
+		{
+			return template;
+		}
 
-					  String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, mt.getTemplate(), "UTF-8", mt.getSubstitutions());
-					  message.setText(text, true);
-				  }
-			  };
-            mailSender.send(messagePreparator);
-	      } catch (Exception e) {
-	          logger.error("Issue with sending email",e);
-	      }
-	    }
+		public void setTemplate(MailMessages template)
+		{
+			this.template = template;
+		}
+	}
 
-	  public void sendEmailUsingTemplate(String from, List<String> to, String subject, Map substitutions, String template)
-	  {
-	      theQueue.add(new MailTask(from,to,subject,substitutions,template));
-	  }
+	/**
+	 * Clear the queue every 1 second after last completion
+	 */
+	@Scheduled(fixedDelay = 1000)
+	private void clearQueue()
+	{
+		MailTask cur = theQueue.poll();
+		while (cur != null)
+		{
+			sendMail(cur);
+			cur = theQueue.poll();
+		}
+	}
+
+	private void sendMail(final MailTask mt)
+	{
+		try
+		{
+			MimeMessagePreparator messagePreparator = new MimeMessagePreparator()
+			{
+				public void prepare(MimeMessage mimeMessage) throws Exception
+				{
+					MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
+
+					if (mt.getFrom() != null)
+					{
+						message.setFrom(mt.getFrom());
+					}
+					else
+					{
+						message.setFrom(defaultFromAddress);
+					}
+					if (mt.getTo() != null)
+					{
+						String[] toArray = mt.getTo().toArray(new String[mt.getTo().size()]);
+						message.setTo(toArray);
+					}
+					if (mt.getSubject() != null)
+					{
+						message.setSubject(mt.getSubject());
+					}
+					else
+					{
+						switch (mt.getTemplate())
+						{
+							case MODERATOR:
+								message.setSubject(moderatorSubject);
+								break;
+							case INTERNAL_PARTICIPANT:
+								message.setSubject(internalParticipantSubject);
+								break;
+							case EXTERNAL_PARTICIPANT:
+								message.setSubject(externalParticipantSubject);
+								break;
+							case SESSION_DELETION:
+								message.setSubject(sessionDeletionSubject);
+								break;
+							default:
+								message.setSubject("");
+						}
+					}
+
+					String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, mt.getTemplate().getTemplateName(), "UTF-8", mt.getSubstitutions());
+					message.setText(text, true);
+				}
+			};
+			mailSender.send(messagePreparator);
+		}
+		catch (Exception e)
+		{
+			logger.error("Issue with sending email", e);
+		}
+	}
+
+	public void sendEmailUsingTemplate(String from, List<String> to, String subject, Map substitutions, MailMessages template)
+	{
+		theQueue.add(new MailTask(from, to, subject, substitutions, template));
+	}
 }

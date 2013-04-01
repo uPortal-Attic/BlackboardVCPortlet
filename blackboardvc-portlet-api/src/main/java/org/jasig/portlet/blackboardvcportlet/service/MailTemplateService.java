@@ -18,6 +18,7 @@
  */
 package org.jasig.portlet.blackboardvcportlet.service;
 
+import org.jasig.portlet.blackboardvcportlet.service.util.MailMessages;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.stereotype.Service;
@@ -43,5 +44,5 @@ public interface MailTemplateService
 	 * @param substitutions Map of Data objects
 	 * @param template      File Name of template
 	 */
-	public void sendEmailUsingTemplate(String from, List<String> to, String subject, Map substitutions, String template);
+	public void sendEmailUsingTemplate(String from, List<String> to, String subject, Map substitutions, MailMessages template);
 }
