@@ -71,8 +71,7 @@
 		<input type="hidden" name="sessionId" value="${session.sessionId}" />
 	</c:if>
 	<c:if test="${!empty session.creatorOrgUnit}">
-		<input type="hidden" name="creatorOrgUnit"
-			value="${session.creatorOrgUnit}" />
+		<input type="hidden" name="creatorOrgUnit" value="${session.creatorOrgUnit}" />
 	</c:if>
 	<table>
 		<tbody>
@@ -80,124 +79,111 @@
 				<td><span class="uportal-channel-strong">Session Name: </span></td>
 				<c:choose>
 					<c:when test="${session.sessionId ne 0}">
-						<td><input type="hidden" name="sessionName"
-							value="${session.sessionName}" />${session.sessionName}</td>
+						<td><input type="hidden" name="sessionName" value="${session.sessionName}" />${session.sessionName}</td>
 					</c:when>
 					<c:otherwise>
-						<td><input name="sessionName" style="width: 50%;"
-							class="uportal-input-text" value="${session.sessionName}" /></td>
+						<td><input name="sessionName" style="width: 50%;" class="uportal-input-text" value="${session.sessionName}" /></td>
 					</c:otherwise>
 				</c:choose>
 
 			</tr>
 			<tr>
-				<td></td>
-				<td class="uportal-channel-table-caption">The session name
-					cannot be changed once created.</td>
+				<td>&nbsp;</td>
+				<td class="uportal-channel-table-caption">The session name cannot be changed once created.</td>
 			</tr>
 			<tr>
-				<td><span class="uportal-channel-strong">Start Date and
-						Time: </span></td>
-				<td><input style="width: 82px;"
-					value="<fmt:formatDate value="${session.startTime}" pattern="dd-MM-yyyy" />"
-					name="startdate" id="${namespace}startdatepicker"
-					style="width: 70px;" type="text">&nbsp; <fmt:formatDate
-						var="startHourValue" value="${session.startTime}" pattern="H" />
+				<td><span class="uportal-channel-strong">Start Date and Time: </span></td>
+				<td><input style="width: 82px;" value="<fmt:formatDate value="${session.startTime}" pattern="dd-MM-yyyy" />" name="startdate" id="${namespace}startdatepicker" style="width: 70px;" type="text">&nbsp; <fmt:formatDate var="startHourValue" value="${session.startTime}" pattern="H" />
 					<select name="startHour">
 						<c:forEach var="i" begin="0" end="23" step="1">
 							<option value="${i}" ${startHourValue == i ? 'selected' : ''}>${i}</option>
 						</c:forEach>
-				</select>: <fmt:formatDate var="startMinuteValue"
-						value='${session.startTime}' pattern='m' /> <select
-					name="startMinute">
+					</select>
+					: 
+					<fmt:formatDate var="startMinuteValue" value='${session.startTime}' pattern='m' /> 
+					<select name="startMinute">
 						<c:forEach var="i" begin="0" end="45" step="15">
 							<option value="${i}" ${startMinuteValue == i ? 'selected' : ''}>${i}</option>
 						</c:forEach>
-				</select></td>
+					</select>
+				</td>
 			</tr>
 			<tr>
-				<td><span class="uportal-channel-strong">End Date and
-						Time: </span></td>
-				<td><input style="width: 82px;"
-					value="<fmt:formatDate value="${session.endTime}" pattern="dd-MM-yyyy" />"
-					name="enddate" id="${namespace}enddatepicker" style="width: 70px;"
-					type="text">&nbsp; <fmt:formatDate var="endHourValue"
-						value="${session.endTime}" pattern="H" /> <select name="endHour">
+				<td><span class="uportal-channel-strong">End Date and Time: </span></td>
+				<td><input style="width: 82px;" value="<fmt:formatDate value="${session.endTime}" pattern="dd-MM-yyyy" />" name="enddate" id="${namespace}enddatepicker" style="width: 70px;" type="text">&nbsp; <fmt:formatDate var="endHourValue" value="${session.endTime}" pattern="H" /> 
+					<select name="endHour">
 						<c:forEach var="i" begin="0" end="23" step="1">
 							<option value="${i}" ${endHourValue == i ? 'selected' : ''}>${i}</option>
 						</c:forEach>
-				</select>: <fmt:formatDate var="endMinuteValue" value='${session.endTime}'
-						pattern='m' /> <select name="endMinute">
+					</select>
+					: <fmt:formatDate var="endMinuteValue" value='${session.endTime}' pattern='m' /> 
+					<select name="endMinute">
 						<c:forEach var="i" begin="0" end="45" step="15">
 							<option value="${i}" ${endMinuteValue == i ? 'selected' : ''}>${i}</option>
 						</c:forEach>
-				</select></td>
+					</select>
+				</td>
 			</tr>
 			<tr>
-				<td></td>
+				<td>&nbsp;</td>
 				<td class="uportal-channel-table-caption">Enter dates as in
 					dd-mm-yyyy format. Time must be entered in 15 minute increments.
 					Start time must be in the future.</td>
 			</tr>
 			<tr>
-				<td><span class="uportal-channel-strong">Early Session
-						Entry: </span></td>
+				<td><span class="uportal-channel-strong">Early Session Entry: </span></td>
 				<td><select name="boundaryTime">
 						<option value="15"
-							${session.boundaryTime == "15" ? 'selected' : ''}>15
-							minutes</option>
+							${session.boundaryTime == "15" ? 'selected' : ''}>15 minutes</option>
 						<option value="30"
-							${session.boundaryTime == "30" ? 'selected' : ''}>30
-							minutes</option>
+							${session.boundaryTime == "30" ? 'selected' : ''}>30 minutes</option>
 						<option value="45"
-							${session.boundaryTime == "45" ? 'selected' : ''}>45
-							minutes</option>
+							${session.boundaryTime == "45" ? 'selected' : ''}>45 minutes</option>
 						<option value="60"
 							${session.boundaryTime == "60" ? 'selected' : ''}>1 hour</option>
 						<option value="120"
-							${session.boundaryTime == "120" ? 'selected' : ''}>2
-							hours</option>
+							${session.boundaryTime == "120" ? 'selected' : ''}>2 hours</option>
 						<option value="180"
-							${session.boundaryTime == "180" ? 'selected' : ''}>3
-							hours</option>
+							${session.boundaryTime == "180" ? 'selected' : ''}>3 hours</option>
 				</select></td>
 			</tr>
 			<tr>
 				<td></td>
-				<td class="uportal-channel-table-caption">The period before the
-					start of the session during which users can enter the session.</td>
+				<td class="uportal-channel-table-caption">The period before the start of the session during which users can enter the session.</td>
 			</tr>
 			<c:choose>
 				<c:when test="${!empty fullAccess}">
 					<tr>
 						<td><span class="uportal-channel-strong">Max
 								Simultaneous Talkers: </span></td>
-						<td><select name="maxTalkers">
+						<td>
+							<select name="maxTalkers">
 								<c:forEach var="i" begin="1" end="6" step="1">
 									<option value="${i}"
 										${session.maxTalkers == i ? 'selected' : ''}>${i}</option>
 								</c:forEach>
-						</select></td>
+							</select>
+						</td>
 					</tr>
 					<tr>
 						<td></td>
-						<td class="uportal-channel-table-caption">Maximum number of
-							simultaneous talkers allowed at the start of a session.</td>
+						<td class="uportal-channel-table-caption">Maximum number of simultaneous talkers allowed at the start of a session.</td>
 					</tr>
 					<tr>
 						<td><span class="uportal-channel-strong">Max Cameras:
 						</span></td>
-						<td><select name="maxCameras">
+						<td>
+							<select name="maxCameras">
 								<c:forEach var="i" begin="1" end="6" step="1">
 									<option value="${i}"
 										${session.maxCameras == i ? 'selected' : ''}>${i}</option>
 								</c:forEach>
-						</select></td>
+							</select>
+						</td>
 					</tr>
 					<tr>
-						<td></td>
-						<td class="uportal-channel-table-caption">Maximum number of
-							simultaneous web cameras allowed at the start of a session.</td>
+						<td>&nbsp;</td>
+						<td class="uportal-channel-table-caption">Maximum number of simultaneous web cameras allowed at the start of a session.</td>
 					</tr>
 					<tr>
 						<td><span class="uportal-channel-strong">Supervised: </span></td>
@@ -206,35 +192,27 @@
 					</tr>
 					<tr>
 						<td></td>
-						<td class="uportal-channel-table-caption">Moderators may view
-							all private chat messages in the session.</td>
+						<td class="uportal-channel-table-caption">Moderators may view all private chat messages in the session.</td>
 					</tr>
 					<tr>
-						<td><span class="uportal-channel-strong">All
-								Permissions: </span></td>
+						<td><span class="uportal-channel-strong">All Permissions: </span></td>
 						<td><input name="permissionsOn" type="checkbox" value="Y"
 							${session.permissionsOn ? 'checked' : ''} /></td>
 					</tr>
 					<tr>
 						<td></td>
-						<td class="uportal-channel-table-caption">All participants
-							have full permissions access to session resources such as audio,
-							whiteboard, etc.</td>
+						<td class="uportal-channel-table-caption">All participants have full permissions access to session resources such as audio, whiteboard, etc.</td>
 					</tr>
 					<tr>
-						<td><span class="uportal-channel-strong">Raise Hand on
-								Entry: </span></td>
-						<td><input name="raiseHandOnEnter" type="checkbox" value="Y"
-							${session.raiseHandOnEnter ? 'checked' : ''} /></td>
+						<td><span class="uportal-channel-strong">Raise Hand on Entry: </span></td>
+						<td><input name="raiseHandOnEnter" type="checkbox" value="Y" ${session.raiseHandOnEnter ? 'checked' : ''} /></td>
 					</tr>
 					<tr>
 						<td></td>
-						<td class="uportal-channel-table-caption">Users automatically
-							raise their hand when they join the session.</td>
+						<td class="uportal-channel-table-caption">Users automatically raise their hand when they join the session.</td>
 					</tr>
 					<tr>
-						<td><span class="uportal-channel-strong">Recording
-								Mode: </span></td>
+						<td><span class="uportal-channel-strong">Recording Mode: </span></td>
 						<td><select name="recordingModeType" disabled>
 								<option value="1"
 									${session.recordingModeType == "1" ? 'selected' : ''}>Manual</option>
@@ -242,35 +220,27 @@
 									${session.recordingModeType == "2" ? 'selected' : ''}>Automatic</option>
 								<option value="3"
 									${session.recordingModeType == "3" ? 'selected' : ''}>Disabled</option>
-						</select> <input type="hidden" name="recordingModeType"
-							value="${session.recordingModeType}" /></td>
+						</select> <input type="hidden" name="recordingModeType" value="${session.recordingModeType}" /></td>
 					</tr>
 					<tr>
 						<td></td>
-						<td class="uportal-channel-table-caption">The mode of
-							recording the session.</td>
+						<td class="uportal-channel-table-caption">The mode of recording the session.</td>
 					</tr>
 					<tr>
-						<td><span class="uportal-channel-strong">Hide Names in
-								Recordings: </span></td>
-						<td><input name="hideParticipantNames" type="checkbox"
-							value="Y" ${session.hideParticipantNames  ? 'checked' : ''} /></td>
+						<td><span class="uportal-channel-strong">Hide Names in Recordings: </span></td>
+						<td><input name="hideParticipantNames" type="checkbox" value="Y" ${session.hideParticipantNames  ? 'checked' : ''} /></td>
 					</tr>
 					<tr>
 						<td></td>
-						<td class="uportal-channel-table-caption">Names of session
-							participants are hidden from viewers of recordings.</td>
+						<td class="uportal-channel-table-caption">Names of session participants are hidden from viewers of recordings.</td>
 					</tr>
 					<tr>
-						<td><span class="uportal-channel-strong">Allow
-								In-Session Invitations: </span></td>
-						<td><input name="allowInSessionInvites" type="checkbox"
-							value="Y" ${session.allowInSessionInvites ? 'checked' : ''} /></td>
+						<td><span class="uportal-channel-strong">Allow In-Session Invitations: </span></td>
+						<td><input name="allowInSessionInvites" type="checkbox" value="Y" ${session.allowInSessionInvites ? 'checked' : ''} /></td>
 					</tr>
 					<tr>
 						<td></td>
-						<td class="uportal-channel-table-caption">Moderators may send
-							invitations to join the session from within the session.</td>
+						<td class="uportal-channel-table-caption">Moderators may send invitations to join the session from within the session.</td>
 					</tr>
 				</c:when>
 				<c:otherwise>
@@ -329,15 +299,11 @@
 
 			<c:if test="${fn:length(moderators) gt 0}">
 				<tr>
-					<td colspan="3"><input value="Delete Moderator(s)"
-						name="action" style="text-transform: none;" class="uportal-button"
-						type="submit"></td>
+					<td colspan="3"><input value="Delete Moderator(s)" name="action" style="text-transform: none;" class="uportal-button" type="submit" /></td>
 				</tr>
 			</c:if>
 			<tr>
-				<td colspan="3"><input id="${namespace}moderatiorUidInput"
-					name="moderatorUid" type="text">&nbsp;<input
-					id="${namespace}addModeratorSubmit" name="action"
+				<td colspan="3"><input id="${namespace}moderatiorUidInput" name="moderatorUid" type="text">&nbsp;<input id="${namespace}addModeratorSubmit" name="action"
 					value="Add Moderator(s)" style="text-transform: none;"
 					class="uportal-button" type="submit"></td>
 			</tr>
