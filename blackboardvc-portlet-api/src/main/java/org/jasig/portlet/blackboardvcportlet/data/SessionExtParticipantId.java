@@ -19,20 +19,22 @@
 package org.jasig.portlet.blackboardvcportlet.data;
 
 import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 
 /**
  * Embeddable id for SessionExtParticipant
  * @author Richard Good
  */
-//@Embeddable
+@Embeddable
 public class SessionExtParticipantId implements Serializable {
     
     private static final long serialVersionUID = -2940420183204251629L;
 
-//	@Column(name="SESSION_ID")
+	@Column(name="SESSION_ID")
     protected long sessionId;
     
-//    @Column(name="EMAIL_ADDRESS")
+    @Column(name="EMAIL_ADDRESS")
     protected String participantEmail;
 
     public long getSessionId() {

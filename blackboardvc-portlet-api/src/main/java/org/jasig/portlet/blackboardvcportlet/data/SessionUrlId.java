@@ -20,21 +20,24 @@ package org.jasig.portlet.blackboardvcportlet.data;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+
 /**
  * Embeddable ID for session Urls
  * @author Richard Good
  */
-// @Embeddable
+ @Embeddable
 public class SessionUrlId implements Serializable {  
     private static final long serialVersionUID = 1L;
 
-//    @Column(name="SESSION_ID")
+    @Column(name="SESSION_ID")
     protected long sessionId;
         
-//    @Column(name="DISPLAY_NAME")
+    @Column(name="DISPLAY_NAME")
     protected String displayName;
          
-//    @Column(name="USER_ID")
+    @Column(name="USER_ID")
     protected String userId;
 
     public long getSessionId() {

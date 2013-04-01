@@ -18,134 +18,111 @@
  */
 package org.jasig.portlet.blackboardvcportlet.data;
 
-import javax.persistence.Cacheable;
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
+import javax.persistence.Temporal;
 import javax.persistence.Transient;
-import javax.persistence.Version;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.NaturalId;
-import org.hibernate.annotations.NaturalIdCache;
-import org.joda.time.DateTime;
-
+/**
+ * Entity class for storing Sessions
+ * @author Richard Good
+ */
 @Entity
-@Table(name = "VC2_SESSION")
-@SequenceGenerator(
-        name="VC2_SESSION_GEN",
-        sequenceName="VC2_SESSION_SEQ",
-        allocationSize=10
-    )
-@TableGenerator(
-        name="VC2_SESSION_GEN",
-        pkColumnValue="VC2_SESSION",
-        allocationSize=10
-    )
-@NaturalIdCache
-@Cacheable
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Table(name="VC_SESSION")
 public class SessionImpl implements Session {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "UP_PORTLET_TYPE_GEN")
-    @Column(name = "DB_SESSION_ID")
-    private final long dbSessionId;
-    
-    @Version
-    @Column(name = "ENTITY_VERSION")
-    private final long entityVersion;
-    
-    @NaturalId
     @Column(name="SESSION_ID")
-    private final long sessionId;
+    protected long sessionId;
     
-    @Column(name="SESSION_NAME", length = 1000)
-    private final String sessionName;
+    @Column(name="SESSION_NAME")
+    protected String sessionName;
     
     @Column(name="START_TIME")
-    private final DateTime startTime;
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    protected Date startTime;
     
     @Column(name="END_TIME")
-    private final DateTime endTime;
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    protected Date endTime;
     
     @Column(name="CREATOR_ID")
-    private String creatorId;
+    protected String creatorId;
     
     @Column(name="BOUNDARY_TIME")
-    private int boundaryTime;
+    protected int boundaryTime;
     
     @Column(name="ACCESS_TYPE")
-    private long accessType;
+    protected long accessType;
     
     @Column(name="RECORDINGS")
-    private boolean recordings;
+    protected boolean recordings;
     
     @Column(name="CHAIR_NOTES")
-    private String chairNotes;
+    protected String chairNotes;
     
     @Column(name="NON_CHAIR_NOTES")
-    private String nonChairNotes;
+    protected String nonChairNotes;
     
     @Column(name="CHAIR_LIST")
-    private String chairList;
+    protected String chairList;
     
     @Column(name="NON_CHAIR_LIST")
-    private String nonChairList;
+    protected String nonChairList;
     
     @Column(name="GROUPING_LIST")
-    private String groupingList;
+    protected String groupingList;
     
     @Column(name="OPEN_CHAIR")
-    private boolean openChair;
+    protected boolean openChair;
     
     @Column(name="PERMISSIONS_ON")
-    private boolean permissionsOn;
+    protected boolean permissionsOn;
     
     @Column(name="MUST_BE_SUPERVISED")
-    private boolean mustBeSupervised;
+    protected boolean mustBeSupervised;
     
     @Column(name="RECORDING_MODE_TYPE")
-    private long recordingModeType;
+    protected long recordingModeType;
     
     @Column(name="MAX_TALKERS")
-    private int maxTalkers;
+    protected int maxTalkers;
     
     @Column(name="MAX_CAMERAS")
-    private int maxCameras;
+    protected int maxCameras;
     
     @Column(name="RAISE_HAND_ON_ENTER")
-    private boolean raiseHandOnEnter;
+    protected boolean raiseHandOnEnter;
     
     @Column(name="RESERVE_SEATS")
-    private int reserveSeats;
+    protected int reserveSeats;
     
     @Column(name="SECURE_SIGN_ON")
-    private boolean secureSignOn;
+    protected boolean secureSignOn;
     
     @Column(name="VERSION_ID")
-    private long versionId;
+    protected long versionId;
     
     @Column(name="ALLOW_IN_SESSION_INVITES")
-    private boolean allowInSessionInvites;
+    protected boolean allowInSessionInvites;
     
     @Column(name="HIDE_PARTICIPANT_NAMES")
-    private boolean hideParticipantNames;
+    protected boolean hideParticipantNames;
     
-    @Column(name="LAST_UPDateTimeD")
-    private DateTime lastUpDateTimed;
+    @Column(name="LAST_UPDATED")
+    @Temporal(javax.persistence.TemporalType.DATE)
+    protected Date lastUpdated;
     
     @Column(name="CREATOR_ORGUNIT")
-    private String creatorOrgUnit;
+    protected String creatorOrgUnit;
     
     @Transient
-    private boolean currUserCanEdit;
+    protected boolean currUserCanEdit;
 
     @Override
     public boolean isCurrUserCanEdit() {
@@ -228,12 +205,12 @@ public class SessionImpl implements Session {
     }
 
     @Override
-    public DateTime getEndTime() {
+    public Date getEndTime() {
         return endTime;
     }
 
     @Override
-    public void setEndTime(DateTime endTime) {
+    public void setEndTime(Date endTime) {
         this.endTime = endTime;
     }
 
@@ -258,13 +235,13 @@ public class SessionImpl implements Session {
     }
 
     @Override
-    public DateTime getLastUpDateTimed() {
-        return lastUpDateTimed;
+    public Date getLastUpdated() {
+        return lastUpdated;
     }
 
     @Override
-    public void setLastUpDateTimed(DateTime lastUpDateTimed) {
-        this.lastUpDateTimed = lastUpDateTimed;
+    public void setLastUpdated(Date lastUpdated) {
+        this.lastUpdated = lastUpdated;
     }
 
     @Override
@@ -408,12 +385,12 @@ public class SessionImpl implements Session {
     }
 
     @Override
-    public DateTime getStartTime() {
+    public Date getStartTime() {
         return startTime;
     }
 
     @Override
-    public void setStartTime(DateTime startTime) {
+    public void setStartTime(Date startTime) {
         this.startTime = startTime;
     }
 
