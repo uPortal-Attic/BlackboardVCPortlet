@@ -13,6 +13,10 @@ public enum MailMessages
 
 	private String templateName;
 
+	/**
+	 * Constructor
+	 * @param templateName The name of the template minus path and minus file extension
+	 */
 	private MailMessages(String templateName)
 	{
 		this.templateName = templateName;
@@ -27,5 +31,14 @@ public enum MailMessages
 	public String toString()
 	{
 		return getTemplateName();
+	}
+
+	/**
+	 * Get the classpath to the template
+	 * @return String containing classpath reference to Velocity template
+	 */
+	public String getClassPathToTemplate()
+	{
+		return  "/mail/" + getTemplateName() + ".vm";
 	}
 }

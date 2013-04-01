@@ -151,11 +151,6 @@ public class MailTemplateServiceImpl implements BeanFactoryAware, MailTemplateSe
 
 	public String buildEmailMessage(final MailTask mailTask)
 	{
-		return VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, getVelocityTemplatePath(mailTask.getTemplate()), "UTF-8", mailTask.getSubstitutions());
-	}
-
-	private String getVelocityTemplatePath(MailMessages messages)
-	{
-		return  "/mail/" + messages.getTemplateName() + ".vm";
+		return VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, mailTask.getTemplate().getClassPathToTemplate(), "UTF-8", mailTask.getSubstitutions());
 	}
 }
