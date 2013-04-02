@@ -80,7 +80,7 @@ public class BlackboardSessionDaoImplTest extends BaseJpaDaoTest {
                 sessionResponse.setSessionId(106582);
                 sessionResponse.setSessionName("Test Session");
                 sessionResponse.setStartTime(1364566500000l);
-                sessionResponse.setEndTime(13645674000000l);
+                sessionResponse.setEndTime(1364567400000l);
                 sessionResponse.setCreatorId("admin@example.com");
                 sessionResponse.setBoundaryTime(30);
                 sessionResponse.setAccessType(2);
@@ -137,7 +137,7 @@ public class BlackboardSessionDaoImplTest extends BaseJpaDaoTest {
                 sessionResponse.setSessionId(106582);
                 sessionResponse.setSessionName("Test Session");
                 sessionResponse.setStartTime(1364566500000l);
-                sessionResponse.setEndTime(13645674000000l);
+                sessionResponse.setEndTime(1364567400000l);
                 sessionResponse.setCreatorId("admin@example.com");
                 sessionResponse.setBoundaryTime(30);
                 sessionResponse.setAccessType(2);
