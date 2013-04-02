@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import org.jasig.portlet.blackboardvcportlet.dao.BlackboardUserDao;
+import org.jasig.portlet.blackboardvcportlet.data.BlackboardSession;
 import org.jasig.portlet.blackboardvcportlet.data.BlackboardUser;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,6 +30,15 @@ public class BlackboardUserDaoImplTest extends BaseJpaDaoTest {
         this.execute(new Callable<Object>() {
             @Override
             public Object call() {
+                final BlackboardUser user = blackboardUserDao.getBlackboardUser(1);
+                assertNull(user);
+                
+                return null;
+            }
+        });
+        this.execute(new Callable<Object>() {
+            @Override
+            public Object call() {
                 final BlackboardUser user = blackboardUserDao.getBlackboardUser("user@example.com");
                 assertNull(user);
                 
@@ -41,6 +52,26 @@ public class BlackboardUserDaoImplTest extends BaseJpaDaoTest {
                 final Map<String, String> attrs = ImmutableMap.of("EPPN", "user@example.com", "SPVI", "012332412");
                 final Set<BlackboardUser> users = blackboardUserDao.findAllMatchingUsers("user@example.com", attrs);
                 assertEquals(0, users.size());
+                
+                return null;
+            }
+        });
+        
+        this.execute(new Callable<Object>() {
+            @Override
+            public Object call() {
+                final Set<BlackboardSession> chairedSessions = blackboardUserDao.getChairedSessionsForUser(1);
+                assertNull(chairedSessions);
+                
+                return null;
+            }
+        });
+        
+        this.execute(new Callable<Object>() {
+            @Override
+            public Object call() {
+                final Set<BlackboardSession> participatingSessions = blackboardUserDao.getNonChairedSessionsForUser(1);
+                assertNull(participatingSessions);
                 
                 return null;
             }

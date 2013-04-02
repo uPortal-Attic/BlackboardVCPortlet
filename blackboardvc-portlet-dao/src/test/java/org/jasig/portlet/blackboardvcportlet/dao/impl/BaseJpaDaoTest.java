@@ -37,6 +37,7 @@ import org.springframework.transaction.support.TransactionOperations;
 public abstract class BaseJpaDaoTest {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
+    @SuppressWarnings("deprecation")
     protected JpaInterceptor jpaInterceptor;
     protected TransactionOperations transactionOperations;
     private EntityManager entityManager;
@@ -50,7 +51,7 @@ public abstract class BaseJpaDaoTest {
     }
     
     @Autowired
-    public final void setJpaInterceptor(JpaInterceptor jpaInterceptor) {
+    public final void setJpaInterceptor(@SuppressWarnings("deprecation") JpaInterceptor jpaInterceptor) {
         this.jpaInterceptor = jpaInterceptor;
     }
 
@@ -109,7 +110,7 @@ public abstract class BaseJpaDaoTest {
     /**
      * Executes the callback inside of a {@link JpaInterceptor}.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "deprecation" })
     public final <T> T execute(final Callable<T> callable) {
         try {
             return (T)this.jpaInterceptor.invoke(new MethodInvocationCallable<T>(callable));

@@ -36,10 +36,10 @@ import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.jasig.portlet.blackboardvcportlet.dao.impl.BlackboardSessionImpl;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingShort;
 import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
 import org.jasig.portlet.blackboardvcportlet.data.BlackboardSession;
-import org.jasig.portlet.blackboardvcportlet.data.BlackboardSessionImpl;
 import org.jasig.portlet.blackboardvcportlet.data.SessionMultimedia;
 import org.jasig.portlet.blackboardvcportlet.data.SessionPresentation;
 import org.jasig.portlet.blackboardvcportlet.data.User;

@@ -14,29 +14,52 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang.Validate;
+import org.jasig.portlet.blackboardvcportlet.data.BlackboardSession;
 import org.jasig.portlet.blackboardvcportlet.data.BlackboardUser;
-import org.jasig.portlet.blackboardvcportlet.data.BlackboardUserImpl;
-import org.jasig.portlet.blackboardvcportlet.data.BlackboardUserImpl_;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.ImmutableSet;
+
 @Repository
-public class BlackboardUserDaoImpl extends BaseJpaDao implements BlackboardUserDao {
+public class BlackboardUserDaoImpl extends BaseJpaDao implements InternalBlackboardUserDao {
+    
+    @Override
+    public Set<BlackboardSession> getChairedSessionsForUser(long userId) {
+        final BlackboardUserImpl userImpl = this.getBlackboardUser(userId);
+        if (userImpl == null) {
+            return null;
+        }
+
+        //Create a copy to trigger loading of the session data
+        return ImmutableSet.copyOf(userImpl.getChairedSessions());
+    }
+
+    @Override
+    public Set<BlackboardSession> getNonChairedSessionsForUser(long userId) {
+        final BlackboardUserImpl userImpl = this.getBlackboardUser(userId);
+        if (userImpl == null) {
+            return null;
+        }
+
+        //Create a copy to trigger loading of the session data
+        return ImmutableSet.copyOf(userImpl.getNonChairedSessions());
+    }
     
     @Override
     @Transactional
-    public BlackboardUser createBlackboardUser(String email, String displayName) {
-        final BlackboardUser msg = new BlackboardUserImpl(email, displayName);
+    public BlackboardUserImpl createBlackboardUser(String email, String displayName) {
+        final BlackboardUserImpl user = new BlackboardUserImpl(email, displayName);
         
-        this.getEntityManager().persist(msg);
+        this.getEntityManager().persist(user);
         
-        return msg;
+        return user;
     }
     
     @Override
     @Transactional
     public BlackboardUser updateBlackboardUser(BlackboardUser user) {
-        Validate.notNull(user, "message can not be null");
+        Validate.notNull(user, "user can not be null");
         
         this.getEntityManager().persist(user);
         
@@ -46,21 +69,35 @@ public class BlackboardUserDaoImpl extends BaseJpaDao implements BlackboardUserD
     @Override
     @Transactional
     public void deleteBlackboardUser(BlackboardUser user) {
-        Validate.notNull(user, "message can not be null");
+        Validate.notNull(user, "user can not be null");
         
-        final BlackboardUser msg;
         final EntityManager entityManager = this.getEntityManager();
-        if (entityManager.contains(user)) {
-            msg = user;
-        } else {
-            msg = entityManager.merge(user);
+        if (!entityManager.contains(user)) {
+            user = entityManager.merge(user);
         }
-        entityManager.remove(msg);
+        entityManager.remove(user);
     }
     
+    @Override
+    public BlackboardUserImpl getBlackboardUser(long userId) {
+        final EntityManager entityManager = this.getEntityManager();
+        return entityManager.find(BlackboardUserImpl.class, userId);
+    }
+
+    @Override
+    @Transactional
+    public BlackboardUserImpl getOrCreateBlackboardUser(String email) {
+        final BlackboardUserImpl user = this.getBlackboardUser(email);
+        if (user != null) {
+            return user;
+        }
+        
+        return this.createBlackboardUser(email, null);
+    }
+
     //TODO need @OpenEntityManager
     @Override
-    public BlackboardUser getBlackboardUser(String email) {
+    public BlackboardUserImpl getBlackboardUser(String email) {
         final NaturalIdQuery<BlackboardUserImpl> query = this.createNaturalIdQuery(BlackboardUserImpl.class);
         query.using(BlackboardUserImpl_.email, email);
         

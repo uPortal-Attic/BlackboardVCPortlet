@@ -1,6 +1,7 @@
-package org.jasig.portlet.blackboardvcportlet.data;
+package org.jasig.portlet.blackboardvcportlet.dao.impl;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,6 +27,8 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.NaturalIdCache;
+import org.jasig.portlet.blackboardvcportlet.data.BlackboardSession;
+import org.jasig.portlet.blackboardvcportlet.data.BlackboardUser;
 
 @Entity
 @Table(name = "VC2_USER")
@@ -69,14 +72,17 @@ public class BlackboardUserImpl implements BlackboardUser {
             name="VC2_USER_ATTR", 
             joinColumns=@JoinColumn(name="USER_ID"),
             uniqueConstraints=@UniqueConstraint(columnNames={"USER_ID", "ATTR_NAME", "ATTR_VALUE"}))
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private final Map<String, String> attributes = new HashMap<String, String>(0);
     
 
     @ManyToMany(targetEntity = BlackboardSessionImpl.class, fetch = FetchType.LAZY, mappedBy = "chairs")
-    private Set<BlackboardSession> chairedSessions;
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<BlackboardSession> chairedSessions = new HashSet<BlackboardSession>(0);
     
     @ManyToMany(targetEntity = BlackboardSessionImpl.class, fetch = FetchType.LAZY, mappedBy = "nonChairs")
-    private Set<BlackboardSession> participatingSessions;
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<BlackboardSession> nonChairedSessions = new HashSet<BlackboardSession>(0);
     
     /**
      * needed by hibernate
@@ -89,7 +95,7 @@ public class BlackboardUserImpl implements BlackboardUser {
         this.displayName = null;
     }
 
-    public BlackboardUserImpl(String email, String displayName) {
+    BlackboardUserImpl(String email, String displayName) {
         Validate.notNull(email, "email for user cannot be null");
         
         this.userId = -1;
@@ -116,6 +122,14 @@ public class BlackboardUserImpl implements BlackboardUser {
     @Override
     public Map<String, String> getAttributes() {
         return attributes;
+    }
+    
+    Set<BlackboardSession> getChairedSessions() {
+        return chairedSessions;
+    }
+
+    Set<BlackboardSession> getNonChairedSessions() {
+        return nonChairedSessions;
     }
 
     @Override

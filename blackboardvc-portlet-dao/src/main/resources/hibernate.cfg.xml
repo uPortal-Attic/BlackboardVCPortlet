@@ -43,7 +43,7 @@
         
         <mapping resource="global.hbm.xml"/>
         
-        <mapping class="org.jasig.portlet.blackboardvcportlet.data.BlackboardUserImpl"/>
-        <mapping class="org.jasig.portlet.blackboardvcportlet.data.BlackboardSessionImpl"/>
+        <mapping class="org.jasig.portlet.blackboardvcportlet.dao.impl.BlackboardUserImpl"/>
+        <mapping class="org.jasig.portlet.blackboardvcportlet.dao.impl.BlackboardSessionImpl"/>
     </session-factory>
 </hibernate-configuration>
