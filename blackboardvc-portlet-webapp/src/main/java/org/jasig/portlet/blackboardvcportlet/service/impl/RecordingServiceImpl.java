@@ -35,20 +35,41 @@ import com.elluminate.sas.UrlResponse;
 public class RecordingServiceImpl implements RecordingService {
     private static final Logger logger = LoggerFactory.getLogger(RecordingService.class);
 
-	@Autowired
 	private SASWebServiceTemplate sasWebServiceTemplate;
+	private ObjectFactory objectFactory;
+    private RecordingShortDao recordingDao;
+    private RecordingUrlDao recordingUrlDao;
+    private SessionService sessionService;
 
 	@Autowired
-	private ObjectFactory objectFactory;
+	public void setSasWebServiceTemplate(SASWebServiceTemplate sasWebServiceTemplate)
+	{
+		this.sasWebServiceTemplate = sasWebServiceTemplate;
+	}
 
-    @Autowired
-    RecordingShortDao recordingDao;
-    
-    @Autowired
-    RecordingUrlDao recordingUrlDao;
-    
-    @Autowired
-    SessionService sessionService;
+	@Autowired
+	public void setObjectFactory(ObjectFactory objectFactory)
+	{
+		this.objectFactory = objectFactory;
+	}
+
+	@Autowired
+	public void setRecordingDao(RecordingShortDao recordingDao)
+	{
+		this.recordingDao = recordingDao;
+	}
+
+	@Autowired
+	public void setRecordingUrlDao(RecordingUrlDao recordingUrlDao)
+	{
+		this.recordingUrlDao = recordingUrlDao;
+	}
+
+	@Autowired
+	public void setSessionService(SessionService sessionService)
+	{
+		this.sessionService = sessionService;
+	}
 
 	/**
 	 * Constructor
@@ -57,6 +78,7 @@ public class RecordingServiceImpl implements RecordingService {
 	{
 		super();
 	}
+
 	/**
      * Get the recordings for a session
      * @param sessionId Long

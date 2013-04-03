@@ -54,17 +54,34 @@ public class BlackboardVCPortletViewController
 	private String eduPersonAffiliation;
 	private String eduPersonOrgUnitDn;
 
-	@Autowired
-	SessionService sessionService;
+	private SessionService sessionService;
+	private RecordingService recordingService;
+	private AuthorisationService authService;
+	private UserService userService;
 
 	@Autowired
-	RecordingService recordingService;
+	public void setSessionService(SessionService sessionService)
+	{
+		this.sessionService = sessionService;
+	}
 
 	@Autowired
-	AuthorisationService authService;
+	public void setRecordingService(RecordingService recordingService)
+	{
+		this.recordingService = recordingService;
+	}
 
 	@Autowired
-	UserService userService;
+	public void setAuthService(AuthorisationService authService)
+	{
+		this.authService = authService;
+	}
+
+	@Autowired
+	public void setUserService(UserService userService)
+	{
+		this.userService = userService;
+	}
 
 	/**
 	 * Standard view mode handler

@@ -18,36 +18,10 @@
  */
 package org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.StringTokenizer;
-
-import javax.portlet.ActionRequest;
-import javax.portlet.ActionResponse;
-import javax.portlet.PortletMode;
-import javax.portlet.PortletPreferences;
-import javax.portlet.PortletRequest;
-import javax.portlet.RenderRequest;
-import javax.portlet.RenderResponse;
-
+import freemarker.template.utility.StringUtil;
 import org.apache.commons.lang.StringUtils;
-import org.jasig.portlet.blackboardvcportlet.data.RecordingShort;
-import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
-import org.jasig.portlet.blackboardvcportlet.data.Session;
-import org.jasig.portlet.blackboardvcportlet.data.SessionImpl;
-import org.jasig.portlet.blackboardvcportlet.data.SessionMultimedia;
-import org.jasig.portlet.blackboardvcportlet.data.SessionPresentation;
-import org.jasig.portlet.blackboardvcportlet.data.User;
-import org.jasig.portlet.blackboardvcportlet.service.AuthorisationService;
-import org.jasig.portlet.blackboardvcportlet.service.RecordingService;
-import org.jasig.portlet.blackboardvcportlet.service.ServerConfigurationService;
-import org.jasig.portlet.blackboardvcportlet.service.SessionService;
-import org.jasig.portlet.blackboardvcportlet.service.UserService;
+import org.jasig.portlet.blackboardvcportlet.data.*;
+import org.jasig.portlet.blackboardvcportlet.service.*;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.slf4j.Logger;
@@ -58,8 +32,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
-
-import freemarker.template.utility.StringUtil;
+import javax.portlet.*;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Controller class for Portlet EDIT related actions and render
@@ -72,20 +47,41 @@ public class BlackboardVCPortletEditController
 {
 	private static final Logger logger = LoggerFactory.getLogger(BlackboardVCPortletEditController.class);
 
-	@Autowired
-	RecordingService recordingService;
+	private RecordingService recordingService;
+	private ServerConfigurationService serverConfigurationService;
+	private SessionService sessionService;
+	private UserService userService;
+	private AuthorisationService authService;
 
 	@Autowired
-	ServerConfigurationService serverConfigurationService;
+	public void setRecordingService(RecordingService recordingService)
+	{
+		this.recordingService = recordingService;
+	}
 
 	@Autowired
-	SessionService sessionService;
+	public void setServerConfigurationService(ServerConfigurationService serverConfigurationService)
+	{
+		this.serverConfigurationService = serverConfigurationService;
+	}
 
 	@Autowired
-	UserService userService;
+	public void setSessionService(SessionService sessionService)
+	{
+		this.sessionService = sessionService;
+	}
 
 	@Autowired
-	AuthorisationService authService;
+	public void setUserService(UserService userService)
+	{
+		this.userService = userService;
+	}
+
+	@Autowired
+	public void setAuthService(AuthorisationService authService)
+	{
+		this.authService = authService;
+	}
 
 	/**
 	 * Standard edit render

@@ -2,7 +2,6 @@ package org.jasig.portlet.blackboardvcportlet.service.impl;
 
 import com.elluminate.sas.GetServerQuotasResponseCollection;
 import com.elluminate.sas.ObjectFactory;
-import com.elluminate.sas.ServerQuotas;
 import com.elluminate.sas.ServerQuotasResponse;
 import org.jasig.portlet.blackboardvcportlet.dao.ServerQuotaDao;
 import org.jasig.portlet.blackboardvcportlet.data.ServerQuota;
@@ -14,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import javax.portlet.PortletPreferences;
 import java.util.Date;
 import java.util.List;
 
@@ -27,16 +25,29 @@ public class ServerQuotaServiceImpl implements ServerQuotaService
 {
 	private static final Logger logger = LoggerFactory.getLogger(ServerQuotaServiceImpl.class);
 
-    @Autowired
     private ServerQuotaDao serverQuotaDao;
-
-	@Autowired
 	private SASWebServiceTemplate sasWebServiceTemplate;
+	private ObjectFactory objectFactory;
 
 	@Autowired
-	private ObjectFactory objectFactory;
-    
-    /**
+	public void setServerQuotaDao(ServerQuotaDao serverQuotaDao)
+	{
+		this.serverQuotaDao = serverQuotaDao;
+	}
+
+	@Autowired
+	public void setSasWebServiceTemplate(SASWebServiceTemplate sasWebServiceTemplate)
+	{
+		this.sasWebServiceTemplate = sasWebServiceTemplate;
+	}
+
+	@Autowired
+	public void setObjectFactory(ObjectFactory objectFactory)
+	{
+		this.objectFactory = objectFactory;
+	}
+
+	/**
      * Gets the Server quota
      * @return ServerQuota
      */

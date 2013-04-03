@@ -42,11 +42,21 @@ public class BlackboardVCPortletCallbackController implements ServletContextAwar
 	private static final Logger logger = LoggerFactory.getLogger(BlackboardVCPortletCallbackController.class);
 
     private static ServletContext servletContext;
-    
-    @Autowired
-    RecordingService recordingService;
+    private RecordingService recordingService;
 
-    /**
+	@Autowired
+	public void setRecordingService(RecordingService recordingService)
+	{
+		this.recordingService = recordingService;
+	}
+
+	@Override
+	public void setServletContext(ServletContext sc)
+	{
+		servletContext=sc;
+	}
+
+	/**
      * Callback method. Looks for a passed session_id and updates the recordings
      * @throws Exception
      */
@@ -72,10 +82,5 @@ public class BlackboardVCPortletCallbackController implements ServletContextAwar
         
         return modelAndView;
         
-    }
-    
-    @Override
-    public void setServletContext(ServletContext sc) {
-        servletContext=sc;
     }
 }

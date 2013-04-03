@@ -28,38 +28,88 @@ public class SessionServiceImpl implements SessionService
 {
 	private static final Logger logger = LoggerFactory.getLogger(SessionService.class);
 
-    @Autowired
-    SessionDao sessionDao;
-    @Autowired
-    SessionUrlDao sessionUrlDao;
-    @Autowired
-    MailTemplateService jasigMailTemplateService;
-    @Autowired
-    UserService userService;
-    @Autowired
-    RecordingService recordingService;
-    @Autowired
-    SessionExtParticipantDao sessionExtParticipantDao;
-    @Autowired
-    SessionPresentationDao sessionPresentationDao;
-    @Autowired
-    SessionMultimediaDao sessionMultimediaDao;
-	@Autowired
+    private SessionDao sessionDao;
+	private SessionUrlDao sessionUrlDao;
+	private MailTemplateService jasigMailTemplateService;
+	private UserService userService;
+	private RecordingService recordingService;
+	private SessionExtParticipantDao sessionExtParticipantDao;
+	private SessionPresentationDao sessionPresentationDao;
+	private SessionMultimediaDao sessionMultimediaDao;
 	private SASWebServiceTemplate sasWebServiceTemplate;
-	@Autowired
 	private ObjectFactory objectFactory;
+
+	@Autowired
+	public void setSessionDao(SessionDao sessionDao)
+	{
+		this.sessionDao = sessionDao;
+	}
+
+	@Autowired
+	public void setSessionUrlDao(SessionUrlDao sessionUrlDao)
+	{
+		this.sessionUrlDao = sessionUrlDao;
+	}
+
+	@Autowired
+	public void setJasigMailTemplateService(MailTemplateService jasigMailTemplateService)
+	{
+		this.jasigMailTemplateService = jasigMailTemplateService;
+	}
+
+	@Autowired
+	public void setUserService(UserService userService)
+	{
+		this.userService = userService;
+	}
+
+	@Autowired
+	public void setRecordingService(RecordingService recordingService)
+	{
+		this.recordingService = recordingService;
+	}
+
+	@Autowired
+	public void setSessionExtParticipantDao(SessionExtParticipantDao sessionExtParticipantDao)
+	{
+		this.sessionExtParticipantDao = sessionExtParticipantDao;
+	}
+
+	@Autowired
+	public void setSessionPresentationDao(SessionPresentationDao sessionPresentationDao)
+	{
+		this.sessionPresentationDao = sessionPresentationDao;
+	}
+
+	@Autowired
+	public void setSessionMultimediaDao(SessionMultimediaDao sessionMultimediaDao)
+	{
+		this.sessionMultimediaDao = sessionMultimediaDao;
+	}
+
+	@Autowired
+	public void setSasWebServiceTemplate(SASWebServiceTemplate sasWebServiceTemplate)
+	{
+		this.sasWebServiceTemplate = sasWebServiceTemplate;
+	}
+
+	@Autowired
+	public void setObjectFactory(ObjectFactory objectFactory)
+	{
+		this.objectFactory = objectFactory;
+	}
 
 	public List<Session> getSessionsForUser(String uid) {
         List<Session> sessionList = sessionDao.getSessionsForUser(uid);
-        for (int i = 0; i < sessionList.size(); i++) {
-            
-            if ((sessionList.get(i).getChairList()!=null&&sessionList.get(i).getChairList().indexOf(uid+",") != -1)||(sessionList.get(i).getCreatorId().equals(uid))||(sessionList.get(i).getChairList()!=null&&sessionList.get(i).getChairList().endsWith(uid)))
+        for (Session session : sessionList)
+		{
+            if ((session.getChairList()!=null && session.getChairList().indexOf(uid+",") != -1) || (session.getCreatorId().equals(uid)) || (session.getChairList() !=null && session.getChairList().endsWith(uid)))
             {
-                sessionList.get(i).setCurrUserCanEdit(true);
+				session.setCurrUserCanEdit(true);
             } 
             else 
             {
-                sessionList.get(i).setCurrUserCanEdit(false);
+				session.setCurrUserCanEdit(false);
             }
         }
         return sessionList;

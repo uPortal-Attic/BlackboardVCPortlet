@@ -22,16 +22,29 @@ public class ServerConfigurationServiceImpl implements ServerConfigurationServic
 {
 	private static final Logger logger = LoggerFactory.getLogger(ServerConfigurationServiceImpl.class);
 
-    @Autowired
-    ServerConfigurationDao serverConfigurationDao;
-
-	@Autowired
+    private ServerConfigurationDao serverConfigurationDao;
 	private SASWebServiceTemplate sasWebServiceTemplate;
-
-	@Autowired
 	private ObjectFactory objectFactory;
 
-    /**
+	@Autowired
+	public void setServerConfigurationDao(ServerConfigurationDao serverConfigurationDao)
+	{
+		this.serverConfigurationDao = serverConfigurationDao;
+	}
+
+	@Autowired
+	public void setSasWebServiceTemplate(SASWebServiceTemplate sasWebServiceTemplate)
+	{
+		this.sasWebServiceTemplate = sasWebServiceTemplate;
+	}
+
+	@Autowired
+	public void setObjectFactory(ObjectFactory objectFactory)
+	{
+		this.objectFactory = objectFactory;
+	}
+
+	/**
      * Gets the server configuration
      * @param prefs PortletPreferences
      * @return ServerConfiguration
