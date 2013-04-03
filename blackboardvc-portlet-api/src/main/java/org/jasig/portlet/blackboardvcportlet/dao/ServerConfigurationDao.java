@@ -20,15 +20,17 @@ package org.jasig.portlet.blackboardvcportlet.dao;
 
 import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
 
+import com.elluminate.sas.ServerConfigurationResponse;
+
 /**
  * DAO Interface for ServerConfiguration
  * @author Richard Good
  */
 public interface ServerConfigurationDao {
     
-    public ServerConfiguration getServerConfiguration();
+    ServerConfiguration createOrUpdateConfiguration(ServerConfigurationResponse configurationResponse);
     
-    public int saveServerConfiguration(ServerConfiguration serverConfiguration);
+    public ServerConfiguration getServerConfiguration();
     
     public void deleteServerConfiguration();
     

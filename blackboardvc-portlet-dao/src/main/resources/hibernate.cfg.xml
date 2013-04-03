@@ -45,5 +45,6 @@
         
         <mapping class="org.jasig.portlet.blackboardvcportlet.dao.impl.BlackboardUserImpl"/>
         <mapping class="org.jasig.portlet.blackboardvcportlet.dao.impl.BlackboardSessionImpl"/>
+        <mapping class="org.jasig.portlet.blackboardvcportlet.dao.impl.ServerConfigurationImpl"/>
     </session-factory>
 </hibernate-configuration>

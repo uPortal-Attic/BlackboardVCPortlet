@@ -1,40 +1,29 @@
 package org.jasig.portlet.blackboardvcportlet.data;
 
 import java.io.Serializable;
-import java.util.Date;
+
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 public interface ServerConfiguration extends Serializable {
 
-    Date getLastUpdated();
+    DateTime getLastUpdated();
 
-    void setLastUpdated(Date lastUpdated);
+    long getEntityVersion();
 
-    int getBoundaryTime();
+    DateTimeZone getTimezone();
 
-    void setBoundaryTime(int boundaryTime);
+    boolean isMustReserveSeats();
+
+    boolean isMayUseSecureSignOn();
+
+    boolean isMayUseTelephony();
+
+    boolean isRaiseHandOnEnter();
 
     int getMaxAvailableCameras();
 
-    void setMaxAvailableCameras(int maxAvailableCameras);
-
     int getMaxAvailableTalkers();
 
-    void setMaxAvailableTalkers(int maxAvailableTalkers);
-
-    char getMayUseSecureSignOn();
-
-    void setMayUseSecureSignOn(char mayUseSecureSignOn);
-
-    char getMustReserveSeats();
-
-    void setMustReserveSeats(char mustReserveSeats);
-
-    char getRaiseHandOnEnter();
-
-    void setRaiseHandOnEnter(char raiseHandOnEnter);
-
-    String getTimezone();
-
-    void setTimezone(String timezone);
-
+    int getBoundaryTime();
 }

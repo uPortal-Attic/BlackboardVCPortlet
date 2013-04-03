@@ -26,6 +26,7 @@
 
 <hibernate-mapping package="org.jasig.portlet.blackboardvcportlet.data">
     <!-- usertypes -->
+    <typedef name="dateTimeZone" class="org.jadira.usertype.dateandtime.joda.PersistentDateTimeZoneAsString" />
     <typedef name="dateTime" class="org.jadira.usertype.dateandtime.joda.PersistentDateTime" />
     <typedef name="dateTimeTZ" class="org.jadira.usertype.dateandtime.joda.PersistentDateTimeWithZone" />
     <typedef name="localDate" class="org.jadira.usertype.dateandtime.joda.PersistentLocalDate">
