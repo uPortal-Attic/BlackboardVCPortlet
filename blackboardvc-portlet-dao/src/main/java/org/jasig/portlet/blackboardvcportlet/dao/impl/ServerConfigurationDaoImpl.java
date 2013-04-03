@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.elluminate.sas.ServerConfigurationResponse;
 
 @Repository
-public class BlackboardServerConfigurationDaoImpl extends BaseJpaDao implements ServerConfigurationDao {
+public class ServerConfigurationDaoImpl extends BaseJpaDao implements ServerConfigurationDao {
     private static final Pattern DATE_TZ_PATTERN = Pattern.compile(".+ \\(.+, [^ ]+ ([^:]+):([^\\)]+)\\)");
     
     @Override

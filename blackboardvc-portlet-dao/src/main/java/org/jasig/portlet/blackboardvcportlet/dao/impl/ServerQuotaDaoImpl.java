@@ -18,70 +18,46 @@
  */
 package org.jasig.portlet.blackboardvcportlet.dao.impl;
 
-import org.hibernate.Criteria;
-import org.hibernate.SessionFactory;
 import org.jasig.portlet.blackboardvcportlet.dao.ServerQuotaDao;
-import org.jasig.portlet.blackboardvcportlet.data.ServerQuota;
-import org.jasig.portlet.blackboardvcportlet.data.ServerQuotaImpl;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
+import org.springframework.stereotype.Repository;
+
+import com.elluminate.sas.ServerQuotasResponse;
 
 /**
  * Implementation of ServerQuotaDao interface, allows the storage, deletion
  * and retrieval of ServerQuota
  * @author Richard Good
  */
-@Transactional
-@Scope("singleton")
-@Component("serverQuotaDao")
-public class ServerQuotaDaoImpl extends HibernateDaoSupport implements ServerQuotaDao {
+@Repository
+public class ServerQuotaDaoImpl extends BaseJpaDao implements ServerQuotaDao {
 
-	@Autowired
-	public void init(SessionFactory factory) {
-		setSessionFactory(factory);
-	}
-
-	/**
-     * Gets the ServerQuota
-     * @return ServerQuota
-     */
     @Override
-    public ServerQuota getServerQuota(){
-        
-        Criteria criteria = this.getSession().createCriteria(ServerQuotaImpl.class);
-        List<ServerQuotaImpl> quotaList = criteria.list();
-        if (quotaList!=null&&quotaList.size()>0)
-        {
-           return (ServerQuota)criteria.list().get(0); 
-        }
-        else 
-        {
-            return null;
+    public ServerQuotaImpl createOrUpdateQuota(ServerQuotasResponse quotasResponse) {
+        ServerQuotaImpl serverQuota = this.getServerQuota();
+        if (serverQuota == null) {
+            serverQuota = new ServerQuotaImpl();
         }
         
+        serverQuota.setDiskQuota(quotasResponse.getDiskQuota());
+        serverQuota.setDiskQuotaAvailable(quotasResponse.getDiskQuotaAvailable());
+        serverQuota.setSessionQuota(quotasResponse.getSessionQuota());
+        serverQuota.setSessionQuotaAvailable(quotasResponse.getSessionQuotaAvailable());
+        
+        this.getEntityManager().persist(serverQuota);
+        
+        return serverQuota;
     }
-	
-    /**
-     * Stores the ServerQuota
-     * @param serverQuota The ServerQuota to store.
-     */
+
     @Override
-    public void saveServerQuota(ServerQuota serverQuota){
-        this.logger.debug("called saveServerQuota:"+serverQuota);
-        this.getHibernateTemplate().saveOrUpdate(serverQuota);   
+    public ServerQuotaImpl getServerQuota() {
+        return this.getEntityManager().find(ServerQuotaImpl.class, ServerQuotaImpl.QUOTA_ID);
     }
-	
-    /**
-     * Deletes the stored ServerQuota
-     */
+
     @Override
-    public void deleteServerQuota(){
-        Criteria criteria = this.getSession().createCriteria(ServerQuotaImpl.class);
-        this.getHibernateTemplate().deleteAll(criteria.list());
+    public void deleteServerQuota() {
+        final ServerQuotaImpl serverQuota = this.getServerQuota();
+        if (serverQuota != null) {
+            this.getEntityManager().remove(serverQuota);
+        }
     }
-    
 }

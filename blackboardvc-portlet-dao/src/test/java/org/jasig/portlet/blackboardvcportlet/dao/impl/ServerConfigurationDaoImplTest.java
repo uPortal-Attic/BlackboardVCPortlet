@@ -19,7 +19,7 @@ import com.elluminate.sas.ServerConfigurationResponse;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:jpaTestContext.xml")
-public class BlackboardServerConfigurationDaoImplTest extends BaseJpaDaoTest {
+public class ServerConfigurationDaoImplTest extends BaseJpaDaoTest {
     @Autowired
     private ServerConfigurationDao serverConfigurationDao;
     

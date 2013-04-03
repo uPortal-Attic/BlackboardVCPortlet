@@ -31,6 +31,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
@@ -151,6 +153,10 @@ public class BlackboardSessionImpl implements BlackboardSession {
     @Column(name="HIDE_PARTICIPANT_NAMES", nullable = false)
     private boolean hideParticipantNames = true;
     
+    @Column(name="LAST_UPDATED", nullable = false)
+    @Type(type = "dateTime")
+    private DateTime lastUpdated;
+    
     /**
      * needed by hibernate
      */
@@ -170,13 +176,21 @@ public class BlackboardSessionImpl implements BlackboardSession {
         this.bbSessionId = bbSessionId;
         this.creator = creator;
     }
+
+    /**
+     * Used to keep lastUpdated up to date
+     */
+    @PreUpdate
+    @PrePersist
+    protected final void onUpdate() {
+        lastUpdated = DateTime.now();
+    }
     
     @Override
     public String getSessionName() {
         return sessionName;
     }
 
-    @Override
     public void setSessionName(String sessionName) {
         this.sessionName = sessionName;
     }
@@ -186,17 +200,14 @@ public class BlackboardSessionImpl implements BlackboardSession {
         return startTime;
     }
 
-    @Override
     public void setStartTime(DateTime startTime) {
         this.startTime = startTime;
     }
 
-    @Override
     public DateTime getEndTime() {
         return endTime;
     }
 
-    @Override
     public void setEndTime(DateTime endTime) {
         this.endTime = endTime;
     }
@@ -206,7 +217,6 @@ public class BlackboardSessionImpl implements BlackboardSession {
         return boundaryTime;
     }
 
-    @Override
     public void setBoundaryTime(int boundaryTime) {
         this.boundaryTime = boundaryTime;
     }
@@ -216,7 +226,6 @@ public class BlackboardSessionImpl implements BlackboardSession {
         return accessType;
     }
 
-    @Override
     public void setAccessType(long accessType) {
         this.accessType = accessType;
     }
@@ -226,7 +235,6 @@ public class BlackboardSessionImpl implements BlackboardSession {
         return recordings;
     }
 
-    @Override
     public void setRecordings(boolean recordings) {
         this.recordings = recordings;
     }
@@ -236,7 +244,6 @@ public class BlackboardSessionImpl implements BlackboardSession {
         return chairNotes;
     }
 
-    @Override
     public void setChairNotes(String chairNotes) {
         this.chairNotes = chairNotes;
     }
@@ -246,7 +253,6 @@ public class BlackboardSessionImpl implements BlackboardSession {
         return nonChairNotes;
     }
 
-    @Override
     public void setNonChairNotes(String nonChairNotes) {
         this.nonChairNotes = nonChairNotes;
     }
@@ -264,7 +270,6 @@ public class BlackboardSessionImpl implements BlackboardSession {
         return openChair;
     }
 
-    @Override
     public void setOpenChair(boolean openChair) {
         this.openChair = openChair;
     }
@@ -274,7 +279,6 @@ public class BlackboardSessionImpl implements BlackboardSession {
         return mustBeSupervised;
     }
 
-    @Override
     public void setMustBeSupervised(boolean mustBeSupervised) {
         this.mustBeSupervised = mustBeSupervised;
     }
@@ -284,7 +288,6 @@ public class BlackboardSessionImpl implements BlackboardSession {
         return recordingMode;
     }
 
-    @Override
     public void setRecordingMode(long recordingMode) {
         this.recordingMode = recordingMode;
     }
@@ -294,17 +297,14 @@ public class BlackboardSessionImpl implements BlackboardSession {
         return maxTalkers;
     }
 
-    @Override
     public void setMaxTalkers(int maxTalkers) {
         this.maxTalkers = maxTalkers;
     }
 
-    @Override
     public int getMaxCameras() {
         return maxCameras;
     }
 
-    @Override
     public void setMaxCameras(int maxCameras) {
         this.maxCameras = maxCameras;
     }
@@ -314,7 +314,6 @@ public class BlackboardSessionImpl implements BlackboardSession {
         return raiseHandOnEnter;
     }
 
-    @Override
     public void setRaiseHandOnEnter(boolean raiseHandOnEnter) {
         this.raiseHandOnEnter = raiseHandOnEnter;
     }
@@ -324,7 +323,6 @@ public class BlackboardSessionImpl implements BlackboardSession {
         return reserveSeats;
     }
 
-    @Override
     public void setReserveSeats(int reserveSeats) {
         this.reserveSeats = reserveSeats;
     }
@@ -334,7 +332,6 @@ public class BlackboardSessionImpl implements BlackboardSession {
         return versionId;
     }
 
-    @Override
     public void setVersionId(long versionId) {
         this.versionId = versionId;
     }
@@ -344,7 +341,6 @@ public class BlackboardSessionImpl implements BlackboardSession {
         return allowInSessionInvites;
     }
 
-    @Override
     public void setAllowInSessionInvites(boolean allowInSessionInvites) {
         this.allowInSessionInvites = allowInSessionInvites;
     }
@@ -354,7 +350,6 @@ public class BlackboardSessionImpl implements BlackboardSession {
         return hideParticipantNames;
     }
 
-    @Override
     public void setHideParticipantNames(boolean hideParticipantNames) {
         this.hideParticipantNames = hideParticipantNames;
     }

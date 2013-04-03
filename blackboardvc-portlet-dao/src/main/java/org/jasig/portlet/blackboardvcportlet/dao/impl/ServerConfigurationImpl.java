@@ -78,7 +78,6 @@ public class ServerConfigurationImpl implements ServerConfiguration {
     @Column(name="TIMEZONE", nullable = false)
     @Type(type="dateTimeZone")
     private DateTimeZone timezone;
-    // ".+ \(.+, [^ ]+ ([^:]+):([^\)]+)\)"
     
     @Column(name="LAST_UPDATED", nullable = false)
     @Type(type = "dateTime")
@@ -90,7 +89,7 @@ public class ServerConfigurationImpl implements ServerConfiguration {
     }
 
     /**
-     * Used to keep the lastUpdated up to date
+     * Used to keep lastUpdated up to date
      */
     @PreUpdate
     @PrePersist
