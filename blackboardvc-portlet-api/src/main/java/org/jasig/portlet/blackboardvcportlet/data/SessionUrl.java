@@ -3,7 +3,7 @@ package org.jasig.portlet.blackboardvcportlet.data;
 import java.io.Serializable;
 import java.util.Date;
 
-public interface SessionUrl extends Serializable {
+interface SessionUrl extends Serializable {
 
     String getDisplayName();
 

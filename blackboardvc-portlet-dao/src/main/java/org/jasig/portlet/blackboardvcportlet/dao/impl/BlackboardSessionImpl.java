@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -31,6 +32,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.SequenceGenerator;
@@ -46,6 +48,7 @@ import org.hibernate.annotations.NaturalIdCache;
 import org.hibernate.annotations.Type;
 import org.jasig.portlet.blackboardvcportlet.data.BlackboardSession;
 import org.jasig.portlet.blackboardvcportlet.data.BlackboardUser;
+import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
 import org.joda.time.DateTime;
 
 @Entity
@@ -156,6 +159,9 @@ public class BlackboardSessionImpl implements BlackboardSession {
     @Column(name="LAST_UPDATED", nullable = false)
     @Type(type = "dateTime")
     private DateTime lastUpdated;
+    
+    @OneToMany(mappedBy = "session", targetEntity = SessionRecordingImpl.class, cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, orphanRemoval = true)
+    private Set<SessionRecording> sessionRecordings = null;
     
     /**
      * needed by hibernate

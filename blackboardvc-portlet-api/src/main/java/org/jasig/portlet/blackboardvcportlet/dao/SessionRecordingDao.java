@@ -18,24 +18,25 @@
  */
 package org.jasig.portlet.blackboardvcportlet.dao;
 
-import java.util.List;
+import java.util.Set;
 
-import org.jasig.portlet.blackboardvcportlet.data.BlackboardSession;
+import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
+
+import com.elluminate.sas.ListRecordingLong;
+import com.elluminate.sas.RecordingLongResponse;
 
 /**
- * DAO interface for Session
+ * DAO Interface class for the {@link RecordingLongResponse}
+ * 
  * @author Richard Good
  */
-public interface SessionDao {
+public interface SessionRecordingDao {
+    Set<SessionRecording> getAllRecordings();
     
-    public BlackboardSession getSession(Long sessionId);
+    //TODO get all recordings for user? 
+
+    SessionRecording createOrUpdateRecording(ListRecordingLong listRecordingLong);
     
-    public void saveSession(BlackboardSession session);
-    
-    public void deleteSession(Long sessionId);
-    
-    public List<BlackboardSession> getAllSesssions();
-    
-    public List<BlackboardSession> getSessionsForUser(String uid);
+    void deleteRecordings(int... recordingIds);
     
 }

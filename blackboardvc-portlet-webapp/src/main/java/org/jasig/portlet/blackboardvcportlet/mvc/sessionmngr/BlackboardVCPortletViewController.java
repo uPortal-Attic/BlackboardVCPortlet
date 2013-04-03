@@ -107,7 +107,7 @@ public class BlackboardVCPortletViewController
 		logger.debug("sessions size:" + sessions.size());
 		modelAndView.addObject("sessions", sessions);
 
-		List<RecordingShort> recordings;
+		List<SessionRecording> recordings;
 
 		if (isAdmin)
 		{

@@ -26,7 +26,7 @@ import org.jasig.portlet.blackboardvcportlet.data.SessionMultimedia;
  * Dao interface for SessionMultimedia
  * @author Richard Good
  */
-public interface SessionMultimediaDao {
+interface SessionMultimediaDao {
     
     public void deleteSessionMultimedia(long multimediaId);
     

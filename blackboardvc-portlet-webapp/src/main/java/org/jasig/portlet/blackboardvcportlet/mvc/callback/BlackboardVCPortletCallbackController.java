@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.ServletContextAware;
@@ -50,8 +51,13 @@ public class BlackboardVCPortletCallbackController implements ServletContextAwar
      * Callback method. Looks for a passed session_id and updates the recordings
      * @throws Exception
      */
-    @ResourceMapping(value = "callback")
-    public ModelAndView callback(@RequestParam String sessionId, @RequestParam String roomClosedMillis, @RequestParam String recPlaybackLink, @RequestParam String roomOpenedMillis) throws Exception {
+    @RequestMapping("/recCallback/${securityToken}")
+    public ModelAndView callback(
+            @PathVariable("securityToken") String securityToken,
+            @RequestParam("session_id") String sessionId,
+            @RequestParam("room_opened_millis") long roomOpenedMillis,
+            @RequestParam("room_closed_millis") long roomClosedMillis, 
+            @RequestParam("rec_playback_link") String recPlaybackLink) throws Exception {
     
         /*logger.info("callback called from remote host: "+request.getRemoteHost());
         

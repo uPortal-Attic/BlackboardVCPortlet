@@ -7,9 +7,9 @@ import java.util.List;
 
 import javax.portlet.PortletPreferences;
 
-import org.jasig.portlet.blackboardvcportlet.dao.RecordingShortDao;
+import org.jasig.portlet.blackboardvcportlet.dao.SessionRecordingDao;
 import org.jasig.portlet.blackboardvcportlet.dao.RecordingUrlDao;
-import org.jasig.portlet.blackboardvcportlet.data.RecordingShort;
+import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingShortImpl;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingUrl;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingUrlImpl;
@@ -42,7 +42,7 @@ public class RecordingServiceImpl implements RecordingService {
 	private ObjectFactory objectFactory;
 
     @Autowired
-    RecordingShortDao recordingDao;
+    SessionRecordingDao recordingDao;
     
     @Autowired
     RecordingUrlDao recordingUrlDao;
@@ -62,7 +62,7 @@ public class RecordingServiceImpl implements RecordingService {
      * @param sessionId Long
      * @return List<RecordingShort>
      */
-    public List<RecordingShort> getRecordingsForSession(long sessionId)
+    public List<SessionRecording> getRecordingsForSession(long sessionId)
     {
         return recordingDao.getAllSessionRecordings(sessionId);
     }
@@ -72,9 +72,9 @@ public class RecordingServiceImpl implements RecordingService {
      * @param recordingId Long
      * @return RecordingShort
      */
-    public RecordingShort getRecording(long recordingId)
+    public SessionRecording getRecording(long recordingId)
     {
-        RecordingShort recordingShort = recordingDao.getRecording(recordingId);
+        SessionRecording recordingShort = recordingDao.getRecording(recordingId);
         recordingShort.setReadableFileSize(readableFileSize(recordingShort.getRecordingSize()));
         recordingShort.setCreatedDate(new Date(recordingShort.getCreationDate()));
         return recordingShort;
@@ -85,9 +85,9 @@ public class RecordingServiceImpl implements RecordingService {
      * @param uid String
      * @return List<RecordingShort>
      */
-    public List<RecordingShort> getRecordingsForUser(String uid)
+    public List<SessionRecording> getRecordingsForUser(String uid)
     {
-        List<RecordingShort> recordings = recordingDao.getRecordingsForUser(uid);
+        List<SessionRecording> recordings = recordingDao.getRecordingsForUser(uid);
         RecordingUrl url;
         for (int i=0;i<recordings.size();i++)
         {  
@@ -111,7 +111,7 @@ public class RecordingServiceImpl implements RecordingService {
      * Store a recording
      * @param recordingShort RecordingShort
      */
-    public void saveRecordingShort(RecordingShort recordingShort)
+    public void saveRecordingShort(SessionRecording recordingShort)
     {
         recordingDao.saveRecordingShort(recordingShort);
     }
@@ -120,9 +120,9 @@ public class RecordingServiceImpl implements RecordingService {
      * Get recordings as Admin
      * @return List<RecordingShort>
      */
-    public List<RecordingShort> getRecordingsForAdmin()
+    public List<SessionRecording> getRecordingsForAdmin()
     {
-        List<RecordingShort> recordings = recordingDao.getAllRecordings();
+        List<SessionRecording> recordings = recordingDao.getAllRecordings();
         RecordingUrl url;
         for (int i=0;i<recordings.size();i++)
         {  
@@ -189,9 +189,9 @@ public class RecordingServiceImpl implements RecordingService {
 	 * @param sessionId Long
 	 * @return List<RecordingShort>
      */
-    public List<RecordingShort> updateSessionRecordings(long sessionId)
+    public List<SessionRecording> updateSessionRecordings(long sessionId)
     {
-        List<RecordingShort> recordingList = new ArrayList<RecordingShort>();
+        List<SessionRecording> recordingList = new ArrayList<SessionRecording>();
         try
         {
 			ListRecordingShort listRecordingShort = objectFactory.createListRecordingShort();

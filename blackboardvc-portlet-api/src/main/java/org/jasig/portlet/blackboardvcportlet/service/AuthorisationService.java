@@ -18,8 +18,9 @@
  */
 package org.jasig.portlet.blackboardvcportlet.service;
 
-import javax.portlet.RenderRequest;
 import java.util.Map;
+
+import javax.portlet.PortletRequest;
 
 /**
  * Service Class which provides authorisation level methods
@@ -32,41 +33,41 @@ public interface AuthorisationService {
      * @param request
      * @return boolean
      */
-    public boolean isAdminAccess(RenderRequest request);
+    public boolean isAdminAccess(PortletRequest request);
     
     /**
      * Gets the admin group name
      * @param request
      * @return String
      */
-    public String getAdminRole(RenderRequest request);
+    public String getAdminRole(PortletRequest request);
     
     /**
      * Is the user allowed full access to the portlet
      * @param request
      * @return boolean
      */
-    public boolean isFullAccess(RenderRequest request);
+    public boolean isFullAccess(PortletRequest request);
     
     /**
      * Gets the user info Map from the request
      * @param request
      * @return 
      */
-    public Map<String,String> getUserInfo(RenderRequest request);
+    public Map<String,String> getUserInfo(PortletRequest request);
     
     /**
      * Gets the userTypeAttribute from the request
      * @param request
      * @return String
      */
-    public String getUserAttribute(RenderRequest request);
+    public String getUserAttribute(PortletRequest request);
     
     /**
      * Gets the values required for full access
      * @param request
      * @return String
      */
-    public String getFullAccessValues(RenderRequest request);
+    public String getFullAccessValues(PortletRequest request);
     
 }

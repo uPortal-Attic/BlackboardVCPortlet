@@ -3,7 +3,7 @@ package org.jasig.portlet.blackboardvcportlet.data;
 import java.io.Serializable;
 import java.util.Date;
 
-public interface SessionPresentation extends Serializable {
+interface SessionPresentation extends Serializable {
 
     void setDateUploaded(Date dateUploaded);
 

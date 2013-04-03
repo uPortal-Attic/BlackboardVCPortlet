@@ -28,8 +28,8 @@ import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.jasig.portlet.blackboardvcportlet.dao.RecordingShortDao;
-import org.jasig.portlet.blackboardvcportlet.data.RecordingShort;
+import org.jasig.portlet.blackboardvcportlet.dao.SessionRecordingDao;
+import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingShortImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -45,7 +45,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @Scope("singleton")
 @Component("recordingShortDao")
-public class RecordingShortDaoImpl extends HibernateDaoSupport implements RecordingShortDao {
+public class RecordingShortDaoImpl extends HibernateDaoSupport implements SessionRecordingDao {
 
 	@Autowired
 	public void init(SessionFactory factory) {
@@ -67,7 +67,7 @@ public class RecordingShortDaoImpl extends HibernateDaoSupport implements Record
      * @param recordingShort The recording to store
      */
     @Override
-    public void saveRecordingShort(RecordingShort recordingShort)
+    public void saveRecordingShort(SessionRecording recordingShort)
     {
         this.getHibernateTemplate().saveOrUpdate(recordingShort);
     }
@@ -87,7 +87,7 @@ public class RecordingShortDaoImpl extends HibernateDaoSupport implements Record
      * @return List<RecordingShort>
      */
     @Override
-    public List<RecordingShort> getAllRecordings()
+    public List<SessionRecording> getAllRecordings()
     {
          Criteria criteria =this.getSession().createCriteria(RecordingShortImpl.class);
          criteria.addOrder(Order.desc("creationDate"));
@@ -101,8 +101,8 @@ public class RecordingShortDaoImpl extends HibernateDaoSupport implements Record
      * @return List<RecordingShort>
      */
     @Override
-    public List<RecordingShort> getRecordingsForUser(String uid) {
-        List<RecordingShort> recordings;
+    public List<SessionRecording> getRecordingsForUser(String uid) {
+        List<SessionRecording> recordings;
         Criteria criteria = this.getSession().createCriteria(RecordingShortImpl.class);
         Criterion chairCriteria = Restrictions.ilike("chairList", uid, MatchMode.ANYWHERE);
         Criterion nonChairCriteria = Restrictions.ilike("nonChairList", uid, MatchMode.ANYWHERE);      
@@ -120,7 +120,7 @@ public class RecordingShortDaoImpl extends HibernateDaoSupport implements Record
         if (recordings==null)
         {
             logger.debug("No sessions found, creating blank list");
-            recordings = new ArrayList<RecordingShort>();
+            recordings = new ArrayList<SessionRecording>();
         }
        
         return recordings;
@@ -132,15 +132,15 @@ public class RecordingShortDaoImpl extends HibernateDaoSupport implements Record
      * @return List<RecordingShort>
      */
     @Override
-    public List<RecordingShort> getAllSessionRecordings(long sessionId) {
+    public List<SessionRecording> getAllSessionRecordings(long sessionId) {
         
-        List<RecordingShort> recordings;
+        List<SessionRecording> recordings;
         Criteria criteria = this.getSession().createCriteria(RecordingShortImpl.class).add(Restrictions.eq("sessionId",sessionId));
         recordings = criteria.list();
         if (recordings==null)
         {
             logger.debug("No sessions found, creating blank list");
-            recordings = new ArrayList<RecordingShort>();
+            recordings = new ArrayList<SessionRecording>();
         }
         
         return recordings;
@@ -148,8 +148,8 @@ public class RecordingShortDaoImpl extends HibernateDaoSupport implements Record
     }
 
     @Override
-    public RecordingShort getRecording(long recordingShortId) {
-        return (RecordingShort)this.getHibernateTemplate().get(RecordingShortImpl.class, recordingShortId);
+    public SessionRecording getRecording(long recordingShortId) {
+        return (SessionRecording)this.getHibernateTemplate().get(RecordingShortImpl.class, recordingShortId);
     }
   
 }

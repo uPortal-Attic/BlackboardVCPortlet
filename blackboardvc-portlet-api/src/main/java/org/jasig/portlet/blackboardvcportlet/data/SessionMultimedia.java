@@ -3,7 +3,7 @@ package org.jasig.portlet.blackboardvcportlet.data;
 import java.io.Serializable;
 import java.util.Date;
 
-public interface SessionMultimedia extends Serializable {
+interface SessionMultimedia extends Serializable {
 
     long getMultimediaId();
 

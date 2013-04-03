@@ -16,7 +16,7 @@ import org.jasig.portlet.blackboardvcportlet.dao.SessionExtParticipantDao;
 import org.jasig.portlet.blackboardvcportlet.dao.SessionMultimediaDao;
 import org.jasig.portlet.blackboardvcportlet.dao.SessionPresentationDao;
 import org.jasig.portlet.blackboardvcportlet.dao.SessionUrlDao;
-import org.jasig.portlet.blackboardvcportlet.data.RecordingShort;
+import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
 import org.jasig.portlet.blackboardvcportlet.data.BlackboardSession;
 import org.jasig.portlet.blackboardvcportlet.data.SessionExtParticipant;
 import org.jasig.portlet.blackboardvcportlet.data.SessionExtParticipantId;
@@ -286,7 +286,7 @@ public class SessionServiceImpl implements SessionService {
             }
 
             logger.debug("Update recordings associated with session");
-            List<RecordingShort> recordings = recordingService.getRecordingsForSession(session.getSessionId());
+            List<SessionRecording> recordings = recordingService.getRecordingsForSession(session.getSessionId());
             if (recordings != null) {
                 boolean changed;
                 for (int i = 0; i < recordings.size(); i++) {

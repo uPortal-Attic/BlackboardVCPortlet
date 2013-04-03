@@ -26,7 +26,7 @@ import org.jasig.portlet.blackboardvcportlet.data.SessionPresentation;
  * Dao interface for SessionPresentation
  * @author Richard Good
  */
-public interface SessionPresentationDao {
+interface SessionPresentationDao {
     
     public void deleteSessionPresentation(String presentationId);
     

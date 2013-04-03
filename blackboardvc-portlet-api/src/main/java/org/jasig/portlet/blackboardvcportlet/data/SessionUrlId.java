@@ -25,7 +25,7 @@ import java.io.Serializable;
  * @author Richard Good
  */
 // @Embeddable
-public class SessionUrlId implements Serializable {  
+class SessionUrlId implements Serializable {  
     private static final long serialVersionUID = 1L;
 
 //    @Column(name="SESSION_ID")

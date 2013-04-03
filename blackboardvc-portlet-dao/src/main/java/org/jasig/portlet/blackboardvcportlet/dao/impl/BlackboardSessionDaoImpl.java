@@ -12,7 +12,7 @@ import org.jasig.portlet.blackboardvcportlet.dao.BlackboardSessionDao;
 import org.jasig.portlet.blackboardvcportlet.data.BlackboardSession;
 import org.jasig.portlet.blackboardvcportlet.data.BlackboardUser;
 import org.joda.time.DateTime;
-import org.joda.time.chrono.ISOChronology;
+import org.joda.time.DateTimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.stereotype.Repository;
@@ -143,8 +143,8 @@ public class BlackboardSessionDaoImpl extends BaseJpaDao implements BlackboardSe
     }
     
     private DateTime toDateTime(long timestamp) {
-        //TODO need to ask what time zone the data is stored in on BBC
-        return new DateTime(timestamp, ISOChronology.getInstanceUTC());
+        //The blackboard docs say all server-side time data is stored in UTC
+        return new DateTime(timestamp, DateTimeZone.UTC);
     }
     
     /**

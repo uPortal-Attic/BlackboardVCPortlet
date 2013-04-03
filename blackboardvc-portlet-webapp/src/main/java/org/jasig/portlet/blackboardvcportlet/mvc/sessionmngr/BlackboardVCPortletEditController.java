@@ -37,7 +37,7 @@ import javax.portlet.RenderResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.jasig.portlet.blackboardvcportlet.dao.impl.BlackboardSessionImpl;
-import org.jasig.portlet.blackboardvcportlet.data.RecordingShort;
+import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
 import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
 import org.jasig.portlet.blackboardvcportlet.data.BlackboardSession;
 import org.jasig.portlet.blackboardvcportlet.data.SessionMultimedia;
@@ -1520,7 +1520,7 @@ public class BlackboardVCPortletEditController
 		}
 
 		String recordingId = request.getParameter("recordingId");
-		RecordingShort recordingShort = recordingService.getRecording(Long.valueOf(recordingId));
+		SessionRecording recordingShort = recordingService.getRecording(Long.valueOf(recordingId));
 		modelAndView.addObject("recording", recordingShort);
 		return modelAndView;
 	}
@@ -1547,7 +1547,7 @@ public class BlackboardVCPortletEditController
 			response.setRenderParameter("recordingId", recordingId);
 		} else
 		{
-			RecordingShort recordingShort = recordingService.getRecording(Long.valueOf(recordingId));
+			SessionRecording recordingShort = recordingService.getRecording(Long.valueOf(recordingId));
 			recordingShort.setRoomName(roomName);
 			recordingService.saveRecordingShort(recordingShort);
 			response.setRenderParameter("feedbackMessage", "feedbackmessage.recordingsaved");

@@ -25,7 +25,7 @@ import org.jasig.portlet.blackboardvcportlet.data.SessionUrlId;
  * DAO interface for SessionUrl
  * @author Richard Good
  */
-public interface SessionUrlDao {
+interface SessionUrlDao {
     
     public SessionUrl getSessionUrl(SessionUrlId sessionUrlId);
     

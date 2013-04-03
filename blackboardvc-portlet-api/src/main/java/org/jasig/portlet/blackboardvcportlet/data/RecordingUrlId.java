@@ -25,7 +25,7 @@ import java.io.Serializable;
  * @author Richard Good
  */
 //@Embeddable
-public class RecordingUrlId implements Serializable {
+class RecordingUrlId implements Serializable {
     private static final long serialVersionUID = 1L;
 
 //    @Column(name = "RECORDING_ID")

@@ -18,7 +18,7 @@
  */
 package org.jasig.portlet.blackboardvcportlet.service;
 
-import org.jasig.portlet.blackboardvcportlet.data.RecordingShort;
+import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingUrl;
 import javax.portlet.PortletPreferences;
 import java.util.List;
@@ -34,33 +34,33 @@ public interface RecordingService
      * @param sessionId Long
      * @return List<RecordingShort>
      */
-    public List<RecordingShort> getRecordingsForSession(long sessionId);
+    public List<SessionRecording> getRecordingsForSession(long sessionId);
     
     /**
      * Get a specific recording
      * @param recordingId Long
      * @return RecordingShort
      */
-    public RecordingShort getRecording(long recordingId);
+    public SessionRecording getRecording(long recordingId);
     
     /**
      * Get the recordings for a user
      * @param uid String
      * @return List<RecordingShort>
      */
-    public List<RecordingShort> getRecordingsForUser(String uid);
+    public List<SessionRecording> getRecordingsForUser(String uid);
     
     /**
      * Store a recording
      * @param recordingShort RecordingShort
      */
-    public void saveRecordingShort(RecordingShort recordingShort);
+    public void saveRecordingShort(SessionRecording recordingShort);
     
     /**
      * Get recordings as Admin
      * @return List<RecordingShort>
      */
-    public List<RecordingShort> getRecordingsForAdmin();
+    public List<SessionRecording> getRecordingsForAdmin();
     
     /**
      * Gets the url for a recording
@@ -83,5 +83,5 @@ public interface RecordingService
 	 * @param sessionId Long
 	 * @return List<RecordingShort>
      */
-    public List<RecordingShort> updateSessionRecordings(long sessionId);
+    public List<SessionRecording> updateSessionRecordings(long sessionId);
 }
