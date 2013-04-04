@@ -308,30 +308,14 @@ public class BlackboardVCPortletEditController
 			{
 				logger.debug("Adding nonchair list to participants");
 				String[] nonChairList = StringUtil.split(session.getNonChairList(), ',');
-//				List<User> intParticipantList = new ArrayList<User>();
 				List<User> extParticipantList = new ArrayList<User>();
 
-				for (int i = 0; i < nonChairList.length; i++)
+				for (String email : nonChairList)
 				{
-					user = userService.getUserDetails(nonChairList[i]);
-					if (user != null)
-					{
-//						intParticipantList.add(user);
-					}
-					else
-					{
-						user = sessionService.getExtParticipant(session.getSessionId(), nonChairList[i]);
-						if (user == null)
-						{
-							user = new User();
-							user.setEmail(nonChairList[i]);
-						}
-
-						extParticipantList.add(user);
-					}
+					User u = new User();
+					u.setEmail(email);
+					extParticipantList.add(u);
 				}
-
-//				modelAndView.addObject("intParticipants", intParticipantList);
 				modelAndView.addObject("extParticipants", extParticipantList);
 			}
 
@@ -1173,7 +1157,7 @@ public class BlackboardVCPortletEditController
 
 			modelAndView.addObject("extParticipants", extParticipantList);
 
-			List<User> intParticipantList = new ArrayList<User>();
+//			List<User> intParticipantList = new ArrayList<User>();
 
 			String[] intParticipantUids = request.getParameterValues("intParticipantUids");
 			String[] intParticipantEmails = request.getParameterValues("intParticipantEmails");
@@ -1188,7 +1172,7 @@ public class BlackboardVCPortletEditController
 					user.setEmail(intParticipantEmails[i]);
 					user.setDisplayName(intParticipantDisplayNames[i]);
 					logger.debug("added user:(" + user.getUid() + "," + user.getDisplayName() + "," + user.getEmail() + ")");
-					intParticipantList.add(user);
+//					intParticipantList.add(user);
 				}
 				if (!nonChairList.equals(""))
 				{
@@ -1200,7 +1184,7 @@ public class BlackboardVCPortletEditController
 			}
 
 			session.setNonChairList(nonChairList);
-			modelAndView.addObject("intParticipants", intParticipantList);
+//			modelAndView.addObject("intParticipants", intParticipantList);
 
 			if (!noErrors)
 			{
@@ -1248,7 +1232,7 @@ public class BlackboardVCPortletEditController
 
 							logger.debug("New session, notifying participants");
 							sessionService.notifyModerators(creatorUser, session, moderatorList, launchUrl);
-							sessionService.notifyIntParticipants(creatorUser, session, intParticipantList, launchUrl);
+//							sessionService.notifyIntParticipants(creatorUser, session, intParticipantList, launchUrl);
 							sessionService.notifyExtParticipants(creatorUser, session, extParticipantList);
 						}
 
