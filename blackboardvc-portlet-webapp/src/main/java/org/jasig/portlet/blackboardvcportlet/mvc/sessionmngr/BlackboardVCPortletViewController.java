@@ -19,6 +19,10 @@
 package org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr;
 
 import freemarker.template.utility.StringUtil;
+
+import org.apache.commons.lang.StringUtils;
+import org.jasig.portlet.blackboardvcportlet.dao.BlackboardSessionDao;
+import org.jasig.portlet.blackboardvcportlet.dao.BlackboardUserDao;
 import org.jasig.portlet.blackboardvcportlet.data.*;
 import org.jasig.portlet.blackboardvcportlet.service.*;
 import org.slf4j.Logger;
@@ -30,10 +34,12 @@ import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 import javax.portlet.*;
+
 import java.io.PrintWriter;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Controller for handling Portlet view mode
@@ -45,21 +51,27 @@ import java.util.Map;
 public class BlackboardVCPortletViewController
 {
 	private static final Logger logger = LoggerFactory.getLogger(BlackboardVCPortletViewController.class);
-	// private PortletPreferences prefs;
 
-	private String uid;
-	private String displayName;
-	private String mail;
-	private boolean isAdmin;
-	private String eduPersonAffiliation;
-	private String eduPersonOrgUnitDn;
-
+	private BlackboardUserDao blackboardUserDao;
+	private BlackboardSessionDao blackboardSessionDao;
+	
 	private SessionService sessionService;
 	private RecordingService recordingService;
 	private AuthorisationService authService;
 	private UserService userService;
-
+	
+	
 	@Autowired
+	public void setBlackboardSessionDao(BlackboardSessionDao blackboardSessionDao) {
+        this.blackboardSessionDao = blackboardSessionDao;
+    }
+
+    @Autowired
+	public void setBlackboardUserDao(BlackboardUserDao blackboardUserDao) {
+        this.blackboardUserDao = blackboardUserDao;
+    }
+
+    @Autowired
 	public void setSessionService(SessionService sessionService)
 	{
 		this.sessionService = sessionService;
@@ -150,6 +162,22 @@ public class BlackboardVCPortletViewController
 		return modelAndView;
 	}
 
+	protected String getAttribute(PortletRequest request, String preferenceName, String... defaultValues) {
+	    final PortletPreferences prefs = request.getPreferences();
+	    final String[] attributeNames = prefs.getValues(preferenceName, defaultValues);
+	    
+	    final Map<String, String> userInfo = (Map<String, String>) request.getAttribute(PortletRequest.USER_INFO);
+	    
+        for (final String mailAttributeName : attributeNames) {
+            final String value = userInfo.get(mailAttributeName);
+            if (value != null) {
+                return value;
+            }
+        }
+        
+        return null;
+	}
+	
 	/**
 	 * Launch page for a specific session
 	 *
@@ -179,19 +207,18 @@ public class BlackboardVCPortletViewController
 				logger.error("session is null!");
 			}
 
-			// Get the user info
-			Map<String, String> userInfo = (Map<String, String>) request.getAttribute(PortletRequest.USER_INFO);
-			uid = userInfo.get("uid");
-			modelAndView.addObject("uid", uid);
-			if ((session.getChairList() != null && session.getChairList().indexOf(uid) != -1) || session.getCreatorId().equals(uid) || authService.isAdminAccess(request))
+            final BlackboardUser blackboardUser = getBlackboardUser(request);
+            final Set<BlackboardUser> sessionChairs = this.blackboardSessionDao.getSessionChairs(session.getSessionId());
+            
+	        if (blackboardUser.equals(session.getCreator()) || sessionChairs.contains(blackboardUser) || authService.isAdminAccess(request)) {
+	            modelAndView.addObject("currUserCanEdit", true);
+	        }
+	        else
 			{
-				session.setCurrUserCanEdit(true);
-			} else
-			{
-				session.setCurrUserCanEdit(false);
+			    modelAndView.addObject("currUserCanEdit", false);
 			}
 			displayName = userInfo.get("displayName");
-			SessionUrlId sessionUrlId;
+//			SessionUrlId sessionUrlId;
 			SessionUrl sessionUrl;
 			if (session.getEndTime().after(new Date()))
 			{
@@ -245,6 +272,39 @@ public class BlackboardVCPortletViewController
 		return modelAndView;
 
 	}
+
+    private BlackboardUser getBlackboardUser(RenderRequest request) {
+        final String mail = getAttribute(request, "emailAttributeName", "mail");
+        final String displayName = getAttribute(request, "displayNameAttributeName", "displayName");
+        
+        BlackboardUser user = this.blackboardUserDao.getBlackboardUser(mail);
+        if (user == null) {
+            user = this.blackboardUserDao.createBlackboardUser(mail, displayName);
+        }
+        
+        //Update with current display name
+        user.setDisplayName(displayName);
+        
+        //Update all key user attributes
+        final PortletPreferences prefs = request.getPreferences();
+        final String[] keyUserAttributeNames = prefs.getValues("keyUserAttributeNames", new String[0]);
+        final Map<String, String> userInfo = (Map<String, String>) request.getAttribute(PortletRequest.USER_INFO);
+        for (final String keyUserAttributeName : keyUserAttributeNames) {
+            final String value = userInfo.get(keyUserAttributeName);
+            final Map<String, String> userAttributes = user.getAttributes();
+            if (StringUtils.isNotEmpty(value)) {
+                userAttributes.put(keyUserAttributeName, value);
+            }
+            else {
+                userAttributes.remove(keyUserAttributeName);
+            }
+        }
+        
+        //Persist modification
+        this.blackboardUserDao.updateBlackboardUser(user);
+        
+        return user;
+    }
 
 	/**
 	 * CSV Download function

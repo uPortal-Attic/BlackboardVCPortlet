@@ -65,7 +65,7 @@ public class BlackboardUserImpl implements BlackboardUser {
     private final String email;
     
     @Column(name="DISPLAY_NAME", length = 500)
-    private final String displayName;
+    private String displayName;
     
     @ElementCollection
     @MapKeyColumn(name="ATTR_NAME")
@@ -76,7 +76,6 @@ public class BlackboardUserImpl implements BlackboardUser {
             uniqueConstraints=@UniqueConstraint(columnNames={"USER_ID", "ATTR_NAME", "ATTR_VALUE"}))
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private final Map<String, String> attributes = new HashMap<String, String>(0);
-    
 
     @ManyToMany(targetEntity = BlackboardSessionImpl.class, fetch = FetchType.LAZY, mappedBy = "chairs")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -98,7 +97,6 @@ public class BlackboardUserImpl implements BlackboardUser {
         this.userId = -1;
         this.entityVersion = -1;
         this.email = null;
-        this.displayName = null;
     }
 
     BlackboardUserImpl(String email, String displayName) {
@@ -123,6 +121,11 @@ public class BlackboardUserImpl implements BlackboardUser {
     @Override
     public String getDisplayName() {
         return displayName;
+    }
+    
+    @Override
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     @Override

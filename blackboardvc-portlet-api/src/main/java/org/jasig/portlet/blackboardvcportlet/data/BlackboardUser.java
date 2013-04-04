@@ -10,10 +10,8 @@ public interface BlackboardUser extends Serializable {
     String getEmail();
 
     String getDisplayName();
+    
+    void setDisplayName(String displayName);
 
     Map<String, String> getAttributes();
-
-    int hashCode();
-
-    boolean equals(Object obj);
 }

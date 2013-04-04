@@ -23,7 +23,7 @@ import java.util.List;
 import javax.portlet.PortletPreferences;
 
 import org.jasig.portlet.blackboardvcportlet.data.BlackboardSession;
-import org.springframework.web.multipart.MultipartFile;
+import org.jasig.portlet.blackboardvcportlet.data.BlackboardUser;
 
 /**
  * Service class for manipulating Collaborate sessions and their persistent
@@ -42,19 +42,19 @@ public interface SessionService
 
 	public List<BlackboardSession> getAllSessions();
 
-	public void createEditSession(BlackboardSession session, PortletPreferences prefs, List<User> extParticipantList) throws Exception;
+	public void createEditSession(BlackboardSession session, PortletPreferences prefs, List<BlackboardUser> extParticipantList) throws Exception;
 
 	public void storeSession(BlackboardSession session);
 
-	public void notifyModerators(User creator, BlackboardSession session, List<User> users, String launchUrl) throws Exception;
+	public void notifyModerators(BlackboardUser creator, BlackboardSession session, List<BlackboardUser> users, String launchUrl) throws Exception;
 
 	public void notifyOfDeletion(BlackboardSession session) throws Exception;
 
-	public void notifyIntParticipants(User creator, BlackboardSession session, List<User> users, String launchUrl) throws Exception;
+	public void notifyIntParticipants(BlackboardUser creator, BlackboardSession session, List<BlackboardUser> users, String launchUrl) throws Exception;
 
-	public void notifyExtParticipants(User creator, BlackboardSession session, List<User> users) throws Exception;
+	public void notifyExtParticipants(BlackboardUser creator, BlackboardSession session, List<BlackboardUser> users) throws Exception;
 
-	public void addExtParticipant(User user, long sessionId);
+	public void addExtParticipant(BlackboardUser user, long sessionId);
 
 	public void deleteExtParticipants(long sessionId);
 
