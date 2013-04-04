@@ -48,5 +48,6 @@
         <mapping class="org.jasig.portlet.blackboardvcportlet.dao.impl.ServerConfigurationImpl"/>
         <mapping class="org.jasig.portlet.blackboardvcportlet.dao.impl.ServerQuotaImpl"/>
         <mapping class="org.jasig.portlet.blackboardvcportlet.dao.impl.SessionRecordingImpl"/>
+        <mapping class="org.jasig.portlet.blackboardvcportlet.dao.impl.UserSessionUrlImpl"/>
     </session-factory>
 </hibernate-configuration>

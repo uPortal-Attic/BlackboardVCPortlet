@@ -18,10 +18,11 @@
  */
 package org.jasig.portlet.blackboardvcportlet.service;
 
-import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
-import org.jasig.portlet.blackboardvcportlet.data.RecordingUrl;
-import javax.portlet.PortletPreferences;
 import java.util.List;
+
+import javax.portlet.PortletPreferences;
+
+import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
 
 /**
  * Service Class for handling Recording interactions
@@ -61,13 +62,6 @@ public interface RecordingService
      * @return List<RecordingShort>
      */
     public List<SessionRecording> getRecordingsForAdmin();
-    
-    /**
-     * Gets the url for a recording
-     * @param recordingId Long
-     * @return RecordingUrl
-     */
-    public RecordingUrl getRecordingUrl(long recordingId);
     
     /**
      * Delete a recording

@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -16,6 +17,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.MapKeyColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
@@ -29,6 +31,7 @@ import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.NaturalIdCache;
 import org.jasig.portlet.blackboardvcportlet.data.BlackboardSession;
 import org.jasig.portlet.blackboardvcportlet.data.BlackboardUser;
+import org.jasig.portlet.blackboardvcportlet.data.UserSessionUrl;
 
 @Entity
 @Table(name = "VC2_USER")
@@ -64,7 +67,6 @@ public class BlackboardUserImpl implements BlackboardUser {
     @Column(name="DISPLAY_NAME", length = 500)
     private final String displayName;
     
-    //TODO probably need some indexes on this for efficient lookup of user by attribute
     @ElementCollection
     @MapKeyColumn(name="ATTR_NAME")
     @Column(name="ATTR_VALUE", nullable = false)
@@ -83,6 +85,10 @@ public class BlackboardUserImpl implements BlackboardUser {
     @ManyToMany(targetEntity = BlackboardSessionImpl.class, fetch = FetchType.LAZY, mappedBy = "nonChairs")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<BlackboardSession> nonChairedSessions = new HashSet<BlackboardSession>(0);
+
+    //Exists only to allow cascading deletes, should NEVER be accessed by normal code
+    @OneToMany(mappedBy = "user", targetEntity = UserSessionUrlImpl.class, cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, orphanRemoval = true)
+    private transient final Set<UserSessionUrl> userUrls = null;
     
     /**
      * needed by hibernate

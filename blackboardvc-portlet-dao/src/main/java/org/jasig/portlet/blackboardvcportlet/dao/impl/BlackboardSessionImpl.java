@@ -49,6 +49,7 @@ import org.hibernate.annotations.Type;
 import org.jasig.portlet.blackboardvcportlet.data.BlackboardSession;
 import org.jasig.portlet.blackboardvcportlet.data.BlackboardUser;
 import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
+import org.jasig.portlet.blackboardvcportlet.data.UserSessionUrl;
 import org.joda.time.DateTime;
 
 @Entity
@@ -163,9 +164,14 @@ public class BlackboardSessionImpl implements BlackboardSession {
     @Type(type = "dateTime")
     private DateTime lastUpdated;
     
+    //Exists only to allow cascading deletes, should NEVER be accessed by normal code
     @OneToMany(mappedBy = "session", targetEntity = SessionRecordingImpl.class, cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, orphanRemoval = true)
-    private Set<SessionRecording> sessionRecordings = new HashSet<SessionRecording>(0);
+    private transient final Set<SessionRecording> sessionRecordings = null;
     
+    //Exists only to allow cascading deletes, should NEVER be accessed by normal code
+    @OneToMany(mappedBy = "session", targetEntity = UserSessionUrlImpl.class, cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, orphanRemoval = true)
+    private transient final Set<UserSessionUrl> userUrls = null;
+
     /**
      * needed by hibernate
      */

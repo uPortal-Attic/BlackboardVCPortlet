@@ -23,11 +23,6 @@ import java.util.List;
 import javax.portlet.PortletPreferences;
 
 import org.jasig.portlet.blackboardvcportlet.data.BlackboardSession;
-import org.jasig.portlet.blackboardvcportlet.data.SessionMultimedia;
-import org.jasig.portlet.blackboardvcportlet.data.SessionPresentation;
-import org.jasig.portlet.blackboardvcportlet.data.SessionUrl;
-import org.jasig.portlet.blackboardvcportlet.data.SessionUrlId;
-import org.jasig.portlet.blackboardvcportlet.data.User;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -43,15 +38,11 @@ public interface SessionService
 
 	public BlackboardSession getSession(long sessionId);
 
-	public SessionUrl getSessionUrl(SessionUrlId sessionUrlId);
-
 	public void deleteSession(long sessionId) throws Exception;
 
 	public List<BlackboardSession> getAllSessions();
 
 	public void createEditSession(BlackboardSession session, PortletPreferences prefs, List<User> extParticipantList) throws Exception;
-
-	public User getExtParticipant(long sessionId, String email);
 
 	public void storeSession(BlackboardSession session);
 
@@ -67,17 +58,17 @@ public interface SessionService
 
 	public void deleteExtParticipants(long sessionId);
 
-	public SessionPresentation getSessionPresentation(String sessionId);
-
-	public void deleteSessionPresentation(long sessionId, long presentationId) throws Exception;
-
-	public void addSessionPresentation(String uid, long sessionId, MultipartFile file) throws Exception;
-
-	public void deleteSessionMultimedia(long sessionId) throws Exception;
-
-	public void deleteSessionMultimediaFiles(long sessionId, String[] multimediaIds) throws Exception;
-
-	public List<SessionMultimedia> getSessionMultimedia(long sessionId);
-
-	public void addSessionMultimedia(String uid, long sessionId, MultipartFile file) throws Exception;
+//	public SessionPresentation getSessionPresentation(String sessionId);
+//
+//	public void deleteSessionPresentation(long sessionId, long presentationId) throws Exception;
+//
+//	public void addSessionPresentation(String uid, long sessionId, MultipartFile file) throws Exception;
+//
+//	public void deleteSessionMultimedia(long sessionId) throws Exception;
+//
+//	public void deleteSessionMultimediaFiles(long sessionId, String[] multimediaIds) throws Exception;
+//
+//	public List<SessionMultimedia> getSessionMultimedia(long sessionId);
+//
+//	public void addSessionMultimedia(String uid, long sessionId, MultipartFile file) throws Exception;
 }
