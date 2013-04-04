@@ -41,9 +41,14 @@ public class LdapUserServiceImpl implements UserService
 {
 	private static final Logger logger = LoggerFactory.getLogger(LdapUserServiceImpl.class);
 
-    @Autowired
-    LdapTemplate ldapTemplate;
-    
+	private LdapTemplate ldapTemplate;
+
+	@Autowired
+	public void setLdapTemplate(LdapTemplate ldapTemplate)
+	{
+		this.ldapTemplate = ldapTemplate;
+	}
+
     public class PersonAttributeMapper implements AttributesMapper{
 
         /**

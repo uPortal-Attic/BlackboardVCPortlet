@@ -29,21 +29,21 @@
                         http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-2.5.xsd
                         http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
 
+    <!-- Set this to the value of your mail host -->
     <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-      <property name="host" value="smtp.wiscmail.wisc.edu"/>
-      <property name="port" value="25" />
+        <property name="host" value="localhost"/>
+        <property name="port" value="25" />
     </bean>
-    
-    <bean class="org.jasig.portlet.blackboardvcportlet.service.impl.MailTemplateServiceImpl" />
-    
-    
-    <!-- Define the four email templates which are to be used. -->
-    <bean id="testEmail" class="org.springframework.mail.SimpleMailMessage">
-	<property name="from" value="test@wisc.edu" />
-	<property name="subject" value="Test" />
-	<property name="text">
-	   <value><![CDATA[This is a test email.]]></value>
+
+    <bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
+        <property name="velocityProperties">
+            <props>
+                <prop key="resource.loader">class</prop>
+                <prop key="class.resource.loader.class">org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader</prop>
+            </props>
         </property>
-     </bean>
-            
+    </bean>
+
+    <bean class="org.jasig.portlet.blackboardvcportlet.service.impl.MailTemplateServiceImpl" />
+
 </beans>

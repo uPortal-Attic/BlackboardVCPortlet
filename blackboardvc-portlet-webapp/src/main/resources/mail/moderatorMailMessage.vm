@@ -1,0 +1,11 @@
+Dear ${displayName}
+
+You have been enrolled as a Moderator and are invited by ${creatorDetails} to attend the following Collaborate session: ${sessionName}
+
+Session Details
+Start Date and Time: ${sessionStartTime}
+End Date and Time: ${sessionEndTime}
+
+To join the session, click on the following link to launch uPortal: ${launchURL}
+
+Contact ${creatorDetails} if you have any questions about the session.

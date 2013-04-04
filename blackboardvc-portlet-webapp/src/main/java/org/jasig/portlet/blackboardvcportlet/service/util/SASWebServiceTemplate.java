@@ -17,11 +17,16 @@ import java.io.IOException;
 
 public class SASWebServiceTemplate extends WebServiceTemplate
 {
-	@Autowired
 	private Jaxb2Marshaller elluminateMarshller;
 
 	private String username;
 	private String password;
+
+	@Autowired
+	public void setElluminateMarshller(Jaxb2Marshaller elluminateMarshller)
+	{
+		this.elluminateMarshller = elluminateMarshller;
+	}
 
 	/**
 	 * Default Constructor

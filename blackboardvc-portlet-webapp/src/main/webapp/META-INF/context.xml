@@ -20,4 +20,4 @@
 
 -->
 
-<Context antiJARLocking="true" path=""/>
+<Context antiJARLocking="true" path="" crossContext="true"/>

@@ -18,36 +18,10 @@
  */
 package org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.StringTokenizer;
-
-import javax.portlet.ActionRequest;
-import javax.portlet.ActionResponse;
-import javax.portlet.PortletMode;
-import javax.portlet.PortletPreferences;
-import javax.portlet.PortletRequest;
-import javax.portlet.RenderRequest;
-import javax.portlet.RenderResponse;
-
+import freemarker.template.utility.StringUtil;
 import org.apache.commons.lang.StringUtils;
-import org.jasig.portlet.blackboardvcportlet.dao.impl.BlackboardSessionImpl;
-import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
-import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
-import org.jasig.portlet.blackboardvcportlet.data.BlackboardSession;
-import org.jasig.portlet.blackboardvcportlet.data.SessionMultimedia;
-import org.jasig.portlet.blackboardvcportlet.data.SessionPresentation;
-import org.jasig.portlet.blackboardvcportlet.data.User;
-import org.jasig.portlet.blackboardvcportlet.service.AuthorisationService;
-import org.jasig.portlet.blackboardvcportlet.service.RecordingService;
-import org.jasig.portlet.blackboardvcportlet.service.ServerConfigurationService;
-import org.jasig.portlet.blackboardvcportlet.service.SessionService;
-import org.jasig.portlet.blackboardvcportlet.service.UserService;
+import org.jasig.portlet.blackboardvcportlet.data.*;
+import org.jasig.portlet.blackboardvcportlet.service.*;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.slf4j.Logger;
@@ -58,8 +32,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
-
-import freemarker.template.utility.StringUtil;
+import javax.portlet.*;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Controller class for Portlet EDIT related actions and render
@@ -72,20 +47,41 @@ public class BlackboardVCPortletEditController
 {
 	private static final Logger logger = LoggerFactory.getLogger(BlackboardVCPortletEditController.class);
 
-	@Autowired
-	RecordingService recordingService;
+	private RecordingService recordingService;
+	private ServerConfigurationService serverConfigurationService;
+	private SessionService sessionService;
+	private UserService userService;
+	private AuthorisationService authService;
 
 	@Autowired
-	ServerConfigurationService serverConfigurationService;
+	public void setRecordingService(RecordingService recordingService)
+	{
+		this.recordingService = recordingService;
+	}
 
 	@Autowired
-	SessionService sessionService;
+	public void setServerConfigurationService(ServerConfigurationService serverConfigurationService)
+	{
+		this.serverConfigurationService = serverConfigurationService;
+	}
 
 	@Autowired
-	UserService userService;
+	public void setSessionService(SessionService sessionService)
+	{
+		this.sessionService = sessionService;
+	}
 
 	@Autowired
-	AuthorisationService authService;
+	public void setUserService(UserService userService)
+	{
+		this.userService = userService;
+	}
+
+	@Autowired
+	public void setAuthService(AuthorisationService authService)
+	{
+		this.authService = authService;
+	}
 
 	/**
 	 * Standard edit render
@@ -109,7 +105,7 @@ public class BlackboardVCPortletEditController
 		{
 			logger.debug("mView is empty");
 			ServerConfiguration serverConfiguration = serverConfigurationService.getServerConfiguration(prefs);
-			BlackboardSession session = new BlackboardSessionImpl();
+			Session session = new SessionImpl();
 			logger.debug("session id:" + session.getSessionId());
 
 			if (authService.isAdminAccess(request) || authService.isFullAccess(request))
@@ -182,7 +178,7 @@ public class BlackboardVCPortletEditController
 					modelAndView.addObject("warningMessage", pairs.getValue());
 				} else if (pairs.getKey().equals("session"))
 				{
-					BlackboardSession session = (BlackboardSession) pairs.getValue();
+					Session session = (Session) pairs.getValue();
 					modelAndView.addObject("session", session);
 				} else if (pairs.getKey().equals("extParticipants"))
 				{
@@ -201,7 +197,9 @@ public class BlackboardVCPortletEditController
 						logger.debug("list debug:(" + moderatorList.get(x).getUid() + "," + moderatorList.get(x).getDisplayName() + "," + moderatorList.get(x).getEmail() + ")");
 					}
 					modelAndView.addObject("moderators", moderatorList);
-				} else if (pairs.getKey().equals("intParticipants"))
+				}
+/*
+				else if (pairs.getKey().equals("intParticipants"))
 				{
 					List<User> intParticipantList = (List<User>) pairs.getValue();
 					for (int x = 0; x < intParticipantList.size(); x++)
@@ -209,7 +207,9 @@ public class BlackboardVCPortletEditController
 						logger.debug("list debug:(" + intParticipantList.get(x).getUid() + "," + intParticipantList.get(x).getDisplayName() + "," + intParticipantList.get(x).getEmail() + ")");
 					}
 					modelAndView.addObject("intParticipants", intParticipantList);
-				} else if (pairs.getKey().equals("presentation"))
+				}
+*/
+				else if (pairs.getKey().equals("presentation"))
 				{
 					SessionPresentation presentation = (SessionPresentation) pairs.getValue();
 					modelAndView.addObject("presentation", presentation);
@@ -274,7 +274,7 @@ public class BlackboardVCPortletEditController
 		try
 		{
 			logger.debug("calling sessionService.getSession");
-			BlackboardSession session = sessionService.getSession(Long.valueOf(sessionId));
+			Session session = sessionService.getSession(Long.valueOf(sessionId));
 			logger.debug("done call");
 			if (session == null)
 			{
@@ -308,29 +308,14 @@ public class BlackboardVCPortletEditController
 			{
 				logger.debug("Adding nonchair list to participants");
 				String[] nonChairList = StringUtil.split(session.getNonChairList(), ',');
-				List<User> intParticipantList = new ArrayList<User>();
 				List<User> extParticipantList = new ArrayList<User>();
 
-				for (int i = 0; i < nonChairList.length; i++)
+				for (String email : nonChairList)
 				{
-					user = userService.getUserDetails(nonChairList[i]);
-					if (user != null)
-					{
-						intParticipantList.add(user);
-					} else
-					{
-						user = sessionService.getExtParticipant(session.getSessionId(), nonChairList[i]);
-						if (user == null)
-						{
-							user = new User();
-							user.setEmail(nonChairList[i]);
-						}
-
-						extParticipantList.add(user);
-					}
+					User u = new User();
+					u.setEmail(email);
+					extParticipantList.add(u);
 				}
-
-				modelAndView.addObject("intParticipants", intParticipantList);
 				modelAndView.addObject("extParticipants", extParticipantList);
 			}
 
@@ -556,6 +541,7 @@ public class BlackboardVCPortletEditController
 	 * @param mView
 	 * @throws Exception
 	 */
+/*
 	@ActionMapping(params = "action=Add Participant(s)")
 	public void addIntParticipant(ActionRequest request, ActionResponse response, ModelAndView mView) throws Exception
 	{
@@ -617,6 +603,7 @@ public class BlackboardVCPortletEditController
 		}
 
 	}
+*/
 
 	/**
 	 * Delete moderators
@@ -661,6 +648,8 @@ public class BlackboardVCPortletEditController
 	 * @param mView
 	 * @throws Exception
 	 */
+/*
+
 	@ActionMapping(params = "action=Delete Internal Participant(s)")
 	public void deleteInternalParticipant(ActionRequest request, ActionResponse response, ModelAndView mView) throws Exception
 	{
@@ -686,6 +675,7 @@ public class BlackboardVCPortletEditController
 			mView.addObject("feedbackMessage", "feedbackmessage.internalparticipantsremoved");
 		}
 	}
+*/
 
 	/**
 	 * Remove multimedia files
@@ -929,7 +919,7 @@ public class BlackboardVCPortletEditController
 
 		logger.debug("saveSession called");
 		boolean noErrors = true;
-		BlackboardSession session = new BlackboardSessionImpl();
+		Session session = new SessionImpl();
 		boolean newSession = false;
 
 		if (!request.getParameter("sessionId").equals("") && !request.getParameter("sessionId").equals("0"))
@@ -1167,7 +1157,7 @@ public class BlackboardVCPortletEditController
 
 			modelAndView.addObject("extParticipants", extParticipantList);
 
-			List<User> intParticipantList = new ArrayList<User>();
+//			List<User> intParticipantList = new ArrayList<User>();
 
 			String[] intParticipantUids = request.getParameterValues("intParticipantUids");
 			String[] intParticipantEmails = request.getParameterValues("intParticipantEmails");
@@ -1182,7 +1172,7 @@ public class BlackboardVCPortletEditController
 					user.setEmail(intParticipantEmails[i]);
 					user.setDisplayName(intParticipantDisplayNames[i]);
 					logger.debug("added user:(" + user.getUid() + "," + user.getDisplayName() + "," + user.getEmail() + ")");
-					intParticipantList.add(user);
+//					intParticipantList.add(user);
 				}
 				if (!nonChairList.equals(""))
 				{
@@ -1194,7 +1184,7 @@ public class BlackboardVCPortletEditController
 			}
 
 			session.setNonChairList(nonChairList);
-			modelAndView.addObject("intParticipants", intParticipantList);
+//			modelAndView.addObject("intParticipants", intParticipantList);
 
 			if (!noErrors)
 			{
@@ -1242,7 +1232,7 @@ public class BlackboardVCPortletEditController
 
 							logger.debug("New session, notifying participants");
 							sessionService.notifyModerators(creatorUser, session, moderatorList, launchUrl);
-							sessionService.notifyIntParticipants(creatorUser, session, intParticipantList, launchUrl);
+//							sessionService.notifyIntParticipants(creatorUser, session, intParticipantList, launchUrl);
 							sessionService.notifyExtParticipants(creatorUser, session, extParticipantList);
 						}
 
@@ -1461,6 +1451,7 @@ public class BlackboardVCPortletEditController
 		}
 
 		modelAndView.addObject("extParticipants", extParticipantList);
+/*
 		List<User> intParticipantList = new ArrayList<User>();
 
 		String[] intParticipantUids = request.getParameterValues("intParticipantUids");
@@ -1481,6 +1472,7 @@ public class BlackboardVCPortletEditController
 		}
 
 		modelAndView.addObject("intParticipants", intParticipantList);
+*/
 
 		SessionPresentation sessionPresentation = sessionService.getSessionPresentation(Long.toString(session.getSessionId()));
 		if (sessionPresentation != null)

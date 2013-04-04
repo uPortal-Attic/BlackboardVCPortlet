@@ -18,30 +18,31 @@
  */
 package org.jasig.portlet.blackboardvcportlet.service;
 
-import java.util.List;
-
+import org.jasig.portlet.blackboardvcportlet.service.util.MailMessages;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.stereotype.Service;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Class which allows the sending of email from a template
+ *
  * @author Richard Good
  */
 @Service
-public interface MailTemplateService {
+public interface MailTemplateService
+{
+	public void setBeanFactory(BeanFactory bf) throws BeansException;
 
-    public void setBeanFactory(BeanFactory bf) throws BeansException;
-        
-  /**
-   * Public method to execute an asynchronous email send
-   * @param from
-   * @param to
-   * @param subject
-   * @param substitutions
-   * @param template
-   * @throws MessagingException 
-   */
-  public void sendEmailUsingTemplate(String from, List<String> to, String subject, String[] substitutions, String template);
-  
+	/**
+	 * Public method to execute an asynchronous email send
+	 *
+	 * @param from          From Email Address
+	 * @param to            To Email Address
+	 * @param subject       Subject
+	 * @param substitutions Map of Data objects
+	 * @param template      File Name of template
+	 */
+	public void sendEmailUsingTemplate(String from, List<String> to, String subject, Map substitutions, MailMessages template);
 }
