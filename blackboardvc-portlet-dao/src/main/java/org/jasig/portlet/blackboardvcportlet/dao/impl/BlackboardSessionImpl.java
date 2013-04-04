@@ -271,10 +271,6 @@ public class BlackboardSessionImpl implements BlackboardSession {
         return nonChairs;
     }
 
-    Set<SessionRecording> getSessionRecordings() {
-        return sessionRecordings;
-    }
-    
     @Override
     public DateTime getLastUpdated() {
         return lastUpdated;

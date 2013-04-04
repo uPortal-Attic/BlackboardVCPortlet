@@ -65,15 +65,14 @@ public class SessionRecordingDaoImpl extends BaseJpaDao implements SessionRecord
         final List<SessionRecordingImpl> sessionRecordings = query.getResultList();
         return new LinkedHashSet<SessionRecording>(sessionRecordings);
     }
-
-    //TODO use ListRecordingLongResponseCollection and update all recordings for a session
+    
     @Override
     @Transactional
     public SessionRecordingImpl createOrUpdateRecording(RecordingLongResponse recordingLongResponse) {
         final Long bbSessionId = recordingLongResponse.getSessionId();
         final BlackboardSessionImpl session = this.sessionDao.getSessionByBlackboardId(bbSessionId);
         if (session == null) {
-            //TODO WTF should we do here?
+            throw new IllegalArgumentException("No session with blackboard session id '" + bbSessionId + "' exists, cannot update recording");
         }
         
         final long bbRecordingId = recordingLongResponse.getRecordingId();
@@ -88,14 +87,8 @@ public class SessionRecordingDaoImpl extends BaseJpaDao implements SessionRecord
         recording.setRoomEnd(BlackboardDaoUtils.toDateTime(recordingLongResponse.getRoomEndDate()));
         recording.setRoomStart(BlackboardDaoUtils.toDateTime(recordingLongResponse.getRoomStartDate()));
         recording.setSecureSignOn(recordingLongResponse.isSecureSignOn());
+        recording.setRoomName(recordingLongResponse.getRoomName());
         recording.setSession(session);
-        
-        //TODO need to prune old recordings
-        final Set<SessionRecording> sessionRecordings = session.getSessionRecordings();
-        final boolean added = sessionRecordings.add(recording);
-        if (added) {
-            this.getEntityManager().persist(sessionRecordings);
-        }
         
         this.getEntityManager().persist(recording);
         
@@ -111,15 +104,16 @@ public class SessionRecordingDaoImpl extends BaseJpaDao implements SessionRecord
     }
 
     @Override
-    public int deleteRecordings(int... recordingIds) {
+    @Transactional
+    public int deleteRecordings(long... recordingIds) {
         final Query deleteRecordingsQuery = this.getEntityManager().createQuery(this.deleteRecordingsByIdQueryString);
         
-        final Builder<Integer> idSetBuilder = ImmutableSet.builder();
-        for (final int recordingId : recordingIds) {
+        final Builder<Long> idSetBuilder = ImmutableSet.builder();
+        for (final long recordingId : recordingIds) {
             idSetBuilder.add(recordingId);
         }
         
-        final ImmutableSet<Integer> idSet = idSetBuilder.build();
+        final ImmutableSet<Long> idSet = idSetBuilder.build();
         deleteRecordingsQuery.setParameter(this.recordingIdParameter.getName(), idSet);
         final int deletedRecordings = deleteRecordingsQuery.executeUpdate();
         

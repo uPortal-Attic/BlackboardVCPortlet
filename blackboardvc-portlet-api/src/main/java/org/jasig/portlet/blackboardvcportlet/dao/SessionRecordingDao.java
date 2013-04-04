@@ -32,10 +32,8 @@ import com.elluminate.sas.RecordingLongResponse;
 public interface SessionRecordingDao {
     Set<SessionRecording> getAllRecordings();
     
-    //TODO get all recordings for user? 
-
     SessionRecording createOrUpdateRecording(RecordingLongResponse recordingLongResponse);
     
-    int deleteRecordings(int... recordingIds);
+    int deleteRecordings(long... recordingIds);
     
 }

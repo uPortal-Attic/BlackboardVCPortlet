@@ -34,6 +34,7 @@
     <bean class="org.jasig.portlet.blackboardvcportlet.dao.impl.BlackboardSessionDaoImpl" />
     <bean class="org.jasig.portlet.blackboardvcportlet.dao.impl.ServerConfigurationDaoImpl" />
     <bean class="org.jasig.portlet.blackboardvcportlet.dao.impl.ServerQuotaDaoImpl" />
+    <bean class="org.jasig.portlet.blackboardvcportlet.dao.impl.SessionRecordingDaoImpl" />
                         
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
         <property name="entityManagerFactory" ref="factoryBean" />

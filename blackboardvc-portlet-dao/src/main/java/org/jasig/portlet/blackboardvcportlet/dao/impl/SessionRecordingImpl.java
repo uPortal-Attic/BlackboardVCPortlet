@@ -3,7 +3,6 @@ package org.jasig.portlet.blackboardvcportlet.dao.impl;
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -27,12 +26,12 @@ import org.joda.time.DateTime;
 @SequenceGenerator(
         name="VC2_RECORDING_GEN",
         sequenceName="VC2_RECORDING_SEQ",
-        allocationSize=100
+        allocationSize=10
     )
 @TableGenerator(
         name="VC2_RECORDING_GEN",
         pkColumnValue="VC2_RECORDING",
-        allocationSize=100
+        allocationSize=10
     )
 @NaturalIdCache
 @Cacheable
@@ -74,10 +73,10 @@ public class SessionRecordingImpl implements SessionRecording {
     @Column(name="RECORDING_SIZE", nullable = false)
     private long recordingSize;
     
-    @Column(name="SESSION_NAME", nullable = false, length = 1000)
+    @Column(name="ROOM_NAME", nullable = false, length = 1000)
     private String roomName;
 
-    @ManyToOne(targetEntity = BlackboardSessionImpl.class, optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = BlackboardSessionImpl.class, optional = false)
     @JoinColumn(name = "SESSION_ID", nullable = false)
     private BlackboardSession session;
     
