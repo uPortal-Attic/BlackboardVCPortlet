@@ -68,7 +68,7 @@ public class BlackboardSessionDaoImpl extends BaseJpaDao implements InternalBlac
 
     @Override
     @Transactional
-    public BlackboardSessionImpl createSession(SessionResponse sessionResponse) {
+    public BlackboardSessionImpl createSession(SessionResponse sessionResponse, String guestUrl) {
         //Find the creator user
         final String creatorId = sessionResponse.getCreatorId();
         final BlackboardUser creator = this.blackboardUserDao.getOrCreateBlackboardUser(creatorId);
@@ -76,6 +76,8 @@ public class BlackboardSessionDaoImpl extends BaseJpaDao implements InternalBlac
         //Create and populate a new blackboardSession
         final BlackboardSessionImpl blackboardSession = new BlackboardSessionImpl(sessionResponse.getSessionId(), creator);
         updateBlackboardSession(sessionResponse, blackboardSession);
+        
+        blackboardSession.setGuestUrl(guestUrl);
 
         //Persist and return the new session
         this.getEntityManager().persist(blackboardSession);

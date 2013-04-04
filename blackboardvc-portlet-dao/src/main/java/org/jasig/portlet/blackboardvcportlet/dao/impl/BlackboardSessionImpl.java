@@ -156,6 +156,9 @@ public class BlackboardSessionImpl implements BlackboardSession {
     @Column(name="HIDE_PARTICIPANT_NAMES", nullable = false)
     private boolean hideParticipantNames = true;
     
+    @Column(name="GUEST_URL", nullable = false, length = 4000)
+    private String guestUrl;
+    
     @Column(name="LAST_UPDATED", nullable = false)
     @Type(type = "dateTime")
     private DateTime lastUpdated;
@@ -363,6 +366,15 @@ public class BlackboardSessionImpl implements BlackboardSession {
 
     public void setHideParticipantNames(boolean hideParticipantNames) {
         this.hideParticipantNames = hideParticipantNames;
+    }
+
+    @Override
+    public String getGuestUrl() {
+        return guestUrl;
+    }
+
+    public void setGuestUrl(String guestUrl) {
+        this.guestUrl = guestUrl;
     }
 
     @Override

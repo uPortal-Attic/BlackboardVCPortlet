@@ -55,4 +55,5 @@ public interface BlackboardSession extends Serializable {
     
     DateTime getLastUpdated();
 
+    String getGuestUrl();
 }

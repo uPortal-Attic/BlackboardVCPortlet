@@ -100,7 +100,7 @@ public class BlackboardSessionDaoImplTest extends BaseJpaDaoTest {
                 sessionResponse.setAllowInSessionInvites(true);
                 sessionResponse.setHideParticipantNames(true);
                 
-                final BlackboardSession session = blackboardSessionDao.createSession(sessionResponse);
+                final BlackboardSession session = blackboardSessionDao.createSession(sessionResponse, "http://www.example.com/session");
                 assertNotNull(session);
 
                 verifyCreatedSession();
