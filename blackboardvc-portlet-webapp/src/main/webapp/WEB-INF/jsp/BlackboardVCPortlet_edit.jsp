@@ -320,6 +320,7 @@
 	<div class="uportal-channel-subtitle">3. Participants</div>
 	<hr>
 
+<%--
 	<div class="uportal-channel-subtitle">Internal participants</div>
 	<table>
 		<c:if test="${fn:length(intParticipants) gt 0}">
@@ -333,8 +334,7 @@
 			</thead>
 		</c:if>
 		<tbody>
-			<c:forEach var="intParticipant" items="${intParticipants}"
-				varStatus="loopStatus">
+			<c:forEach var="intParticipant" items="${intParticipants}" varStatus="loopStatus">
 				<input type="hidden" name="intParticipantUids"
 					value="${intParticipant.uid}" />
 				<input type="hidden" name="intParticipantDisplayNames"
@@ -346,8 +346,7 @@
 					<td>${intParticipant.uid}</td>
 					<td>${intParticipant.displayName}</td>
 					<td>${intParticipant.email}</td>
-					<td><input value="${loopStatus.index}"
-						name="deleteIntParticipant" type="checkbox" /></td>
+					<td><input value="${loopStatus.index}" name="deleteIntParticipant" type="checkbox" /></td>
 				</tr>
 			</c:forEach>
 			<c:if test="${fn:length(intParticipants) gt 0}">
@@ -371,6 +370,7 @@
 			</tr>
 		</tbody>
 	</table>
+--%>
 
 	<div class="uportal-channel-subtitle">External participants</div>
 	<table>
@@ -558,6 +558,7 @@
 									return false;
 								}
 							});
+<%--
 					$('#${namespace}intParticipantInput').keypress(
 							function(e) {
 								if (e.which == 13) {
@@ -566,6 +567,7 @@
 									return false;
 								}
 							});
+--%>
 					$('#${namespace}extParticipantDisplayNameInput').keypress(
 							function(e) {
 								if (e.which == 13) {

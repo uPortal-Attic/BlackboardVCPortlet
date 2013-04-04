@@ -197,7 +197,9 @@ public class BlackboardVCPortletEditController
 						logger.debug("list debug:(" + moderatorList.get(x).getUid() + "," + moderatorList.get(x).getDisplayName() + "," + moderatorList.get(x).getEmail() + ")");
 					}
 					modelAndView.addObject("moderators", moderatorList);
-				} else if (pairs.getKey().equals("intParticipants"))
+				}
+/*
+				else if (pairs.getKey().equals("intParticipants"))
 				{
 					List<User> intParticipantList = (List<User>) pairs.getValue();
 					for (int x = 0; x < intParticipantList.size(); x++)
@@ -205,7 +207,9 @@ public class BlackboardVCPortletEditController
 						logger.debug("list debug:(" + intParticipantList.get(x).getUid() + "," + intParticipantList.get(x).getDisplayName() + "," + intParticipantList.get(x).getEmail() + ")");
 					}
 					modelAndView.addObject("intParticipants", intParticipantList);
-				} else if (pairs.getKey().equals("presentation"))
+				}
+*/
+				else if (pairs.getKey().equals("presentation"))
 				{
 					SessionPresentation presentation = (SessionPresentation) pairs.getValue();
 					modelAndView.addObject("presentation", presentation);
@@ -304,7 +308,7 @@ public class BlackboardVCPortletEditController
 			{
 				logger.debug("Adding nonchair list to participants");
 				String[] nonChairList = StringUtil.split(session.getNonChairList(), ',');
-				List<User> intParticipantList = new ArrayList<User>();
+//				List<User> intParticipantList = new ArrayList<User>();
 				List<User> extParticipantList = new ArrayList<User>();
 
 				for (int i = 0; i < nonChairList.length; i++)
@@ -312,8 +316,9 @@ public class BlackboardVCPortletEditController
 					user = userService.getUserDetails(nonChairList[i]);
 					if (user != null)
 					{
-						intParticipantList.add(user);
-					} else
+//						intParticipantList.add(user);
+					}
+					else
 					{
 						user = sessionService.getExtParticipant(session.getSessionId(), nonChairList[i]);
 						if (user == null)
@@ -326,7 +331,7 @@ public class BlackboardVCPortletEditController
 					}
 				}
 
-				modelAndView.addObject("intParticipants", intParticipantList);
+//				modelAndView.addObject("intParticipants", intParticipantList);
 				modelAndView.addObject("extParticipants", extParticipantList);
 			}
 
@@ -552,6 +557,7 @@ public class BlackboardVCPortletEditController
 	 * @param mView
 	 * @throws Exception
 	 */
+/*
 	@ActionMapping(params = "action=Add Participant(s)")
 	public void addIntParticipant(ActionRequest request, ActionResponse response, ModelAndView mView) throws Exception
 	{
@@ -613,6 +619,7 @@ public class BlackboardVCPortletEditController
 		}
 
 	}
+*/
 
 	/**
 	 * Delete moderators
@@ -657,6 +664,8 @@ public class BlackboardVCPortletEditController
 	 * @param mView
 	 * @throws Exception
 	 */
+/*
+
 	@ActionMapping(params = "action=Delete Internal Participant(s)")
 	public void deleteInternalParticipant(ActionRequest request, ActionResponse response, ModelAndView mView) throws Exception
 	{
@@ -682,6 +691,7 @@ public class BlackboardVCPortletEditController
 			mView.addObject("feedbackMessage", "feedbackmessage.internalparticipantsremoved");
 		}
 	}
+*/
 
 	/**
 	 * Remove multimedia files
@@ -1457,6 +1467,7 @@ public class BlackboardVCPortletEditController
 		}
 
 		modelAndView.addObject("extParticipants", extParticipantList);
+/*
 		List<User> intParticipantList = new ArrayList<User>();
 
 		String[] intParticipantUids = request.getParameterValues("intParticipantUids");
@@ -1477,6 +1488,7 @@ public class BlackboardVCPortletEditController
 		}
 
 		modelAndView.addObject("intParticipants", intParticipantList);
+*/
 
 		SessionPresentation sessionPresentation = sessionService.getSessionPresentation(Long.toString(session.getSessionId()));
 		if (sessionPresentation != null)
