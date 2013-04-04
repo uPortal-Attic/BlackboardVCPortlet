@@ -146,6 +146,38 @@ public class SessionRecordingImpl implements SessionRecording {
     public BlackboardSession getSession() {
         return session;
     }
+    
+    public void setRoomStart(DateTime roomStart) {
+        this.roomStart = roomStart;
+    }
+
+    public void setRoomEnd(DateTime roomEnd) {
+        this.roomEnd = roomEnd;
+    }
+
+    public void setRecordingUrl(String recordingUrl) {
+        this.recordingUrl = recordingUrl;
+    }
+
+    public void setSecureSignOn(boolean secureSignOn) {
+        this.secureSignOn = secureSignOn;
+    }
+
+    public void setCreationDate(DateTime creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public void setRecordingSize(long recordingSize) {
+        this.recordingSize = recordingSize;
+    }
+
+    public void setRoomName(String roomName) {
+        this.roomName = roomName;
+    }
+
+    void setSession(BlackboardSession session) {
+        this.session = session;
+    }
 
     @Override
     public int hashCode() {

@@ -14,7 +14,7 @@ public interface BlackboardSessionDao {
     
     BlackboardSession getSession(long sessionId);
     
-    BlackboardSession getSessionByBlackboardId(long blackboardId);
+    BlackboardSession getSessionByBlackboardId(long bbSessionId);
     
     BlackboardSession createSession(SessionResponse sessionResponse);
     

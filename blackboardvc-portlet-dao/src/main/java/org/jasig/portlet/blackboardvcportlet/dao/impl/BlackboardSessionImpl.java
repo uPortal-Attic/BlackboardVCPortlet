@@ -161,7 +161,7 @@ public class BlackboardSessionImpl implements BlackboardSession {
     private DateTime lastUpdated;
     
     @OneToMany(mappedBy = "session", targetEntity = SessionRecordingImpl.class, cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, orphanRemoval = true)
-    private Set<SessionRecording> sessionRecordings = null;
+    private Set<SessionRecording> sessionRecordings = new HashSet<SessionRecording>(0);
     
     /**
      * needed by hibernate
@@ -269,6 +269,15 @@ public class BlackboardSessionImpl implements BlackboardSession {
 
     Set<BlackboardUser> getNonChairs() {
         return nonChairs;
+    }
+
+    Set<SessionRecording> getSessionRecordings() {
+        return sessionRecordings;
+    }
+    
+    @Override
+    public DateTime getLastUpdated() {
+        return lastUpdated;
     }
 
     @Override

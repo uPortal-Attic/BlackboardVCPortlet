@@ -52,5 +52,7 @@ public interface BlackboardSession extends Serializable {
     DateTime getStartTime();
 
     String getSessionName();
+    
+    DateTime getLastUpdated();
 
 }

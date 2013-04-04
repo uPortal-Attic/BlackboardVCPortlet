@@ -22,7 +22,6 @@ import java.util.Set;
 
 import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
 
-import com.elluminate.sas.ListRecordingLong;
 import com.elluminate.sas.RecordingLongResponse;
 
 /**
@@ -35,8 +34,8 @@ public interface SessionRecordingDao {
     
     //TODO get all recordings for user? 
 
-    SessionRecording createOrUpdateRecording(ListRecordingLong listRecordingLong);
+    SessionRecording createOrUpdateRecording(RecordingLongResponse recordingLongResponse);
     
-    void deleteRecordings(int... recordingIds);
+    int deleteRecordings(int... recordingIds);
     
 }

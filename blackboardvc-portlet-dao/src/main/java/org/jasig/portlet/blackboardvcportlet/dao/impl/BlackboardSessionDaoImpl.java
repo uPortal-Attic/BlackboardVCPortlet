@@ -8,11 +8,8 @@ import java.util.regex.Pattern;
 import javax.persistence.EntityManager;
 
 import org.apache.commons.lang.Validate;
-import org.jasig.portlet.blackboardvcportlet.dao.BlackboardSessionDao;
 import org.jasig.portlet.blackboardvcportlet.data.BlackboardSession;
 import org.jasig.portlet.blackboardvcportlet.data.BlackboardUser;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.stereotype.Repository;
@@ -22,7 +19,7 @@ import com.elluminate.sas.SessionResponse;
 import com.google.common.collect.ImmutableSet;
 
 @Repository
-public class BlackboardSessionDaoImpl extends BaseJpaDao implements BlackboardSessionDao {
+public class BlackboardSessionDaoImpl extends BaseJpaDao implements InternalBlackboardSessionDao {
     private static final Pattern USER_LIST_DELIM = Pattern.compile(",");
     
     private InternalBlackboardUserDao blackboardUserDao;
@@ -62,9 +59,9 @@ public class BlackboardSessionDaoImpl extends BaseJpaDao implements BlackboardSe
 
     @Override
     //TODO need @OpenEntityManager
-    public BlackboardSessionImpl getSessionByBlackboardId(long blackboardId) {
+    public BlackboardSessionImpl getSessionByBlackboardId(long bbSessionId) {
         final NaturalIdQuery<BlackboardSessionImpl> query = this.createNaturalIdQuery(BlackboardSessionImpl.class);
-        query.using(BlackboardSessionImpl_.bbSessionId, blackboardId);
+        query.using(BlackboardSessionImpl_.bbSessionId, bbSessionId);
         
         return query.load();
     }
@@ -122,7 +119,7 @@ public class BlackboardSessionDaoImpl extends BaseJpaDao implements BlackboardSe
         blackboardSession.setAllowInSessionInvites(sessionResponse.isAllowInSessionInvites());
         blackboardSession.setBoundaryTime(sessionResponse.getBoundaryTime());
         blackboardSession.setChairNotes(sessionResponse.getChairNotes());
-        blackboardSession.setEndTime(toDateTime(sessionResponse.getEndTime()));
+        blackboardSession.setEndTime(BlackboardDaoUtils.toDateTime(sessionResponse.getEndTime()));
         blackboardSession.setHideParticipantNames(sessionResponse.isHideParticipantNames());
         blackboardSession.setMaxCameras(sessionResponse.getMaxCameras());
         blackboardSession.setMaxTalkers(sessionResponse.getMaxTalkers());
@@ -134,7 +131,7 @@ public class BlackboardSessionDaoImpl extends BaseJpaDao implements BlackboardSe
         blackboardSession.setRecordings(sessionResponse.isRecordings());
         blackboardSession.setReserveSeats(sessionResponse.getReserveSeats());
         blackboardSession.setSessionName(sessionResponse.getSessionName());
-        blackboardSession.setStartTime(toDateTime(sessionResponse.getStartTime()));
+        blackboardSession.setStartTime(BlackboardDaoUtils.toDateTime(sessionResponse.getStartTime()));
         blackboardSession.setVersionId(sessionResponse.getVersionId());
         
         updateUserList(sessionResponse, blackboardSession, UserListType.CHAIR);
@@ -142,10 +139,6 @@ public class BlackboardSessionDaoImpl extends BaseJpaDao implements BlackboardSe
         updateUserList(sessionResponse, blackboardSession, UserListType.NON_CHAIR);
     }
     
-    private DateTime toDateTime(long timestamp) {
-        //The blackboard docs say all server-side time data is stored in UTC
-        return new DateTime(timestamp, DateTimeZone.UTC);
-    }
     
     /**
      * Syncs the user list (chair or non-chair) from the {@link SessionResponse} to the {@link BlackboardSessionImpl}. Handles
