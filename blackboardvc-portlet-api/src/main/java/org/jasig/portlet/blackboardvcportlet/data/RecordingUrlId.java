@@ -19,21 +19,19 @@
 package org.jasig.portlet.blackboardvcportlet.data;
 
 import java.io.Serializable;
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
 
 /**
  * Embedded id for Recording URLs
  * @author Richard Good
  */
-@Embeddable
+//@Embeddable
 public class RecordingUrlId implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "RECORDING_ID")
+//    @Column(name = "RECORDING_ID")
     protected long recordingId;
 
-    @Column(name = "URL")
+//    @Column(name = "URL")
     protected String url;
 
 }
