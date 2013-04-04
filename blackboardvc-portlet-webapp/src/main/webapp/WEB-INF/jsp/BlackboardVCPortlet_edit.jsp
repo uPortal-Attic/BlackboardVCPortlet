@@ -537,6 +537,7 @@
 	</table>
 </form>
 <script type="text/javascript">
+    <rs:compressJs>
 	up.jQuery(function() {
 		var $ = up.jQuery;
 		$(document).ready(
@@ -583,4 +584,5 @@
 							});
 				});
 	});
+    </rs:compressJs>
 </script>

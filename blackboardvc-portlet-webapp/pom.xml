@@ -65,26 +65,12 @@
         <dependency>
             <groupId>org.jasig.resourceserver</groupId>
             <artifactId>resource-server-utils</artifactId>
-<!--
-            <version>${resource-server.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
--->
         </dependency>
         <dependency>
             <groupId>org.jasig.resourceserver</groupId>
             <artifactId>resource-server-content</artifactId>
-<!--
-            <version>${resource-server.version}</version>
-            <type>war</type>
--->
             <type>war</type>
         </dependency>
-        
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -240,7 +226,7 @@
                             <groupId>org.jasig.resourceserver</groupId>
                             <artifactId>resource-server-content</artifactId>
                             <includes>
-                                <include>rs/jquery/1.6.1/</include>
+                                <include>rs/jquery/1.9.1/</include>
                                 <include>rs/jqueryui/1.8.13/</include>
                             </includes>
                         </overlay>
