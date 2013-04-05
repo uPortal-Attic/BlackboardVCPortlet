@@ -1,19 +1,17 @@
 package org.jasig.portlet.blackboardvcportlet.service.impl;
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.portlet.PortletPreferences;
 
-import org.jasig.portlet.blackboardvcportlet.dao.RecordingShortDao;
-import org.jasig.portlet.blackboardvcportlet.dao.RecordingUrlDao;
-import org.jasig.portlet.blackboardvcportlet.data.RecordingShort;
-import org.jasig.portlet.blackboardvcportlet.data.RecordingShortImpl;
-import org.jasig.portlet.blackboardvcportlet.data.RecordingUrl;
-import org.jasig.portlet.blackboardvcportlet.data.RecordingUrlImpl;
+import org.jasig.portlet.blackboardvcportlet.dao.BlackboardSessionDao;
+import org.jasig.portlet.blackboardvcportlet.dao.BlackboardUserDao;
+import org.jasig.portlet.blackboardvcportlet.dao.SessionRecordingDao;
 import org.jasig.portlet.blackboardvcportlet.data.BlackboardSession;
+import org.jasig.portlet.blackboardvcportlet.data.BlackboardUser;
+import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
 import org.jasig.portlet.blackboardvcportlet.service.RecordingService;
 import org.jasig.portlet.blackboardvcportlet.service.SessionService;
 import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceTemplate;
@@ -22,71 +20,58 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.elluminate.sas.BuildRecordingUrl;
-import com.elluminate.sas.ListRecordingShort;
-import com.elluminate.sas.ListRecordingShortResponseCollection;
-import com.elluminate.sas.ObjectFactory;
-import com.elluminate.sas.RecordingShortResponse;
+import com.elluminate.sas.ListRecordingLong;
+import com.elluminate.sas.ListRecordingLongResponseCollection;
+import com.elluminate.sas.RecordingLongResponse;
 import com.elluminate.sas.RemoveRecording;
 import com.elluminate.sas.SuccessResponse;
-import com.elluminate.sas.UrlResponse;
 
 @Service("recordingService")
 public class RecordingServiceImpl implements RecordingService {
     private static final Logger logger = LoggerFactory.getLogger(RecordingService.class);
 
 	private SASWebServiceTemplate sasWebServiceTemplate;
-	private ObjectFactory objectFactory;
-    private RecordingShortDao recordingDao;
-    private RecordingUrlDao recordingUrlDao;
+	private BlackboardUserDao blackboardUserDao;
+	private BlackboardSessionDao blackboardSessionDao;
+	private SessionRecordingDao sessionRecordingDao;
     private SessionService sessionService;
+    
+    
+    @Autowired
+	public void setBlackboardUserDao(BlackboardUserDao blackboardUserDao) {
+        this.blackboardUserDao = blackboardUserDao;
+    }
 
-	@Autowired
+    @Autowired
+    public void setBlackboardSessionDao(BlackboardSessionDao blackboardSessionDao) {
+        this.blackboardSessionDao = blackboardSessionDao;
+    }
+
+    @Autowired
+    public void setSessionRecordingDao(SessionRecordingDao sessionRecordingDao) {
+        this.sessionRecordingDao = sessionRecordingDao;
+    }
+
+    @Autowired
 	public void setSasWebServiceTemplate(SASWebServiceTemplate sasWebServiceTemplate)
 	{
 		this.sasWebServiceTemplate = sasWebServiceTemplate;
 	}
 
-	@Autowired
-	public void setObjectFactory(ObjectFactory objectFactory)
-	{
-		this.objectFactory = objectFactory;
-	}
-
-	@Autowired
-	public void setRecordingDao(RecordingShortDao recordingDao)
-	{
-		this.recordingDao = recordingDao;
-	}
-
-	@Autowired
-	public void setRecordingUrlDao(RecordingUrlDao recordingUrlDao)
-	{
-		this.recordingUrlDao = recordingUrlDao;
-	}
-
-	@Autowired
+    @Autowired
 	public void setSessionService(SessionService sessionService)
 	{
 		this.sessionService = sessionService;
 	}
 
 	/**
-	 * Constructor
-	 */
-	public RecordingServiceImpl()
-	{
-		super();
-	}
-
-	/**
      * Get the recordings for a session
      * @param sessionId Long
-     * @return List<RecordingShort>
+     * @return Set<RecordingShort>
      */
-    public List<SessionRecording> getRecordingsForSession(long sessionId)
+    public Set<SessionRecording> getRecordingsForSession(long sessionId)
     {
-        return recordingDao.getAllSessionRecordings(sessionId);
+        return blackboardSessionDao.getSessionRecordings(sessionId);
     }
     
     /**
@@ -96,84 +81,44 @@ public class RecordingServiceImpl implements RecordingService {
      */
     public SessionRecording getRecording(long recordingId)
     {
-        SessionRecording recordingShort = recordingDao.getRecording(recordingId);
-        recordingShort.setReadableFileSize(readableFileSize(recordingShort.getRecordingSize()));
-        recordingShort.setCreatedDate(new Date(recordingShort.getCreationDate()));
-        return recordingShort;
+        return sessionRecordingDao.getSessionRecording(recordingId);
     }
     
     /**
      * Get the recordings for a user
      * @param uid String
-     * @return List<RecordingShort>
+     * @return Set<RecordingShort>
      */
-    public List<SessionRecording> getRecordingsForUser(String uid)
+    public Set<SessionRecording> getRecordingsForUser(String uid)
     {
-        List<SessionRecording> recordings = recordingDao.getRecordingsForUser(uid);
-        RecordingUrl url;
-        for (int i=0;i<recordings.size();i++)
-        {  
-            url = this.getRecordingUrl(recordings.get(i).getRecordingId());
-            recordings.get(i).setRecordingUrl(url.getUrl());
-            recordings.get(i).setCreatedDate(new Date(recordings.get(i).getCreationDate()));
-            if ((recordings.get(i).getChairList()!=null&&recordings.get(i).getChairList().indexOf(uid+",")!=-1)||(recordings.get(i).getChairList()!=null&&recordings.get(i).getChairList().endsWith(uid)))
-            {
-                recordings.get(i).setCurrUserCanDelete(true);
-            }
-            else
-            {
-                recordings.get(i).setCurrUserCanDelete(false);
-            }
-            recordings.get(i).setReadableFileSize(readableFileSize(recordings.get(i).getRecordingSize()));
+        //TODO this is not bad if the data is all in cache but if it isn't it would be better to just run a query
+        
+        final BlackboardUser blackboardUser = this.blackboardUserDao.getBlackboardUser(uid);
+        
+        final Set<SessionRecording> recordings = new LinkedHashSet<SessionRecording>();
+        
+        final Set<BlackboardSession> chairedSessionsForUser = this.blackboardUserDao.getChairedSessionsForUser(blackboardUser.getUserId());
+        for (final BlackboardSession blackboardSession : chairedSessionsForUser) {
+            final Set<SessionRecording> sessionRecordings = this.blackboardSessionDao.getSessionRecordings(blackboardSession.getSessionId());
+            recordings.addAll(sessionRecordings);
         }
+        
+        final Set<BlackboardSession> nonChairedSessionsForUser = this.blackboardUserDao.getNonChairedSessionsForUser(blackboardUser.getUserId());
+        for (final BlackboardSession blackboardSession : nonChairedSessionsForUser) {
+            final Set<SessionRecording> sessionRecordings = this.blackboardSessionDao.getSessionRecordings(blackboardSession.getSessionId());
+            recordings.addAll(sessionRecordings);
+        }
+
         return recordings;
     }
     
-    /**
-     * Store a recording
-     * @param recordingShort RecordingShort
-     */
-    public void saveRecordingShort(SessionRecording recordingShort)
-    {
-        recordingDao.saveRecordingShort(recordingShort);
-    }
-
     /**
      * Get recordings as Admin
-     * @return List<RecordingShort>
+     * @return Set<RecordingShort>
      */
-    public List<SessionRecording> getRecordingsForAdmin()
+    public Set<SessionRecording> getRecordingsForAdmin()
     {
-        List<SessionRecording> recordings = recordingDao.getAllRecordings();
-        RecordingUrl url;
-        for (int i=0;i<recordings.size();i++)
-        {  
-            url = this.getRecordingUrl(recordings.get(i).getRecordingId());
-            recordings.get(i).setRecordingUrl(url.getUrl());
-            recordings.get(i).setCreatedDate(new Date(recordings.get(i).getCreationDate()));
-            recordings.get(i).setCurrUserCanDelete(true);
-            recordings.get(i).setReadableFileSize(readableFileSize(recordings.get(i).getRecordingSize()));
-        }
-        return recordings;
-    }
-    
-    /**
-     * Gets the url for a recording
-     * @param recordingId Long
-     * @return RecordingUrl
-     */
-    public RecordingUrl getRecordingUrl(long recordingId)
-    {
-        List<RecordingUrl> recordingUrlList= recordingUrlDao.getRecordingUrls(recordingId);
-        if (recordingUrlList.size()>0)
-        {
-            return recordingUrlList.get(0);
-        }
-        else
-        {
-            return null;
-        }
-
+        return sessionRecordingDao.getAllRecordings();
     }
    
     /**
@@ -188,7 +133,7 @@ public class RecordingServiceImpl implements RecordingService {
         
         try
         {
-			RemoveRecording removeRecording = objectFactory.createRemoveRecording();
+			RemoveRecording removeRecording = new RemoveRecording();
 			removeRecording.setRecordingId(recordingId);
 			SuccessResponse successResponse = (SuccessResponse) sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/RemoveRecording", removeRecording);
 			logger.debug("removeRecording response:" + successResponse);
@@ -198,10 +143,10 @@ public class RecordingServiceImpl implements RecordingService {
             logger.error("Exception caught calling Collaborate API",e);
             throw e;
         }
-        recordingUrlDao.deleteRecordingUrls(recordingId);
         logger.debug("Deleted recordingUrl");
              
-        recordingDao.deleteRecordingShort(recordingId);
+        //TODO probably shouldn't delete it from our local db if the WS call fails
+        sessionRecordingDao.deleteRecordings(recordingId);
         logger.debug("Deleted recordingShort");
     }
    
@@ -209,69 +154,34 @@ public class RecordingServiceImpl implements RecordingService {
      * Updates the local recordings cache from Collaborate for a particular session
      *
 	 * @param sessionId Long
-	 * @return List<RecordingShort>
+	 * @return Set<RecordingShort>
      */
-    public List<SessionRecording> updateSessionRecordings(long sessionId)
+    public Set<SessionRecording> updateSessionRecordings(long sessionId)
     {
-        List<SessionRecording> recordingList = new ArrayList<SessionRecording>();
+        final BlackboardSession session = sessionService.getSession(sessionId);
+        if (session == null) {
+            //TODO?
+        }
+        
+        Set<SessionRecording> recordingList = new LinkedHashSet<SessionRecording>();
         try
         {
-			ListRecordingShort listRecordingShort = objectFactory.createListRecordingShort();
-			listRecordingShort.setSessionId(sessionId);
-			ListRecordingShortResponseCollection listRecordingShortResponseCollection = (ListRecordingShortResponseCollection)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/ListRecordingShort", listRecordingShort);
-			List<RecordingShortResponse> recordingShortResponses = listRecordingShortResponseCollection.getRecordingShortResponses();
-
-			RecordingShortImpl recordingShort;
-			RecordingUrl recordingUrl;
-			BlackboardSession session = sessionService.getSession(sessionId);
-			for (RecordingShortResponse shortResponse : recordingShortResponses)
-			{
-				recordingShort = new RecordingShortImpl();
-				recordingShort.setCreationDate(shortResponse.getCreationDate());
-				recordingShort.setRecordingId(shortResponse.getRecordingId());
-				recordingShort.setRecordingSize(shortResponse.getRecordingSize());
-				recordingShort.setRoomName(shortResponse.getRoomName());
-				recordingShort.setSessionId(shortResponse.getSessionId());
-				recordingShort.setChairList(session.getChairList());
-				recordingShort.setNonChairList(session.getNonChairList());
-				logger.debug("initialised recording for recording id:" + recordingShort.getRecordingId());
-				recordingDao.saveRecordingShort(recordingShort);
-				logger.debug("stored recording short");
-				logger.debug("getting url for recording");
-
-				BuildRecordingUrl buildRecordingUrl = objectFactory.createBuildRecordingUrl();
-				buildRecordingUrl.setRecordingId(recordingShort.getRecordingId());
-				UrlResponse urlResponse = (UrlResponse) sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/BuildRecordingUrl", buildRecordingUrl);
-
-				recordingUrl = new RecordingUrlImpl();
-				recordingUrl.setRecordingId(shortResponse.getRecordingId());
-				recordingUrl.setUrl(urlResponse.getUrl());
-				recordingUrl.setLastUpdated(new Date());
-				logger.debug("initialised recording for recording url:" + recordingUrl.getUrl());
-				recordingUrlDao.saveRecordingUrl(recordingUrl);
-				logger.debug("Stored recording url");
-				recordingList.add(recordingShort);
+            ListRecordingLong listRecording = new ListRecordingLong();
+			listRecording.setSessionId(sessionId);
+			ListRecordingLongResponseCollection listRecordingShortResponseCollection = (ListRecordingLongResponseCollection)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/ListRecordingShort", listRecording);
+			
+			final List<RecordingLongResponse> recordingResponses = listRecordingShortResponseCollection.getRecordingLongResponses();
+			
+			for (final RecordingLongResponse recordingResponse : recordingResponses) {
+			    final SessionRecording sessionRecording = sessionRecordingDao.createOrUpdateRecording(recordingResponse);
+			    recordingList.add(sessionRecording);
 			}
 		}
         catch (Exception e)
         {
+            //TODO this should get rethrown
             logger.error("Exception caught refreshing recordings",e);
         }
         return recordingList;
     }
-    
-    /**
-     * Utility class for pretty output of file size
-     * @param size Long
-     * @return String
-     */
-    private static String readableFileSize(long size) {
-        if(size <= 0) {
-            return "0";
-        }
-        final String[] units = new String[] { "B", "KB", "MB", "GB", "TB" };
-        int digitGroups = (int) (Math.log10(size)/Math.log10(1024));
-        return new DecimalFormat("#,##0.#").format(size/Math.pow(1024, digitGroups)) + " " + units[digitGroups];
-    }
-
 }

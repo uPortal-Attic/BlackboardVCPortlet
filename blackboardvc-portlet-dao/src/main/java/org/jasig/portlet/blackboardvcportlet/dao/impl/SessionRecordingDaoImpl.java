@@ -67,6 +67,11 @@ public class SessionRecordingDaoImpl extends BaseJpaDao implements SessionRecord
     }
     
     @Override
+    public SessionRecording getSessionRecording(long recordingId) {
+        return this.getEntityManager().find(SessionRecordingImpl.class, recordingId);
+    }
+
+    @Override
     @Transactional
     public SessionRecordingImpl createOrUpdateRecording(RecordingLongResponse recordingLongResponse) {
         final Long bbSessionId = recordingLongResponse.getSessionId();

@@ -1,10 +1,8 @@
 package org.jasig.portlet.blackboardvcportlet.service.impl;
 
-import com.elluminate.sas.GetServerQuotasResponseCollection;
-import com.elluminate.sas.ObjectFactory;
-import com.elluminate.sas.ServerQuotasResponse;
+import java.util.List;
+
 import org.jasig.portlet.blackboardvcportlet.dao.ServerQuotaDao;
-import org.jasig.portlet.blackboardvcportlet.dao.impl.ServerQuotaImpl;
 import org.jasig.portlet.blackboardvcportlet.data.ServerQuota;
 import org.jasig.portlet.blackboardvcportlet.service.ServerQuotaService;
 import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceTemplate;
@@ -13,8 +11,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import java.util.Date;
-import java.util.List;
+
+import com.elluminate.sas.GetServerQuotasResponseCollection;
+import com.elluminate.sas.ObjectFactory;
+import com.elluminate.sas.ServerQuotasResponse;
 
 /**
  * Service class for Server Quota
@@ -27,7 +27,6 @@ public class ServerQuotaServiceImpl implements ServerQuotaService
 
     private ServerQuotaDao serverQuotaDao;
 	private SASWebServiceTemplate sasWebServiceTemplate;
-	private ObjectFactory objectFactory;
 
 	@Autowired
 	public void setServerQuotaDao(ServerQuotaDao serverQuotaDao)
@@ -41,57 +40,48 @@ public class ServerQuotaServiceImpl implements ServerQuotaService
 		this.sasWebServiceTemplate = sasWebServiceTemplate;
 	}
 
-	@Autowired
-	public void setObjectFactory(ObjectFactory objectFactory)
-	{
-		this.objectFactory = objectFactory;
-	}
-
-	/**
+    /**
      * Gets the Server quota
+     * 
      * @return ServerQuota
      */
-     public ServerQuota getServerQuota()
-     {
-         return this.serverQuotaDao.getServerQuota();
-     }
+    public ServerQuota getServerQuota() {
+        ServerQuota serverQuota = this.serverQuotaDao.getServerQuota();
+        if (serverQuota == null) {
+            serverQuota = this.refreshServerQuota();
+        }
+        return serverQuota;
+    }
     
      /**
       * Refresh the server quota, only goes to Collaborate if last update
       * was longer than an hour ago.
       */
 	@Scheduled(fixedRate=3600000)
-    public void refreshServerQuota()
+    public ServerQuota refreshServerQuota()
     {
+	    final ServerQuota serverQuota = this.serverQuotaDao.getServerQuota();
+	    if (serverQuota != null && serverQuota.getLastUpdated().plusHours(1).isAfterNow()) {
+	        //Nothing to do, serverQuota exists and is less than 1 hour old
+	        return serverQuota;
+	    }
+	    
 		logger.info("Server Quota being refreshed");
 		try
 		{
 			// Call Web Service Operation
-			GetServerQuotasResponseCollection serverQuotasResponseCollection = (GetServerQuotasResponseCollection)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/GetServerQuotas", objectFactory.createGetServerQuotas(null));
+			GetServerQuotasResponseCollection serverQuotasResponseCollection = (GetServerQuotasResponseCollection)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/GetServerQuotas", new ObjectFactory().createGetServerQuotas(null));
 			List<ServerQuotasResponse> quotaResult = serverQuotasResponseCollection.getServerQuotasResponses();
 			logger.debug("Result = " + quotaResult);
-			for (ServerQuotasResponse response : quotaResult)
-			{
-				ServerQuota quota = new ServerQuotaImpl();
-				quota.setDiskQuota(response.getDiskQuota());
-				quota.setDiskQuotaAvailable(response.getDiskQuotaAvailable());
-				quota.setSessionQuota(response.getSessionQuota());
-				quota.setSessionQuotaAvailable(response.getSessionQuotaAvailable());
-				quota.setLastUpdated(new Date());
-				logger.debug("disk quota:" + quota.getDiskQuota());
-				logger.debug("disk quota available:" + quota.getDiskQuotaAvailable());
-				logger.debug("session quota:" + quota.getSessionQuota());
-				logger.debug("session quota available:" + quota.getSessionQuotaAvailable());
-
-				//ServerQuotaService serviceQuotaImpl = new ServerQuotaService();
-				/// serviceQuotaImpl.saveServerQuota(quota);
-				serverQuotaDao.deleteServerQuota();
-				serverQuotaDao.saveServerQuota(quota);
+			for (ServerQuotasResponse response : quotaResult) {
+			    return this.serverQuotaDao.createOrUpdateQuota(response);
 			}
 		}
 		catch (Exception ex)
 		{
 			logger.error("Error refreshing ServerQuota data: ", ex);
 		}
+		
+		return null;
 	}
 }

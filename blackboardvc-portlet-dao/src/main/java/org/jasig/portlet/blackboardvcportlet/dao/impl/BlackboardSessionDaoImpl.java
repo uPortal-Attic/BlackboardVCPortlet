@@ -2,31 +2,60 @@ package org.jasig.portlet.blackboardvcportlet.dao.impl;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang.Validate;
 import org.jasig.portlet.blackboardvcportlet.data.BlackboardSession;
 import org.jasig.portlet.blackboardvcportlet.data.BlackboardUser;
+import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.elluminate.sas.SessionResponse;
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 
 @Repository
 public class BlackboardSessionDaoImpl extends BaseJpaDao implements InternalBlackboardSessionDao {
     private static final Pattern USER_LIST_DELIM = Pattern.compile(",");
     
+    private CriteriaQuery<BlackboardSessionImpl> findAllSessions;
+    
     private InternalBlackboardUserDao blackboardUserDao;
 
     @Autowired
     public void setBlackboardUserDao(InternalBlackboardUserDao blackboardUserDao) {
         this.blackboardUserDao = blackboardUserDao;
+    }
+    
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        this.findAllSessions = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<BlackboardSessionImpl>>() {
+            @Override
+            public CriteriaQuery<BlackboardSessionImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<BlackboardSessionImpl> criteriaQuery = cb.createQuery(BlackboardSessionImpl.class);
+                final Root<BlackboardSessionImpl> definitionRoot = criteriaQuery.from(BlackboardSessionImpl.class);
+                criteriaQuery.select(definitionRoot);
+
+                return criteriaQuery;
+            }
+        });
+    }
+    
+    @Override
+    public Set<BlackboardSession> getAllSessions() {
+        final TypedQuery<BlackboardSessionImpl> query = this.createQuery(this.findAllSessions);
+        return new LinkedHashSet<BlackboardSession>(query.getResultList());
     }
 
     @Override
@@ -49,6 +78,12 @@ public class BlackboardSessionDaoImpl extends BaseJpaDao implements InternalBlac
 
         //Create a copy to trigger loading of the user data
         return ImmutableSet.copyOf(sessionImpl.getNonChairs());
+    }
+    
+    @Override
+    public Set<SessionRecording> getSessionRecordings(long sessionId) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     @Override

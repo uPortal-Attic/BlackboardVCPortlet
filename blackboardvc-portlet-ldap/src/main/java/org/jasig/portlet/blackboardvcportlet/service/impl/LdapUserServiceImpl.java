@@ -18,7 +18,12 @@
  */
 package org.jasig.portlet.blackboardvcportlet.service.impl;
 
-import org.jasig.portlet.blackboardvcportlet.data.User;
+import java.util.List;
+
+import javax.naming.NamingException;
+import javax.naming.directory.Attributes;
+
+import org.jasig.portlet.blackboardvcportlet.data.BlackboardUser;
 import org.jasig.portlet.blackboardvcportlet.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,9 +33,6 @@ import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.filter.OrFilter;
-import javax.naming.NamingException;
-import javax.naming.directory.Attributes;
-import java.util.List;
 
 /**
  * Service Class for retrieving LDAP user lookups
@@ -52,6 +54,8 @@ public class LdapUserServiceImpl implements UserService
     public class PersonAttributeMapper implements AttributesMapper{
 
         /**
+         * TODO
+         * 
          * Maps the basic user attributes 
          * @param attributes
          * @return
@@ -59,7 +63,7 @@ public class LdapUserServiceImpl implements UserService
          */
         @Override
         public Object mapFromAttributes(Attributes attributes) throws NamingException {
-            User user = new User();
+            BlackboardUser user = null;//new BlackboardUser();
             
             // Users may not have an email address
             if (attributes.get("mail")!=null)
@@ -68,7 +72,7 @@ public class LdapUserServiceImpl implements UserService
                 if (email!=null)
                 {
                     logger.debug("Setting email:"+email);
-                    user.setEmail(email);
+//                    user.setEmail(email);
                 }
             
             }
@@ -77,7 +81,7 @@ public class LdapUserServiceImpl implements UserService
             if (uid!=null)
             {
                 logger.debug("Setting uid:"+uid);
-                user.setUid(uid);
+//                user.setUid(uid);
             }
             
             String cn = (String)attributes.get("cn").get();
@@ -97,7 +101,7 @@ public class LdapUserServiceImpl implements UserService
      * @param searchTerm
      * @return User
      */
-    public User getUserDetails(String searchTerm)
+    public BlackboardUser getUserDetails(String searchTerm)
     {       
         logger.debug("getUserDetails called");
         AndFilter andFilter = new AndFilter();
@@ -107,7 +111,7 @@ public class LdapUserServiceImpl implements UserService
         orFilter.or(new EqualsFilter("cn",searchTerm));
         andFilter.and(orFilter);
         logger.debug("Set up the filter for searchTerm:"+searchTerm);
-        List<User> result;
+        List<BlackboardUser> result;
         result = ldapTemplate.search("",andFilter.encode(),new PersonAttributeMapper());
         logger.debug("gotten a result");
         if (result.size()>0)

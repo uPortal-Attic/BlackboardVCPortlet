@@ -18,18 +18,19 @@
  */
 package org.jasig.portlet.blackboardvcportlet.service;
 
-import org.springframework.stereotype.Service;
+import org.jasig.portlet.blackboardvcportlet.data.ServerQuota;
 
 /**
  * Service class for Server Quota
  * @author rgood
  */
-@Service
 public interface ServerQuotaService
 {
+    ServerQuota getServerQuota();
+    
 	 /**
 	  * Refresh the server quota, only goes to Collaborate if last update
 	  * was longer than an hour ago.
 	  */
-    public void refreshServerQuota();
+    ServerQuota refreshServerQuota();
 }

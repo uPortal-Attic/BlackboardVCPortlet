@@ -18,7 +18,6 @@
  */
 package org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr;
 
-import freemarker.template.utility.StringUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jasig.portlet.blackboardvcportlet.data.*;
 import org.jasig.portlet.blackboardvcportlet.service.*;
@@ -43,7 +42,7 @@ import java.util.*;
  */
 @Controller
 @RequestMapping("EDIT")
-public class BlackboardVCPortletEditController
+public class BlackboardVCPortletEditController extends BaseController
 {
 	private static final Logger logger = LoggerFactory.getLogger(BlackboardVCPortletEditController.class);
 
@@ -1526,24 +1525,24 @@ public class BlackboardVCPortletEditController
 	 * @throws Exception
 	 */
 	@ActionMapping(params = "action=Save Recording")
-	public void saveRecording(ActionRequest request, ActionResponse response, ModelAndView modelAndView) throws Exception
+	public void saveRecording(ActionRequest request, ActionResponse response) throws Exception
 	{
-
-		String roomName = request.getParameter("roomName");
-		String recordingId = request.getParameter("recordingId");
-		if (roomName == null || roomName.equals(""))
-		{
-			String errorMessage = "error.roomnameisnull";
-			response.setRenderParameter("errorMessage", errorMessage);
-			response.setRenderParameter("action", "editRecording");
-			response.setRenderParameter("recordingId", recordingId);
-		} else
-		{
-			SessionRecording recordingShort = recordingService.getRecording(Long.valueOf(recordingId));
-			recordingShort.setRoomName(roomName);
-			recordingService.saveRecordingShort(recordingShort);
-			response.setRenderParameter("feedbackMessage", "feedbackmessage.recordingsaved");
-			response.setPortletMode(PortletMode.VIEW);
-		}
+	    //TODO allow editing of room name
+//		String roomName = request.getParameter("roomName");
+//		String recordingId = request.getParameter("recordingId");
+//		if (roomName == null || roomName.equals(""))
+//		{
+//			String errorMessage = "error.roomnameisnull";
+//			response.setRenderParameter("errorMessage", errorMessage);
+//			response.setRenderParameter("action", "editRecording");
+//			response.setRenderParameter("recordingId", recordingId);
+//		} else
+//		{
+//			SessionRecording recordingShort = recordingService.getRecording(Long.valueOf(recordingId));
+//			recordingShort.setRoomName(roomName);
+//			recordingService.saveRecordingShort(recordingShort);
+//			response.setRenderParameter("feedbackMessage", "feedbackmessage.recordingsaved");
+//			response.setPortletMode(PortletMode.VIEW);
+//		}
 	}
 }

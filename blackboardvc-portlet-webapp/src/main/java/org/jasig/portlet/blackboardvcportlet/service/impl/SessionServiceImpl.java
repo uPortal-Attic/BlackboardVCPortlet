@@ -1,9 +1,24 @@
 package org.jasig.portlet.blackboardvcportlet.service.impl;
 
-import com.elluminate.sas.*;
-import freemarker.template.utility.StringUtil;
-import org.jasig.portlet.blackboardvcportlet.dao.*;
-import org.jasig.portlet.blackboardvcportlet.data.*;
+import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.activation.DataHandler;
+import javax.mail.util.ByteArrayDataSource;
+import javax.portlet.PortletPreferences;
+import javax.xml.bind.JAXBElement;
+
+import org.apache.ws.security.util.StringUtil;
+import org.jasig.portlet.blackboardvcportlet.dao.BlackboardSessionDao;
+import org.jasig.portlet.blackboardvcportlet.dao.BlackboardUserDao;
+import org.jasig.portlet.blackboardvcportlet.data.BlackboardSession;
+import org.jasig.portlet.blackboardvcportlet.data.BlackboardUser;
 import org.jasig.portlet.blackboardvcportlet.service.MailTemplateService;
 import org.jasig.portlet.blackboardvcportlet.service.RecordingService;
 import org.jasig.portlet.blackboardvcportlet.service.SessionService;
@@ -13,49 +28,58 @@ import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import javax.activation.DataHandler;
-import javax.mail.util.ByteArrayDataSource;
-import javax.portlet.PortletPreferences;
-import javax.xml.bind.JAXBElement;
-import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.util.*;
+
+import com.elluminate.sas.BuildSessionUrl;
+import com.elluminate.sas.MultimediaResponse;
+import com.elluminate.sas.MultimediaResponseCollection;
+import com.elluminate.sas.PresentationResponse;
+import com.elluminate.sas.PresentationResponseCollection;
+import com.elluminate.sas.RemoveRepositoryMultimedia;
+import com.elluminate.sas.RemoveRepositoryPresentation;
+import com.elluminate.sas.RemoveSessionMultimedia;
+import com.elluminate.sas.RemoveSessionPresentation;
+import com.elluminate.sas.SessionResponse;
+import com.elluminate.sas.SessionResponseCollection;
+import com.elluminate.sas.SetApiCallbackUrl;
+import com.elluminate.sas.SetSessionMultimedia;
+import com.elluminate.sas.SetSessionPresentation;
+import com.elluminate.sas.SuccessResponse;
+import com.elluminate.sas.UploadRepositoryContent;
+import com.elluminate.sas.UrlResponse;
 
 @Service
 public class SessionServiceImpl implements SessionService
 {
 	private static final Logger logger = LoggerFactory.getLogger(SessionService.class);
 
-    private SessionDao sessionDao;
-	private SessionUrlDao sessionUrlDao;
-	private MailTemplateService jasigMailTemplateService;
+    private BlackboardSessionDao blackboardSessionDao;
+    private BlackboardUserDao blackboardUserDao;
+	private MailTemplateService mailTemplateService;
 	private UserService userService;
 	private RecordingService recordingService;
-	private SessionExtParticipantDao sessionExtParticipantDao;
-	private SessionPresentationDao sessionPresentationDao;
-	private SessionMultimediaDao sessionMultimediaDao;
+//	private SessionPresentationDao sessionPresentationDao;
+//	private SessionMultimediaDao sessionMultimediaDao;
 	private SASWebServiceTemplate sasWebServiceTemplate;
-	private ObjectFactory objectFactory;
-
+//	private ObjectFactory objectFactory;
+	
+	
 	@Autowired
-	public void setSessionDao(SessionDao sessionDao)
-	{
-		this.sessionDao = sessionDao;
-	}
+	public void setBlackboardSessionDao(BlackboardSessionDao blackboardSessionDao) {
+        this.blackboardSessionDao = blackboardSessionDao;
+    }
 
-	@Autowired
-	public void setSessionUrlDao(SessionUrlDao sessionUrlDao)
-	{
-		this.sessionUrlDao = sessionUrlDao;
-	}
+    @Autowired
+    public void setBlackboardUserDao(BlackboardUserDao blackboardUserDao) {
+        this.blackboardUserDao = blackboardUserDao;
+    }
 
-	@Autowired
-	public void setJasigMailTemplateService(MailTemplateService jasigMailTemplateService)
-	{
-		this.jasigMailTemplateService = jasigMailTemplateService;
-	}
+    @Autowired
+    public void setMailTemplateService(MailTemplateService mailTemplateService) {
+        this.mailTemplateService = mailTemplateService;
+    }
 
 	@Autowired
 	public void setUserService(UserService userService)
@@ -69,23 +93,17 @@ public class SessionServiceImpl implements SessionService
 		this.recordingService = recordingService;
 	}
 
-	@Autowired
-	public void setSessionExtParticipantDao(SessionExtParticipantDao sessionExtParticipantDao)
-	{
-		this.sessionExtParticipantDao = sessionExtParticipantDao;
-	}
-
-	@Autowired
-	public void setSessionPresentationDao(SessionPresentationDao sessionPresentationDao)
-	{
-		this.sessionPresentationDao = sessionPresentationDao;
-	}
-
-	@Autowired
-	public void setSessionMultimediaDao(SessionMultimediaDao sessionMultimediaDao)
-	{
-		this.sessionMultimediaDao = sessionMultimediaDao;
-	}
+//	@Autowired
+//	public void setSessionPresentationDao(SessionPresentationDao sessionPresentationDao)
+//	{
+//		this.sessionPresentationDao = sessionPresentationDao;
+//	}
+//
+//	@Autowired
+//	public void setSessionMultimediaDao(SessionMultimediaDao sessionMultimediaDao)
+//	{
+//		this.sessionMultimediaDao = sessionMultimediaDao;
+//	}
 
 	@Autowired
 	public void setSasWebServiceTemplate(SASWebServiceTemplate sasWebServiceTemplate)
@@ -93,15 +111,9 @@ public class SessionServiceImpl implements SessionService
 		this.sasWebServiceTemplate = sasWebServiceTemplate;
 	}
 
-	@Autowired
-	public void setObjectFactory(ObjectFactory objectFactory)
-	{
-		this.objectFactory = objectFactory;
-	}
-
-	public List<Session> getSessionsForUser(String uid) {
-        List<Session> sessionList = sessionDao.getSessionsForUser(uid);
-        for (Session session : sessionList)
+	public Set<BlackboardSession> getSessionsForUser(String uid) {
+        List<BlackboardSession> sessionList = blackboardSessionDao.getSessionsForUser(uid);
+        for (BlackboardSession session : sessionList)
 		{
             if ((session.getChairList()!=null && session.getChairList().indexOf(uid+",") != -1) || (session.getCreatorId().equals(uid)) || (session.getChairList() !=null && session.getChairList().endsWith(uid)))
             {
@@ -115,9 +127,9 @@ public class SessionServiceImpl implements SessionService
         return sessionList;
     }
 
-    public Session getSession(long sessionId) {
-        logger.debug("getSession called");
-        return sessionDao.getSession(sessionId);
+    public BlackboardSession getSession(long sessionId) {
+        logger.debug("getBlackboardSession called");
+        return blackboardSessionDao.getSession(sessionId);
     }
 
     public SessionUrl getSessionUrl(SessionUrlId sessionUrlId) {
@@ -166,10 +178,10 @@ public class SessionServiceImpl implements SessionService
     }
 
     public void deleteSession(long sessionId) throws Exception {
-        logger.debug("deleteSession called for :" + sessionId);
+        logger.debug("deleteBlackboardSession called for :" + sessionId);
         try {
             
-            Session session = sessionDao.getSession(sessionId);
+            BlackboardSession session = blackboardSessionDao.getSession(sessionId);
             
             // Call Web Service Operation
             logger.debug("deleting session multimedia");
@@ -184,13 +196,13 @@ public class SessionServiceImpl implements SessionService
 
             logger.debug("Calling removeSession:" + sessionId);
             try {
-				RemoveSession removeSession = objectFactory.createRemoveSession();
+				RemoveBlackboardSession removeBlackboardSession = objectFactory.createRemoveSession();
 				removeSession.setSessionId(sessionId);
 				JAXBElement<SuccessResponse> response = (JAXBElement<SuccessResponse>)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/RemoveSession", removeSession); 
 				SuccessResponse successResponse = response.getValue();
-                logger.debug("removeSession called, returned:" + successResponse.isSuccess());
+                logger.debug("removeBlackboardSession called, returned:" + successResponse.isSuccess());
             } catch (Exception e) {
-                logger.error("RemoveSession Error:", e);
+                logger.error("RemoveBlackboardSession Error:", e);
             }
             
             logger.debug("Deleting session urls");
@@ -198,7 +210,7 @@ public class SessionServiceImpl implements SessionService
             logger.debug("Finished deleting session urls");
 
             logger.debug("Now deleting session");
-            sessionDao.deleteSession(sessionId);
+            blackboardSessionDao.deleteSession(sessionId);
             logger.debug("Finished deleting session");
             
             notifyOfDeletion(session);
@@ -213,16 +225,16 @@ public class SessionServiceImpl implements SessionService
 
     }
 
-    public List<Session> getAllSessions() {
+    public List<BlackboardSession> getAllSessions() {
         logger.debug("getAllSessions called");
-        List<Session> sessions = sessionDao.getAllSesssions();
-        for (Session session : sessions) {
+        List<BlackboardSession> sessions = blackboardSessionDao.getAllSesssions();
+        for (BlackboardSession session : sessions) {
             session.setCurrUserCanEdit(true);
         }
         return sessions;
     }
 
-    public void createEditSession(Session session, PortletPreferences prefs, List<User> extParticipantList) throws Exception {
+    public void createEditSession(BlackboardSession session, PortletPreferences prefs, List<User> extParticipantList) throws Exception {
 
         try { // Call Web Service Operation
             logger.debug("Setup session web service call");
@@ -230,7 +242,7 @@ public class SessionServiceImpl implements SessionService
 			SessionResponseCollection sessionResponseCollection = null;
             if (session.getSessionId() > 0) {
                 logger.debug("Existing session, calling updateSession");
-				UpdateSession updateSession = objectFactory.createUpdateSession();
+				UpdateBlackboardSession updateBlackboardSession = objectFactory.createUpdateSession();
 				updateSession.setSessionId(session.getSessionId());
 				updateSession.setStartTime(session.getStartTime().getTime());
 				updateSession.setEndTime(session.getEndTime().getTime());
@@ -257,7 +269,7 @@ public class SessionServiceImpl implements SessionService
 				sessionResponseCollection = response.getValue();
             } else {
                 logger.debug("New session, calling setSession");
-				SetSession setSession = objectFactory.createSetSession();
+				SetBlackboardSession setBlackboardSession = objectFactory.createSetSession();
 				setSession.setCreatorId(session.getCreatorId());
 				setSession.setStartTime(session.getStartTime().getTime());
 				setSession.setEndTime(session.getEndTime().getTime());
@@ -281,7 +293,7 @@ public class SessionServiceImpl implements SessionService
 				setSession.setHideParticipantNames(session.isHideParticipantNames());
 				JAXBElement<SessionResponseCollection> response = (JAXBElement<SessionResponseCollection>)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/SetSession", setSession);
 				sessionResponseCollection = (SessionResponseCollection)response.getValue();
-                logger.debug("setSession called, received response");
+                logger.debug("setBlackboardSession called, received response");
             }
 
 			for (SessionResponse sessionResponse : sessionResponseCollection.getSessionResponses())
@@ -291,7 +303,7 @@ public class SessionServiceImpl implements SessionService
                 session.setLastUpdated(new Date());
                 logger.debug("Storing session");
                 this.storeSession(session);
-                logger.debug("Session stored");
+                logger.debug("BlackboardSession stored");
             }
 
             logger.debug("Update recordings associated with session");
@@ -347,14 +359,14 @@ public class SessionServiceImpl implements SessionService
         }
     }
 
-    public User getExtParticipant(long sessionId, String email) {
+    public BlackboardUser getExtParticipant(long sessionId, String email) {
         SessionExtParticipantId sessionExtParticipantId = new SessionExtParticipantId();
         sessionExtParticipantId.setSessionId(sessionId);
         sessionExtParticipantId.setParticipantEmail(email);
 
         SessionExtParticipant sessionExtParticipant = sessionExtParticipantDao.getSessionExtParticipant(sessionExtParticipantId);
 
-        User extParticipant = new User();
+        BlackboardUser extParticipant = new User();
         extParticipant.setUid(email);
         extParticipant.setEmail(email);
 
@@ -365,17 +377,17 @@ public class SessionServiceImpl implements SessionService
         return extParticipant;
     }
 
-    public void storeSession(Session session) {
-        sessionDao.saveSession(session);
+    public void storeSession(BlackboardSession session) {
+        blackboardSessionDao.saveSession(session);
     }
 
-    public void notifyModerators(User creator, Session session, List<User> users,String launchUrl) throws Exception {
+    public void notifyModerators(BlackboardUser creator, BlackboardSession session, List<User> users,String launchUrl) throws Exception {
         logger.debug("notifyModerators called");
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy HH:mm");
         String creatorDetails = creator.getDisplayName() + " (" + creator.getEmail() + ")";
        
         List<String> toList;
-        for (User user : users)
+        for (BlackboardUser user : users)
 		{
             logger.debug("user name:" + user.getDisplayName());
             logger.debug("user email:" + user.getDisplayName());
@@ -390,17 +402,17 @@ public class SessionServiceImpl implements SessionService
 
 			toList = new ArrayList<String>();
             toList.add(user.getEmail());
-			jasigMailTemplateService.sendEmailUsingTemplate(creator.getEmail(), toList, null, subs, MailMessages.MODERATOR);
+			mailTemplateService.sendEmailUsingTemplate(creator.getEmail(), toList, null, subs, MailMessages.MODERATOR);
         }
         logger.debug("finished");
     }
     
-    public void notifyOfDeletion(Session session) throws Exception {
+    public void notifyOfDeletion(BlackboardSession session) throws Exception {
         logger.debug("notifyOfDeletion called");
         String[] substitutions;
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy HH:mm");
         
-        User creator = userService.getUserDetails(session.getCreatorId());
+        BlackboardUser creator = userService.getUserDetails(session.getCreatorId());
         String creatorDetails= "Unknown user";
         
         if (creator!=null)
@@ -411,7 +423,7 @@ public class SessionServiceImpl implements SessionService
              
         List<User> users = new ArrayList<User>();
         
-        User lookupUser;     
+        BlackboardUser lookupUser;     
         
         logger.debug("Finished initialisation of creator and variables");
         if (session.getChairList()!=null&&!session.getChairList().equals(""))
@@ -445,10 +457,10 @@ public class SessionServiceImpl implements SessionService
                     }
                     else
                     {
-                        lookupUser = this.getExtParticipant(session.getSessionId(),nonChairList[i]);
+                        lookupBlackboardUser = this.getExtParticipant(session.getSessionId(),nonChairList[i]);
                         if (lookupUser==null)
                         {
-                            lookupUser = new User();
+                            lookupBlackboardUser = new User();
                             lookupUser.setEmail(nonChairList[i]);
                         }
                         
@@ -459,7 +471,7 @@ public class SessionServiceImpl implements SessionService
         }
         
 		List<String> toList;
-		for (User user : users)
+		for (BlackboardUser user : users)
 		{
 			Map<String, String> subs = new HashMap<String, String>();
 			subs.put("displayName", user.getDisplayName());
@@ -470,19 +482,19 @@ public class SessionServiceImpl implements SessionService
 
 			toList = new ArrayList<String>();
 			toList.add(user.getEmail());
-			jasigMailTemplateService.sendEmailUsingTemplate(creator.getEmail(), toList, null, subs, MailMessages.SESSION_DELETION);
+			mailTemplateService.sendEmailUsingTemplate(creator.getEmail(), toList, null, subs, MailMessages.SESSION_DELETION);
 		}
 		logger.debug("finished");
     }
 
-    public void notifyIntParticipants(User creator, Session session, List<User> users, String launchUrl) throws Exception {
+    public void notifyIntParticipants(BlackboardUser creator, BlackboardSession session, List<User> users, String launchUrl) throws Exception {
         logger.debug("notifyIntParticipants called");
         String[] substitutions;
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy HH:mm");
         String creatorDetails = creator.getDisplayName() + " (" + creator.getEmail() + ")";
 
         List<String> toList;
-        for (User user : users)
+        for (BlackboardUser user : users)
 		{
 			Map<String, String> subs = new HashMap<String, String>();
 			subs.put("displayName", user.getDisplayName());
@@ -494,12 +506,12 @@ public class SessionServiceImpl implements SessionService
 
 			toList = new ArrayList<String>();
 			toList.add(user.getEmail());
-			jasigMailTemplateService.sendEmailUsingTemplate(creator.getEmail(), toList, null, subs, MailMessages.INTERNAL_PARTICIPANT);
+			mailTemplateService.sendEmailUsingTemplate(creator.getEmail(), toList, null, subs, MailMessages.INTERNAL_PARTICIPANT);
         }
         logger.debug("finished");
     }
 
-    public void notifyExtParticipants(User creator, Session session, List<User> users) throws Exception {
+    public void notifyExtParticipants(BlackboardUser creator, BlackboardSession session, List<User> users) throws Exception {
         logger.debug("notifyExtParticipants called");
         String[] substitutions;
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy HH:mm");
@@ -513,7 +525,7 @@ public class SessionServiceImpl implements SessionService
         sessionUrlId.setDisplayName("Guest");
         sessionUrl = getSessionUrl(sessionUrlId);
         String extParticipantUrl;
-		for (User user : users)
+		for (BlackboardUser user : users)
 		{
 			extParticipantUrl = sessionUrl.getUrl().replaceFirst("Guest", URLEncoder.encode(user.getDisplayName(), "UTF-8"));
 
@@ -527,13 +539,13 @@ public class SessionServiceImpl implements SessionService
 
 			toList = new ArrayList<String>();
 			toList.add(user.getEmail());
-			jasigMailTemplateService.sendEmailUsingTemplate(creator.getEmail(), toList, null, subs, MailMessages.EXTERNAL_PARTICIPANT);
+			mailTemplateService.sendEmailUsingTemplate(creator.getEmail(), toList, null, subs, MailMessages.EXTERNAL_PARTICIPANT);
 		}
 
 		logger.debug("finished");
     }
 
-    public void addExtParticipant(User user, long sessionId) {
+    public void addExtParticipant(BlackboardUser user, long sessionId) {
         logger.debug("addExtParticipant called for session,user: (" + sessionId + "," + user.getEmail() + ")");
         SessionExtParticipantId sessionExtParticipantId = new SessionExtParticipantId();
         SessionExtParticipant sessionExtParticipant = new SessionExtParticipantImpl();

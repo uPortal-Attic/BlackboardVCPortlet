@@ -79,8 +79,7 @@
 						<portlet:param name="sessionId" value="${session.sessionId}" />
 						<portlet:param name="action" value="viewSession" />
 					</portlet:renderURL>
-					<portlet:renderURL var="editSessionUrl" portletMode="EDIT"
-						windowState="MAXIMIZED">
+					<portlet:renderURL var="editSessionUrl" portletMode="EDIT" windowState="MAXIMIZED">
 						<portlet:param name="sessionId" value="${session.sessionId}" />
 						<portlet:param name="action" value="editSession" />
 					</portlet:renderURL>

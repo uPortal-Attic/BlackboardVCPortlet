@@ -18,7 +18,7 @@
  */
 package org.jasig.portlet.blackboardvcportlet.service;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.portlet.PortletPreferences;
 
@@ -33,9 +33,9 @@ public interface RecordingService
 	/**
      * Get the recordings for a session
      * @param sessionId Long
-     * @return List<RecordingShort>
+     * @return Set<RecordingShort>
      */
-    public List<SessionRecording> getRecordingsForSession(long sessionId);
+    public Set<SessionRecording> getRecordingsForSession(long sessionId);
     
     /**
      * Get a specific recording
@@ -47,21 +47,15 @@ public interface RecordingService
     /**
      * Get the recordings for a user
      * @param uid String
-     * @return List<RecordingShort>
+     * @return Set<RecordingShort>
      */
-    public List<SessionRecording> getRecordingsForUser(String uid);
-    
-    /**
-     * Store a recording
-     * @param recordingShort RecordingShort
-     */
-    public void saveRecordingShort(SessionRecording recordingShort);
+    public Set<SessionRecording> getRecordingsForUser(String uid);
     
     /**
      * Get recordings as Admin
-     * @return List<RecordingShort>
+     * @return Set<RecordingShort>
      */
-    public List<SessionRecording> getRecordingsForAdmin();
+    public Set<SessionRecording> getRecordingsForAdmin();
     
     /**
      * Delete a recording
@@ -75,7 +69,7 @@ public interface RecordingService
      * Updates the local recordings cache from Collaborate for a particular session
      *
 	 * @param sessionId Long
-	 * @return List<RecordingShort>
+	 * @return Set<RecordingShort>
      */
-    public List<SessionRecording> updateSessionRecordings(long sessionId);
+    public Set<SessionRecording> updateSessionRecordings(long sessionId);
 }

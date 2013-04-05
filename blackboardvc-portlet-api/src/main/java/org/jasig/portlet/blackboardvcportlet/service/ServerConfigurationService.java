@@ -18,8 +18,6 @@
  */
 package org.jasig.portlet.blackboardvcportlet.service;
 
-import javax.portlet.PortletPreferences;
-
 import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
 
 /**
@@ -31,21 +29,13 @@ public interface ServerConfigurationService
 {
     /**
      * Gets the server configuration
-     * @param prefs PortletPreferences
      * @return ServerConfiguration
      */
-    public ServerConfiguration getServerConfiguration(PortletPreferences prefs);
-
-    /**
-     * Stores the server configuration
-     * @param serverConfiguration ServerConfiguration
-     */
-    public void storeServerConfiguration(ServerConfiguration serverConfiguration);
+    public ServerConfiguration getServerConfiguration();
 
     /**
      * Refreshes the server configuration, only updates local cache if last update
      * was older than an hour.
-     * @param prefs PortletPreferences
      */
-    public void refreshServerConfiguration(PortletPreferences prefs);    
+    public ServerConfiguration refreshServerConfiguration();    
 }

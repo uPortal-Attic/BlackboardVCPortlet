@@ -19,6 +19,7 @@
 package org.jasig.portlet.blackboardvcportlet.service;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.portlet.PortletPreferences;
 
@@ -34,13 +35,13 @@ import org.jasig.portlet.blackboardvcportlet.data.BlackboardUser;
 
 public interface SessionService
 {
-	public List<BlackboardSession> getSessionsForUser(String uid);
+	public Set<BlackboardSession> getSessionsForUser(String uid);
 
 	public BlackboardSession getSession(long sessionId);
 
 	public void deleteSession(long sessionId) throws Exception;
 
-	public List<BlackboardSession> getAllSessions();
+	public Set<BlackboardSession> getAllSessions();
 
 	public void createEditSession(BlackboardSession session, PortletPreferences prefs, List<BlackboardUser> extParticipantList) throws Exception;
 
