@@ -17,6 +17,7 @@ import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.Metamodel;
 
 import org.aopalliance.intercept.MethodInvocation;
+import org.jasig.jpa.BaseJpaDao;
 import org.jasig.springframework.mockito.MockitoFactoryBean;
 import org.junit.After;
 import org.slf4j.Logger;

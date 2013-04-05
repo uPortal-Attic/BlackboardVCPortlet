@@ -18,6 +18,7 @@
  */
 package org.jasig.portlet.blackboardvcportlet.dao.impl;
 
+import org.jasig.jpa.BaseJpaDao;
 import org.jasig.portlet.blackboardvcportlet.dao.ServerQuotaDao;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;

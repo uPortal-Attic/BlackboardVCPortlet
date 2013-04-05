@@ -3,6 +3,7 @@ package org.jasig.portlet.blackboardvcportlet.dao.impl;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jasig.jpa.BaseJpaDao;
 import org.jasig.portlet.blackboardvcportlet.dao.ServerConfigurationDao;
 import org.joda.time.DateTimeZone;
 import org.springframework.stereotype.Repository;

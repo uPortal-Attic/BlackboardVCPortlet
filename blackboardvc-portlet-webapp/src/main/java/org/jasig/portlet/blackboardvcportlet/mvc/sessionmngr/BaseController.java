@@ -1,5 +1,6 @@
 package org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import javax.portlet.PortletPreferences;
@@ -19,8 +20,8 @@ public abstract class BaseController {
     }
 
     protected BlackboardUser getBlackboardUser(PortletRequest request) {
-        final String mail = getAttribute(request, "emailAttributeName", "mail");
-        final String displayName = getAttribute(request, "displayNameAttributeName", "displayName");
+        final String mail = getAttribute(request, "emailAttributeName", true, "mail");
+        final String displayName = getAttribute(request, "displayNameAttributeName", false, "displayName");
         
         BlackboardUser user = this.blackboardUserDao.getBlackboardUser(mail);
         if (user == null) {
@@ -52,7 +53,7 @@ public abstract class BaseController {
         return user;
     }
 
-    private String getAttribute(PortletRequest request, String preferenceName, String... defaultValues) {
+    private String getAttribute(PortletRequest request, String preferenceName, boolean required, String... defaultValues) {
         final PortletPreferences prefs = request.getPreferences();
         final String[] attributeNames = prefs.getValues(preferenceName, defaultValues);
         
@@ -64,6 +65,10 @@ public abstract class BaseController {
             if (value != null) {
                 return value;
             }
+        }
+        
+        if (required) {
+            throw new IllegalStateException("Could not find required user attribute value for " + Arrays.toString(attributeNames));
         }
         
         return null;

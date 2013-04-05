@@ -15,6 +15,14 @@
 
 	<context:annotation-config />
 	<context:component-scan base-package="org.jasig.portlet.blackboardvcportlet.mvc.callback" />
+  
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
+        <property name="interceptors">
+            <list>
+                <bean class="org.springframework.orm.jpa.support.OpenEntityManagerInViewInterceptor" />
+            </list>
+        </property>
+    </bean>
 	
 	<!-- Configure the multipart resolver -->
     <bean id="portletMultipartResolver" class="org.springframework.web.portlet.multipart.CommonsPortletMultipartResolver">  

@@ -31,9 +31,15 @@
 http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 
-   <context:annotation-config />
-   <context:component-scan base-package="org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr" />
+    <context:annotation-config />
+    <context:component-scan base-package="org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr" />
+    
     <bean class="org.springframework.web.portlet.mvc.annotation.DefaultAnnotationHandlerMapping">
-    	<property name="interceptors"><bean class="org.jasig.web.portlet.handler.MinimizedStateHandlerInterceptor"/></property>
+    	<property name="interceptors">
+            <list>
+                <bean class="org.jasig.web.portlet.handler.MinimizedStateHandlerInterceptor" />
+                <bean class="org.springframework.orm.jpa.support.OpenEntityManagerInViewInterceptor" />
+            </list>
+        </property>
     </bean>
 </beans>

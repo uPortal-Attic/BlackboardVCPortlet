@@ -1,4 +1,4 @@
-package org.jasig.portlet.blackboardvcportlet.dao.impl;
+package org.jasig.jpa;
 
 import java.util.Set;
 

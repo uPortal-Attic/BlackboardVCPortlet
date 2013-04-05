@@ -14,6 +14,8 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang.Validate;
+import org.jasig.jpa.BaseJpaDao;
+import org.jasig.jpa.OpenEntityManager;
 import org.jasig.portlet.blackboardvcportlet.data.BlackboardSession;
 import org.jasig.portlet.blackboardvcportlet.data.BlackboardUser;
 import org.springframework.stereotype.Repository;
@@ -95,8 +97,8 @@ public class BlackboardUserDaoImpl extends BaseJpaDao implements InternalBlackbo
         return this.createBlackboardUser(email, null);
     }
 
-    //TODO need @OpenEntityManager
     @Override
+    @OpenEntityManager
     public BlackboardUserImpl getBlackboardUser(String email) {
         final NaturalIdQuery<BlackboardUserImpl> query = this.createNaturalIdQuery(BlackboardUserImpl.class);
         query.using(BlackboardUserImpl_.email, email);

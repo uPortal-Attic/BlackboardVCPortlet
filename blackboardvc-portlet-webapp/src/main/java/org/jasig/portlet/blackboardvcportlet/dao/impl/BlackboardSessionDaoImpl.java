@@ -13,6 +13,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang.Validate;
+import org.jasig.jpa.BaseJpaDao;
+import org.jasig.jpa.OpenEntityManager;
 import org.jasig.portlet.blackboardvcportlet.data.BlackboardSession;
 import org.jasig.portlet.blackboardvcportlet.data.BlackboardUser;
 import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
@@ -93,7 +95,7 @@ public class BlackboardSessionDaoImpl extends BaseJpaDao implements InternalBlac
     }
 
     @Override
-    //TODO need @OpenEntityManager
+    @OpenEntityManager
     public BlackboardSessionImpl getSessionByBlackboardId(long bbSessionId) {
         final NaturalIdQuery<BlackboardSessionImpl> query = this.createNaturalIdQuery(BlackboardSessionImpl.class);
         query.using(BlackboardSessionImpl_.bbSessionId, bbSessionId);

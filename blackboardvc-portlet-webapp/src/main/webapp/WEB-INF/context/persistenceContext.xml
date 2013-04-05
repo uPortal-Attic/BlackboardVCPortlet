@@ -39,13 +39,13 @@
         <property name="dataSource" ref="dataSource" />
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
         <property name="persistenceUnitName">
-            <util:constant static-field="org.jasig.portlet.blackboardvcportlet.dao.impl.BaseJpaDao.PERSISTENCE_UNIT_NAME"/>
+            <util:constant static-field="org.jasig.jpa.BaseJpaDao.PERSISTENCE_UNIT_NAME"/>
         </property>
         <property name="jpaProperties">
             <props>
                 <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.SpringBeanEhCacheRegionFactory</prop>
                 <prop key="org.jasig.portal.cache.CacheManagerName">BlackboardCollaborate.cacheManager</prop>
-                <prop key="persistenceUnitName">#{T(org.jasig.portlet.blackboardvcportlet.dao.impl.BaseJpaDao).PERSISTENCE_UNIT_NAME}</prop>
+                <prop key="persistenceUnitName">#{T(org.jasig.jpa.BaseJpaDao).PERSISTENCE_UNIT_NAME}</prop>
             </props>
         </property>
     </bean>
@@ -55,7 +55,7 @@
     </bean>
     
     
-    <!-- <bean class="org.jasig.portal.jpa.OpenEntityManagerAspect" /> -->
+    <bean class="org.jasig.jpa.OpenEntityManagerAspect" />
     
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
         <property name="entityManagerFactory" ref="entityManagerFactory" />

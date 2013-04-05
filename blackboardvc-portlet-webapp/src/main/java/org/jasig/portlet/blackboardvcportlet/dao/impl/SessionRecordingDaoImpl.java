@@ -11,6 +11,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
+import org.jasig.jpa.BaseJpaDao;
+import org.jasig.jpa.OpenEntityManager;
 import org.jasig.portlet.blackboardvcportlet.dao.SessionRecordingDao;
 import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,7 +102,7 @@ public class SessionRecordingDaoImpl extends BaseJpaDao implements SessionRecord
         return recording;
     }
 
-    //TODO need @OpenEntityManager
+    @OpenEntityManager
     public SessionRecordingImpl getRecordingByBlackboardId(long bbRecordingId) {
         final NaturalIdQuery<SessionRecordingImpl> query = this.createNaturalIdQuery(SessionRecordingImpl.class);
         query.using(SessionRecordingImpl_.bbRecordingId, bbRecordingId);
