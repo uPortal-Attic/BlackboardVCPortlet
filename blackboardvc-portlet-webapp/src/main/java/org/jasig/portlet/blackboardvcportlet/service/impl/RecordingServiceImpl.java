@@ -13,7 +13,6 @@ import org.jasig.portlet.blackboardvcportlet.data.BlackboardSession;
 import org.jasig.portlet.blackboardvcportlet.data.BlackboardUser;
 import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
 import org.jasig.portlet.blackboardvcportlet.service.RecordingService;
-import org.jasig.portlet.blackboardvcportlet.service.SessionService;
 import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +33,6 @@ public class RecordingServiceImpl implements RecordingService {
 	private BlackboardUserDao blackboardUserDao;
 	private BlackboardSessionDao blackboardSessionDao;
 	private SessionRecordingDao sessionRecordingDao;
-    private SessionService sessionService;
     
     
     @Autowired
@@ -56,12 +54,6 @@ public class RecordingServiceImpl implements RecordingService {
 	public void setSasWebServiceTemplate(SASWebServiceTemplate sasWebServiceTemplate)
 	{
 		this.sasWebServiceTemplate = sasWebServiceTemplate;
-	}
-
-    @Autowired
-	public void setSessionService(SessionService sessionService)
-	{
-		this.sessionService = sessionService;
 	}
 
 	/**
@@ -158,7 +150,7 @@ public class RecordingServiceImpl implements RecordingService {
      */
     public Set<SessionRecording> updateSessionRecordings(long sessionId)
     {
-        final BlackboardSession session = sessionService.getSession(sessionId);
+        final BlackboardSession session = blackboardSessionDao.getSession(sessionId);
         if (session == null) {
             //TODO?
         }

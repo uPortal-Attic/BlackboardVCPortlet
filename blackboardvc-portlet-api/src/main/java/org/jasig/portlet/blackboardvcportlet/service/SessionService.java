@@ -35,30 +35,30 @@ import org.jasig.portlet.blackboardvcportlet.data.BlackboardUser;
 
 public interface SessionService
 {
-	public Set<BlackboardSession> getSessionsForUser(String uid);
-
-	public BlackboardSession getSession(long sessionId);
-
-	public void deleteSession(long sessionId) throws Exception;
-
-	public Set<BlackboardSession> getAllSessions();
-
-	public void createEditSession(BlackboardSession session, PortletPreferences prefs, List<BlackboardUser> extParticipantList) throws Exception;
-
-	public void storeSession(BlackboardSession session);
-
-	public void notifyModerators(BlackboardUser creator, BlackboardSession session, List<BlackboardUser> users, String launchUrl) throws Exception;
-
-	public void notifyOfDeletion(BlackboardSession session) throws Exception;
-
-	public void notifyIntParticipants(BlackboardUser creator, BlackboardSession session, List<BlackboardUser> users, String launchUrl) throws Exception;
-
-	public void notifyExtParticipants(BlackboardUser creator, BlackboardSession session, List<BlackboardUser> users) throws Exception;
-
-	public void addExtParticipant(BlackboardUser user, long sessionId);
-
-	public void deleteExtParticipants(long sessionId);
-
+//	public Set<BlackboardSession> getSessionsForUser(String uid);
+//
+//	public BlackboardSession getSession(long sessionId);
+//
+//	public void deleteSession(long sessionId) throws Exception;
+//
+//	public Set<BlackboardSession> getAllSessions();
+//
+//	public void createEditSession(BlackboardSession session, PortletPreferences prefs, List<BlackboardUser> extParticipantList) throws Exception;
+//
+//	public void storeSession(BlackboardSession session);
+//
+//	public void notifyModerators(BlackboardUser creator, BlackboardSession session, List<BlackboardUser> users, String launchUrl) throws Exception;
+//
+//	public void notifyOfDeletion(BlackboardSession session) throws Exception;
+//
+//	public void notifyIntParticipants(BlackboardUser creator, BlackboardSession session, List<BlackboardUser> users, String launchUrl) throws Exception;
+//
+//	public void notifyExtParticipants(BlackboardUser creator, BlackboardSession session, List<BlackboardUser> users) throws Exception;
+//
+//	public void addExtParticipant(BlackboardUser user, long sessionId);
+//
+//	public void deleteExtParticipants(long sessionId);
+//
 //	public SessionPresentation getSessionPresentation(String sessionId);
 //
 //	public void deleteSessionPresentation(long sessionId, long presentationId) throws Exception;
