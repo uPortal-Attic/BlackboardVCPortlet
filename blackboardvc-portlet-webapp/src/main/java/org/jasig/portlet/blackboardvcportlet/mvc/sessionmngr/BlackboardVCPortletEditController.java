@@ -49,7 +49,7 @@ public class BlackboardVCPortletEditController extends BaseController
 	private RecordingService recordingService;
 	private ServerConfigurationService serverConfigurationService;
 	private SessionService sessionService;
-	private UserService userService;
+//	private UserService userService;
 	private AuthorisationService authService;
 
 	@Autowired
@@ -70,11 +70,11 @@ public class BlackboardVCPortletEditController extends BaseController
 		this.sessionService = sessionService;
 	}
 
-	@Autowired
-	public void setUserService(UserService userService)
-	{
-		this.userService = userService;
-	}
+//	@Autowired
+//	public void setUserService(UserService userService)
+//	{
+//		this.userService = userService;
+//	}
 
 	@Autowired
 	public void setAuthService(AuthorisationService authService)

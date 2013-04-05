@@ -2,6 +2,8 @@ package org.jasig.portlet.blackboardvcportlet.service.impl;
 
 import java.util.List;
 
+import javax.xml.bind.JAXBElement;
+
 import org.jasig.portlet.blackboardvcportlet.dao.ServerConfigurationDao;
 import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
 import org.jasig.portlet.blackboardvcportlet.service.ServerConfigurationService;
@@ -13,6 +15,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.elluminate.sas.GetServerConfigurationResponseCollection;
+import com.elluminate.sas.ObjectFactory;
 import com.elluminate.sas.ServerConfigurationResponse;
 
 @Service("serverConfigurationService")
@@ -48,13 +51,16 @@ public class ServerConfigurationServiceImpl implements ServerConfigurationServic
         return serverConfiguration;
     }
 
+    @Scheduled(fixedRate=3600000)
+    public void scheduledRefreshServerConfiguration() {
+        this.refreshServerConfiguration();
+    }
 
     /**
      * Refreshes the server configuration, only updates local cache if last update
      * was older than an hour.
      * @param prefs PortletPreferences
      */
-    @Scheduled(fixedRate=3600000)
     public ServerConfiguration refreshServerConfiguration() {
         final ServerConfiguration serverConfiguration = serverConfigurationDao.getServerConfiguration();
         if (serverConfiguration != null && serverConfiguration.getLastUpdated().plusHours(1).isAfterNow()) {
@@ -64,9 +70,9 @@ public class ServerConfigurationServiceImpl implements ServerConfigurationServic
 		logger.debug("refreshing server configuration");
 		try
 		{ // Call Web Service Operation
-			com.elluminate.sas.ServerConfiguration sc = new com.elluminate.sas.ServerConfiguration();
+		    final JAXBElement<com.elluminate.sas.ServerConfiguration> request = new ObjectFactory().createGetServerConfiguration(null);
 
-			GetServerConfigurationResponseCollection responseCollection = (GetServerConfigurationResponseCollection) sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/GetServerConfiguration", sc);
+			GetServerConfigurationResponseCollection responseCollection = (GetServerConfigurationResponseCollection) sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/GetServerConfiguration", request);
 			List<ServerConfigurationResponse> configResult = responseCollection.getServerConfigurationResponses();
 
 			logger.debug("Result = " + configResult);
@@ -76,7 +82,7 @@ public class ServerConfigurationServiceImpl implements ServerConfigurationServic
 		}
 		catch (Exception ex)
 		{
-			logger.error(ex.toString());
+			logger.error("Failed to refresh ServerConfiguration", ex);
 		}
 		
 		return null;

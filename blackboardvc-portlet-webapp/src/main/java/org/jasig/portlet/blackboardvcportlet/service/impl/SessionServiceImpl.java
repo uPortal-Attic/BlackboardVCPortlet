@@ -58,7 +58,7 @@ public class SessionServiceImpl implements SessionService
     private BlackboardSessionDao blackboardSessionDao;
     private BlackboardUserDao blackboardUserDao;
 	private MailTemplateService mailTemplateService;
-	private UserService userService;
+//	private UserService userService;
 	private RecordingService recordingService;
 //	private SessionPresentationDao sessionPresentationDao;
 //	private SessionMultimediaDao sessionMultimediaDao;
@@ -81,11 +81,11 @@ public class SessionServiceImpl implements SessionService
         this.mailTemplateService = mailTemplateService;
     }
 
-	@Autowired
-	public void setUserService(UserService userService)
-	{
-		this.userService = userService;
-	}
+//	@Autowired
+//	public void setUserService(UserService userService)
+//	{
+//		this.userService = userService;
+//	}
 
 	@Autowired
 	public void setRecordingService(RecordingService recordingService)

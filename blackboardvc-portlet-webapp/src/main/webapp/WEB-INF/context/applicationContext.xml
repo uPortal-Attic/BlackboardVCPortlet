@@ -22,21 +22,14 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	   xmlns:task="http://www.springframework.org/schema/task"
-	   xmlns:tx="http://www.springframework.org/schema/tx"
 	   xmlns:sws="http://www.springframework.org/schema/web-services"
 	   xmlns:context="http://www.springframework.org/schema/context"
-	   xmlns:p="http://www.springframework.org/schema/p"
-       xmlns:ehcache="http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring"
 	   xsi:schemaLocation="http://www.springframework.org/schema/beans
-           http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
-           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
-           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+           http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
            http://www.springframework.org/schema/web-services http://www.springframework.org/schema/web-services/web-services-2.0.xsd
-           http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
-           http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm.xsd
-           http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring/ehcache-spring-1.1.xsd">
+           http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
 
-    <tx:annotation-driven transaction-manager="transactionManager" />
     <sws:annotation-driven  />
     
     <context:annotation-config />
@@ -50,67 +43,11 @@
     <!-- Task scheduling -->
     <task:annotation-driven scheduler="taskScheduler"/>
     <task:scheduler id="taskScheduler" pool-size="10" />
-
-    <!-- Set the datasource details to the database where you want to cache Collaborate data --> 
-    <bean id="dataSource" class="org.jasig.portlet.utils.jdbc.TomcatDataSourceFactory">
-        <property name="baseObjectName" value="BlacboardCollaboratePortlet:section=DataSource,name=" />
-<!--
-        <property name="mBeanServer" ref="mbeanServer" />
--->
-        <property name="driverClassName" value="${bbc.db.driverClassName}"/>
-        <property name="url" value="${bbc.db.jdbc}"/>
-        <property name="username" value="${bbc.db.username}"/>
-        <property name="password" value="${bbc.db.password}"/>
-        <property name="initialSize" value="1" />
-        <property name="minIdle" value="1" />
-        <property name="maxActive" value="75" />
-        <property name="maxIdle" value="50" />
-        <property name="maxWait" value="5000" /> <!-- 5 seconds -->
-        <property name="maxAge" value="3600000" /> <!-- 1 hour -->
-        <property name="minEvictableIdleTimeMillis" value="300000" /> <!-- 5 minutes -->
-
-        <property name="abandonWhenPercentageFull" value="70" />
-        <property name="removeAbandoned" value="true" />
-        <property name="removeAbandonedTimeout" value="300" />
-
-        <property name="jdbcInterceptors" value="ConnectionState(useEquals=true);ResetAbandonedTimer"/>
-        <property name="testWhileIdle" value="true" />
-        <property name="testOnBorrow" value="true" />
-        <property name="connectionProperties" value="oracle.net.CONNECT_TIMEOUT=5000;oracle.net.READ_TIMEOUT=30000;oracle.jdbc.ReadTimeout=30000" />
+    
+    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+        <property name="configLocation" value="classpath:/ehcache.xml" />
     </bean>
 
-    <bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
-		<property name="dataSource" ref="dataSource" />
-		<property name="annotatedClasses">
-	        <list>
-	            <value>org.jasig.portlet.blackboardvcportlet.data.RecordingShortImpl</value>
-	            <value>org.jasig.portlet.blackboardvcportlet.data.RecordingUrlImpl</value>
-	            <value>org.jasig.portlet.blackboardvcportlet.data.ServerConfigurationImpl</value>
-	            <value>org.jasig.portlet.blackboardvcportlet.data.ServerQuotaImpl</value>
-	            <value>org.jasig.portlet.blackboardvcportlet.data.SessionExtParticipantImpl</value>
-	            <value>org.jasig.portlet.blackboardvcportlet.data.SessionImpl</value>
-	            <value>org.jasig.portlet.blackboardvcportlet.data.SessionMultimediaImpl</value>
-	            <value>org.jasig.portlet.blackboardvcportlet.data.SessionPresentationImpl</value>
-	            <value>org.jasig.portlet.blackboardvcportlet.data.SessionUrlImpl</value>
-	        </list>
-	    </property>
-		<property name="hibernateProperties">
-			<props>
-				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
-				<prop key="hibernate.show_sql">false</prop>
-                <prop key="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</prop>
-<!-- For first run, uncommenting this out will autocreate the DB schema objects for you-->
-                <prop key="hibernate.hbm2ddl.auto">update</prop>
-			</props>
-		</property>
-    </bean> 
-  	
-    
-	
-    <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
-	<property name="sessionFactory" ref="sessionFactory" />
-    </bean>
-    
 	<!-- Set this to the value of your mail host -->
     <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
       <property name="host" value="${mail.host}"/>
@@ -133,8 +70,8 @@
         </list>
     </property>
    </bean>
-	<bean id="userService" class="org.jasig.portlet.blackboardvcportlet.service.impl.DefaultUserServiceImpl" />
 	<!-- Only needed if you want to bind via a user to LDAP
+	<bean id="userService" class="org.jasig.portlet.blackboardvcportlet.service.impl.DefaultUserServiceImpl" />
    <bean id="authenticationSource" class="org.springframework.ldap.authentication.DefaultValuesAuthenticationSourceDecorator">
       <property name="target" ref="springSecurityAuthenticationSource" />
       <property name="defaultUser" value="uid=vcuser,ou=people,dc=example,dc=com" />
@@ -145,7 +82,10 @@
    <bean id="springSecurityAuthenticationSource" class="org.springframework.security.ldap.authentication.SpringSecurityAuthenticationSource" />-->
 
     
-    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" id="viewResolver" p:prefix="/WEB-INF/jsp/" p:suffix=".jsp"/>
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" id="viewResolver">
+        <property name="prefix" value="/WEB-INF/jsp/" />
+        <property name="suffix" value=".jsp" />
+    </bean>
 
     <!--Spring Web Services Client-->
     <bean id="sasWebServicesTemplate" class="org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceTemplate">

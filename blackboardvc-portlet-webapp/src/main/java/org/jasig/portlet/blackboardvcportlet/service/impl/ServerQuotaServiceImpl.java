@@ -2,6 +2,8 @@ package org.jasig.portlet.blackboardvcportlet.service.impl;
 
 import java.util.List;
 
+import javax.xml.bind.JAXBElement;
+
 import org.jasig.portlet.blackboardvcportlet.dao.ServerQuotaDao;
 import org.jasig.portlet.blackboardvcportlet.data.ServerQuota;
 import org.jasig.portlet.blackboardvcportlet.service.ServerQuotaService;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.elluminate.sas.GetServerQuotasResponseCollection;
 import com.elluminate.sas.ObjectFactory;
+import com.elluminate.sas.ServerQuotas;
 import com.elluminate.sas.ServerQuotasResponse;
 
 /**
@@ -53,12 +56,16 @@ public class ServerQuotaServiceImpl implements ServerQuotaService
         return serverQuota;
     }
     
+    @Scheduled(fixedRate=3600000)
+    public void scheduledRefreshServerQuota() {
+        this.refreshServerQuota();
+    }
+    
      /**
       * Refresh the server quota, only goes to Collaborate if last update
       * was longer than an hour ago.
       */
-	@Scheduled(fixedRate=3600000)
-    public ServerQuota refreshServerQuota()
+	public ServerQuota refreshServerQuota()
     {
 	    final ServerQuota serverQuota = this.serverQuotaDao.getServerQuota();
 	    if (serverQuota != null && serverQuota.getLastUpdated().plusHours(1).isAfterNow()) {
@@ -70,7 +77,8 @@ public class ServerQuotaServiceImpl implements ServerQuotaService
 		try
 		{
 			// Call Web Service Operation
-			GetServerQuotasResponseCollection serverQuotasResponseCollection = (GetServerQuotasResponseCollection)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/GetServerQuotas", new ObjectFactory().createGetServerQuotas(null));
+			final JAXBElement<ServerQuotas> request = new ObjectFactory().createGetServerQuotas(null);
+            GetServerQuotasResponseCollection serverQuotasResponseCollection = (GetServerQuotasResponseCollection)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/GetServerQuotas", request);
 			List<ServerQuotasResponse> quotaResult = serverQuotasResponseCollection.getServerQuotasResponses();
 			logger.debug("Result = " + quotaResult);
 			for (ServerQuotasResponse response : quotaResult) {
@@ -79,7 +87,7 @@ public class ServerQuotaServiceImpl implements ServerQuotaService
 		}
 		catch (Exception ex)
 		{
-			logger.error("Error refreshing ServerQuota data: ", ex);
+		    logger.error("Failed to refresh ServerQuota", ex);
 		}
 		
 		return null;
