@@ -47,12 +47,6 @@
    +-->
   <property scope="local" name="LOG_DIR" value="${BlackboardVCPortlet.webapp.root}/../../logs/${CONTEXT_NAME}" />
 
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>[%d{ISO8601}] %level [%thread] %logger - %msg%n</pattern>
-        </encoder>
-    </appender>
-
     <appender name="LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!--See http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
         <!--and http://logback.qos.ch/manual/appenders.html#TimeBasedRollingPolicy-->
@@ -67,7 +61,6 @@
     </appender>
 
     <root level="INFO">
-        <appender-ref ref="CONSOLE"/>
         <appender-ref ref="LOG"/>
     </root>
 

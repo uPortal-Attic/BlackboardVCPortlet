@@ -20,6 +20,7 @@ package org.jasig.portlet.blackboardvcportlet.dao.impl;
 
 import org.jasig.portlet.blackboardvcportlet.dao.ServerQuotaDao;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.elluminate.sas.ServerQuotasResponse;
 
@@ -32,6 +33,7 @@ import com.elluminate.sas.ServerQuotasResponse;
 public class ServerQuotaDaoImpl extends BaseJpaDao implements ServerQuotaDao {
 
     @Override
+    @Transactional
     public ServerQuotaImpl createOrUpdateQuota(ServerQuotasResponse quotasResponse) {
         ServerQuotaImpl serverQuota = this.getServerQuota();
         if (serverQuota == null) {
