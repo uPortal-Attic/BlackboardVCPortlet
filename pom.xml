@@ -21,7 +21,6 @@
 
     <modules>
         <module>blackboardvc-portlet-api</module>
-        <module>blackboardvc-portlet-dao</module>
         <module>blackboardvc-portlet-ldap</module>
         <module>blackboardvc-portlet-webapp</module>
     </modules>
