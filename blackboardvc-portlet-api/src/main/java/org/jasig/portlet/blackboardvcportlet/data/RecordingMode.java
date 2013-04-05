@@ -4,4 +4,8 @@ public enum RecordingMode {
     MANUAL,
     AUTOMATIC,
     DISABLE;
+    
+    public String getName() {
+        return this.getName();
+    }
 }

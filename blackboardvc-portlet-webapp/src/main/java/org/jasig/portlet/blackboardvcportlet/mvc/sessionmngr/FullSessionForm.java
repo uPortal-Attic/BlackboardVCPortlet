@@ -23,22 +23,15 @@ import java.io.Serializable;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingMode;
 import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
-import org.joda.time.DateTime;
 
 
 /**
  * form backing object for creating/editing sessions
  */
-public class SessionForm implements Serializable {
+public class FullSessionForm extends LimitedSessionForm implements Serializable {
     private static final long serialVersionUID = 1L;
     
-    private boolean newSession;
-	private long sessionId;
-	private String sessionName;
-	private DateTime startTime;
-	private DateTime endTime;
-	private int boundaryTime;
-	private int maxTalkers;
+    private int maxTalkers;
 	private int maxCameras;
 	private boolean mustBeSupervised;
 	private boolean permissionsOn;
@@ -47,80 +40,26 @@ public class SessionForm implements Serializable {
 	private boolean hideParticipantNames;
 	private boolean allowInSessionInvites;
 	
-	public SessionForm(ServerConfiguration serverConfiguration) {
-	    this.newSession = true;
+	public FullSessionForm(ServerConfiguration serverConfiguration) {
+	    super(serverConfiguration);
 	    
-	    this.boundaryTime = serverConfiguration.getBoundaryTime();
 	    this.maxCameras = serverConfiguration.getMaxAvailableCameras();
 	    this.maxTalkers = serverConfiguration.getMaxAvailableTalkers();
 	    this.raiseHandOnEnter = serverConfiguration.isRaiseHandOnEnter(); 
 	}
 	
-	public SessionForm(Session blackboardSession) {
-	    this.newSession = false;
-	    
-	    this.sessionId = blackboardSession.getSessionId();
-	    this.sessionName = blackboardSession.getSessionName();
-	    this.startTime = blackboardSession.getStartTime();
-	    this.endTime = blackboardSession.getEndTime();
-	    this.boundaryTime = blackboardSession.getBoundaryTime();
-	    this.maxTalkers = blackboardSession.getMaxTalkers();
-	    this.maxCameras = blackboardSession.getMaxCameras();
-	    this.mustBeSupervised = blackboardSession.isMustBeSupervised();
-	    this.permissionsOn = blackboardSession.isPermissionsOn();
-	    this.raiseHandOnEnter = blackboardSession.isRaiseHandOnEnter();
-	    this.recordingMode = blackboardSession.getRecordingMode();
-	    this.hideParticipantNames = blackboardSession.isHideParticipantNames();
-	    this.allowInSessionInvites = blackboardSession.isAllowInSessionInvites();
+	public FullSessionForm(Session session) {
+	    super(session);
+
+	    this.maxTalkers = session.getMaxTalkers();
+	    this.maxCameras = session.getMaxCameras();
+	    this.mustBeSupervised = session.isMustBeSupervised();
+	    this.permissionsOn = session.isPermissionsOn();
+	    this.raiseHandOnEnter = session.isRaiseHandOnEnter();
+	    this.recordingMode = session.getRecordingMode();
+	    this.hideParticipantNames = session.isHideParticipantNames();
+	    this.allowInSessionInvites = session.isAllowInSessionInvites();
 	}
-
-    public boolean isNewSession() {
-        return newSession;
-    }
-
-    public void setNewSession(boolean newSession) {
-        this.newSession = newSession;
-    }
-
-    public long getSessionId() {
-        return sessionId;
-    }
-
-    public void setSessionId(long sessionId) {
-        this.sessionId = sessionId;
-    }
-
-    public String getSessionName() {
-        return sessionName;
-    }
-
-    public void setSessionName(String sessionName) {
-        this.sessionName = sessionName;
-    }
-
-    public DateTime getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(DateTime startTime) {
-        this.startTime = startTime;
-    }
-
-    public DateTime getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(DateTime endTime) {
-        this.endTime = endTime;
-    }
-
-    public int getBoundaryTime() {
-        return boundaryTime;
-    }
-
-    public void setBoundaryTime(int boundaryTime) {
-        this.boundaryTime = boundaryTime;
-    }
 
     public int getMaxTalkers() {
         return maxTalkers;
@@ -188,11 +127,11 @@ public class SessionForm implements Serializable {
 
     @Override
     public String toString() {
-        return "SessionForm [newSession=" + newSession + ", sessionId=" + sessionId + ", sessionName=" + sessionName
-                + ", startTime=" + startTime + ", endTime=" + endTime + ", boundaryTime=" + boundaryTime
-                + ", maxTalkers=" + maxTalkers + ", maxCameras=" + maxCameras + ", mustBeSupervised="
+        return "FullSessionForm [maxTalkers=" + maxTalkers + ", maxCameras=" + maxCameras + ", mustBeSupervised="
                 + mustBeSupervised + ", permissionsOn=" + permissionsOn + ", raiseHandOnEnter=" + raiseHandOnEnter
                 + ", recordingMode=" + recordingMode + ", hideParticipantNames=" + hideParticipantNames
-                + ", allowInSessionInvites=" + allowInSessionInvites + "]";
+                + ", allowInSessionInvites=" + allowInSessionInvites + ", isNewSession()=" + isNewSession()
+                + ", getSessionId()=" + getSessionId() + ", getSessionName()=" + getSessionName() + ", getStartTime()="
+                + getStartTime() + ", getEndTime()=" + getEndTime() + ", getBoundaryTime()=" + getBoundaryTime() + "]";
     }
 }

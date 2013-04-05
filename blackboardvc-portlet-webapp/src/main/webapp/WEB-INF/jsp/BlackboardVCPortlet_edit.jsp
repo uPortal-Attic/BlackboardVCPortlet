@@ -67,7 +67,7 @@
 </portlet:renderURL>
 
 <form action="${formActionUrl}" method="post">
-	<c:if test="${!empty session.sessionId}">
+	<c:if test="${!session.newSession}">
 		<input type="hidden" name="sessionId" value="${session.sessionId}" />
 	</c:if>
 	<table>
@@ -75,11 +75,11 @@
 			<tr>
 				<td><span class="uportal-channel-strong">Session Name: </span></td>
 				<c:choose>
-					<c:when test="${session.sessionId ne 0}">
-						<td><input type="hidden" name="sessionName" value="${session.sessionName}" />${session.sessionName}</td>
+					<c:when test="${session.newSession}">
+						<td><input name="sessionName" style="width: 50%;" class="uportal-input-text" value="${session.sessionName}" /></td>
 					</c:when>
 					<c:otherwise>
-						<td><input name="sessionName" style="width: 50%;" class="uportal-input-text" value="${session.sessionName}" /></td>
+						<td><input type="hidden" name="sessionName" value="${session.sessionName}" />${session.sessionName}</td>
 					</c:otherwise>
 				</c:choose>
 
@@ -155,7 +155,7 @@
 								Simultaneous Talkers: </span></td>
 						<td>
 							<select name="maxTalkers">
-								<c:forEach var="i" begin="1" end="6" step="1">
+								<c:forEach var="i" begin="1" end="${serverConfiguration.maxAvailableTalkers}" step="1">
 									<option value="${i}"
 										${session.maxTalkers == i ? 'selected' : ''}>${i}</option>
 								</c:forEach>
@@ -171,7 +171,7 @@
 						</span></td>
 						<td>
 							<select name="maxCameras">
-								<c:forEach var="i" begin="1" end="6" step="1">
+								<c:forEach var="i" begin="1" end="${serverConfiguration.maxAvailableCameras}" step="1">
 									<option value="${i}"
 										${session.maxCameras == i ? 'selected' : ''}>${i}</option>
 								</c:forEach>
@@ -211,13 +211,13 @@
 					<tr>
 						<td><span class="uportal-channel-strong">Recording Mode: </span></td>
 						<td><select name="recordingModeType" disabled>
-								<option value="1"
-									${session.recordingModeType == "1" ? 'selected' : ''}>Manual</option>
-								<option value="2"
-									${session.recordingModeType == "2" ? 'selected' : ''}>Automatic</option>
-								<option value="3"
-									${session.recordingModeType == "3" ? 'selected' : ''}>Disabled</option>
-						</select> <input type="hidden" name="recordingModeType" value="${session.recordingModeType}" /></td>
+								<option value="MANUAL"
+									${session.recordingMode.name == "MANUAL" ? 'selected' : ''}>Manual</option>
+								<option value="AUTOMATIC"
+									${session.recordingMode.name == "AUTOMATIC" ? 'selected' : ''}>Automatic</option>
+								<option value="DISABLED"
+									${session.recordingMode.name == "DISABLED" ? 'selected' : ''}>Disabled</option>
+						</select> <input type="hidden" name="recordingMode" value="${session.recordingMode.name}" /></td>
 					</tr>
 					<tr>
 						<td></td>

@@ -20,6 +20,7 @@ package org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr;
 
 import javax.portlet.RenderRequest;
 
+import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
 import org.jasig.portlet.blackboardvcportlet.service.AuthorisationService;
 import org.jasig.portlet.blackboardvcportlet.service.RecordingService;
 import org.jasig.portlet.blackboardvcportlet.service.ServerConfigurationService;
@@ -80,14 +81,30 @@ public class BlackboardVCPortletEditController extends BaseController
 	}
 
 	@RenderMapping
-	public String renderEditView(RenderRequest request, ModelMap model) throws Exception {
-	    //TODO move to @ModelAttribute method
+	public String displayNewSessionForm(RenderRequest request, ModelMap model) throws Exception {
+	    final ServerConfiguration serverConfiguration = this.serverConfigurationService.getServerConfiguration();
+        model.put("serverConfiguration", serverConfiguration);
+	    
 	    if (this.authService.isFullAccess(request) || this.authService.isAdminAccess(request)) {
 	        model.addAttribute("fullAccess", true);
+	        
+	        final FullSessionForm sessionForm = new FullSessionForm(serverConfiguration);
+            model.put("session", sessionForm);
+	    }
+	    else {
+	        final LimitedSessionForm sessionForm = new LimitedSessionForm(serverConfiguration);
+	        model.put("session", sessionForm);
 	    }
 	    
 	    return "BlackboardVCPortlet_edit";
 	}
+	
+	/*
+	 * disable recordings for limited users
+	 * 
+	 */
+	
+	
 //		logger.debug("renderEditView called");
 //		logger.debug("session_id:" + request.getParameter("session_id"));
 //		logger.debug("sessionId" + request.getParameter("sessionId"));
