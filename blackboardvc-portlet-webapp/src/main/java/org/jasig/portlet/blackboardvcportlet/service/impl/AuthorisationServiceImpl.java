@@ -4,7 +4,6 @@ import java.util.Map;
 
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
-import javax.portlet.RenderRequest;
 
 import org.jasig.portlet.blackboardvcportlet.service.AuthorisationService;
 import org.slf4j.Logger;
@@ -20,7 +19,7 @@ public class AuthorisationServiceImpl implements AuthorisationService {
      * @param request
      * @return boolean
      */
-    public boolean isAdminAccess(RenderRequest request)
+    public boolean isAdminAccess(PortletRequest request)
     {
         return true; //return request.isUserInRole(getAdminRole(request));
     }
@@ -30,7 +29,7 @@ public class AuthorisationServiceImpl implements AuthorisationService {
      * @param request
      * @return String
      */
-    public String getAdminRole(RenderRequest request)
+    public String getAdminRole(PortletRequest request)
     {
         final PortletPreferences prefs=request.getPreferences();
         return prefs.getValue("adminRole", null);
@@ -41,7 +40,7 @@ public class AuthorisationServiceImpl implements AuthorisationService {
      * @param request
      * @return boolean
      */
-    public boolean isFullAccess(RenderRequest request)
+    public boolean isFullAccess(PortletRequest request)
     {
     	return true;
 //        logger.debug("isFullAccess called");
@@ -65,7 +64,8 @@ public class AuthorisationServiceImpl implements AuthorisationService {
      * @param request
      * @return 
      */
-    public Map<String,String> getUserInfo(RenderRequest request)
+    @SuppressWarnings("unchecked")
+    public Map<String,String> getUserInfo(PortletRequest request)
     {
         return (Map<String,String>) request.getAttribute(PortletRequest.USER_INFO);
     }
@@ -75,7 +75,7 @@ public class AuthorisationServiceImpl implements AuthorisationService {
      * @param request
      * @return String
      */
-    public String getUserAttribute(RenderRequest request)
+    public String getUserAttribute(PortletRequest request)
     {
         final PortletPreferences prefs=request.getPreferences();
         return prefs.getValue("userTypeAttribute", null);
@@ -86,7 +86,7 @@ public class AuthorisationServiceImpl implements AuthorisationService {
      * @param request
      * @return String
      */
-    public String getFullAccessValues(RenderRequest request)
+    public String getFullAccessValues(PortletRequest request)
     {
         final PortletPreferences prefs=request.getPreferences();
         return prefs.getValue("fullAccessValues", null);

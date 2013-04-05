@@ -12,6 +12,8 @@ public interface BlackboardSessionDao {
     
     Set<BlackboardUser> getSessionNonChairs(long sessionId);
     
+    Set<BlackboardSession> getAllSessions();
+    
     BlackboardSession getSession(long sessionId);
     
     BlackboardSession getSessionByBlackboardId(long bbSessionId);
