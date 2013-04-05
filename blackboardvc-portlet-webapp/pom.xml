@@ -230,6 +230,12 @@
     <build>
         <finalName>BlackboardVCPortlet</finalName>
         <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <compilerArgument>-proc:none</compilerArgument>
+                </configuration>
+            </plugin>
             <!-- Generates the Hibernate metamodel classes -->
             <plugin>
                 <groupId>org.bsc.maven</groupId>
