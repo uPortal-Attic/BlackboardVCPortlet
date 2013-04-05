@@ -1,10 +1,10 @@
 package org.jasig.portlet.blackboardvcportlet.service;
 
-import org.jasig.portlet.blackboardvcportlet.data.BlackboardUser;
+import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 
 public interface UserService {
 	
     //TODO need a different return type here
-	public BlackboardUser getUserDetails(String searchTerm);
+	public ConferenceUser getUserDetails(String searchTerm);
 	
 }

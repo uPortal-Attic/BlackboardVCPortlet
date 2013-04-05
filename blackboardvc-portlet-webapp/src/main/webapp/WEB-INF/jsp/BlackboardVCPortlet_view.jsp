@@ -37,25 +37,21 @@
 <table width="100%">
 	<tbody>
 		<tr>
-			<portlet:renderURL var="editUrl" portletMode="EDIT" windowState="MAXIMIZED" />
-
-			<portlet:actionURL portletMode="EDIT" var="deleteSessionActionUrl">
-				<portlet:param name="action" value="deleteSessions" />
-			</portlet:actionURL>
-
-			<td align="left"><input value="Schedule Session"
-				name="Schedule Session" class="uportal-button" type="button"
-				onclick="window.location='${editUrl}'"></td>
-			<form name="deleteSessions" action="${deleteSessionActionUrl}"
-				method="post">
-				<td align="right">
-					<input id="dialog-confirm"
-							value="Delete Session(s)" name="Delete"
-							style="text-transform: none;" class="uportal-button"
-							onclick="javascript:return confirm('Are you sure you wish to delete the session(s)?');"
-							type="submit" />
-				</td>
-			</form>
+			<td align="left">
+			  <portlet:renderURL var="editUrl" portletMode="EDIT" windowState="MAXIMIZED" />
+			  <a href="${editUrl}" class="uportal-button">Schedule Session</a>
+			</td>
+			<td align="right">
+			 <portlet:actionURL portletMode="EDIT" var="deleteSessionActionUrl">
+			     <portlet:param name="action" value="deleteSessions" />
+		     </portlet:actionURL>
+		     <form name="deleteSessions" action="${deleteSessionActionUrl}" method="post">
+					<input id="dialog-confirm" value="Delete Session(s)" name="Delete"
+						style="text-transform: none;" class="uportal-button"
+						onclick="javascript:return confirm('Are you sure you wish to delete the session(s)?');"
+						type="submit" />
+		      </form>
+	      </td>
 		</tr>
 	</tbody>
 </table>
@@ -197,13 +193,11 @@
 				function() {
 					$('#${namespace}selectAllSessions').click(
 							function() {
-								$('.${namespace}deleteSession').attr('checked',
-										this.checked);
+								$('.${namespace}deleteSession').attr('checked', this.checked);
 							});
 					$('#${namespace}selectAllRecordings').click(
 							function() {
-								$('.${namespace}deleteRecording').attr(
-										'checked', this.checked);
+								$('.${namespace}deleteRecording').attr('checked', this.checked);
 							});
 				});
 	});

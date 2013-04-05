@@ -3,7 +3,7 @@ package org.jasig.portlet.blackboardvcportlet.dao.impl;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
-public enum BlackboardDaoUtils {
+public enum DaoUtils {
     INSTANCE;
     
     public static DateTime toDateTime(long timestamp) {

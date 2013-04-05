@@ -25,6 +25,8 @@ import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -46,8 +48,10 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.NaturalIdCache;
 import org.hibernate.annotations.Type;
-import org.jasig.portlet.blackboardvcportlet.data.BlackboardSession;
-import org.jasig.portlet.blackboardvcportlet.data.BlackboardUser;
+import org.jasig.portlet.blackboardvcportlet.data.AccessType;
+import org.jasig.portlet.blackboardvcportlet.data.Session;
+import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
+import org.jasig.portlet.blackboardvcportlet.data.RecordingMode;
 import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
 import org.jasig.portlet.blackboardvcportlet.data.UserSessionUrl;
 import org.joda.time.DateTime;
@@ -67,7 +71,7 @@ import org.joda.time.DateTime;
 @NaturalIdCache
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class BlackboardSessionImpl implements BlackboardSession {
+public class SessionImpl implements Session {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -83,9 +87,9 @@ public class BlackboardSessionImpl implements BlackboardSession {
     @Column(name="BB_SESSION_ID", nullable = false)
     private final long bbSessionId;
     
-    @ManyToOne(targetEntity = BlackboardUserImpl.class, optional = false)
+    @ManyToOne(targetEntity = ConferenceUserImpl.class, optional = false)
     @JoinColumn(name = "CREATOR", nullable = false)
-    private final BlackboardUser creator;
+    private final ConferenceUser creator;
     
     @Column(name="SESSION_NAME", nullable = false, length = 1000)
     private String sessionName;
@@ -102,7 +106,8 @@ public class BlackboardSessionImpl implements BlackboardSession {
     private int boundaryTime;
     
     @Column(name="ACCESS_TYPE", nullable = false)
-    private long accessType;
+    @Enumerated(EnumType.STRING)
+    private AccessType accessType;
     
     @Column(name="RECORDINGS", nullable = false)
     private boolean recordings;
@@ -113,19 +118,19 @@ public class BlackboardSessionImpl implements BlackboardSession {
     @Column(name="NON_CHAIR_NOTES", length = 4000)
     private String nonChairNotes;
     
-    @ManyToMany(targetEntity = BlackboardUserImpl.class, fetch = FetchType.LAZY)
+    @ManyToMany(targetEntity = ConferenceUserImpl.class, fetch = FetchType.LAZY)
     @JoinTable(name="VC2_SESSION_CHAIRS",
         joinColumns= @JoinColumn(name="SESSION_ID"),
         inverseJoinColumns=@JoinColumn(name="USER_ID")
     )
-    private Set<BlackboardUser> chairs = new HashSet<BlackboardUser>(0);
+    private final Set<ConferenceUser> chairs = new HashSet<ConferenceUser>(0);
     
-    @ManyToMany(targetEntity = BlackboardUserImpl.class, fetch = FetchType.LAZY)
+    @ManyToMany(targetEntity = ConferenceUserImpl.class, fetch = FetchType.LAZY)
     @JoinTable(name="VC2_SESSION_NONCHAIRS",
         joinColumns= @JoinColumn(name="SESSION_ID"),
         inverseJoinColumns=@JoinColumn(name="USER_ID")
     )
-    private Set<BlackboardUser> nonChairs = new HashSet<BlackboardUser>(0);
+    private final Set<ConferenceUser> nonChairs = new HashSet<ConferenceUser>(0);
     
     @Column(name="OPEN_CHAIR", nullable = false)
     private boolean openChair;
@@ -134,7 +139,8 @@ public class BlackboardSessionImpl implements BlackboardSession {
     private boolean mustBeSupervised;
     
     @Column(name="RECORDING_MODE", nullable = false)
-    private long recordingMode;
+    @Enumerated(EnumType.STRING)
+    private RecordingMode recordingMode;
 
     @Column(name="MAX_TALKERS", nullable = false)
     private int maxTalkers;
@@ -157,6 +163,12 @@ public class BlackboardSessionImpl implements BlackboardSession {
     @Column(name="HIDE_PARTICIPANT_NAMES", nullable = false)
     private boolean hideParticipantNames = true;
     
+    @Column(name="PERMISSIONS_ON", nullable = false)
+    private boolean permissionsOn = false;
+    
+    @Column(name="SECURE_SIGN_ON", nullable = false)
+    private boolean secureSignOn = false;
+    
     @Column(name="GUEST_URL", nullable = false, length = 4000)
     private String guestUrl;
     
@@ -176,14 +188,14 @@ public class BlackboardSessionImpl implements BlackboardSession {
      * needed by hibernate
      */
     @SuppressWarnings("unused")
-    private BlackboardSessionImpl() {
+    private SessionImpl() {
         this.sessionId = -1;
         this.entityVersion = -1;
         this.bbSessionId = -1;
         this.creator = null;
     }
     
-    BlackboardSessionImpl(long bbSessionId, BlackboardUser creator) {
+    SessionImpl(long bbSessionId, ConferenceUser creator) {
         Validate.notNull(creator, "creator cannot be null");
             
         this.sessionId = -1;
@@ -201,6 +213,24 @@ public class BlackboardSessionImpl implements BlackboardSession {
         lastUpdated = DateTime.now();
     }
     
+    @Override
+    public boolean isPermissionsOn() {
+        return this.permissionsOn;
+    }
+    
+    public void setPermissionsOn(boolean permissionsOn) {
+        this.permissionsOn = permissionsOn;
+    }
+
+    @Override
+    public boolean isSecureSignOn() {
+        return this.secureSignOn;
+    }
+
+    public void setSecureSignOn(boolean secureSignOn) {
+        this.secureSignOn = secureSignOn;
+    }
+
     @Override
     public String getSessionName() {
         return sessionName;
@@ -237,11 +267,11 @@ public class BlackboardSessionImpl implements BlackboardSession {
     }
 
     @Override
-    public long getAccessType() {
+    public AccessType getAccessType() {
         return accessType;
     }
 
-    public void setAccessType(long accessType) {
+    public void setAccessType(AccessType accessType) {
         this.accessType = accessType;
     }
 
@@ -272,11 +302,11 @@ public class BlackboardSessionImpl implements BlackboardSession {
         this.nonChairNotes = nonChairNotes;
     }
 
-    Set<BlackboardUser> getChairs() {
+    Set<ConferenceUser> getChairs() {
         return chairs;
     }
 
-    Set<BlackboardUser> getNonChairs() {
+    Set<ConferenceUser> getNonChairs() {
         return nonChairs;
     }
 
@@ -304,11 +334,11 @@ public class BlackboardSessionImpl implements BlackboardSession {
     }
 
     @Override
-    public long getRecordingMode() {
+    public RecordingMode getRecordingMode() {
         return recordingMode;
     }
 
-    public void setRecordingMode(long recordingMode) {
+    public void setRecordingMode(RecordingMode recordingMode) {
         this.recordingMode = recordingMode;
     }
 
@@ -399,7 +429,7 @@ public class BlackboardSessionImpl implements BlackboardSession {
     }
 
     @Override
-    public BlackboardUser getCreator() {
+    public ConferenceUser getCreator() {
         return creator;
     }
 
@@ -424,7 +454,7 @@ public class BlackboardSessionImpl implements BlackboardSession {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        BlackboardSessionImpl other = (BlackboardSessionImpl) obj;
+        SessionImpl other = (SessionImpl) obj;
         if (bbSessionId != other.bbSessionId)
             return false;
         return true;

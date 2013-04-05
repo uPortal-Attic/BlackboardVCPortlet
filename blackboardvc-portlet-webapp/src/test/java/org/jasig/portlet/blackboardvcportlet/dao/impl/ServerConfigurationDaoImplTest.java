@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.elluminate.sas.ServerConfigurationResponse;
+import com.elluminate.sas.BlackboardServerConfigurationResponse;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:jpaTestContext.xml")
@@ -48,7 +48,7 @@ public class ServerConfigurationDaoImplTest extends BaseJpaDaoTest {
         this.execute(new Callable<Object>() {
             @Override
             public Object call() {
-                final ServerConfigurationResponse configurationResponse = new ServerConfigurationResponse();
+                final BlackboardServerConfigurationResponse configurationResponse = new BlackboardServerConfigurationResponse();
                 configurationResponse.setBoundaryTime(30);
                 configurationResponse.setMaxAvailableTalkers(6);
                 configurationResponse.setMaxAvailableCameras(6);
@@ -71,7 +71,7 @@ public class ServerConfigurationDaoImplTest extends BaseJpaDaoTest {
         this.execute(new Callable<Object>() {
             @Override
             public Object call() {
-                final ServerConfigurationResponse configurationResponse = new ServerConfigurationResponse();
+                final BlackboardServerConfigurationResponse configurationResponse = new BlackboardServerConfigurationResponse();
                 configurationResponse.setBoundaryTime(30);
                 configurationResponse.setMaxAvailableTalkers(6);
                 configurationResponse.setMaxAvailableCameras(6);

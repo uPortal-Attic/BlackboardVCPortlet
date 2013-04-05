@@ -30,8 +30,8 @@
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
 
-    <bean class="org.jasig.portlet.blackboardvcportlet.dao.impl.BlackboardUserDaoImpl" />
-    <bean class="org.jasig.portlet.blackboardvcportlet.dao.impl.BlackboardSessionDaoImpl" />
+    <bean class="org.jasig.portlet.blackboardvcportlet.dao.impl.ConferenceUserDaoImpl" />
+    <bean class="org.jasig.portlet.blackboardvcportlet.dao.impl.SessionDaoImpl" />
     <bean class="org.jasig.portlet.blackboardvcportlet.dao.impl.ServerConfigurationDaoImpl" />
     <bean class="org.jasig.portlet.blackboardvcportlet.dao.impl.ServerQuotaDaoImpl" />
     <bean class="org.jasig.portlet.blackboardvcportlet.dao.impl.SessionRecordingDaoImpl" />

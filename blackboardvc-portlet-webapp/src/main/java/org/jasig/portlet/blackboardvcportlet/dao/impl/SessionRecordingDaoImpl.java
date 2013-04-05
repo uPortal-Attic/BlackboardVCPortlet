@@ -19,14 +19,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.elluminate.sas.RecordingLongResponse;
+import com.elluminate.sas.BlackboardRecordingLongResponse;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 
 @Repository
 public class SessionRecordingDaoImpl extends BaseJpaDao implements SessionRecordingDao {
-    private InternalBlackboardSessionDao sessionDao;
+    private InternalSessionDao sessionDao;
     
 
     private ParameterExpression<Long> recordingIdParameter;
@@ -35,7 +35,7 @@ public class SessionRecordingDaoImpl extends BaseJpaDao implements SessionRecord
     private CriteriaQuery<SessionRecordingImpl> findAllSessionRecordings;
 
     @Autowired
-    public void setSessionDao(InternalBlackboardSessionDao sessionDao) {
+    public void setSessionDao(InternalSessionDao sessionDao) {
         this.sessionDao = sessionDao;
     }
     
@@ -75,9 +75,9 @@ public class SessionRecordingDaoImpl extends BaseJpaDao implements SessionRecord
 
     @Override
     @Transactional
-    public SessionRecordingImpl createOrUpdateRecording(RecordingLongResponse recordingLongResponse) {
+    public SessionRecordingImpl createOrUpdateRecording(BlackboardRecordingLongResponse recordingLongResponse) {
         final Long bbSessionId = recordingLongResponse.getSessionId();
-        final BlackboardSessionImpl session = this.sessionDao.getSessionByBlackboardId(bbSessionId);
+        final SessionImpl session = this.sessionDao.getSessionByBlackboardId(bbSessionId);
         if (session == null) {
             throw new IllegalArgumentException("No session with blackboard session id '" + bbSessionId + "' exists, cannot update recording");
         }
@@ -88,11 +88,11 @@ public class SessionRecordingDaoImpl extends BaseJpaDao implements SessionRecord
             recording = new SessionRecordingImpl(bbRecordingId);
         }
         
-        recording.setCreationDate(BlackboardDaoUtils.toDateTime(recordingLongResponse.getCreationDate()));
+        recording.setCreationDate(DaoUtils.toDateTime(recordingLongResponse.getCreationDate()));
         recording.setRecordingSize(recordingLongResponse.getRecordingSize());
         recording.setRecordingUrl(recordingLongResponse.getRecordingURL());
-        recording.setRoomEnd(BlackboardDaoUtils.toDateTime(recordingLongResponse.getRoomEndDate()));
-        recording.setRoomStart(BlackboardDaoUtils.toDateTime(recordingLongResponse.getRoomStartDate()));
+        recording.setRoomEnd(DaoUtils.toDateTime(recordingLongResponse.getRoomEndDate()));
+        recording.setRoomStart(DaoUtils.toDateTime(recordingLongResponse.getRoomStartDate()));
         recording.setSecureSignOn(recordingLongResponse.isSecureSignOn());
         recording.setRoomName(recordingLongResponse.getRoomName());
         recording.setSession(session);

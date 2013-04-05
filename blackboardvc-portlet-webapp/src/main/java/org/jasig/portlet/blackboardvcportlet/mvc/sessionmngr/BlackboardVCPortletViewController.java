@@ -27,9 +27,9 @@ import javax.portlet.PortletRequest;
 import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
 
-import org.jasig.portlet.blackboardvcportlet.dao.BlackboardSessionDao;
-import org.jasig.portlet.blackboardvcportlet.data.BlackboardSession;
-import org.jasig.portlet.blackboardvcportlet.data.BlackboardUser;
+import org.jasig.portlet.blackboardvcportlet.dao.SessionDao;
+import org.jasig.portlet.blackboardvcportlet.data.Session;
+import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.service.AuthorisationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +52,7 @@ public class BlackboardVCPortletViewController extends BaseController
 {
 	private static final Logger logger = LoggerFactory.getLogger(BlackboardVCPortletViewController.class);
 
-	private BlackboardSessionDao blackboardSessionDao;
+	private SessionDao blackboardSessionDao;
 	
 //	private SessionService sessionService;
 //	private RecordingService recordingService;
@@ -61,7 +61,7 @@ public class BlackboardVCPortletViewController extends BaseController
 	
 	
 	@Autowired
-	public void setBlackboardSessionDao(BlackboardSessionDao blackboardSessionDao) {
+	public void setBlackboardSessionDao(SessionDao blackboardSessionDao) {
         this.blackboardSessionDao = blackboardSessionDao;
     }
 
@@ -92,21 +92,21 @@ public class BlackboardVCPortletViewController extends BaseController
 	@RenderMapping
 	public String view(PortletRequest request, ModelMap model)
 	{
-		final BlackboardUser blackboardUser = this.getBlackboardUser(request);
+		final ConferenceUser blackboardUser = this.getBlackboardUser(request);
 		
 		final boolean isAdmin = authService.isAdminAccess(request);
 		
-		final Set<BlackboardSession> sessions;
+		final Set<Session> sessions;
         if (isAdmin) {
             sessions = this.blackboardSessionDao.getAllSessions();
             //TODO get list of all recordings
         } else {
-            sessions = new HashSet<BlackboardSession>();
+            sessions = new HashSet<Session>();
             
-            final Set<BlackboardSession> chairedSessionsForUser = this.blackboardUserDao.getChairedSessionsForUser(blackboardUser.getUserId());
+            final Set<Session> chairedSessionsForUser = this.blackboardUserDao.getChairedSessionsForUser(blackboardUser.getUserId());
             sessions.addAll(chairedSessionsForUser);
             
-            final Set<BlackboardSession> nonChairedSessionsForUser = this.blackboardUserDao.getNonChairedSessionsForUser(blackboardUser.getUserId());
+            final Set<Session> nonChairedSessionsForUser = this.blackboardUserDao.getNonChairedSessionsForUser(blackboardUser.getUserId());
             sessions.addAll(nonChairedSessionsForUser);
             
             //TODO get list of all recordings for user
@@ -147,7 +147,7 @@ public class BlackboardVCPortletViewController extends BaseController
 //		try
 //		{
 			logger.debug("calling sessionService.getSession");
-			BlackboardSession session = this.blackboardSessionDao.getSession(sessionId);
+			Session session = this.blackboardSessionDao.getSession(sessionId);
 			model.addAttribute("session", session);
 
 			logger.debug("done call");
@@ -156,8 +156,8 @@ public class BlackboardVCPortletViewController extends BaseController
 				logger.error("session is null!");
 			}
 
-            final BlackboardUser blackboardUser = getBlackboardUser(request);
-            final Set<BlackboardUser> sessionChairs = this.blackboardSessionDao.getSessionChairs(session.getSessionId());
+            final ConferenceUser blackboardUser = getBlackboardUser(request);
+            final Set<ConferenceUser> sessionChairs = this.blackboardSessionDao.getSessionChairs(session.getSessionId());
             
 	        if (blackboardUser.equals(session.getCreator()) || sessionChairs.contains(blackboardUser) || authService.isAdminAccess(request)) {
 	            model.addAttribute("currUserCanEdit", true);
@@ -177,7 +177,7 @@ public class BlackboardVCPortletViewController extends BaseController
 				}
 
 				logger.debug("Session is still open, we can show the launch url");
-				final Set<BlackboardUser> sessionNonChairs = this.blackboardSessionDao.getSessionNonChairs(session.getSessionId());
+				final Set<ConferenceUser> sessionNonChairs = this.blackboardSessionDao.getSessionNonChairs(session.getSessionId());
 				
 				// If the user is specified in chair or non chair list then get the URL
 				if (sessionChairs.contains(blackboardUser) || sessionNonChairs.contains(blackboardUser))
@@ -229,7 +229,7 @@ public class BlackboardVCPortletViewController extends BaseController
 		response.setContentType("application/csv");
 		response.setProperty("Content-Disposition", "inline; filename=participantList_" + sessionId + ".csv");
 
-		final BlackboardUser blackboardUser = this.getBlackboardUser(request);
+		final ConferenceUser blackboardUser = this.getBlackboardUser(request);
 
 		PrintWriter stringWriter = null;
 		try
@@ -239,7 +239,7 @@ public class BlackboardVCPortletViewController extends BaseController
 			stringWriter.println("UID,Display Name,Email address,Participant type");
 			logger.debug("calling sessionService.getSession");
 			
-			final BlackboardSession session = this.blackboardSessionDao.getSession(sessionId);
+			final Session session = this.blackboardSessionDao.getSession(sessionId);
 			
 			logger.debug("done call");
 			if (session == null) {
@@ -247,7 +247,7 @@ public class BlackboardVCPortletViewController extends BaseController
 				return;
 			}
 			
-			final Set<BlackboardUser> sessionChairs = this.blackboardSessionDao.getSessionChairs(session.getSessionId());
+			final Set<ConferenceUser> sessionChairs = this.blackboardSessionDao.getSessionChairs(session.getSessionId());
             if (!sessionChairs.contains(blackboardUser)) {
 				logger.warn("User not authorised to see csv");
 				return;
@@ -255,15 +255,15 @@ public class BlackboardVCPortletViewController extends BaseController
 
             
 			logger.debug("Adding chair list into moderators");
-			for (final BlackboardUser user : sessionChairs) {
+			for (final ConferenceUser user : sessionChairs) {
 				stringWriter.println(user.getEmail() + "," + user.getDisplayName() + "," + user.getEmail() + ",Moderator");
 			}
 			logger.debug("added moderators to CSV output");
 
 
-			final Set<BlackboardUser> sessionNonChairs = this.blackboardSessionDao.getSessionNonChairs(session.getSessionId());
+			final Set<ConferenceUser> sessionNonChairs = this.blackboardSessionDao.getSessionNonChairs(session.getSessionId());
 			logger.debug("Adding nonchair list to participants");
-            for (final BlackboardUser user : sessionNonChairs) {
+            for (final ConferenceUser user : sessionNonChairs) {
                 if (user.getAttributes().isEmpty()) {
                     stringWriter.println(user.getEmail() + "," + user.getDisplayName() + "," + user.getEmail() + ",External Participant");
                 }

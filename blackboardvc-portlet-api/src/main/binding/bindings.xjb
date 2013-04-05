@@ -22,12 +22,20 @@
     <jaxb:bindings schemaLocation="../resources/xsd/elluminate/misc.xsd">
         <jaxb:schemaBindings>
             <jaxb:package name="com.elluminate.sas" />
+            <jaxb:nameXmlTransform>
+                <jaxb:typeName prefix="Blackboard"/>
+                <jaxb:elementName prefix="Blackboard"/>
+            </jaxb:nameXmlTransform>
         </jaxb:schemaBindings>
     </jaxb:bindings>
 
     <jaxb:bindings schemaLocation="../resources/xsd/elluminate/sas-int-v3.xsd">
         <jaxb:schemaBindings>
             <jaxb:package name="com.elluminate.sas"/>
+            <jaxb:nameXmlTransform>
+                <jaxb:typeName prefix="Blackboard"/>
+                <jaxb:elementName prefix="Blackboard"/>
+            </jaxb:nameXmlTransform>
         </jaxb:schemaBindings>
     </jaxb:bindings>
 

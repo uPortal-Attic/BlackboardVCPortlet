@@ -17,7 +17,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.NaturalIdCache;
 import org.hibernate.annotations.Type;
-import org.jasig.portlet.blackboardvcportlet.data.BlackboardSession;
+import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
 import org.joda.time.DateTime;
 
@@ -76,9 +76,9 @@ public class SessionRecordingImpl implements SessionRecording {
     @Column(name="ROOM_NAME", nullable = false, length = 1000)
     private String roomName;
 
-    @ManyToOne(targetEntity = BlackboardSessionImpl.class, optional = false)
+    @ManyToOne(targetEntity = SessionImpl.class, optional = false)
     @JoinColumn(name = "SESSION_ID", nullable = false)
-    private BlackboardSession session;
+    private Session session;
     
     /**
      * Needed by hibernate
@@ -142,7 +142,7 @@ public class SessionRecordingImpl implements SessionRecording {
     }
 
     @Override
-    public BlackboardSession getSession() {
+    public Session getSession() {
         return session;
     }
     
@@ -174,7 +174,7 @@ public class SessionRecordingImpl implements SessionRecording {
         this.roomName = roomName;
     }
 
-    void setSession(BlackboardSession session) {
+    void setSession(Session session) {
         this.session = session;
     }
 

@@ -29,8 +29,8 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.NaturalIdCache;
-import org.jasig.portlet.blackboardvcportlet.data.BlackboardSession;
-import org.jasig.portlet.blackboardvcportlet.data.BlackboardUser;
+import org.jasig.portlet.blackboardvcportlet.data.Session;
+import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.UserSessionUrl;
 
 @Entity
@@ -48,7 +48,7 @@ import org.jasig.portlet.blackboardvcportlet.data.UserSessionUrl;
 @NaturalIdCache
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class BlackboardUserImpl implements BlackboardUser {
+public class ConferenceUserImpl implements ConferenceUser {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -77,13 +77,13 @@ public class BlackboardUserImpl implements BlackboardUser {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private final Map<String, String> attributes = new HashMap<String, String>(0);
 
-    @ManyToMany(targetEntity = BlackboardSessionImpl.class, fetch = FetchType.LAZY, mappedBy = "chairs")
+    @ManyToMany(targetEntity = SessionImpl.class, fetch = FetchType.LAZY, mappedBy = "chairs")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private Set<BlackboardSession> chairedSessions = new HashSet<BlackboardSession>(0);
+    private Set<Session> chairedSessions = new HashSet<Session>(0);
     
-    @ManyToMany(targetEntity = BlackboardSessionImpl.class, fetch = FetchType.LAZY, mappedBy = "nonChairs")
+    @ManyToMany(targetEntity = SessionImpl.class, fetch = FetchType.LAZY, mappedBy = "nonChairs")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private Set<BlackboardSession> nonChairedSessions = new HashSet<BlackboardSession>(0);
+    private Set<Session> nonChairedSessions = new HashSet<Session>(0);
 
     //Exists only to allow cascading deletes, should NEVER be accessed by normal code
     @OneToMany(mappedBy = "user", targetEntity = UserSessionUrlImpl.class, cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, orphanRemoval = true)
@@ -93,13 +93,13 @@ public class BlackboardUserImpl implements BlackboardUser {
      * needed by hibernate
      */
     @SuppressWarnings("unused")
-    private BlackboardUserImpl() {
+    private ConferenceUserImpl() {
         this.userId = -1;
         this.entityVersion = -1;
         this.email = null;
     }
 
-    BlackboardUserImpl(String email, String displayName) {
+    ConferenceUserImpl(String email, String displayName) {
         Validate.notNull(email, "email for user cannot be null");
         
         this.userId = -1;
@@ -133,11 +133,11 @@ public class BlackboardUserImpl implements BlackboardUser {
         return attributes;
     }
     
-    Set<BlackboardSession> getChairedSessions() {
+    Set<Session> getChairedSessions() {
         return chairedSessions;
     }
 
-    Set<BlackboardSession> getNonChairedSessions() {
+    Set<Session> getNonChairedSessions() {
         return nonChairedSessions;
     }
 
@@ -162,7 +162,7 @@ public class BlackboardUserImpl implements BlackboardUser {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        BlackboardUserImpl other = (BlackboardUserImpl) obj;
+        ConferenceUserImpl other = (ConferenceUserImpl) obj;
         if (email == null) {
             if (other.email != null)
                 return false;

@@ -20,7 +20,7 @@ package org.jasig.portlet.blackboardvcportlet.dao;
 
 import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
 
-import com.elluminate.sas.ServerConfigurationResponse;
+import com.elluminate.sas.BlackboardServerConfigurationResponse;
 
 /**
  * DAO Interface for ServerConfiguration
@@ -28,10 +28,10 @@ import com.elluminate.sas.ServerConfigurationResponse;
  */
 public interface ServerConfigurationDao {
     
-    ServerConfiguration createOrUpdateConfiguration(ServerConfigurationResponse configurationResponse);
+    ServerConfiguration createOrUpdateConfiguration(BlackboardServerConfigurationResponse configurationResponse);
     
-    public ServerConfiguration getServerConfiguration();
+    ServerConfiguration getServerConfiguration();
     
-    public void deleteServerConfiguration();
+    void deleteServerConfiguration();
     
 }

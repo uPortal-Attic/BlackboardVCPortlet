@@ -4,9 +4,11 @@
  */
 package org.jasig.portlet.blackboardvcportlet.test;
 
-import com.elluminate.sas.GetServerQuotasResponseCollection;
-import com.elluminate.sas.ObjectFactory;
-import com.elluminate.sas.ServerQuotasResponse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.List;
+
 import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceTemplate;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,15 +17,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import java.util.List;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+
+import com.elluminate.sas.BlackboardGetServerQuotasResponseCollection;
+import com.elluminate.sas.BlackboardServerQuotasResponse;
+import com.elluminate.sas.ObjectFactory;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/test-applicationContext.xml")
-public class WebServiceIntegrationTest
+public class WebServiceIntegrationIT
 {
-	private static final Logger logger = LoggerFactory.getLogger(WebServiceIntegrationTest.class);
+	private static final Logger logger = LoggerFactory.getLogger(WebServiceIntegrationIT.class);
 
 	@Autowired
 	private SASWebServiceTemplate sasWebServiceTemplate;
@@ -35,12 +38,12 @@ public class WebServiceIntegrationTest
 	public void testConnection() throws Exception
 	{
 		logger.info("Starting testConnection()...");
-		GetServerQuotasResponseCollection serverQuotasResponseCollection = (GetServerQuotasResponseCollection)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/GetServerQuotas", elluminateObjectFactory.createGetServerQuotas(null));
+		BlackboardGetServerQuotasResponseCollection serverQuotasResponseCollection = (BlackboardGetServerQuotasResponseCollection)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/GetServerQuotas", elluminateObjectFactory.createGetServerQuotas(null));
 		assertNotNull(serverQuotasResponseCollection);
-		List<ServerQuotasResponse> quotaResult = serverQuotasResponseCollection.getServerQuotasResponses();
+		List<BlackboardServerQuotasResponse> quotaResult = serverQuotasResponseCollection.getServerQuotasResponses();
 		assertNotNull(quotaResult);
 		assertTrue(quotaResult.size() > 0);
-		ServerQuotasResponse response = quotaResult.get(0);
+		BlackboardServerQuotasResponse response = quotaResult.get(0);
 		assertNotNull(response.getDiskQuota());
 		assertNotNull(response.getDiskQuotaAvailable());
 		assertNotNull(response.getSessionQuota());

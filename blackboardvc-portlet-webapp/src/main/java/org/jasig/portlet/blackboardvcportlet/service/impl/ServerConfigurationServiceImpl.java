@@ -14,9 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.elluminate.sas.GetServerConfigurationResponseCollection;
+import com.elluminate.sas.BlackboardGetServerConfigurationResponseCollection;
+import com.elluminate.sas.BlackboardServerConfiguration;
+import com.elluminate.sas.BlackboardServerConfigurationResponse;
 import com.elluminate.sas.ObjectFactory;
-import com.elluminate.sas.ServerConfigurationResponse;
 
 @Service("serverConfigurationService")
 public class ServerConfigurationServiceImpl implements ServerConfigurationService
@@ -70,13 +71,13 @@ public class ServerConfigurationServiceImpl implements ServerConfigurationServic
 		logger.debug("refreshing server configuration");
 		try
 		{ // Call Web Service Operation
-		    final JAXBElement<com.elluminate.sas.ServerConfiguration> request = new ObjectFactory().createGetServerConfiguration(null);
+		    final JAXBElement<BlackboardServerConfiguration> request = new ObjectFactory().createGetServerConfiguration(null);
 
-			GetServerConfigurationResponseCollection responseCollection = (GetServerConfigurationResponseCollection) sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/GetServerConfiguration", request);
-			List<ServerConfigurationResponse> configResult = responseCollection.getServerConfigurationResponses();
+		    BlackboardGetServerConfigurationResponseCollection responseCollection = (BlackboardGetServerConfigurationResponseCollection) sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/GetServerConfiguration", request);
+			List<BlackboardServerConfigurationResponse> configResult = responseCollection.getServerConfigurationResponses();
 
 			logger.debug("Result = " + configResult);
-			for (ServerConfigurationResponse response : configResult) {
+			for (BlackboardServerConfigurationResponse response : configResult) {
 			    return this.serverConfigurationDao.createOrUpdateConfiguration(response);
 			}
 		}

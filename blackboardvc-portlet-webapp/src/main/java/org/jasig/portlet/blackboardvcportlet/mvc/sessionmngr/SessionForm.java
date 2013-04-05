@@ -18,308 +18,181 @@
  */
 package org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr;
 
-import org.springframework.web.multipart.MultipartFile;
+import java.io.Serializable;
+
+import org.jasig.portlet.blackboardvcportlet.data.RecordingMode;
+import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
+import org.jasig.portlet.blackboardvcportlet.data.Session;
+import org.joda.time.DateTime;
+
 
 /**
- * @author rgood
+ * form backing object for creating/editing sessions
  */
-public class SessionForm
-{
-	private MultipartFile presentationUpload;
-	private MultipartFile multimediaUpload;
-	private String action;
-	private String sessionId;
+public class SessionForm implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
+    private boolean newSession;
+	private long sessionId;
 	private String sessionName;
-	private String startdate;
-	private String starttime;
-	private String enddate;
-	private String endtime;
-	private String allowInSessionInvites;
-	private String creatorOrgUnit;
-	private String boundaryTime;
-	private String hideParticipantNames;
-	private String maxCameras;
-	private String maxTalkers;
-	private String mustBeSupervised;
-	private String permissionsOn;
-	private String raiseHandOnEnter;
-	private String recordingModeType;
-	private String[] moderatorUids;
-	private String[] moderatorEmails;
-	private String[] moderatorDisplayNames;
-	private String[] extParticipantEmails;
-	private String[] extParticipantsDisplayNames;
-	private String[] intParticipantUids;
-	private String[] intParticipantEmails;
-	private String[] intParticipantDisplayNames;
-
-	public MultipartFile getPresentationUpload()
-	{
-		return presentationUpload;
+	private DateTime startTime;
+	private DateTime endTime;
+	private int boundaryTime;
+	private int maxTalkers;
+	private int maxCameras;
+	private boolean mustBeSupervised;
+	private boolean permissionsOn;
+	private boolean raiseHandOnEnter;
+	private RecordingMode recordingMode;
+	private boolean hideParticipantNames;
+	private boolean allowInSessionInvites;
+	
+	public SessionForm(ServerConfiguration serverConfiguration) {
+	    this.newSession = true;
+	    
+	    this.boundaryTime = serverConfiguration.getBoundaryTime();
+	    this.maxCameras = serverConfiguration.getMaxAvailableCameras();
+	    this.maxTalkers = serverConfiguration.getMaxAvailableTalkers();
+	    this.raiseHandOnEnter = serverConfiguration.isRaiseHandOnEnter(); 
+	}
+	
+	public SessionForm(Session blackboardSession) {
+	    this.newSession = false;
+	    
+	    this.sessionId = blackboardSession.getSessionId();
+	    this.sessionName = blackboardSession.getSessionName();
+	    this.startTime = blackboardSession.getStartTime();
+	    this.endTime = blackboardSession.getEndTime();
+	    this.boundaryTime = blackboardSession.getBoundaryTime();
+	    this.maxTalkers = blackboardSession.getMaxTalkers();
+	    this.maxCameras = blackboardSession.getMaxCameras();
+	    this.mustBeSupervised = blackboardSession.isMustBeSupervised();
+	    this.permissionsOn = blackboardSession.isPermissionsOn();
+	    this.raiseHandOnEnter = blackboardSession.isRaiseHandOnEnter();
+	    this.recordingMode = blackboardSession.getRecordingMode();
+	    this.hideParticipantNames = blackboardSession.isHideParticipantNames();
+	    this.allowInSessionInvites = blackboardSession.isAllowInSessionInvites();
 	}
 
-	public void setPresentationUpload(MultipartFile presentationUpload)
-	{
-		this.presentationUpload = presentationUpload;
-	}
+    public boolean isNewSession() {
+        return newSession;
+    }
 
-	public MultipartFile getMultimediaUpload()
-	{
-		return multimediaUpload;
-	}
+    public void setNewSession(boolean newSession) {
+        this.newSession = newSession;
+    }
 
-	public void setMultimediaUpload(MultipartFile multimediaUpload)
-	{
-		this.multimediaUpload = multimediaUpload;
-	}
+    public long getSessionId() {
+        return sessionId;
+    }
 
-	public String getAction()
-	{
-		return action;
-	}
+    public void setSessionId(long sessionId) {
+        this.sessionId = sessionId;
+    }
 
-	public void setAction(String action)
-	{
-		this.action = action;
-	}
+    public String getSessionName() {
+        return sessionName;
+    }
 
-	public String getSessionId()
-	{
-		return sessionId;
-	}
+    public void setSessionName(String sessionName) {
+        this.sessionName = sessionName;
+    }
 
-	public void setSessionId(String sessionId)
-	{
-		this.sessionId = sessionId;
-	}
+    public DateTime getStartTime() {
+        return startTime;
+    }
 
-	public String getSessionName()
-	{
-		return sessionName;
-	}
+    public void setStartTime(DateTime startTime) {
+        this.startTime = startTime;
+    }
 
-	public void setSessionName(String sessionName)
-	{
-		this.sessionName = sessionName;
-	}
+    public DateTime getEndTime() {
+        return endTime;
+    }
 
-	public String getStartdate()
-	{
-		return startdate;
-	}
+    public void setEndTime(DateTime endTime) {
+        this.endTime = endTime;
+    }
 
-	public void setStartdate(String startdate)
-	{
-		this.startdate = startdate;
-	}
+    public int getBoundaryTime() {
+        return boundaryTime;
+    }
 
-	public String getStarttime()
-	{
-		return starttime;
-	}
+    public void setBoundaryTime(int boundaryTime) {
+        this.boundaryTime = boundaryTime;
+    }
 
-	public void setStarttime(String starttime)
-	{
-		this.starttime = starttime;
-	}
+    public int getMaxTalkers() {
+        return maxTalkers;
+    }
 
-	public String getEnddate()
-	{
-		return enddate;
-	}
+    public void setMaxTalkers(int maxTalkers) {
+        this.maxTalkers = maxTalkers;
+    }
 
-	public void setEnddate(String enddate)
-	{
-		this.enddate = enddate;
-	}
+    public int getMaxCameras() {
+        return maxCameras;
+    }
 
-	public String getEndtime()
-	{
-		return endtime;
-	}
+    public void setMaxCameras(int maxCameras) {
+        this.maxCameras = maxCameras;
+    }
 
-	public void setEndtime(String endtime)
-	{
-		this.endtime = endtime;
-	}
+    public boolean isMustBeSupervised() {
+        return mustBeSupervised;
+    }
 
-	public String getAllowInSessionInvites()
-	{
-		return allowInSessionInvites;
-	}
+    public void setMustBeSupervised(boolean mustBeSupervised) {
+        this.mustBeSupervised = mustBeSupervised;
+    }
 
-	public void setAllowInSessionInvites(String allowInSessionInvites)
-	{
-		this.allowInSessionInvites = allowInSessionInvites;
-	}
+    public boolean isPermissionsOn() {
+        return permissionsOn;
+    }
 
-	public String getCreatorOrgUnit()
-	{
-		return creatorOrgUnit;
-	}
+    public void setPermissionsOn(boolean permissionsOn) {
+        this.permissionsOn = permissionsOn;
+    }
 
-	public void setCreatorOrgUnit(String creatorOrgUnit)
-	{
-		this.creatorOrgUnit = creatorOrgUnit;
-	}
+    public boolean isRaiseHandOnEnter() {
+        return raiseHandOnEnter;
+    }
 
-	public String getBoundaryTime()
-	{
-		return boundaryTime;
-	}
+    public void setRaiseHandOnEnter(boolean raiseHandOnEnter) {
+        this.raiseHandOnEnter = raiseHandOnEnter;
+    }
 
-	public void setBoundaryTime(String boundaryTime)
-	{
-		this.boundaryTime = boundaryTime;
-	}
+    public RecordingMode getRecordingMode() {
+        return recordingMode;
+    }
 
-	public String getHideParticipantNames()
-	{
-		return hideParticipantNames;
-	}
+    public void setRecordingMode(RecordingMode recordingMode) {
+        this.recordingMode = recordingMode;
+    }
 
-	public void setHideParticipantNames(String hideParticipantNames)
-	{
-		this.hideParticipantNames = hideParticipantNames;
-	}
+    public boolean isHideParticipantNames() {
+        return hideParticipantNames;
+    }
 
-	public String getMaxCameras()
-	{
-		return maxCameras;
-	}
+    public void setHideParticipantNames(boolean hideParticipantNames) {
+        this.hideParticipantNames = hideParticipantNames;
+    }
 
-	public void setMaxCameras(String maxCameras)
-	{
-		this.maxCameras = maxCameras;
-	}
+    public boolean isAllowInSessionInvites() {
+        return allowInSessionInvites;
+    }
 
-	public String getMaxTalkers()
-	{
-		return maxTalkers;
-	}
+    public void setAllowInSessionInvites(boolean allowInSessionInvites) {
+        this.allowInSessionInvites = allowInSessionInvites;
+    }
 
-	public void setMaxTalkers(String maxTalkers)
-	{
-		this.maxTalkers = maxTalkers;
-	}
-
-	public String getMustBeSupervised()
-	{
-		return mustBeSupervised;
-	}
-
-	public void setMustBeSupervised(String mustBeSupervised)
-	{
-		this.mustBeSupervised = mustBeSupervised;
-	}
-
-	public String getPermissionsOn()
-	{
-		return permissionsOn;
-	}
-
-	public void setPermissionsOn(String permissionsOn)
-	{
-		this.permissionsOn = permissionsOn;
-	}
-
-	public String getRaiseHandOnEnter()
-	{
-		return raiseHandOnEnter;
-	}
-
-	public void setRaiseHandOnEnter(String raiseHandOnEnter)
-	{
-		this.raiseHandOnEnter = raiseHandOnEnter;
-	}
-
-	public String getRecordingModeType()
-	{
-		return recordingModeType;
-	}
-
-	public void setRecordingModeType(String recordingModeType)
-	{
-		this.recordingModeType = recordingModeType;
-	}
-
-	public String[] getModeratorUids()
-	{
-		return moderatorUids;
-	}
-
-	public void setModeratorUids(String[] moderatorUids)
-	{
-		this.moderatorUids = moderatorUids;
-	}
-
-	public String[] getModeratorEmails()
-	{
-		return moderatorEmails;
-	}
-
-	public void setModeratorEmails(String[] moderatorEmails)
-	{
-		this.moderatorEmails = moderatorEmails;
-	}
-
-	public String[] getModeratorDisplayNames()
-	{
-		return moderatorDisplayNames;
-	}
-
-	public void setModeratorDisplayNames(String[] moderatorDisplayNames)
-	{
-		this.moderatorDisplayNames = moderatorDisplayNames;
-	}
-
-	public String[] getExtParticipantEmails()
-	{
-		return extParticipantEmails;
-	}
-
-	public void setExtParticipantEmails(String[] extParticipantEmails)
-	{
-		this.extParticipantEmails = extParticipantEmails;
-	}
-
-	public String[] getExtParticipantsDisplayNames()
-	{
-		return extParticipantsDisplayNames;
-	}
-
-	public void setExtParticipantsDisplayNames(String[] extParticipantsDisplayNames)
-	{
-		this.extParticipantsDisplayNames = extParticipantsDisplayNames;
-	}
-
-	public String[] getIntParticipantUids()
-	{
-		return intParticipantUids;
-	}
-
-	public void setIntParticipantUids(String[] intParticipantUids)
-	{
-		this.intParticipantUids = intParticipantUids;
-	}
-
-	public String[] getIntParticipantEmails()
-	{
-		return intParticipantEmails;
-	}
-
-	public void setIntParticipantEmails(String[] intParticipantEmails)
-	{
-		this.intParticipantEmails = intParticipantEmails;
-	}
-
-	public String[] getIntParticipantDisplayNames()
-	{
-		return intParticipantDisplayNames;
-	}
-
-	public void setIntParticipantDisplayNames(String[] intParticipantDisplayNames)
-	{
-		this.intParticipantDisplayNames = intParticipantDisplayNames;
-	}
+    @Override
+    public String toString() {
+        return "SessionForm [newSession=" + newSession + ", sessionId=" + sessionId + ", sessionName=" + sessionName
+                + ", startTime=" + startTime + ", endTime=" + endTime + ", boundaryTime=" + boundaryTime
+                + ", maxTalkers=" + maxTalkers + ", maxCameras=" + maxCameras + ", mustBeSupervised="
+                + mustBeSupervised + ", permissionsOn=" + permissionsOn + ", raiseHandOnEnter=" + raiseHandOnEnter
+                + ", recordingMode=" + recordingMode + ", hideParticipantNames=" + hideParticipantNames
+                + ", allowInSessionInvites=" + allowInSessionInvites + "]";
+    }
 }

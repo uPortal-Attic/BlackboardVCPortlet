@@ -23,7 +23,7 @@ import org.jasig.portlet.blackboardvcportlet.dao.ServerQuotaDao;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.elluminate.sas.ServerQuotasResponse;
+import com.elluminate.sas.BlackboardServerQuotasResponse;
 
 /**
  * Implementation of ServerQuotaDao interface, allows the storage, deletion
@@ -35,7 +35,7 @@ public class ServerQuotaDaoImpl extends BaseJpaDao implements ServerQuotaDao {
 
     @Override
     @Transactional
-    public ServerQuotaImpl createOrUpdateQuota(ServerQuotasResponse quotasResponse) {
+    public ServerQuotaImpl createOrUpdateQuota(BlackboardServerQuotasResponse quotasResponse) {
         ServerQuotaImpl serverQuota = this.getServerQuota();
         if (serverQuota == null) {
             serverQuota = new ServerQuotaImpl();

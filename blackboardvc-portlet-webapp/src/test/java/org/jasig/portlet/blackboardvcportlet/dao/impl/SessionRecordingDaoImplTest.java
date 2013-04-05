@@ -7,9 +7,9 @@ import static org.junit.Assert.fail;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-import org.jasig.portlet.blackboardvcportlet.dao.BlackboardSessionDao;
+import org.jasig.portlet.blackboardvcportlet.dao.SessionDao;
 import org.jasig.portlet.blackboardvcportlet.dao.SessionRecordingDao;
-import org.jasig.portlet.blackboardvcportlet.data.BlackboardSession;
+import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,8 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.elluminate.sas.RecordingLongResponse;
-import com.elluminate.sas.SessionResponse;
+import com.elluminate.sas.BlackboardRecordingLongResponse;
+import com.elluminate.sas.BlackboardSessionResponse;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:jpaTestContext.xml")
@@ -26,7 +26,7 @@ public class SessionRecordingDaoImplTest extends BaseJpaDaoTest {
     @Autowired
     private SessionRecordingDao sessionRecordingDao;
     @Autowired
-    private BlackboardSessionDao blackboardSessionDao;
+    private SessionDao sessionDao;
     
     @Test
     public void testEmptyQueries() throws Exception {
@@ -46,7 +46,7 @@ public class SessionRecordingDaoImplTest extends BaseJpaDaoTest {
         this.execute(new Callable<Object>() {
             @Override
             public Object call() {
-                final RecordingLongResponse recordingLongResponse = new RecordingLongResponse();
+                final BlackboardRecordingLongResponse recordingLongResponse = new BlackboardRecordingLongResponse();
                 
                 recordingLongResponse.setCreationDate(1364566600000l);
                 recordingLongResponse.setRecordingId(1);
@@ -76,7 +76,7 @@ public class SessionRecordingDaoImplTest extends BaseJpaDaoTest {
         this.execute(new Callable<Object>() {
             @Override
             public Object call() {
-                final SessionResponse sessionResponse = new SessionResponse();
+                final BlackboardSessionResponse sessionResponse = new BlackboardSessionResponse();
                 sessionResponse.setSessionId(1);
                 sessionResponse.setSessionName("Test Session");
                 sessionResponse.setStartTime(1364566500000l);
@@ -100,7 +100,7 @@ public class SessionRecordingDaoImplTest extends BaseJpaDaoTest {
                 sessionResponse.setAllowInSessionInvites(true);
                 sessionResponse.setHideParticipantNames(true);
                 
-                final BlackboardSession session = blackboardSessionDao.createSession(sessionResponse, "http://www.example.com/session");
+                final Session session = sessionDao.createSession(sessionResponse, "http://www.example.com/session");
                 assertNotNull(session);
                 
                 return null;
@@ -111,7 +111,7 @@ public class SessionRecordingDaoImplTest extends BaseJpaDaoTest {
         this.execute(new Callable<Object>() {
             @Override
             public Object call() {
-                final RecordingLongResponse recordingLongResponse = new RecordingLongResponse();
+                final BlackboardRecordingLongResponse recordingLongResponse = new BlackboardRecordingLongResponse();
                 
                 recordingLongResponse.setCreationDate(1364566600000l);
                 recordingLongResponse.setRecordingId(1);
@@ -136,7 +136,7 @@ public class SessionRecordingDaoImplTest extends BaseJpaDaoTest {
         this.execute(new Callable<Object>() {
             @Override
             public Object call() {
-                final RecordingLongResponse recordingLongResponse = new RecordingLongResponse();
+                final BlackboardRecordingLongResponse recordingLongResponse = new BlackboardRecordingLongResponse();
                 
                 recordingLongResponse.setCreationDate(1364566600000l);
                 recordingLongResponse.setRecordingId(1);
@@ -161,7 +161,7 @@ public class SessionRecordingDaoImplTest extends BaseJpaDaoTest {
         this.execute(new Callable<Object>() {
             @Override
             public Object call() {
-                final RecordingLongResponse recordingLongResponse = new RecordingLongResponse();
+                final BlackboardRecordingLongResponse recordingLongResponse = new BlackboardRecordingLongResponse();
                 
                 recordingLongResponse.setCreationDate(1364566600000l);
                 recordingLongResponse.setRecordingId(2);
@@ -186,7 +186,7 @@ public class SessionRecordingDaoImplTest extends BaseJpaDaoTest {
         this.execute(new Callable<Object>() {
             @Override
             public Object call() {
-                final RecordingLongResponse recordingLongResponse = new RecordingLongResponse();
+                final BlackboardRecordingLongResponse recordingLongResponse = new BlackboardRecordingLongResponse();
                 
                 recordingLongResponse.setCreationDate(1364566600000l);
                 recordingLongResponse.setRecordingId(3);

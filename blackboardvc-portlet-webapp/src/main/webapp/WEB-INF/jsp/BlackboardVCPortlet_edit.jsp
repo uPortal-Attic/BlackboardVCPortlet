@@ -70,9 +70,6 @@
 	<c:if test="${!empty session.sessionId}">
 		<input type="hidden" name="sessionId" value="${session.sessionId}" />
 	</c:if>
-	<c:if test="${!empty session.creatorOrgUnit}">
-		<input type="hidden" name="creatorOrgUnit" value="${session.creatorOrgUnit}" />
-	</c:if>
 	<table>
 		<tbody>
 			<tr>

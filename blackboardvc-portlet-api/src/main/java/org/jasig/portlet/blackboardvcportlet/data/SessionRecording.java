@@ -11,7 +11,7 @@ import org.joda.time.DateTime;
  */
 public interface SessionRecording extends Serializable {
 
-    BlackboardSession getSession();
+    Session getSession();
 
     String getRoomName();
 

@@ -16,8 +16,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.NaturalIdCache;
-import org.jasig.portlet.blackboardvcportlet.data.BlackboardSession;
-import org.jasig.portlet.blackboardvcportlet.data.BlackboardUser;
+import org.jasig.portlet.blackboardvcportlet.data.Session;
+import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.UserSessionUrl;
 
 @Entity
@@ -45,14 +45,14 @@ public class UserSessionUrlImpl implements UserSessionUrl {
     private final long urlId;
     
     @NaturalId
-    @ManyToOne(targetEntity = BlackboardSessionImpl.class, optional = false)
+    @ManyToOne(targetEntity = SessionImpl.class, optional = false)
     @JoinColumn(name = "SESSION_ID", nullable = false)
-    private final BlackboardSession session;
+    private final Session session;
 
     @NaturalId
-    @ManyToOne(targetEntity = BlackboardUserImpl.class, optional = false)
+    @ManyToOne(targetEntity = ConferenceUserImpl.class, optional = false)
     @JoinColumn(name = "USER_ID", nullable = false)
-    private final BlackboardUser user;
+    private final ConferenceUser user;
     
     @Column(name = "ENTITY_VERSION", nullable = false)
     private final String url;
@@ -68,7 +68,7 @@ public class UserSessionUrlImpl implements UserSessionUrl {
         this.url = null;
     }
 
-    UserSessionUrlImpl(BlackboardSession session, BlackboardUser creator, String url) {
+    UserSessionUrlImpl(Session session, ConferenceUser creator, String url) {
         this.urlId = -1;
         
         this.session = session;
@@ -82,12 +82,12 @@ public class UserSessionUrlImpl implements UserSessionUrl {
     }
 
     @Override
-    public BlackboardSession getSession() {
+    public Session getSession() {
         return session;
     }
 
     @Override
-    public BlackboardUser getUser() {
+    public ConferenceUser getUser() {
         return user;
     }
 

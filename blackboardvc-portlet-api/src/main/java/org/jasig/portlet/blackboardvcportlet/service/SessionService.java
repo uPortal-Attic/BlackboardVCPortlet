@@ -23,8 +23,8 @@ import java.util.Set;
 
 import javax.portlet.PortletPreferences;
 
-import org.jasig.portlet.blackboardvcportlet.data.BlackboardSession;
-import org.jasig.portlet.blackboardvcportlet.data.BlackboardUser;
+import org.jasig.portlet.blackboardvcportlet.data.Session;
+import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 
 /**
  * Service class for manipulating Collaborate sessions and their persistent

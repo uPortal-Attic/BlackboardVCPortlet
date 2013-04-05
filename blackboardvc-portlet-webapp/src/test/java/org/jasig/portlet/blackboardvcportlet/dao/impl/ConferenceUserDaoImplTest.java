@@ -8,9 +8,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-import org.jasig.portlet.blackboardvcportlet.dao.BlackboardUserDao;
-import org.jasig.portlet.blackboardvcportlet.data.BlackboardSession;
-import org.jasig.portlet.blackboardvcportlet.data.BlackboardUser;
+import org.jasig.portlet.blackboardvcportlet.dao.ConferenceUserDao;
+import org.jasig.portlet.blackboardvcportlet.data.Session;
+import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,16 +21,16 @@ import com.google.common.collect.ImmutableMap;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:jpaTestContext.xml")
-public class BlackboardUserDaoImplTest extends BaseJpaDaoTest {
+public class ConferenceUserDaoImplTest extends BaseJpaDaoTest {
     @Autowired
-    private BlackboardUserDao blackboardUserDao;
+    private ConferenceUserDao conferenceUserDao;
     
     @Test
     public void testEmptyQueries() throws Exception {
         this.execute(new Callable<Object>() {
             @Override
             public Object call() {
-                final BlackboardUser user = blackboardUserDao.getBlackboardUser(1);
+                final ConferenceUser user = conferenceUserDao.getUser(1);
                 assertNull(user);
                 
                 return null;
@@ -39,7 +39,7 @@ public class BlackboardUserDaoImplTest extends BaseJpaDaoTest {
         this.execute(new Callable<Object>() {
             @Override
             public Object call() {
-                final BlackboardUser user = blackboardUserDao.getBlackboardUser("user@example.com");
+                final ConferenceUser user = conferenceUserDao.getBlackboardUser("user@example.com");
                 assertNull(user);
                 
                 return null;
@@ -50,7 +50,7 @@ public class BlackboardUserDaoImplTest extends BaseJpaDaoTest {
             @Override
             public Object call() {
                 final Map<String, String> attrs = ImmutableMap.of("EPPN", "user@example.com", "SPVI", "012332412");
-                final Set<BlackboardUser> users = blackboardUserDao.findAllMatchingUsers("user@example.com", attrs);
+                final Set<ConferenceUser> users = conferenceUserDao.findAllMatchingUsers("user@example.com", attrs);
                 assertEquals(0, users.size());
                 
                 return null;
@@ -60,7 +60,7 @@ public class BlackboardUserDaoImplTest extends BaseJpaDaoTest {
         this.execute(new Callable<Object>() {
             @Override
             public Object call() {
-                final Set<BlackboardSession> chairedSessions = blackboardUserDao.getChairedSessionsForUser(1);
+                final Set<Session> chairedSessions = conferenceUserDao.getChairedSessionsForUser(1);
                 assertNull(chairedSessions);
                 
                 return null;
@@ -70,7 +70,7 @@ public class BlackboardUserDaoImplTest extends BaseJpaDaoTest {
         this.execute(new Callable<Object>() {
             @Override
             public Object call() {
-                final Set<BlackboardSession> participatingSessions = blackboardUserDao.getNonChairedSessionsForUser(1);
+                final Set<Session> participatingSessions = conferenceUserDao.getNonChairedSessionsForUser(1);
                 assertNull(participatingSessions);
                 
                 return null;
@@ -84,7 +84,7 @@ public class BlackboardUserDaoImplTest extends BaseJpaDaoTest {
         this.execute(new Callable<Object>() {
             @Override
             public Object call() {
-                final BlackboardUser user = blackboardUserDao.createBlackboardUser("user@example.com", "Example User");
+                final ConferenceUser user = conferenceUserDao.createBlackboardUser("user@example.com", "Example User");
 
                 assertNotNull(user);
                 assertEquals("user@example.com", user.getEmail());
@@ -99,10 +99,10 @@ public class BlackboardUserDaoImplTest extends BaseJpaDaoTest {
         this.execute(new Callable<Object>() {
             @Override
             public Object call() {
-                final BlackboardUser user = blackboardUserDao.createBlackboardUser("example.user@example.com", "Example User");
+                final ConferenceUser user = conferenceUserDao.createBlackboardUser("example.user@example.com", "Example User");
                 user.getAttributes().put("EPPN", "user@example.com");
                 user.getAttributes().put("SPVI", "1234567");
-                blackboardUserDao.updateBlackboardUser(user);
+                conferenceUserDao.updateBlackboardUser(user);
 
                 assertNotNull(user);
                 assertEquals("example.user@example.com", user.getEmail());
@@ -117,10 +117,10 @@ public class BlackboardUserDaoImplTest extends BaseJpaDaoTest {
         this.execute(new Callable<Object>() {
             @Override
             public Object call() {
-                final BlackboardUser user = blackboardUserDao.getBlackboardUser("user@example.com");
+                final ConferenceUser user = conferenceUserDao.getBlackboardUser("user@example.com");
                 user.getAttributes().put("EPPN", "user@example.com");
                 user.getAttributes().put("SPVI", "1234567");
-                blackboardUserDao.updateBlackboardUser(user);
+                conferenceUserDao.updateBlackboardUser(user);
 
                 assertNotNull(user);
                 assertEquals("user@example.com", user.getEmail());
@@ -135,10 +135,10 @@ public class BlackboardUserDaoImplTest extends BaseJpaDaoTest {
         this.execute(new Callable<Object>() {
             @Override
             public Object call() {
-                final BlackboardUser user = blackboardUserDao.createBlackboardUser("admin@example.com", "Example Admin");
+                final ConferenceUser user = conferenceUserDao.createBlackboardUser("admin@example.com", "Example Admin");
                 user.getAttributes().put("EPPN", "admin@example.com");
                 user.getAttributes().put("SPVI", "789456");
-                blackboardUserDao.updateBlackboardUser(user);
+                conferenceUserDao.updateBlackboardUser(user);
 
                 assertNotNull(user);
                 assertEquals("admin@example.com", user.getEmail());
@@ -154,7 +154,7 @@ public class BlackboardUserDaoImplTest extends BaseJpaDaoTest {
             @Override
             public Object call() {
                 final Map<String, String> attrs = ImmutableMap.of("EPPN", "user@example.com", "SPVI", "1234567");
-                final Set<BlackboardUser> users = blackboardUserDao.findAllMatchingUsers("user@example.com", attrs);
+                final Set<ConferenceUser> users = conferenceUserDao.findAllMatchingUsers("user@example.com", attrs);
                 assertEquals(2, users.size());
                 
                 return null;

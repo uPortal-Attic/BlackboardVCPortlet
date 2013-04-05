@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.elluminate.sas.ServerQuotasResponse;
+import com.elluminate.sas.BlackboardServerQuotasResponse;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:jpaTestContext.xml")
@@ -47,7 +47,7 @@ public class ServerQuotaDaoImplTest extends BaseJpaDaoTest {
         this.execute(new Callable<Object>() {
             @Override
             public Object call() {
-                final ServerQuotasResponse quotasResponse = new ServerQuotasResponse();
+                final BlackboardServerQuotasResponse quotasResponse = new BlackboardServerQuotasResponse();
                 quotasResponse.setDiskQuota(10737418240l);
                 quotasResponse.setDiskQuotaAvailable(1073741824);
                 quotasResponse.setSessionQuota(1024);
@@ -66,7 +66,7 @@ public class ServerQuotaDaoImplTest extends BaseJpaDaoTest {
         this.execute(new Callable<Object>() {
             @Override
             public Object call() {
-                final ServerQuotasResponse quotasResponse = new ServerQuotasResponse();
+                final BlackboardServerQuotasResponse quotasResponse = new BlackboardServerQuotasResponse();
                 quotasResponse.setDiskQuota(1073741824);
                 quotasResponse.setDiskQuotaAvailable(1073741824);
                 quotasResponse.setSessionQuota(1024);

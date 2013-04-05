@@ -3,7 +3,7 @@ package org.jasig.portlet.blackboardvcportlet.data;
 import java.io.Serializable;
 import java.util.Map;
 
-public interface BlackboardUser extends Serializable {
+public interface ConferenceUser extends Serializable {
 
     long getUserId();
 

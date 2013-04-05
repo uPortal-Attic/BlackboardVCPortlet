@@ -18,22 +18,19 @@
  */
 package org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr;
 
-import org.apache.commons.lang.StringUtils;
-import org.jasig.portlet.blackboardvcportlet.data.*;
-import org.jasig.portlet.blackboardvcportlet.service.*;
-import org.joda.time.DateTime;
-import org.joda.time.Period;
+import javax.portlet.RenderRequest;
+
+import org.jasig.portlet.blackboardvcportlet.service.AuthorisationService;
+import org.jasig.portlet.blackboardvcportlet.service.RecordingService;
+import org.jasig.portlet.blackboardvcportlet.service.ServerConfigurationService;
+import org.jasig.portlet.blackboardvcportlet.service.SessionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.portlet.ModelAndView;
-import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
-import javax.portlet.*;
-import java.text.SimpleDateFormat;
-import java.util.*;
 
 /**
  * Controller class for Portlet EDIT related actions and render
@@ -82,18 +79,15 @@ public class BlackboardVCPortletEditController extends BaseController
 		this.authService = authService;
 	}
 
-//	/**
-//	 * Standard edit render
-//	 *
-//	 * @param request
-//	 * @param response
-//	 * @param mView
-//	 * @return
-//	 * @throws Exception
-//	 */
-//	@RenderMapping
-//	public ModelAndView renderEditView(RenderRequest request, RenderResponse response, ModelAndView mView) throws Exception
-//	{
+	@RenderMapping
+	public String renderEditView(RenderRequest request, ModelMap model) throws Exception {
+	    //TODO move to @ModelAttribute method
+	    if (this.authService.isFullAccess(request) || this.authService.isAdminAccess(request)) {
+	        model.addAttribute("fullAccess", true);
+	    }
+	    
+	    return "BlackboardVCPortlet_edit";
+	}
 //		logger.debug("renderEditView called");
 //		logger.debug("session_id:" + request.getParameter("session_id"));
 //		logger.debug("sessionId" + request.getParameter("sessionId"));

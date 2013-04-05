@@ -20,7 +20,7 @@ package org.jasig.portlet.blackboardvcportlet.dao;
 
 import org.jasig.portlet.blackboardvcportlet.data.ServerQuota;
 
-import com.elluminate.sas.ServerQuotasResponse;
+import com.elluminate.sas.BlackboardServerQuotasResponse;
 
 /**
  * DAO Interface for ServerQuota
@@ -28,7 +28,7 @@ import com.elluminate.sas.ServerQuotasResponse;
  */
 public interface ServerQuotaDao {
     
-    ServerQuota createOrUpdateQuota(ServerQuotasResponse quotasResponse);
+    ServerQuota createOrUpdateQuota(BlackboardServerQuotasResponse quotasResponse);
     
     public ServerQuota getServerQuota();
     

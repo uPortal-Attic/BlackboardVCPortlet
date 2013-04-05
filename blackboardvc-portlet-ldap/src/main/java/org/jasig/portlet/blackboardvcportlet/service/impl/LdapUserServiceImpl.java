@@ -23,7 +23,7 @@ import java.util.List;
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 
-import org.jasig.portlet.blackboardvcportlet.data.BlackboardUser;
+import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +63,7 @@ public class LdapUserServiceImpl implements UserService
          */
         @Override
         public Object mapFromAttributes(Attributes attributes) throws NamingException {
-            BlackboardUser user = null;//new BlackboardUser();
+            ConferenceUser user = null;//new BlackboardUser();
             
             // Users may not have an email address
             if (attributes.get("mail")!=null)
@@ -101,7 +101,7 @@ public class LdapUserServiceImpl implements UserService
      * @param searchTerm
      * @return User
      */
-    public BlackboardUser getUserDetails(String searchTerm)
+    public ConferenceUser getUserDetails(String searchTerm)
     {       
         logger.debug("getUserDetails called");
         AndFilter andFilter = new AndFilter();
@@ -111,7 +111,7 @@ public class LdapUserServiceImpl implements UserService
         orFilter.or(new EqualsFilter("cn",searchTerm));
         andFilter.and(orFilter);
         logger.debug("Set up the filter for searchTerm:"+searchTerm);
-        List<BlackboardUser> result;
+        List<ConferenceUser> result;
         result = ldapTemplate.search("",andFilter.encode(),new PersonAttributeMapper());
         logger.debug("gotten a result");
         if (result.size()>0)

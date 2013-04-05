@@ -16,19 +16,19 @@ import javax.persistence.criteria.Root;
 import org.apache.commons.lang.Validate;
 import org.jasig.jpa.BaseJpaDao;
 import org.jasig.jpa.OpenEntityManager;
-import org.jasig.portlet.blackboardvcportlet.data.BlackboardSession;
-import org.jasig.portlet.blackboardvcportlet.data.BlackboardUser;
+import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
+import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.ImmutableSet;
 
 @Repository
-public class BlackboardUserDaoImpl extends BaseJpaDao implements InternalBlackboardUserDao {
+public class ConferenceUserDaoImpl extends BaseJpaDao implements InternalConferenceUserDao {
     
     @Override
-    public Set<BlackboardSession> getChairedSessionsForUser(long userId) {
-        final BlackboardUserImpl userImpl = this.getBlackboardUser(userId);
+    public Set<Session> getChairedSessionsForUser(long userId) {
+        final ConferenceUserImpl userImpl = this.getUser(userId);
         if (userImpl == null) {
             return null;
         }
@@ -38,8 +38,8 @@ public class BlackboardUserDaoImpl extends BaseJpaDao implements InternalBlackbo
     }
 
     @Override
-    public Set<BlackboardSession> getNonChairedSessionsForUser(long userId) {
-        final BlackboardUserImpl userImpl = this.getBlackboardUser(userId);
+    public Set<Session> getNonChairedSessionsForUser(long userId) {
+        final ConferenceUserImpl userImpl = this.getUser(userId);
         if (userImpl == null) {
             return null;
         }
@@ -50,8 +50,8 @@ public class BlackboardUserDaoImpl extends BaseJpaDao implements InternalBlackbo
     
     @Override
     @Transactional
-    public BlackboardUserImpl createBlackboardUser(String email, String displayName) {
-        final BlackboardUserImpl user = new BlackboardUserImpl(email, displayName);
+    public ConferenceUserImpl createBlackboardUser(String email, String displayName) {
+        final ConferenceUserImpl user = new ConferenceUserImpl(email, displayName);
         
         this.getEntityManager().persist(user);
         
@@ -60,7 +60,7 @@ public class BlackboardUserDaoImpl extends BaseJpaDao implements InternalBlackbo
     
     @Override
     @Transactional
-    public BlackboardUser updateBlackboardUser(BlackboardUser user) {
+    public ConferenceUser updateBlackboardUser(ConferenceUser user) {
         Validate.notNull(user, "user can not be null");
         
         this.getEntityManager().persist(user);
@@ -70,7 +70,7 @@ public class BlackboardUserDaoImpl extends BaseJpaDao implements InternalBlackbo
     
     @Override
     @Transactional
-    public void deleteBlackboardUser(BlackboardUser user) {
+    public void deleteBlackboardUser(ConferenceUser user) {
         Validate.notNull(user, "user can not be null");
         
         final EntityManager entityManager = this.getEntityManager();
@@ -81,15 +81,15 @@ public class BlackboardUserDaoImpl extends BaseJpaDao implements InternalBlackbo
     }
     
     @Override
-    public BlackboardUserImpl getBlackboardUser(long userId) {
+    public ConferenceUserImpl getUser(long userId) {
         final EntityManager entityManager = this.getEntityManager();
-        return entityManager.find(BlackboardUserImpl.class, userId);
+        return entityManager.find(ConferenceUserImpl.class, userId);
     }
 
     @Override
     @Transactional
-    public BlackboardUserImpl getOrCreateBlackboardUser(String email) {
-        final BlackboardUserImpl user = this.getBlackboardUser(email);
+    public ConferenceUserImpl getOrCreateUser(String email) {
+        final ConferenceUserImpl user = this.getBlackboardUser(email);
         if (user != null) {
             return user;
         }
@@ -99,34 +99,34 @@ public class BlackboardUserDaoImpl extends BaseJpaDao implements InternalBlackbo
 
     @Override
     @OpenEntityManager
-    public BlackboardUserImpl getBlackboardUser(String email) {
-        final NaturalIdQuery<BlackboardUserImpl> query = this.createNaturalIdQuery(BlackboardUserImpl.class);
-        query.using(BlackboardUserImpl_.email, email);
+    public ConferenceUserImpl getBlackboardUser(String email) {
+        final NaturalIdQuery<ConferenceUserImpl> query = this.createNaturalIdQuery(ConferenceUserImpl.class);
+        query.using(ConferenceUserImpl_.email, email);
         
         return query.load();
     }
     
     @Override
-    public Set<BlackboardUser> findAllMatchingUsers(String email, Map<String, String> attributes) {
-        final CriteriaQuery<BlackboardUserImpl> criteriaQuery = createSearchQuery(email, attributes);
+    public Set<ConferenceUser> findAllMatchingUsers(String email, Map<String, String> attributes) {
+        final CriteriaQuery<ConferenceUserImpl> criteriaQuery = createSearchQuery(email, attributes);
         
-        final TypedQuery<BlackboardUserImpl> query = this.createQuery(criteriaQuery);
-        final List<BlackboardUserImpl> results = query.getResultList();
-        return new LinkedHashSet<BlackboardUser>(results);
+        final TypedQuery<ConferenceUserImpl> query = this.createQuery(criteriaQuery);
+        final List<ConferenceUserImpl> results = query.getResultList();
+        return new LinkedHashSet<ConferenceUser>(results);
     }
 
-    private CriteriaQuery<BlackboardUserImpl> createSearchQuery(String email, Map<String, String> attributes) {
+    private CriteriaQuery<ConferenceUserImpl> createSearchQuery(String email, Map<String, String> attributes) {
         final CriteriaBuilder cb = this.getEntityManager().getCriteriaBuilder();
-        final CriteriaQuery<BlackboardUserImpl> criteriaQuery = cb.createQuery(BlackboardUserImpl.class);
-        final Root<BlackboardUserImpl> bbu = criteriaQuery.from(BlackboardUserImpl.class);
+        final CriteriaQuery<ConferenceUserImpl> criteriaQuery = cb.createQuery(ConferenceUserImpl.class);
+        final Root<ConferenceUserImpl> bbu = criteriaQuery.from(ConferenceUserImpl.class);
         
         //Fetch the attributes in one query
-        bbu.fetch(BlackboardUserImpl_.attributes);
+        bbu.fetch(ConferenceUserImpl_.attributes);
 
         //Use a MapJoin to filter the results by attribute
-        final MapJoin<BlackboardUserImpl, String, String> attrJoin = bbu.join(BlackboardUserImpl_.attributes);
+        final MapJoin<ConferenceUserImpl, String, String> attrJoin = bbu.join(ConferenceUserImpl_.attributes);
         final Predicate[] predicates = new Predicate[attributes.size() + 1];
-        predicates[0] = cb.equal(bbu.get(BlackboardUserImpl_.email), email);
+        predicates[0] = cb.equal(bbu.get(ConferenceUserImpl_.email), email);
         int pIdx = 1;
         for (final Map.Entry<String, String> attrEntry : attributes.entrySet()) {
             predicates[pIdx] = cb.and(cb.equal(attrJoin.key(), attrEntry.getKey()), cb.equal(attrJoin.value(), attrEntry.getValue()));

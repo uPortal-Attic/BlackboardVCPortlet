@@ -14,10 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.elluminate.sas.GetServerQuotasResponseCollection;
+import com.elluminate.sas.BlackboardGetServerQuotasResponseCollection;
+import com.elluminate.sas.BlackboardServerQuotas;
+import com.elluminate.sas.BlackboardServerQuotasResponse;
 import com.elluminate.sas.ObjectFactory;
-import com.elluminate.sas.ServerQuotas;
-import com.elluminate.sas.ServerQuotasResponse;
 
 /**
  * Service class for Server Quota
@@ -77,11 +77,11 @@ public class ServerQuotaServiceImpl implements ServerQuotaService
 		try
 		{
 			// Call Web Service Operation
-			final JAXBElement<ServerQuotas> request = new ObjectFactory().createGetServerQuotas(null);
-            GetServerQuotasResponseCollection serverQuotasResponseCollection = (GetServerQuotasResponseCollection)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/GetServerQuotas", request);
-			List<ServerQuotasResponse> quotaResult = serverQuotasResponseCollection.getServerQuotasResponses();
+			final JAXBElement<BlackboardServerQuotas> request = new ObjectFactory().createGetServerQuotas(null);
+			BlackboardGetServerQuotasResponseCollection serverQuotasResponseCollection = (BlackboardGetServerQuotasResponseCollection)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/GetServerQuotas", request);
+			List<BlackboardServerQuotasResponse> quotaResult = serverQuotasResponseCollection.getServerQuotasResponses();
 			logger.debug("Result = " + quotaResult);
-			for (ServerQuotasResponse response : quotaResult) {
+			for (BlackboardServerQuotasResponse response : quotaResult) {
 			    return this.serverQuotaDao.createOrUpdateQuota(response);
 			}
 		}

@@ -1,62 +1,23 @@
 package org.jasig.portlet.blackboardvcportlet.service.impl;
 
-import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.activation.DataHandler;
-import javax.mail.util.ByteArrayDataSource;
-import javax.portlet.PortletPreferences;
-import javax.xml.bind.JAXBElement;
-
-import org.apache.ws.security.util.StringUtil;
-import org.jasig.portlet.blackboardvcportlet.dao.BlackboardSessionDao;
-import org.jasig.portlet.blackboardvcportlet.dao.BlackboardUserDao;
-import org.jasig.portlet.blackboardvcportlet.data.BlackboardSession;
-import org.jasig.portlet.blackboardvcportlet.data.BlackboardUser;
+import org.jasig.portlet.blackboardvcportlet.dao.ConferenceUserDao;
+import org.jasig.portlet.blackboardvcportlet.dao.SessionDao;
 import org.jasig.portlet.blackboardvcportlet.service.MailTemplateService;
 import org.jasig.portlet.blackboardvcportlet.service.RecordingService;
 import org.jasig.portlet.blackboardvcportlet.service.SessionService;
-import org.jasig.portlet.blackboardvcportlet.service.UserService;
-import org.jasig.portlet.blackboardvcportlet.service.util.MailMessages;
 import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
-import com.elluminate.sas.BuildSessionUrl;
-import com.elluminate.sas.MultimediaResponse;
-import com.elluminate.sas.MultimediaResponseCollection;
-import com.elluminate.sas.PresentationResponse;
-import com.elluminate.sas.PresentationResponseCollection;
-import com.elluminate.sas.RemoveRepositoryMultimedia;
-import com.elluminate.sas.RemoveRepositoryPresentation;
-import com.elluminate.sas.RemoveSessionMultimedia;
-import com.elluminate.sas.RemoveSessionPresentation;
-import com.elluminate.sas.SessionResponse;
-import com.elluminate.sas.SessionResponseCollection;
-import com.elluminate.sas.SetApiCallbackUrl;
-import com.elluminate.sas.SetSessionMultimedia;
-import com.elluminate.sas.SetSessionPresentation;
-import com.elluminate.sas.SuccessResponse;
-import com.elluminate.sas.UploadRepositoryContent;
-import com.elluminate.sas.UrlResponse;
 
 @Service
 public class SessionServiceImpl implements SessionService
 {
 	private static final Logger logger = LoggerFactory.getLogger(SessionService.class);
 
-    private BlackboardSessionDao blackboardSessionDao;
-    private BlackboardUserDao blackboardUserDao;
+    private SessionDao blackboardSessionDao;
+    private ConferenceUserDao blackboardUserDao;
 	private MailTemplateService mailTemplateService;
 //	private UserService userService;
 	private RecordingService recordingService;
@@ -67,12 +28,12 @@ public class SessionServiceImpl implements SessionService
 	
 	
 	@Autowired
-	public void setBlackboardSessionDao(BlackboardSessionDao blackboardSessionDao) {
+	public void setBlackboardSessionDao(SessionDao blackboardSessionDao) {
         this.blackboardSessionDao = blackboardSessionDao;
     }
 
     @Autowired
-    public void setBlackboardUserDao(BlackboardUserDao blackboardUserDao) {
+    public void setBlackboardUserDao(ConferenceUserDao blackboardUserDao) {
         this.blackboardUserDao = blackboardUserDao;
     }
 

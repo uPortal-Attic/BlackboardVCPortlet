@@ -7,9 +7,9 @@ public interface UserSessionUrl extends Serializable {
 
     long getUrlId();
 
-    BlackboardSession getSession();
+    Session getSession();
 
-    BlackboardUser getUser();
+    ConferenceUser getUser();
 
     String getUrl();
 

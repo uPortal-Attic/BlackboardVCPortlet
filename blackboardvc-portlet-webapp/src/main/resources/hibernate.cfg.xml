@@ -43,8 +43,8 @@
         
         <mapping resource="global.hbm.xml"/>
         
-        <mapping class="org.jasig.portlet.blackboardvcportlet.dao.impl.BlackboardUserImpl"/>
-        <mapping class="org.jasig.portlet.blackboardvcportlet.dao.impl.BlackboardSessionImpl"/>
+        <mapping class="org.jasig.portlet.blackboardvcportlet.dao.impl.ConferenceUserImpl"/>
+        <mapping class="org.jasig.portlet.blackboardvcportlet.dao.impl.SessionImpl"/>
         <mapping class="org.jasig.portlet.blackboardvcportlet.dao.impl.ServerConfigurationImpl"/>
         <mapping class="org.jasig.portlet.blackboardvcportlet.dao.impl.ServerQuotaImpl"/>
         <mapping class="org.jasig.portlet.blackboardvcportlet.dao.impl.SessionRecordingImpl"/>

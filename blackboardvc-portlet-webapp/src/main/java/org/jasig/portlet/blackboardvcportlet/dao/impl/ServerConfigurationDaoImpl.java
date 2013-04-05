@@ -9,7 +9,7 @@ import org.joda.time.DateTimeZone;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.elluminate.sas.ServerConfigurationResponse;
+import com.elluminate.sas.BlackboardServerConfigurationResponse;
 
 @Repository
 public class ServerConfigurationDaoImpl extends BaseJpaDao implements ServerConfigurationDao {
@@ -17,7 +17,7 @@ public class ServerConfigurationDaoImpl extends BaseJpaDao implements ServerConf
     
     @Override
     @Transactional
-    public ServerConfigurationImpl createOrUpdateConfiguration(ServerConfigurationResponse configurationResponse) {
+    public ServerConfigurationImpl createOrUpdateConfiguration(BlackboardServerConfigurationResponse configurationResponse) {
         ServerConfigurationImpl serverConfiguration = this.getServerConfiguration();
         if (serverConfiguration == null) {
             serverConfiguration = new ServerConfigurationImpl();

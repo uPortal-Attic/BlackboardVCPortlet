@@ -6,11 +6,11 @@ import java.util.Set;
 
 import javax.portlet.PortletPreferences;
 
-import org.jasig.portlet.blackboardvcportlet.dao.BlackboardSessionDao;
-import org.jasig.portlet.blackboardvcportlet.dao.BlackboardUserDao;
+import org.jasig.portlet.blackboardvcportlet.dao.ConferenceUserDao;
+import org.jasig.portlet.blackboardvcportlet.dao.SessionDao;
 import org.jasig.portlet.blackboardvcportlet.dao.SessionRecordingDao;
-import org.jasig.portlet.blackboardvcportlet.data.BlackboardSession;
-import org.jasig.portlet.blackboardvcportlet.data.BlackboardUser;
+import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
+import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
 import org.jasig.portlet.blackboardvcportlet.service.RecordingService;
 import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceTemplate;
@@ -19,29 +19,29 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.elluminate.sas.ListRecordingLong;
-import com.elluminate.sas.ListRecordingLongResponseCollection;
-import com.elluminate.sas.RecordingLongResponse;
-import com.elluminate.sas.RemoveRecording;
-import com.elluminate.sas.SuccessResponse;
+import com.elluminate.sas.BlackboardListRecordingLong;
+import com.elluminate.sas.BlackboardListRecordingLongResponseCollection;
+import com.elluminate.sas.BlackboardRecordingLongResponse;
+import com.elluminate.sas.BlackboardRemoveRecording;
+import com.elluminate.sas.BlackboardSuccessResponse;
 
 @Service("recordingService")
 public class RecordingServiceImpl implements RecordingService {
     private static final Logger logger = LoggerFactory.getLogger(RecordingService.class);
 
 	private SASWebServiceTemplate sasWebServiceTemplate;
-	private BlackboardUserDao blackboardUserDao;
-	private BlackboardSessionDao blackboardSessionDao;
+	private ConferenceUserDao blackboardUserDao;
+	private SessionDao blackboardSessionDao;
 	private SessionRecordingDao sessionRecordingDao;
     
     
     @Autowired
-	public void setBlackboardUserDao(BlackboardUserDao blackboardUserDao) {
+	public void setBlackboardUserDao(ConferenceUserDao blackboardUserDao) {
         this.blackboardUserDao = blackboardUserDao;
     }
 
     @Autowired
-    public void setBlackboardSessionDao(BlackboardSessionDao blackboardSessionDao) {
+    public void setBlackboardSessionDao(SessionDao blackboardSessionDao) {
         this.blackboardSessionDao = blackboardSessionDao;
     }
 
@@ -85,18 +85,18 @@ public class RecordingServiceImpl implements RecordingService {
     {
         //TODO this is not bad if the data is all in cache but if it isn't it would be better to just run a query
         
-        final BlackboardUser blackboardUser = this.blackboardUserDao.getBlackboardUser(uid);
+        final ConferenceUser blackboardUser = this.blackboardUserDao.getBlackboardUser(uid);
         
         final Set<SessionRecording> recordings = new LinkedHashSet<SessionRecording>();
         
-        final Set<BlackboardSession> chairedSessionsForUser = this.blackboardUserDao.getChairedSessionsForUser(blackboardUser.getUserId());
-        for (final BlackboardSession blackboardSession : chairedSessionsForUser) {
+        final Set<Session> chairedSessionsForUser = this.blackboardUserDao.getChairedSessionsForUser(blackboardUser.getUserId());
+        for (final Session blackboardSession : chairedSessionsForUser) {
             final Set<SessionRecording> sessionRecordings = this.blackboardSessionDao.getSessionRecordings(blackboardSession.getSessionId());
             recordings.addAll(sessionRecordings);
         }
         
-        final Set<BlackboardSession> nonChairedSessionsForUser = this.blackboardUserDao.getNonChairedSessionsForUser(blackboardUser.getUserId());
-        for (final BlackboardSession blackboardSession : nonChairedSessionsForUser) {
+        final Set<Session> nonChairedSessionsForUser = this.blackboardUserDao.getNonChairedSessionsForUser(blackboardUser.getUserId());
+        for (final Session blackboardSession : nonChairedSessionsForUser) {
             final Set<SessionRecording> sessionRecordings = this.blackboardSessionDao.getSessionRecordings(blackboardSession.getSessionId());
             recordings.addAll(sessionRecordings);
         }
@@ -125,9 +125,9 @@ public class RecordingServiceImpl implements RecordingService {
         
         try
         {
-			RemoveRecording removeRecording = new RemoveRecording();
+			BlackboardRemoveRecording removeRecording = new BlackboardRemoveRecording();
 			removeRecording.setRecordingId(recordingId);
-			SuccessResponse successResponse = (SuccessResponse) sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/RemoveRecording", removeRecording);
+			BlackboardSuccessResponse successResponse = (BlackboardSuccessResponse) sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/RemoveRecording", removeRecording);
 			logger.debug("removeRecording response:" + successResponse);
 		}
         catch (Exception e)
@@ -150,7 +150,7 @@ public class RecordingServiceImpl implements RecordingService {
      */
     public Set<SessionRecording> updateSessionRecordings(long sessionId)
     {
-        final BlackboardSession session = blackboardSessionDao.getSession(sessionId);
+        final Session session = blackboardSessionDao.getSession(sessionId);
         if (session == null) {
             //TODO?
         }
@@ -158,13 +158,13 @@ public class RecordingServiceImpl implements RecordingService {
         Set<SessionRecording> recordingList = new LinkedHashSet<SessionRecording>();
         try
         {
-            ListRecordingLong listRecording = new ListRecordingLong();
+            BlackboardListRecordingLong listRecording = new BlackboardListRecordingLong();
 			listRecording.setSessionId(sessionId);
-			ListRecordingLongResponseCollection listRecordingShortResponseCollection = (ListRecordingLongResponseCollection)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/ListRecordingShort", listRecording);
+			BlackboardListRecordingLongResponseCollection listRecordingShortResponseCollection = (BlackboardListRecordingLongResponseCollection)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/ListRecordingShort", listRecording);
 			
-			final List<RecordingLongResponse> recordingResponses = listRecordingShortResponseCollection.getRecordingLongResponses();
+			final List<BlackboardRecordingLongResponse> recordingResponses = listRecordingShortResponseCollection.getRecordingLongResponses();
 			
-			for (final RecordingLongResponse recordingResponse : recordingResponses) {
+			for (final BlackboardRecordingLongResponse recordingResponse : recordingResponses) {
 			    final SessionRecording sessionRecording = sessionRecordingDao.createOrUpdateRecording(recordingResponse);
 			    recordingList.add(sessionRecording);
 			}

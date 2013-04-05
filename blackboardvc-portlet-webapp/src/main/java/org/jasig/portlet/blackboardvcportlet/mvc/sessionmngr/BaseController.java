@@ -7,23 +7,23 @@ import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.jasig.portlet.blackboardvcportlet.dao.BlackboardUserDao;
-import org.jasig.portlet.blackboardvcportlet.data.BlackboardUser;
+import org.jasig.portlet.blackboardvcportlet.dao.ConferenceUserDao;
+import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class BaseController {
-    protected BlackboardUserDao blackboardUserDao;
+    protected ConferenceUserDao blackboardUserDao;
 
     @Autowired
-    public void setBlackboardUserDao(BlackboardUserDao blackboardUserDao) {
+    public void setBlackboardUserDao(ConferenceUserDao blackboardUserDao) {
         this.blackboardUserDao = blackboardUserDao;
     }
 
-    protected BlackboardUser getBlackboardUser(PortletRequest request) {
+    protected ConferenceUser getBlackboardUser(PortletRequest request) {
         final String mail = getAttribute(request, "emailAttributeName", true, "mail");
         final String displayName = getAttribute(request, "displayNameAttributeName", false, "displayName");
         
-        BlackboardUser user = this.blackboardUserDao.getBlackboardUser(mail);
+        ConferenceUser user = this.blackboardUserDao.getBlackboardUser(mail);
         if (user == null) {
             user = this.blackboardUserDao.createBlackboardUser(mail, displayName);
         }

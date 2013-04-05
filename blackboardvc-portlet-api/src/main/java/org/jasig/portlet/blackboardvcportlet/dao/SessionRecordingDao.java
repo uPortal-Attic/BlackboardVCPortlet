@@ -22,7 +22,7 @@ import java.util.Set;
 
 import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
 
-import com.elluminate.sas.RecordingLongResponse;
+import com.elluminate.sas.BlackboardRecordingLongResponse;
 
 /**
  * DAO Interface class for the {@link RecordingLongResponse}
@@ -32,7 +32,7 @@ import com.elluminate.sas.RecordingLongResponse;
 public interface SessionRecordingDao {
     Set<SessionRecording> getAllRecordings();
     
-    SessionRecording createOrUpdateRecording(RecordingLongResponse recordingLongResponse);
+    SessionRecording createOrUpdateRecording(BlackboardRecordingLongResponse recordingLongResponse);
     
     SessionRecording getSessionRecording(long recordingId);
     
