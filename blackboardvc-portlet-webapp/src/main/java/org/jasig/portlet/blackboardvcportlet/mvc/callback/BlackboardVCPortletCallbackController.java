@@ -18,7 +18,9 @@
  */
 package org.jasig.portlet.blackboardvcportlet.mvc.callback;
 
+import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
 import org.jasig.portlet.blackboardvcportlet.service.RecordingService;
+import org.jasig.portlet.blackboardvcportlet.service.ServerConfigurationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,56 +39,51 @@ import javax.servlet.ServletContext;
  * @author Richard Good
  */
 @Controller
-@RequestMapping("VIEW")
 public class BlackboardVCPortletCallbackController implements ServletContextAware
 {
 	private static final Logger logger = LoggerFactory.getLogger(BlackboardVCPortletCallbackController.class);
 
-    private static ServletContext servletContext;
     private RecordingService recordingService;
+    private ServerConfigurationService serverConfigurationService;
+    private static ServletContext servletContext;
+    
+    @Autowired
+    public void setServerConfigurationService(ServerConfigurationService value) 
+    {
+    	this.serverConfigurationService = value;
+    }
 
 	@Autowired
 	public void setRecordingService(RecordingService recordingService)
 	{
 		this.recordingService = recordingService;
 	}
-
+	
 	@Override
-	public void setServletContext(ServletContext sc)
-	{
-		servletContext=sc;
+	public void setServletContext(ServletContext servletContext) {
+		this.servletContext = servletContext;
 	}
 
 	/**
      * Callback method. Looks for a passed session_id and updates the recordings
      * @throws Exception
      */
-    @RequestMapping("/recCallback/${securityToken}")
+    @RequestMapping("/recCallback/{securityToken:.*}")
     public ModelAndView callback(
             @PathVariable("securityToken") String securityToken,
             @RequestParam("session_id") String sessionId,
             @RequestParam("room_opened_millis") long roomOpenedMillis,
             @RequestParam("room_closed_millis") long roomClosedMillis, 
             @RequestParam("rec_playback_link") String recPlaybackLink) throws Exception {
-    
-        /*logger.info("callback called from remote host: "+request.getRemoteHost());
+    	
+        final ServerConfiguration serverConfiguration = serverConfigurationService.getServerConfiguration();
+        if(serverConfiguration.getRandomCallbackUrl().equalsIgnoreCase(securityToken)) {
+        	recordingService.updateSessionRecordings(Long.valueOf(sessionId));
+        } else {
+        	logger.error("Invalid callback URL provided. Expected :" + serverConfiguration.getRandomCallbackUrl() + "; Received : " + securityToken);
+        }
         
-        String sessionId = request.getParameter("session_id");
-        String roomClosedMillis = request.getParameter("room_closed_millis");
-        String recPlaybackLink = request.getParameter("rec_playback_link");
-        String roomOpenedMillis = request.getParameter("room_opened_millis");*/
-        
-        logger.debug("sessionId:"+sessionId);
-        logger.debug("roomClosedMillis:"+roomClosedMillis);
-        logger.debug("recPlaybackLink:"+recPlaybackLink);
-        logger.debug("roomOpenedMillis:"+roomOpenedMillis);
-        
-        logger.debug("updating session recordings");
-        recordingService.updateSessionRecordings(Long.valueOf(sessionId));
-        logger.debug("done update");
-        ModelAndView modelAndView = new ModelAndView("callback");
-        
-        return modelAndView;
+        return new ModelAndView("callback");
         
     }
 }

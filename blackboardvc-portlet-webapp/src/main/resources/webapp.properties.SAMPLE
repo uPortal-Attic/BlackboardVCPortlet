@@ -1,6 +1,6 @@
 bbc.username=
 bbc.password=
-bbc.callbackURL=https://my-test.wisc.edu/Blackboard/
+bbc.callbackURL=https://my-test.wisc.edu/BlackboardVCPortlet/callback/recCallback/
 bbc.db.jdbc=jdbc:hsqldb:hsql://localhost:8887/uPortal
 bbc.db.username=sa
 bbc.db.password=

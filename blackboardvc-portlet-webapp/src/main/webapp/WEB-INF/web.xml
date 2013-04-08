@@ -55,6 +55,6 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>callbackDispatcher</servlet-name>
-        <url-pattern>/callback</url-pattern>
+        <url-pattern>/callback/*</url-pattern>
     </servlet-mapping>
 </web-app>

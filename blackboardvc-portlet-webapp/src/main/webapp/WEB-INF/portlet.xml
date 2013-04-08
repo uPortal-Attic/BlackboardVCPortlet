@@ -42,15 +42,7 @@
             <title>Web Conferencing</title>
             <short-title>Web Conferencing</short-title>
         </portlet-info>
-        <!--
-        	TODO : Move username/password to .properties file 
-         -->
         <portlet-preferences>
-			<!-- Set the callback URL to your uPortal instance URL -->
-            <preference>
-                <name>callbackUrl</name>
-                <value>http://localhost:8080/BlackboardVCPortlet/callback</value>
-            </preference>
             <!-- The attribute to check for basic or full access.
                  Attribute must be available below-->
             <preference>
