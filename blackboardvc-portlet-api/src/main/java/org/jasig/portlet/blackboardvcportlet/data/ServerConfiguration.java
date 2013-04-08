@@ -26,4 +26,6 @@ public interface ServerConfiguration extends Serializable {
     int getMaxAvailableTalkers();
 
     int getBoundaryTime();
+    
+    String getRandomCallbackUrl();
 }

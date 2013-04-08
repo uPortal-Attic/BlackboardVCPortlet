@@ -83,6 +83,8 @@ public class ServerConfigurationImpl implements ServerConfiguration {
     @Type(type = "dateTime")
     private DateTime lastUpdated;    
     
+    @Column(name="CALLBACK_URL", nullable = false, length = 80)
+    private String randomCallbackUrl;
     
     ServerConfigurationImpl() {
         this.entityVersion = -1;
@@ -95,6 +97,15 @@ public class ServerConfigurationImpl implements ServerConfiguration {
     @PrePersist
     protected final void onUpdate() {
         lastUpdated = DateTime.now();
+    }
+    
+    @Override
+    public String getRandomCallbackUrl() {
+    	return randomCallbackUrl;
+    }
+    
+    public void setRandomCallbackUrl(String value) {
+    	this.randomCallbackUrl = value;
     }
 
     @Override
@@ -178,6 +189,8 @@ public class ServerConfigurationImpl implements ServerConfiguration {
     public DateTime getLastUpdated() {
         return lastUpdated;
     }
+    
+    
     
     //********** NOTE ALL ServerConfigurationImpl instances are equal! **********//
 

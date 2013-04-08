@@ -3,6 +3,7 @@ package org.jasig.portlet.blackboardvcportlet.dao.impl;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.jasig.jpa.BaseJpaDao;
 import org.jasig.portlet.blackboardvcportlet.dao.ServerConfigurationDao;
 import org.joda.time.DateTimeZone;
@@ -21,6 +22,11 @@ public class ServerConfigurationDaoImpl extends BaseJpaDao implements ServerConf
         ServerConfigurationImpl serverConfiguration = this.getServerConfiguration();
         if (serverConfiguration == null) {
             serverConfiguration = new ServerConfigurationImpl();
+        }
+        
+        if(serverConfiguration.getRandomCallbackUrl() == null) {
+        	//Create random callback URL and send that to blackboard
+        	serverConfiguration.setRandomCallbackUrl(RandomStringUtils.randomAlphanumeric(20));
         }
         
         serverConfiguration.setBoundaryTime(configurationResponse.getBoundaryTime());
