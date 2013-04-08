@@ -53,7 +53,8 @@ public class SessionDaoImplTest extends BaseJpaDaoTest {
         this.execute(new Callable<Object>() {
             @Override
             public Object call() {
-                final Set<ConferenceUser> sessionChairs = sessionDao.getSessionChairs(1);
+                final Session session = sessionDao.getSession(1);
+                final Set<ConferenceUser> sessionChairs = sessionDao.getSessionChairs(session);
                 assertNull(sessionChairs);
                 
                 return null;
@@ -63,7 +64,8 @@ public class SessionDaoImplTest extends BaseJpaDaoTest {
         this.execute(new Callable<Object>() {
             @Override
             public Object call() {
-                final Set<ConferenceUser> sessionNonChairs = sessionDao.getSessionNonChairs(1);
+                final Session session = sessionDao.getSession(1);
+                final Set<ConferenceUser> sessionNonChairs = sessionDao.getSessionNonChairs(session);
                 assertNull(sessionNonChairs);
                 
                 return null;
@@ -193,67 +195,67 @@ public class SessionDaoImplTest extends BaseJpaDaoTest {
         assertNotNull(session);
         assertEquals(106582, session.getBbSessionId());
         
-        final Set<ConferenceUser> sessionChairs = sessionDao.getSessionChairs(session.getSessionId());
+        final Set<ConferenceUser> sessionChairs = sessionDao.getSessionChairs(session);
         assertNotNull(sessionChairs);
         assertEquals(1, sessionChairs.size());
         
-        final Set<ConferenceUser> sessionNonChairs = sessionDao.getSessionNonChairs(session.getSessionId());
+        final Set<ConferenceUser> sessionNonChairs = sessionDao.getSessionNonChairs(session);
         assertNotNull(sessionNonChairs);
         assertEquals(2, sessionNonChairs.size());
     }
 
     private void verifyUpdatedUsers() {
         final ConferenceUser admin = conferenceUserDao.getBlackboardUser("admin@example.com");
-        final Set<Session> adminChaired = conferenceUserDao.getChairedSessionsForUser(admin.getUserId());
+        final Set<Session> adminChaired = conferenceUserDao.getChairedSessionsForUser(admin);
         assertNotNull(adminChaired);
         assertEquals(1, adminChaired.size());
-        final Set<Session> adminNonChaired = conferenceUserDao.getNonChairedSessionsForUser(admin.getUserId());
+        final Set<Session> adminNonChaired = conferenceUserDao.getNonChairedSessionsForUser(admin);
         assertNotNull(adminNonChaired);
         assertEquals(0, adminNonChaired.size());
         
 
         final ConferenceUser dalquist = conferenceUserDao.getBlackboardUser("dalquist@example.com");
-        final Set<Session> dalquistChaired = conferenceUserDao.getChairedSessionsForUser(dalquist.getUserId());
+        final Set<Session> dalquistChaired = conferenceUserDao.getChairedSessionsForUser(dalquist);
         assertNotNull(dalquistChaired);
         assertEquals(0, dalquistChaired.size());
-        final Set<Session> dalquistNonChaired = conferenceUserDao.getNonChairedSessionsForUser(dalquist.getUserId());
+        final Set<Session> dalquistNonChaired = conferenceUserDao.getNonChairedSessionsForUser(dalquist);
         assertNotNull(dalquistNonChaired);
         assertEquals(1, dalquistNonChaired.size());
         
 
         final ConferenceUser levett = conferenceUserDao.getBlackboardUser("levett@example.com");
-        final Set<Session> levettChaired = conferenceUserDao.getChairedSessionsForUser(levett.getUserId());
+        final Set<Session> levettChaired = conferenceUserDao.getChairedSessionsForUser(levett);
         assertNotNull(levettChaired);
         assertEquals(0, levettChaired.size());
-        final Set<Session> levettNonChaired = conferenceUserDao.getNonChairedSessionsForUser(levett.getUserId());
+        final Set<Session> levettNonChaired = conferenceUserDao.getNonChairedSessionsForUser(levett);
         assertNotNull(levettNonChaired);
         assertEquals(1, levettNonChaired.size());
     }
 
     private void verifyCreatedUsers() {
         final ConferenceUser admin = conferenceUserDao.getBlackboardUser("admin@example.com");
-        final Set<Session> adminChaired = conferenceUserDao.getChairedSessionsForUser(admin.getUserId());
+        final Set<Session> adminChaired = conferenceUserDao.getChairedSessionsForUser(admin);
         assertNotNull(adminChaired);
         assertEquals(1, adminChaired.size());
-        final Set<Session> adminNonChaired = conferenceUserDao.getNonChairedSessionsForUser(admin.getUserId());
+        final Set<Session> adminNonChaired = conferenceUserDao.getNonChairedSessionsForUser(admin);
         assertNotNull(adminNonChaired);
         assertEquals(0, adminNonChaired.size());
         
 
         final ConferenceUser dalquist = conferenceUserDao.getBlackboardUser("dalquist@example.com");
-        final Set<Session> dalquistChaired = conferenceUserDao.getChairedSessionsForUser(dalquist.getUserId());
+        final Set<Session> dalquistChaired = conferenceUserDao.getChairedSessionsForUser(dalquist);
         assertNotNull(dalquistChaired);
         assertEquals(1, dalquistChaired.size());
-        final Set<Session> dalquistNonChaired = conferenceUserDao.getNonChairedSessionsForUser(dalquist.getUserId());
+        final Set<Session> dalquistNonChaired = conferenceUserDao.getNonChairedSessionsForUser(dalquist);
         assertNotNull(dalquistNonChaired);
         assertEquals(0, dalquistNonChaired.size());
         
 
         final ConferenceUser levett = conferenceUserDao.getBlackboardUser("levett@example.com");
-        final Set<Session> levettChaired = conferenceUserDao.getChairedSessionsForUser(levett.getUserId());
+        final Set<Session> levettChaired = conferenceUserDao.getChairedSessionsForUser(levett);
         assertNotNull(levettChaired);
         assertEquals(0, levettChaired.size());
-        final Set<Session> levettNonChaired = conferenceUserDao.getNonChairedSessionsForUser(levett.getUserId());
+        final Set<Session> levettNonChaired = conferenceUserDao.getNonChairedSessionsForUser(levett);
         assertNotNull(levettNonChaired);
         assertEquals(1, levettNonChaired.size());
     }
@@ -263,11 +265,11 @@ public class SessionDaoImplTest extends BaseJpaDaoTest {
         assertNotNull(session);
         assertEquals(106582, session.getBbSessionId());
         
-        final Set<ConferenceUser> sessionChairs = sessionDao.getSessionChairs(session.getSessionId());
+        final Set<ConferenceUser> sessionChairs = sessionDao.getSessionChairs(session);
         assertNotNull(sessionChairs);
         assertEquals(2, sessionChairs.size());
         
-        final Set<ConferenceUser> sessionNonChairs = sessionDao.getSessionNonChairs(session.getSessionId());
+        final Set<ConferenceUser> sessionNonChairs = sessionDao.getSessionNonChairs(session);
         assertNotNull(sessionNonChairs);
         assertEquals(1, sessionNonChairs.size());
     }

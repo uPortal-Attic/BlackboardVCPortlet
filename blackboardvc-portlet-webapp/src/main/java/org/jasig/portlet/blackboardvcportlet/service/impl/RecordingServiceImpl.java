@@ -13,7 +13,7 @@ import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
 import org.jasig.portlet.blackboardvcportlet.service.RecordingService;
-import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceTemplate;
+import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceOperations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ import com.elluminate.sas.BlackboardSuccessResponse;
 public class RecordingServiceImpl implements RecordingService {
     private static final Logger logger = LoggerFactory.getLogger(RecordingService.class);
 
-	private SASWebServiceTemplate sasWebServiceTemplate;
+	private SASWebServiceOperations sasWebServiceTemplate;
 	private ConferenceUserDao blackboardUserDao;
 	private SessionDao blackboardSessionDao;
 	private SessionRecordingDao sessionRecordingDao;
@@ -51,21 +51,21 @@ public class RecordingServiceImpl implements RecordingService {
     }
 
     @Autowired
-	public void setSasWebServiceTemplate(SASWebServiceTemplate sasWebServiceTemplate)
+	public void setSasWebServiceTemplate(SASWebServiceOperations sasWebServiceTemplate)
 	{
 		this.sasWebServiceTemplate = sasWebServiceTemplate;
 	}
 
-	/**
-     * Get the recordings for a session
-     * @param sessionId Long
-     * @return Set<RecordingShort>
-     */
-    public Set<SessionRecording> getRecordingsForSession(long sessionId)
-    {
-        return blackboardSessionDao.getSessionRecordings(sessionId);
-    }
-    
+//	/**
+//     * Get the recordings for a session
+//     * @param sessionId Long
+//     * @return Set<RecordingShort>
+//     */
+//    public Set<SessionRecording> getRecordingsForSession(long sessionId)
+//    {
+//        return blackboardSessionDao.getSessionRecordings(sessionId);
+//    }
+//    
     /**
      * Get a specific recording
      * @param recordingId Long
@@ -89,15 +89,15 @@ public class RecordingServiceImpl implements RecordingService {
         
         final Set<SessionRecording> recordings = new LinkedHashSet<SessionRecording>();
         
-        final Set<Session> chairedSessionsForUser = this.blackboardUserDao.getChairedSessionsForUser(blackboardUser.getUserId());
+        final Set<Session> chairedSessionsForUser = this.blackboardUserDao.getChairedSessionsForUser(blackboardUser);
         for (final Session blackboardSession : chairedSessionsForUser) {
-            final Set<SessionRecording> sessionRecordings = this.blackboardSessionDao.getSessionRecordings(blackboardSession.getSessionId());
+            final Set<SessionRecording> sessionRecordings = this.blackboardSessionDao.getSessionRecordings(blackboardSession);
             recordings.addAll(sessionRecordings);
         }
         
-        final Set<Session> nonChairedSessionsForUser = this.blackboardUserDao.getNonChairedSessionsForUser(blackboardUser.getUserId());
+        final Set<Session> nonChairedSessionsForUser = this.blackboardUserDao.getNonChairedSessionsForUser(blackboardUser);
         for (final Session blackboardSession : nonChairedSessionsForUser) {
-            final Set<SessionRecording> sessionRecordings = this.blackboardSessionDao.getSessionRecordings(blackboardSession.getSessionId());
+            final Set<SessionRecording> sessionRecordings = this.blackboardSessionDao.getSessionRecordings(blackboardSession);
             recordings.addAll(sessionRecordings);
         }
 

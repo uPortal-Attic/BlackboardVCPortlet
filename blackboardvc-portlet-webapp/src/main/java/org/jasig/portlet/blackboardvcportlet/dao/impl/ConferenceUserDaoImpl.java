@@ -27,8 +27,12 @@ import com.google.common.collect.ImmutableSet;
 public class ConferenceUserDaoImpl extends BaseJpaDao implements InternalConferenceUserDao {
     
     @Override
-    public Set<Session> getChairedSessionsForUser(long userId) {
-        final ConferenceUserImpl userImpl = this.getUser(userId);
+    public Set<Session> getChairedSessionsForUser(ConferenceUser user) {
+        if (user == null) {
+            return null;
+        }
+        
+        final ConferenceUserImpl userImpl = this.getUser(user.getUserId());
         if (userImpl == null) {
             return null;
         }
@@ -38,8 +42,12 @@ public class ConferenceUserDaoImpl extends BaseJpaDao implements InternalConfere
     }
 
     @Override
-    public Set<Session> getNonChairedSessionsForUser(long userId) {
-        final ConferenceUserImpl userImpl = this.getUser(userId);
+    public Set<Session> getNonChairedSessionsForUser(ConferenceUser user) {
+        if (user == null) {
+            return null;
+        }
+        
+        final ConferenceUserImpl userImpl = this.getUser(user.getUserId());
         if (userImpl == null) {
             return null;
         }

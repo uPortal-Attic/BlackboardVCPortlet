@@ -9,7 +9,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceTemplate;
+import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceOperations;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -29,7 +29,7 @@ public class WebServiceIntegrationIT
 	private static final Logger logger = LoggerFactory.getLogger(WebServiceIntegrationIT.class);
 
 	@Autowired
-	private SASWebServiceTemplate sasWebServiceTemplate;
+	private SASWebServiceOperations sasWebServiceTemplate;
 
 	@Autowired
 	private ObjectFactory elluminateObjectFactory;

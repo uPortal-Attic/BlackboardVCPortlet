@@ -81,21 +81,21 @@
 					</portlet:renderURL>
 					<tr align="center"
 						class="${loopStatus.index % 2 == 0 ? 'uportal-channel-table-row-odd' : 'uportal-channel-table-row-even'}">
-						<td><c:if test="${session.currUserCanEdit}">
+						<td><%--c:if test="${session.currUserCanEdit}">
 								<input value="${session.sessionId}"
 									class="${namespace}deleteSession" name="deleteSession"
 									type="checkbox" />
-							</c:if></td>
+							</c:if --%></td>
 						<td><a href="${launchSessionUrl}">${session.sessionName}</a></td>
-						<td><fmt:formatDate value="${session.startTime}"
-								pattern="dd-MM-yyyy HH:mm" /></td>
-						<td><fmt:formatDate value="${session.endTime}"
-								pattern="dd-MM-yyyy HH:mm" /></td>
-						<td><c:if test="${session.currUserCanEdit}">
+						<td><joda:format value="${session.startTime}"
+								pattern="MM/dd/yyyy HH:mm" /></td>
+						<td><joda:format value="${session.endTime}"
+								pattern="MM/dd/yyyy HH:mm" /></td>
+						<td><%--c:if test="${session.currUserCanEdit}">
 								<input value="Edit" name="${session.sessionId}"
 									class="uportal-button"
 									onclick="window.location='${editSessionUrl}'" type="button">
-							</c:if></td>
+							</c:if--%></td>
 					</tr>
 				</c:forEach>
 
@@ -163,8 +163,8 @@
 							</c:if></td>
 						<td><a target="_blank" href="${recording.recordingUrl}"><c:out
 									value="${recording.roomName}" /></a></td>
-						<td><fmt:formatDate value="${recording.createdDate}"
-								pattern="dd-MM-yyyy HH:mm" /></td>
+						<td><joda:format value="${recording.createdDate}"
+								pattern="MM/dd/yyyy HH:mm" /></td>
 						<td><c:out value="${recording.readableFileSize}" /></td>
 						<td><c:if test="${recording.currUserCanDelete}">
 								<input value="Edit" name="${recording.recordingId}"

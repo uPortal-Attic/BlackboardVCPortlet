@@ -67,6 +67,7 @@
 </portlet:renderURL>
 
 <form action="${formActionUrl}" method="post">
+    <input type="hidden" name="newSession" value="${session.newSession}" />
 	<c:if test="${!session.newSession}">
 		<input type="hidden" name="sessionId" value="${session.sessionId}" />
 	</c:if>
@@ -90,33 +91,40 @@
 			</tr>
 			<tr>
 				<td><span class="uportal-channel-strong">Start Date and Time: </span></td>
-				<td><input style="width: 82px;" value="<fmt:formatDate value="${session.startTime}" pattern="dd-MM-yyyy" />" name="startdate" id="${namespace}startdatepicker" style="width: 70px;" type="text">&nbsp; <fmt:formatDate var="startHourValue" value="${session.startTime}" pattern="H" />
+				<joda:format var="startDate" value="${session.startTime}" pattern="MM/dd/yyyy" />
+				<joda:format var="startHour" value="${session.startTime}" pattern="H" />
+				<joda:format var="startMinute" value="${session.startTime}" pattern="m" />
+				
+				<td><input style="width: 82px;" value="${startDate}" name="startDate" id="${namespace}startdatepicker" style="width: 70px;" type="text">&nbsp;
 					<select name="startHour">
 						<c:forEach var="i" begin="0" end="23" step="1">
-							<option value="${i}" ${startHourValue == i ? 'selected' : ''}>${i}</option>
+							<option value="${i}" ${startHour == i ? 'selected' : ''}>${i}</option>
 						</c:forEach>
 					</select>
 					: 
-					<fmt:formatDate var="startMinuteValue" value='${session.startTime}' pattern='m' /> 
 					<select name="startMinute">
 						<c:forEach var="i" begin="0" end="45" step="15">
-							<option value="${i}" ${startMinuteValue == i ? 'selected' : ''}>${i}</option>
+							<option value="${i}" ${startMinute == i ? 'selected' : ''}>${i}</option>
 						</c:forEach>
 					</select>
 				</td>
 			</tr>
 			<tr>
 				<td><span class="uportal-channel-strong">End Date and Time: </span></td>
-				<td><input style="width: 82px;" value="<fmt:formatDate value="${session.endTime}" pattern="dd-MM-yyyy" />" name="enddate" id="${namespace}enddatepicker" style="width: 70px;" type="text">&nbsp; <fmt:formatDate var="endHourValue" value="${session.endTime}" pattern="H" /> 
+                <joda:format var="endDate" value="${session.endTime}" pattern="MM/dd/yyyy" />
+                <joda:format var="endHour" value="${session.endTime}" pattern="H" />
+                <joda:format var="endMinute" value="${session.endTime}" pattern="m" />
+                
+				<td><input style="width: 82px;" value="${endDate}" name="endDate" id="${namespace}enddatepicker" style="width: 70px;" type="text">&nbsp; 
 					<select name="endHour">
 						<c:forEach var="i" begin="0" end="23" step="1">
-							<option value="${i}" ${endHourValue == i ? 'selected' : ''}>${i}</option>
+							<option value="${i}" ${endHour == i ? 'selected' : ''}>${i}</option>
 						</c:forEach>
 					</select>
-					: <fmt:formatDate var="endMinuteValue" value='${session.endTime}' pattern='m' /> 
+					:  
 					<select name="endMinute">
 						<c:forEach var="i" begin="0" end="45" step="15">
-							<option value="${i}" ${endMinuteValue == i ? 'selected' : ''}>${i}</option>
+							<option value="${i}" ${endMinute == i ? 'selected' : ''}>${i}</option>
 						</c:forEach>
 					</select>
 				</td>
@@ -210,7 +218,7 @@
 					</tr>
 					<tr>
 						<td><span class="uportal-channel-strong">Recording Mode: </span></td>
-						<td><select name="recordingModeType" disabled>
+						<td><select name="recordingMode" disabled>
 								<option value="MANUAL"
 									${session.recordingMode.name == "MANUAL" ? 'selected' : ''}>Manual</option>
 								<option value="AUTOMATIC"
@@ -541,11 +549,11 @@
 				function() {
 					$("#${namespace}startdatepicker").datepicker({
 						showButtonPanel : true,
-						dateFormat : 'dd-mm-yy'
+						dateFormat : 'mm/dd/yyyy'
 					});
 					$("#${namespace}enddatepicker").datepicker({
 						showButtonPanel : true,
-						dateFormat : 'dd-mm-yy'
+						dateFormat : 'mm/dd/yyyy'
 					});
 					$('#${namespace}moderatiorUidInput').keypress(
 							function(e) {

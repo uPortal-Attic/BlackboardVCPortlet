@@ -19,7 +19,7 @@ public abstract class BaseController {
         this.blackboardUserDao = blackboardUserDao;
     }
 
-    protected ConferenceUser getBlackboardUser(PortletRequest request) {
+    protected ConferenceUser getConferenceUser(PortletRequest request) {
         final String mail = getAttribute(request, "emailAttributeName", true, "mail");
         final String displayName = getAttribute(request, "displayNameAttributeName", false, "displayName");
         

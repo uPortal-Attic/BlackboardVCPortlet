@@ -9,11 +9,11 @@ import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
 import com.elluminate.sas.BlackboardSessionResponse;
 
 public interface SessionDao {
-    Set<ConferenceUser> getSessionChairs(long sessionId);
+    Set<ConferenceUser> getSessionChairs(Session session);
     
-    Set<ConferenceUser> getSessionNonChairs(long sessionId);
+    Set<ConferenceUser> getSessionNonChairs(Session session);
     
-    Set<SessionRecording> getSessionRecordings(long sessionId);
+    Set<SessionRecording> getSessionRecordings(Session session);
     
     Set<Session> getAllSessions();
     

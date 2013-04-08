@@ -60,7 +60,8 @@ public class ConferenceUserDaoImplTest extends BaseJpaDaoTest {
         this.execute(new Callable<Object>() {
             @Override
             public Object call() {
-                final Set<Session> chairedSessions = conferenceUserDao.getChairedSessionsForUser(1);
+                final ConferenceUser user = conferenceUserDao.getUser(1);
+                final Set<Session> chairedSessions = conferenceUserDao.getChairedSessionsForUser(user);
                 assertNull(chairedSessions);
                 
                 return null;
@@ -70,7 +71,8 @@ public class ConferenceUserDaoImplTest extends BaseJpaDaoTest {
         this.execute(new Callable<Object>() {
             @Override
             public Object call() {
-                final Set<Session> participatingSessions = conferenceUserDao.getNonChairedSessionsForUser(1);
+                final ConferenceUser user = conferenceUserDao.getUser(1);
+                final Set<Session> participatingSessions = conferenceUserDao.getNonChairedSessionsForUser(user);
                 assertNull(participatingSessions);
                 
                 return null;

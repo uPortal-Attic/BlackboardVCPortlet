@@ -7,7 +7,7 @@ import javax.xml.bind.JAXBElement;
 import org.jasig.portlet.blackboardvcportlet.dao.ServerQuotaDao;
 import org.jasig.portlet.blackboardvcportlet.data.ServerQuota;
 import org.jasig.portlet.blackboardvcportlet.service.ServerQuotaService;
-import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceTemplate;
+import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceOperations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class ServerQuotaServiceImpl implements ServerQuotaService
 	private static final Logger logger = LoggerFactory.getLogger(ServerQuotaServiceImpl.class);
 
     private ServerQuotaDao serverQuotaDao;
-	private SASWebServiceTemplate sasWebServiceTemplate;
+	private SASWebServiceOperations sasWebServiceTemplate;
 
 	@Autowired
 	public void setServerQuotaDao(ServerQuotaDao serverQuotaDao)
@@ -38,7 +38,7 @@ public class ServerQuotaServiceImpl implements ServerQuotaService
 	}
 
 	@Autowired
-	public void setSasWebServiceTemplate(SASWebServiceTemplate sasWebServiceTemplate)
+	public void setSasWebServiceTemplate(SASWebServiceOperations sasWebServiceTemplate)
 	{
 		this.sasWebServiceTemplate = sasWebServiceTemplate;
 	}

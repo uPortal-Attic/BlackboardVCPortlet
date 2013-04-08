@@ -7,19 +7,16 @@ import javax.xml.bind.JAXBElement;
 import org.jasig.portlet.blackboardvcportlet.dao.ServerConfigurationDao;
 import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
 import org.jasig.portlet.blackboardvcportlet.service.ServerConfigurationService;
-import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceTemplate;
+import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceOperations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.elluminate.sas.BlackboardGetServerConfigurationResponseCollection;
 import com.elluminate.sas.BlackboardServerConfiguration;
 import com.elluminate.sas.BlackboardServerConfigurationResponse;
-import com.elluminate.sas.BlackboardSetApiCallbackUrl;
-import com.elluminate.sas.BlackboardSuccessResponse;
 import com.elluminate.sas.ObjectFactory;
 
 @Service("serverConfigurationService")
@@ -28,14 +25,7 @@ public class ServerConfigurationServiceImpl implements ServerConfigurationServic
 	private static final Logger logger = LoggerFactory.getLogger(ServerConfigurationServiceImpl.class);
 
     private ServerConfigurationDao serverConfigurationDao;
-	private SASWebServiceTemplate sasWebServiceTemplate;
-	
-	private String callbackURL;
-	
-	@Value("${bbc.callbackURL}")
-	public void setCallbackURL(String value) {
-		this.callbackURL = value;
-	}
+	private SASWebServiceOperations sasWebServiceTemplate;
 
 	@Autowired
 	public void setServerConfigurationDao(ServerConfigurationDao serverConfigurationDao)
@@ -44,7 +34,7 @@ public class ServerConfigurationServiceImpl implements ServerConfigurationServic
 	}
 
 	@Autowired
-	public void setSasWebServiceTemplate(SASWebServiceTemplate sasWebServiceTemplate)
+	public void setSasWebServiceTemplate(SASWebServiceOperations sasWebServiceTemplate)
 	{
 		this.sasWebServiceTemplate = sasWebServiceTemplate;
 	}
@@ -88,24 +78,7 @@ public class ServerConfigurationServiceImpl implements ServerConfigurationServic
 
 			logger.debug("Result = " + configResult);
 			for (BlackboardServerConfigurationResponse response : configResult) {
-				ServerConfiguration newServerConfiguration = this.serverConfigurationDao.createOrUpdateConfiguration(response);
-				if(serverConfiguration == null || serverConfiguration.getRandomCallbackUrl() == null) {
-					if(callbackURL != null && callbackURL.length() > 0) {
-						//create request object
-						final BlackboardSetApiCallbackUrl apiCallbackRequest = new ObjectFactory().createBlackboardSetApiCallbackUrl();
-						//create URL
-						apiCallbackRequest.setApiCallbackUrl(callbackURL + (callbackURL.lastIndexOf('/') == (callbackURL.length() - 1) ? "" : "/") + newServerConfiguration.getRandomCallbackUrl());
-						//send new URL to blackboard	
-						JAXBElement<BlackboardSuccessResponse> jaxbApiCallbackUrlResponse = (JAXBElement<BlackboardSuccessResponse>) sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/SetApiCallbackUrl", apiCallbackRequest);
-						BlackboardSuccessResponse apiCallbackUrlResponse = jaxbApiCallbackUrlResponse.getValue();
-						if(!apiCallbackUrlResponse.isSuccess()) {
-							logger.warn("Issue sending blackboard api callback URL");
-						}
-					} else {
-						logger.error("Missing configuration in webapp.properties for property 'bbc.callbackURL'");
-					}
-				}
-				return newServerConfiguration;
+			    return this.serverConfigurationDao.createOrUpdateConfiguration(response);
 			}
 		}
 		catch (Exception ex)

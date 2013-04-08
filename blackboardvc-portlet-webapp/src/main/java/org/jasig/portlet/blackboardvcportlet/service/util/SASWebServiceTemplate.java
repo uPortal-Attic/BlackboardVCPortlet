@@ -15,14 +15,14 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
 
-public class SASWebServiceTemplate extends WebServiceTemplate
+public class SASWebServiceTemplate extends WebServiceTemplate implements SASWebServiceOperations
 {
 	private Jaxb2Marshaller elluminateMarshller;
 
 	private String username;
 	private String password;
 
-	@Autowired
+    @Autowired
 	public void setElluminateMarshller(Jaxb2Marshaller elluminateMarshller)
 	{
 		this.elluminateMarshller = elluminateMarshller;
@@ -40,7 +40,8 @@ public class SASWebServiceTemplate extends WebServiceTemplate
 		this.password = password;
 	}
 
-	public Object marshalSendAndReceiveToSAS(final String soapAction, final Object requestPayload)
+	@Override
+    public Object marshalSendAndReceiveToSAS(final String soapAction, final Object requestPayload)
 	{
 		return marshalSendAndReceive(requestPayload, new WebServiceMessageCallback() {
 

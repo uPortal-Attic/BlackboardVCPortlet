@@ -30,12 +30,12 @@ import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
  */
 public interface RecordingService
 {
-	/**
-     * Get the recordings for a session
-     * @param sessionId Long
-     * @return Set<RecordingShort>
-     */
-    public Set<SessionRecording> getRecordingsForSession(long sessionId);
+//	/**
+//     * Get the recordings for a session
+//     * @param sessionId Long
+//     * @return Set<RecordingShort>
+//     */
+//    public Set<SessionRecording> getRecordingsForSession(long sessionId);
     
     /**
      * Get a specific recording

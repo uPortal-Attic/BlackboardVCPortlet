@@ -18,13 +18,9 @@
  */
 package org.jasig.portlet.blackboardvcportlet.service;
 
-import java.util.List;
-import java.util.Set;
-
-import javax.portlet.PortletPreferences;
-
-import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
+import org.jasig.portlet.blackboardvcportlet.data.Session;
+
 
 /**
  * Service class for manipulating Collaborate sessions and their persistent
@@ -33,8 +29,20 @@ import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
  * @author rgood
  */
 
-public interface SessionService
-{
+public interface SessionService {
+    /**
+     * Creates or Updates a session for the user, form and access flag. This method throws an exception
+     * if the specified user doesn't have access to edit the specified session
+     */
+    void createOrUpdateSession(ConferenceUser user, SessionForm sessionForm, boolean fullAccess);
+    
+    /**
+     * Get a session for the user and sessionId. This method throws an exception if the
+     * specified user does not have access to view the session
+     */
+    Session getSession(ConferenceUser user, long sessionId, boolean fullAccess);
+    
+    
 //	public Set<BlackboardSession> getSessionsForUser(String uid);
 //
 //	public BlackboardSession getSession(long sessionId);

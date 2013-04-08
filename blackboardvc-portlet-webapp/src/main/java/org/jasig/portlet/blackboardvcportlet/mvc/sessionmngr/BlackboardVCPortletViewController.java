@@ -92,7 +92,7 @@ public class BlackboardVCPortletViewController extends BaseController
 	@RenderMapping
 	public String view(PortletRequest request, ModelMap model)
 	{
-		final ConferenceUser blackboardUser = this.getBlackboardUser(request);
+		final ConferenceUser blackboardUser = this.getConferenceUser(request);
 		
 		final boolean isAdmin = authService.isAdminAccess(request);
 		
@@ -103,10 +103,10 @@ public class BlackboardVCPortletViewController extends BaseController
         } else {
             sessions = new HashSet<Session>();
             
-            final Set<Session> chairedSessionsForUser = this.blackboardUserDao.getChairedSessionsForUser(blackboardUser.getUserId());
+            final Set<Session> chairedSessionsForUser = this.blackboardUserDao.getChairedSessionsForUser(blackboardUser);
             sessions.addAll(chairedSessionsForUser);
             
-            final Set<Session> nonChairedSessionsForUser = this.blackboardUserDao.getNonChairedSessionsForUser(blackboardUser.getUserId());
+            final Set<Session> nonChairedSessionsForUser = this.blackboardUserDao.getNonChairedSessionsForUser(blackboardUser);
             sessions.addAll(nonChairedSessionsForUser);
             
             //TODO get list of all recordings for user
@@ -114,6 +114,8 @@ public class BlackboardVCPortletViewController extends BaseController
 
 		logger.debug("sessions size:" + sessions.size());
 		model.addAttribute("sessions", sessions);
+		
+		//TODO need to build list of currUserCanEdit, currUserCanDelete for each Session
 
 //		logger.debug("gotten recordings, size:" + recordings.size());
 //		model.addAttribute("recordings", recordings);
@@ -156,8 +158,8 @@ public class BlackboardVCPortletViewController extends BaseController
 				logger.error("session is null!");
 			}
 
-            final ConferenceUser blackboardUser = getBlackboardUser(request);
-            final Set<ConferenceUser> sessionChairs = this.blackboardSessionDao.getSessionChairs(session.getSessionId());
+            final ConferenceUser blackboardUser = getConferenceUser(request);
+            final Set<ConferenceUser> sessionChairs = this.blackboardSessionDao.getSessionChairs(session);
             
 	        if (blackboardUser.equals(session.getCreator()) || sessionChairs.contains(blackboardUser) || authService.isAdminAccess(request)) {
 	            model.addAttribute("currUserCanEdit", true);
@@ -177,7 +179,7 @@ public class BlackboardVCPortletViewController extends BaseController
 				}
 
 				logger.debug("Session is still open, we can show the launch url");
-				final Set<ConferenceUser> sessionNonChairs = this.blackboardSessionDao.getSessionNonChairs(session.getSessionId());
+				final Set<ConferenceUser> sessionNonChairs = this.blackboardSessionDao.getSessionNonChairs(session);
 				
 				// If the user is specified in chair or non chair list then get the URL
 				if (sessionChairs.contains(blackboardUser) || sessionNonChairs.contains(blackboardUser))
@@ -229,7 +231,7 @@ public class BlackboardVCPortletViewController extends BaseController
 		response.setContentType("application/csv");
 		response.setProperty("Content-Disposition", "inline; filename=participantList_" + sessionId + ".csv");
 
-		final ConferenceUser blackboardUser = this.getBlackboardUser(request);
+		final ConferenceUser blackboardUser = this.getConferenceUser(request);
 
 		PrintWriter stringWriter = null;
 		try
@@ -247,7 +249,7 @@ public class BlackboardVCPortletViewController extends BaseController
 				return;
 			}
 			
-			final Set<ConferenceUser> sessionChairs = this.blackboardSessionDao.getSessionChairs(session.getSessionId());
+			final Set<ConferenceUser> sessionChairs = this.blackboardSessionDao.getSessionChairs(session);
             if (!sessionChairs.contains(blackboardUser)) {
 				logger.warn("User not authorised to see csv");
 				return;
@@ -261,7 +263,7 @@ public class BlackboardVCPortletViewController extends BaseController
 			logger.debug("added moderators to CSV output");
 
 
-			final Set<ConferenceUser> sessionNonChairs = this.blackboardSessionDao.getSessionNonChairs(session.getSessionId());
+			final Set<ConferenceUser> sessionNonChairs = this.blackboardSessionDao.getSessionNonChairs(session);
 			logger.debug("Adding nonchair list to participants");
             for (final ConferenceUser user : sessionNonChairs) {
                 if (user.getAttributes().isEmpty()) {

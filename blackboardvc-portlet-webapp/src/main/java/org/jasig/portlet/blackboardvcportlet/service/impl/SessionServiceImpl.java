@@ -1,40 +1,56 @@
 package org.jasig.portlet.blackboardvcportlet.service.impl;
 
+import java.util.Set;
+
+import javax.xml.bind.JAXBElement;
+
 import org.jasig.portlet.blackboardvcportlet.dao.ConferenceUserDao;
 import org.jasig.portlet.blackboardvcportlet.dao.SessionDao;
+import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
+import org.jasig.portlet.blackboardvcportlet.data.RecordingMode;
+import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.service.MailTemplateService;
 import org.jasig.portlet.blackboardvcportlet.service.RecordingService;
+import org.jasig.portlet.blackboardvcportlet.service.SessionForm;
 import org.jasig.portlet.blackboardvcportlet.service.SessionService;
-import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceTemplate;
+import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceOperations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.elluminate.sas.BlackboardBuildSessionUrl;
+import com.elluminate.sas.BlackboardSessionResponse;
+import com.elluminate.sas.BlackboardSessionResponseCollection;
+import com.elluminate.sas.BlackboardSetSession;
+import com.elluminate.sas.BlackboardUrlResponse;
 
 @Service
 public class SessionServiceImpl implements SessionService
 {
 	private static final Logger logger = LoggerFactory.getLogger(SessionService.class);
 
-    private SessionDao blackboardSessionDao;
-    private ConferenceUserDao blackboardUserDao;
+    private SessionDao sessionDao;
+    private ConferenceUserDao conferenceUserDao;
 	private MailTemplateService mailTemplateService;
 //	private UserService userService;
 	private RecordingService recordingService;
 //	private SessionPresentationDao sessionPresentationDao;
 //	private SessionMultimediaDao sessionMultimediaDao;
-	private SASWebServiceTemplate sasWebServiceTemplate;
+	private SASWebServiceOperations sasWebServiceOperations;
 //	private ObjectFactory objectFactory;
 	
 	
 	@Autowired
 	public void setBlackboardSessionDao(SessionDao blackboardSessionDao) {
-        this.blackboardSessionDao = blackboardSessionDao;
+        this.sessionDao = blackboardSessionDao;
     }
 
     @Autowired
     public void setBlackboardUserDao(ConferenceUserDao blackboardUserDao) {
-        this.blackboardUserDao = blackboardUserDao;
+        this.conferenceUserDao = blackboardUserDao;
     }
 
     @Autowired
@@ -67,10 +83,85 @@ public class SessionServiceImpl implements SessionService
 //	}
 
 	@Autowired
-	public void setSasWebServiceTemplate(SASWebServiceTemplate sasWebServiceTemplate)
+	public void setSasWebServiceOperations(SASWebServiceOperations sasWebServiceOperations)
 	{
-		this.sasWebServiceTemplate = sasWebServiceTemplate;
+		this.sasWebServiceOperations = sasWebServiceOperations;
 	}
+
+    @Override
+    @Transactional
+    public void createOrUpdateSession(ConferenceUser user, SessionForm sessionForm, boolean fullAccess) {
+        if (sessionForm.isNewSession()) {
+            final BlackboardSetSession setSession = new BlackboardSetSession();
+            setSession.setCreatorId(user.getEmail());
+            setSession.setSessionName(sessionForm.getSessionName());
+            setSession.setStartTime(sessionForm.getStartTime().getMillis());
+            setSession.setEndTime(sessionForm.getEndTime().getMillis());
+            setSession.setBoundaryTime(sessionForm.getBoundaryTime());
+
+            if (fullAccess) {
+                setSession.setMaxTalkers(sessionForm.getMaxTalkers());
+                setSession.setMaxCameras(sessionForm.getMaxCameras());
+                setSession.setMustBeSupervised(sessionForm.isMustBeSupervised());
+                setSession.setPermissionsOn(sessionForm.isPermissionsOn());
+                setSession.setRaiseHandOnEnter(sessionForm.isRaiseHandOnEnter());
+                final RecordingMode recordingMode = sessionForm.getRecordingMode();
+                if (recordingMode != null) {
+                    setSession.setRecordingModeType(recordingMode.getBlackboardRecordingMode());
+                }
+                setSession.setHideParticipantNames(sessionForm.isHideParticipantNames());
+                setSession.setAllowInSessionInvites(sessionForm.isAllowInSessionInvites());
+            }
+
+            final Object objSessionResponse = sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/SetSession", setSession);
+            JAXBElement<BlackboardSessionResponseCollection> jaxbSessionResponse = (JAXBElement<BlackboardSessionResponseCollection>) objSessionResponse;
+            
+            final BlackboardSessionResponseCollection sessionResponses = jaxbSessionResponse.getValue();
+            final BlackboardSessionResponse sessionResponse = DataAccessUtils.singleResult(sessionResponses.getSessionResponses());
+            
+            
+            BlackboardBuildSessionUrl buildGuestUrlRequest = new BlackboardBuildSessionUrl();
+            buildGuestUrlRequest.setSessionId(sessionResponse.getSessionId());
+            buildGuestUrlRequest.setDisplayName("GUEST_PLACEHOLDER");
+            final Object objGuestUrlResponse = sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/BuildSessionUrl", buildGuestUrlRequest);
+            JAXBElement<BlackboardUrlResponse> jaxbGuestUrlResponse = (JAXBElement<BlackboardUrlResponse>) objGuestUrlResponse;
+            final String guestUrl = jaxbGuestUrlResponse.getValue().getUrl();
+
+            //Remove guest username so that guest user's are prompted
+            this.sessionDao.createSession(sessionResponse, guestUrl.replace("&amp;username=GUEST_PLACEHOLDER", ""));
+        }
+        else {
+            //TODO just verifying access?
+            this.getSession(user, sessionForm.getSessionId(), fullAccess);
+        }
+    }
+
+    @Override
+    public Session getSession(ConferenceUser user, long sessionId, boolean fullAccess) {
+        final Session session = this.sessionDao.getSession(sessionId);
+        if (session == null) {
+            return null;
+        }
+        
+        if (fullAccess || session.getCreator().equals(user)) {
+            return session;
+        }
+        
+        final Set<ConferenceUser> sessionChairs = this.sessionDao.getSessionChairs(session);
+        if (sessionChairs.contains(user)) {
+            return session;
+        }
+        
+        final Set<ConferenceUser> sessionNonChairs = this.sessionDao.getSessionNonChairs(session);
+        if (sessionNonChairs.contains(user)) {
+            return session;
+        }
+        
+        throw new RuntimeException("TODO better exception and error msg about illegal access");
+    }
+	
+	
+	
 
 //	public Set<BlackboardSession> getSessionsForUser(String uid) {
 //        List<BlackboardSession> sessionList = blackboardSessionDao.getSessionsForUser(uid);

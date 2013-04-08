@@ -7,9 +7,9 @@ import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 
 public interface ConferenceUserDao {
-    Set<Session> getChairedSessionsForUser(long userId);
+    Set<Session> getChairedSessionsForUser(ConferenceUser user);
 
-    Set<Session> getNonChairedSessionsForUser(long userId);
+    Set<Session> getNonChairedSessionsForUser(ConferenceUser user);
     
     ConferenceUser createBlackboardUser(String email, String displayName);
 

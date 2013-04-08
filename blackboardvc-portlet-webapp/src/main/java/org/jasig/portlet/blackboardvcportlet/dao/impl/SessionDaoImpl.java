@@ -12,6 +12,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.jasig.jpa.BaseJpaDao;
 import org.jasig.jpa.OpenEntityManager;
@@ -63,8 +64,12 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
     }
 
     @Override
-    public Set<ConferenceUser> getSessionChairs(long sessionId) {
-        final SessionImpl sessionImpl = this.getSession(sessionId);
+    public Set<ConferenceUser> getSessionChairs(Session session) {
+        if (session == null) {
+            return null;
+        }
+        
+        final SessionImpl sessionImpl = this.getSession(session.getSessionId());
         if (sessionImpl == null) {
             return null;
         }
@@ -74,8 +79,12 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
     }
 
     @Override
-    public Set<ConferenceUser> getSessionNonChairs(long sessionId) {
-        final SessionImpl sessionImpl = this.getSession(sessionId);
+    public Set<ConferenceUser> getSessionNonChairs(Session session) {
+        if (session == null) {
+            return null;
+        }
+        
+        final SessionImpl sessionImpl = this.getSession(session.getSessionId());
         if (sessionImpl == null) {
             return null;
         }
@@ -85,9 +94,9 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
     }
     
     @Override
-    public Set<SessionRecording> getSessionRecordings(long sessionId) {
+    public Set<SessionRecording> getSessionRecordings(Session session) {
         // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -156,7 +165,7 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
      * Sync all data from the {@link BlackboardSessionResponse} to the {@link SessionImpl}
      */
     private void updateBlackboardSession(BlackboardSessionResponse sessionResponse, SessionImpl session) {
-        session.setAccessType(resolveAccessType(sessionResponse.getAccessType()));
+        session.setAccessType(AccessType.resolveAccessType(sessionResponse.getAccessType()));
         session.setAllowInSessionInvites(sessionResponse.isAllowInSessionInvites());
         session.setBoundaryTime(sessionResponse.getBoundaryTime());
         session.setChairNotes(sessionResponse.getChairNotes());
@@ -168,7 +177,7 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
         session.setNonChairNotes(sessionResponse.getNonChairNotes());
         session.setOpenChair(sessionResponse.isOpenChair());
         session.setRaiseHandOnEnter(sessionResponse.isRaiseHandOnEnter());
-        session.setRecordingMode(resolveRecordingMode(sessionResponse.getRecordingModeType()));
+        session.setRecordingMode(RecordingMode.resolveRecordingMode(sessionResponse.getRecordingModeType()));
         session.setRecordings(sessionResponse.isRecordings());
         session.setReserveSeats(sessionResponse.getReserveSeats());
         session.setSessionName(sessionResponse.getSessionName());
@@ -180,36 +189,6 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
         updateUserList(sessionResponse, session, UserListType.CHAIR);
         
         updateUserList(sessionResponse, session, UserListType.NON_CHAIR);
-    }
-
-    private RecordingMode resolveRecordingMode(long recordingModeType) {
-        switch ((int)recordingModeType) {
-            default:
-            case 1: {
-                return RecordingMode.MANUAL;
-            }
-            case 2: {
-                return RecordingMode.AUTOMATIC;
-            }
-            case 3: {
-                return RecordingMode.DISABLE;
-            }
-        }
-    }
-
-    private AccessType resolveAccessType(long accessTypeId) {
-        switch ((int)accessTypeId) {
-            default:
-            case 1: {
-                return AccessType.PRIVATE;
-            }
-            case 2: {
-                return AccessType.RESTRICTED;
-            }
-            case 3: {
-                return AccessType.PUBLIC;
-            }
-        }
     }
     
     
@@ -227,7 +206,14 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
         
         final Set<ConferenceUser> existingUsers = type.getUserSet(blackboardSession);
         final Set<ConferenceUser> newUsers = new HashSet<ConferenceUser>(userIds.length);
-        for (final String userId : userIds) {
+        for (String userId : userIds) {
+            userId = StringUtils.trimToNull(userId);
+            
+            //Skip empty/null userIds
+            if (userId == null) {
+                continue;
+            }
+            
             //find the DB user object for the chair
             final ConferenceUserImpl user = this.blackboardUserDao.getOrCreateUser(userId);
             

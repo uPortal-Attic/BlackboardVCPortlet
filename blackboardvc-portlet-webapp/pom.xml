@@ -212,6 +212,10 @@
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-xc</artifactId>
         </dependency>
+        <dependency>
+          <groupId>joda-time</groupId>
+          <artifactId>joda-time-jsptags</artifactId>
+      </dependency>
         
         <dependency>
             <groupId>org.hibernate</groupId>
