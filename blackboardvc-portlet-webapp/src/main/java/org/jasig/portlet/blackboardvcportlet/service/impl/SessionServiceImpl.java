@@ -128,7 +128,7 @@ public class SessionServiceImpl implements SessionService
             final String guestUrl = jaxbGuestUrlResponse.getValue().getUrl();
 
             //Remove guest username so that guest user's are prompted
-            this.sessionDao.createSession(sessionResponse, guestUrl.replace("&amp;username=GUEST_PLACEHOLDER", ""));
+            this.sessionDao.createSession(sessionResponse, guestUrl.replace("&username=GUEST_PLACEHOLDER", ""));
         }
         else {
             //TODO just verifying access?
