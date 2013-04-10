@@ -2,12 +2,10 @@ package org.jasig.portlet.blackboardvcportlet.service.impl;
 
 import java.util.Set;
 
-import javax.xml.bind.JAXBElement;
-
 import org.jasig.portlet.blackboardvcportlet.dao.ConferenceUserDao;
 import org.jasig.portlet.blackboardvcportlet.dao.SessionDao;
+import org.jasig.portlet.blackboardvcportlet.dao.ws.SessionWSDao;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
-import org.jasig.portlet.blackboardvcportlet.data.RecordingMode;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.service.MailTemplateService;
 import org.jasig.portlet.blackboardvcportlet.service.RecordingService;
@@ -17,20 +15,15 @@ import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceOperation
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.elluminate.sas.BlackboardBuildSessionUrl;
 import com.elluminate.sas.BlackboardSessionResponse;
-import com.elluminate.sas.BlackboardSessionResponseCollection;
-import com.elluminate.sas.BlackboardSetSession;
-import com.elluminate.sas.BlackboardUrlResponse;
 
 @Service
 public class SessionServiceImpl implements SessionService
 {
-	private static final Logger logger = LoggerFactory.getLogger(SessionService.class);
+	private static final Logger logger = LoggerFactory.getLogger(SessionServiceImpl.class);
 
     private SessionDao sessionDao;
     private ConferenceUserDao conferenceUserDao;
@@ -40,6 +33,7 @@ public class SessionServiceImpl implements SessionService
 //	private SessionPresentationDao sessionPresentationDao;
 //	private SessionMultimediaDao sessionMultimediaDao;
 	private SASWebServiceOperations sasWebServiceOperations;
+	private SessionWSDao sessionWSDao;
 //	private ObjectFactory objectFactory;
 	
 	
@@ -87,48 +81,21 @@ public class SessionServiceImpl implements SessionService
 	{
 		this.sasWebServiceOperations = sasWebServiceOperations;
 	}
+	
+	@Autowired
+	public void setSessionWSDao(SessionWSDao value) {
+		this.sessionWSDao = value;
+	}
 
     @Override
     @Transactional
     public void createOrUpdateSession(ConferenceUser user, SessionForm sessionForm, boolean fullAccess) {
         if (sessionForm.isNewSession()) {
-            final BlackboardSetSession setSession = new BlackboardSetSession();
-            setSession.setCreatorId(user.getEmail());
-            setSession.setSessionName(sessionForm.getSessionName());
-            setSession.setStartTime(sessionForm.getStartTime().getMillis());
-            setSession.setEndTime(sessionForm.getEndTime().getMillis());
-            setSession.setBoundaryTime(sessionForm.getBoundaryTime());
-
-            if (fullAccess) {
-                setSession.setMaxTalkers(sessionForm.getMaxTalkers());
-                setSession.setMaxCameras(sessionForm.getMaxCameras());
-                setSession.setMustBeSupervised(sessionForm.isMustBeSupervised());
-                setSession.setPermissionsOn(sessionForm.isPermissionsOn());
-                setSession.setRaiseHandOnEnter(sessionForm.isRaiseHandOnEnter());
-                final RecordingMode recordingMode = sessionForm.getRecordingMode();
-                if (recordingMode != null) {
-                    setSession.setRecordingModeType(recordingMode.getBlackboardRecordingMode());
-                }
-                setSession.setHideParticipantNames(sessionForm.isHideParticipantNames());
-                setSession.setAllowInSessionInvites(sessionForm.isAllowInSessionInvites());
-            }
-
-            final Object objSessionResponse = sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/SetSession", setSession);
-            JAXBElement<BlackboardSessionResponseCollection> jaxbSessionResponse = (JAXBElement<BlackboardSessionResponseCollection>) objSessionResponse;
-            
-            final BlackboardSessionResponseCollection sessionResponses = jaxbSessionResponse.getValue();
-            final BlackboardSessionResponse sessionResponse = DataAccessUtils.singleResult(sessionResponses.getSessionResponses());
-            
-            
-            BlackboardBuildSessionUrl buildGuestUrlRequest = new BlackboardBuildSessionUrl();
-            buildGuestUrlRequest.setSessionId(sessionResponse.getSessionId());
-            buildGuestUrlRequest.setDisplayName("GUEST_PLACEHOLDER");
-            final Object objGuestUrlResponse = sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/BuildSessionUrl", buildGuestUrlRequest);
-            JAXBElement<BlackboardUrlResponse> jaxbGuestUrlResponse = (JAXBElement<BlackboardUrlResponse>) objGuestUrlResponse;
-            final String guestUrl = jaxbGuestUrlResponse.getValue().getUrl();
-
-            //Remove guest username so that guest user's are prompted
-            this.sessionDao.createSession(sessionResponse, guestUrl.replace("&username=GUEST_PLACEHOLDER", ""));
+        	BlackboardSessionResponse sessionResponse = sessionWSDao.createSession(user, sessionForm, fullAccess);
+        	String guestUrl = sessionWSDao.buildSessionUrl(sessionResponse.getSessionId(), "GUEST_PLACEHOLDER");
+        	
+        	//Remove guest username so that guest user's are prompted
+            sessionDao.createSession(sessionResponse, guestUrl.replace("&username=GUEST_PLACEHOLDER", ""));
         }
         else {
             //TODO just verifying access?

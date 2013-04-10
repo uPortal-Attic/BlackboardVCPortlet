@@ -2,11 +2,16 @@ package org.jasig.portlet.blackboardvcportlet.dao.ws;
 
 import java.util.List;
 
+import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
+import org.jasig.portlet.blackboardvcportlet.service.SessionForm;
+
+import com.elluminate.sas.BlackboardSessionResponse;
+
 public interface SessionWSDao {
 	
 	//create
-	public void buildSessionUrl(int sessionId, String displayName, String uid);
-	public void createSession(Object session);
+	public BlackboardSessionResponse createSession(ConferenceUser user, SessionForm sessionForm, boolean fullAccess);
+	public String buildSessionUrl(long sessionId, String displayName);
 	//TODO : this might just go into create session
 	public void createSessionTelephony(int sessionId, Object telephony);
 
@@ -25,5 +30,6 @@ public interface SessionWSDao {
 	public void deleteSession(int sessionId);
 	public void clearSessionChairList(int sessionId);
 	public void clearSessionNonChairList(int sessionId);
+	
 	
 }
