@@ -1,23 +1,14 @@
 package org.jasig.portlet.blackboardvcportlet.service.impl;
 
-import java.util.List;
-
-import javax.xml.bind.JAXBElement;
-
 import org.jasig.portlet.blackboardvcportlet.dao.ServerConfigurationDao;
+import org.jasig.portlet.blackboardvcportlet.dao.ws.GlobalSettingsWSDao;
 import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
 import org.jasig.portlet.blackboardvcportlet.service.ServerConfigurationService;
-import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceOperations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
-import com.elluminate.sas.BlackboardGetServerConfigurationResponseCollection;
-import com.elluminate.sas.BlackboardServerConfiguration;
-import com.elluminate.sas.BlackboardServerConfigurationResponse;
-import com.elluminate.sas.ObjectFactory;
 
 @Service("serverConfigurationService")
 public class ServerConfigurationServiceImpl implements ServerConfigurationService
@@ -25,7 +16,7 @@ public class ServerConfigurationServiceImpl implements ServerConfigurationServic
 	private static final Logger logger = LoggerFactory.getLogger(ServerConfigurationServiceImpl.class);
 
     private ServerConfigurationDao serverConfigurationDao;
-	private SASWebServiceOperations sasWebServiceTemplate;
+	private GlobalSettingsWSDao globalSettingsWSDao;
 
 	@Autowired
 	public void setServerConfigurationDao(ServerConfigurationDao serverConfigurationDao)
@@ -34,9 +25,8 @@ public class ServerConfigurationServiceImpl implements ServerConfigurationServic
 	}
 
 	@Autowired
-	public void setSasWebServiceTemplate(SASWebServiceOperations sasWebServiceTemplate)
-	{
-		this.sasWebServiceTemplate = sasWebServiceTemplate;
+	public void setGlobalSettingWSDao(GlobalSettingsWSDao value) {
+		this.globalSettingsWSDao = value;
 	}
 
 	/**
@@ -63,26 +53,19 @@ public class ServerConfigurationServiceImpl implements ServerConfigurationServic
      * @param prefs PortletPreferences
      */
     public ServerConfiguration refreshServerConfiguration() {
-        final ServerConfiguration serverConfiguration = serverConfigurationDao.getServerConfiguration();
-        if (serverConfiguration != null && serverConfiguration.getLastUpdated().plusHours(1).isAfterNow()) {
+        final ServerConfiguration currentServerConfiguration = serverConfigurationDao.getServerConfiguration();
+        if (currentServerConfiguration != null && currentServerConfiguration.getLastUpdated().plusHours(1).isAfterNow()) {
             //Nothing to do, serverConfiguration exists and is less than 1 hour old
-            return serverConfiguration;
+            return currentServerConfiguration;
         }
-		logger.debug("refreshing server configuration");
-		try
-		{ // Call Web Service Operation
-		    final JAXBElement<BlackboardServerConfiguration> request = new ObjectFactory().createGetServerConfiguration(null);
-
-		    BlackboardGetServerConfigurationResponseCollection responseCollection = (BlackboardGetServerConfigurationResponseCollection) sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/GetServerConfiguration", request);
-			List<BlackboardServerConfigurationResponse> configResult = responseCollection.getServerConfigurationResponses();
-
-			logger.debug("Result = " + configResult);
-			for (BlackboardServerConfigurationResponse response : configResult) {
-			    return this.serverConfigurationDao.createOrUpdateConfiguration(response);
+        
+		try {
+			final ServerConfiguration newServerConfiguration = this.serverConfigurationDao.createOrUpdateConfiguration(globalSettingsWSDao.getServerConfiguration());
+			if(currentServerConfiguration == null || currentServerConfiguration.getRandomCallbackUrl() == null) {
+				globalSettingsWSDao.setApiCallbackUrl(newServerConfiguration.getRandomCallbackUrl());
 			}
-		}
-		catch (Exception ex)
-		{
+			return newServerConfiguration;
+		} catch (Exception ex) {
 			logger.error("Failed to refresh ServerConfiguration", ex);
 		}
 		

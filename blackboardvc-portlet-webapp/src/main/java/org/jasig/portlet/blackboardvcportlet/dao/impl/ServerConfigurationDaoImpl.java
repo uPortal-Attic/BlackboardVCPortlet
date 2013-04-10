@@ -25,7 +25,7 @@ public class ServerConfigurationDaoImpl extends BaseJpaDao implements ServerConf
         }
         
         if(serverConfiguration.getRandomCallbackUrl() == null) {
-        	//Create random callback URL and send that to blackboard
+        	//Create random callback URL for blackboard callback
         	serverConfiguration.setRandomCallbackUrl(RandomStringUtils.randomAlphanumeric(20));
         }
         

@@ -1,23 +1,15 @@
 package org.jasig.portlet.blackboardvcportlet.service.impl;
 
-import java.util.List;
-
-import javax.xml.bind.JAXBElement;
-
 import org.jasig.portlet.blackboardvcportlet.dao.ServerQuotaDao;
+import org.jasig.portlet.blackboardvcportlet.dao.ws.GlobalSettingsWSDao;
 import org.jasig.portlet.blackboardvcportlet.data.ServerQuota;
 import org.jasig.portlet.blackboardvcportlet.service.ServerQuotaService;
-import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceOperations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.elluminate.sas.BlackboardGetServerQuotasResponseCollection;
-import com.elluminate.sas.BlackboardServerQuotas;
-import com.elluminate.sas.BlackboardServerQuotasResponse;
-import com.elluminate.sas.ObjectFactory;
 
 /**
  * Service class for Server Quota
@@ -29,7 +21,7 @@ public class ServerQuotaServiceImpl implements ServerQuotaService
 	private static final Logger logger = LoggerFactory.getLogger(ServerQuotaServiceImpl.class);
 
     private ServerQuotaDao serverQuotaDao;
-	private SASWebServiceOperations sasWebServiceTemplate;
+	private GlobalSettingsWSDao globalSettingsWSDao;
 
 	@Autowired
 	public void setServerQuotaDao(ServerQuotaDao serverQuotaDao)
@@ -38,9 +30,8 @@ public class ServerQuotaServiceImpl implements ServerQuotaService
 	}
 
 	@Autowired
-	public void setSasWebServiceTemplate(SASWebServiceOperations sasWebServiceTemplate)
-	{
-		this.sasWebServiceTemplate = sasWebServiceTemplate;
+	public void setGlobalSettingWSDao(GlobalSettingsWSDao value) {
+		this.globalSettingsWSDao = value;
 	}
 
     /**
@@ -74,19 +65,9 @@ public class ServerQuotaServiceImpl implements ServerQuotaService
 	    }
 	    
 		logger.info("Server Quota being refreshed");
-		try
-		{
-			// Call Web Service Operation
-			final JAXBElement<BlackboardServerQuotas> request = new ObjectFactory().createGetServerQuotas(null);
-			BlackboardGetServerQuotasResponseCollection serverQuotasResponseCollection = (BlackboardGetServerQuotasResponseCollection)sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/GetServerQuotas", request);
-			List<BlackboardServerQuotasResponse> quotaResult = serverQuotasResponseCollection.getServerQuotasResponses();
-			logger.debug("Result = " + quotaResult);
-			for (BlackboardServerQuotasResponse response : quotaResult) {
-			    return this.serverQuotaDao.createOrUpdateQuota(response);
-			}
-		}
-		catch (Exception ex)
-		{
+		try {
+			return this.serverQuotaDao.createOrUpdateQuota(globalSettingsWSDao.getServerQuota());
+		} catch (Exception ex) {
 		    logger.error("Failed to refresh ServerQuota", ex);
 		}
 		
