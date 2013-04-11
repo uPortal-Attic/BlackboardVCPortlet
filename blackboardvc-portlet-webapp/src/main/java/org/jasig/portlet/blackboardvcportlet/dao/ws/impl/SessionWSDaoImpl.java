@@ -2,7 +2,6 @@ package org.jasig.portlet.blackboardvcportlet.dao.ws.impl;
 
 import java.util.List;
 
-import javax.portlet.UnavailableException;
 import javax.xml.bind.JAXBElement;
 
 import org.jasig.portlet.blackboardvcportlet.dao.ws.SessionWSDao;
@@ -11,13 +10,11 @@ import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingMode;
 import org.jasig.portlet.blackboardvcportlet.service.SessionForm;
 import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceOperations;
-import org.omg.PortableInterceptor.SUCCESSFUL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.support.DataAccessUtils;
 
 import com.elluminate.sas.BlackboardBuildSessionUrl;
 import com.elluminate.sas.BlackboardClearSessionUserList;
-import com.elluminate.sas.BlackboardGetServerConfigurationResponseCollection;
 import com.elluminate.sas.BlackboardListSession;
 import com.elluminate.sas.BlackboardListSessionAttendance;
 import com.elluminate.sas.BlackboardListSessionAttendanceResponseCollection;
@@ -26,10 +23,10 @@ import com.elluminate.sas.BlackboardSessionAttendanceResponse;
 import com.elluminate.sas.BlackboardSessionResponse;
 import com.elluminate.sas.BlackboardSessionResponseCollection;
 import com.elluminate.sas.BlackboardSessionTelephony;
+import com.elluminate.sas.BlackboardSessionTelephonyResponse;
 import com.elluminate.sas.BlackboardSessionTelephonyResponseCollection;
 import com.elluminate.sas.BlackboardSetSession;
 import com.elluminate.sas.BlackboardSetSessionTelephony;
-import com.elluminate.sas.BlackboardSuccessResponse;
 import com.elluminate.sas.BlackboardUpdateSession;
 import com.elluminate.sas.BlackboardUrlResponse;
 import com.elluminate.sas.ObjectFactory;
@@ -136,7 +133,7 @@ public class SessionWSDaoImpl implements SessionWSDao {
 	}
 
 	@Override
-	public List getSessionTelephony(int sessionId) {
+	public List<BlackboardSessionTelephonyResponse> getSessionTelephony(int sessionId) {
 		BlackboardSessionTelephony request = new ObjectFactory().createBlackboardSessionTelephony();
 		request.setSessionId(sessionId);
 		final BlackboardSessionTelephonyResponseCollection response = (BlackboardSessionTelephonyResponseCollection) sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/ListSessionTelephony", request);

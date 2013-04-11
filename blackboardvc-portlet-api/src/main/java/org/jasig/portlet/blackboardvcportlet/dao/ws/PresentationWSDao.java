@@ -23,8 +23,8 @@ public interface PresentationWSDao {
 	public boolean linkPresentationToSession(Long sessionId, Long presentationId);
 
 	//read
-	public List getSessionPresentations(Long sessionId);
-	public List getRepositoryPresentations(String creatorId, Long presentationId, String description);
+	public List<BlackboardPresentationResponse> getSessionPresentations(Long sessionId);
+	public List<BlackboardPresentationResponse> getRepositoryPresentations(String creatorId, Long presentationId, String description);
 	
 	//delete
 	public boolean deletePresentation(Long presentationId);

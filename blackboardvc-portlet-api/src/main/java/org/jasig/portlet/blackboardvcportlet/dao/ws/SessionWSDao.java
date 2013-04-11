@@ -5,7 +5,9 @@ import java.util.List;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.service.SessionForm;
 
+import com.elluminate.sas.BlackboardSessionAttendanceResponse;
 import com.elluminate.sas.BlackboardSessionResponse;
+import com.elluminate.sas.BlackboardSessionTelephonyResponse;
 import com.elluminate.sas.BlackboardSetSessionTelephony;
 
 public interface SessionWSDao {
@@ -21,8 +23,8 @@ public interface SessionWSDao {
 	public List<BlackboardSessionResponse> getSessions(String userId, String groupingId, Long sessionId, String creatorId, Long startTime, Long endTime, String sessionName);
 	
 	//Misc. reads that have to do with a session but don't warrant there own dao
-	public List getSessionAttendance(int sessionId, Object startTime);
-	public List getSessionTelephony(int sessionId);
+	public List<BlackboardSessionAttendanceResponse> getSessionAttendance(int sessionId, Object startTime);
+	public List<BlackboardSessionTelephonyResponse> getSessionTelephony(int sessionId);
 	
 	//update
 	public BlackboardSessionResponse updateSession(ConferenceUser user, SessionForm sessionForm, boolean fullAccess);

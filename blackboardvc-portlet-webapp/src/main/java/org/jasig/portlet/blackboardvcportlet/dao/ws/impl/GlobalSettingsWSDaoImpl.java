@@ -5,6 +5,7 @@ import java.util.List;
 import javax.xml.bind.JAXBElement;
 
 import org.jasig.portlet.blackboardvcportlet.dao.ws.GlobalSettingsWSDao;
+import org.jasig.portlet.blackboardvcportlet.dao.ws.WSDaoUtils;
 import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceOperations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +24,6 @@ import com.elluminate.sas.BlackboardServerQuotasResponse;
 import com.elluminate.sas.BlackboardServerVersionResponse;
 import com.elluminate.sas.BlackboardServerVersions;
 import com.elluminate.sas.BlackboardSetApiCallbackUrl;
-import com.elluminate.sas.BlackboardSuccessResponse;
 import com.elluminate.sas.ObjectFactory;
 
 @Service
@@ -77,9 +77,7 @@ public class GlobalSettingsWSDaoImpl implements GlobalSettingsWSDao {
 		//create URL
 		apiCallbackRequest.setApiCallbackUrl(callbackURL + (callbackURL.lastIndexOf('/') == (callbackURL.length() - 1) ? "" : "/") + randomURLToken);
 		//send new URL to blackboard	
-		JAXBElement<BlackboardSuccessResponse> jaxbApiCallbackUrlResponse = (JAXBElement<BlackboardSuccessResponse>) sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/SetApiCallbackUrl", apiCallbackRequest);
-		BlackboardSuccessResponse apiCallbackUrlResponse = jaxbApiCallbackUrlResponse.getValue();
-		if(!apiCallbackUrlResponse.isSuccess()) {
+		if(!WSDaoUtils.isSuccessful(sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/SetApiCallbackUrl", apiCallbackRequest))) {
 			logger.warn("Issue sending blackboard api callback URL");
 			return false;
 		}
