@@ -9,6 +9,7 @@ import org.jasig.portlet.blackboardvcportlet.dao.ws.WSDaoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.stereotype.Service;
 
 import com.elluminate.sas.BlackboardListRepositoryPresentation;
 import com.elluminate.sas.BlackboardPresentationResponse;
@@ -18,6 +19,7 @@ import com.elluminate.sas.BlackboardRemoveSessionPresentation;
 import com.elluminate.sas.BlackboardSetSessionPresentation;
 import com.elluminate.sas.ObjectFactory;
 
+@Service
 public class PresentationWSDaoImpl extends ContentWSDaoImpl implements PresentationWSDao {
 	
 	private static final Logger logger = LoggerFactory.getLogger(PresentationWSDaoImpl.class);

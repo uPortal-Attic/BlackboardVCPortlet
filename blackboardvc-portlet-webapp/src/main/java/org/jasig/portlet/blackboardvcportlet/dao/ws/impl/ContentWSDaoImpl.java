@@ -5,11 +5,13 @@ import javax.activation.DataHandler;
 import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceOperations;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.elluminate.sas.BlackboardListSessionContent;
 import com.elluminate.sas.BlackboardUploadRepositoryContent;
 import com.elluminate.sas.ObjectFactory;
 
+@Service
 public abstract class ContentWSDaoImpl {
 	
 	public enum ContentType {Multimedia, Presentation} ;

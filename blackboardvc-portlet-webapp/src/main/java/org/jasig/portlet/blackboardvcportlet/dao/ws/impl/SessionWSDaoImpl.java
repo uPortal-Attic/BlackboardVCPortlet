@@ -12,6 +12,7 @@ import org.jasig.portlet.blackboardvcportlet.service.SessionForm;
 import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceOperations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.stereotype.Service;
 
 import com.elluminate.sas.BlackboardBuildSessionUrl;
 import com.elluminate.sas.BlackboardClearSessionUserList;
@@ -31,6 +32,7 @@ import com.elluminate.sas.BlackboardUpdateSession;
 import com.elluminate.sas.BlackboardUrlResponse;
 import com.elluminate.sas.ObjectFactory;
 
+@Service
 public class SessionWSDaoImpl implements SessionWSDao {
 	
 	private SASWebServiceOperations sasWebServiceOperations;

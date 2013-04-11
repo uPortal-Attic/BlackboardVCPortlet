@@ -1,9 +1,12 @@
 package org.jasig.portlet.blackboardvcportlet.dao.ws.impl;
 
+import static org.jasig.portlet.blackboardvcportlet.dao.ws.WSDaoUtils.isSuccessful;
+
 import java.util.List;
 
 import org.jasig.portlet.blackboardvcportlet.dao.ws.RecordingWSDao;
 import org.jasig.portlet.blackboardvcportlet.dao.ws.WSDaoUtils;
+import org.springframework.stereotype.Service;
 
 import com.elluminate.sas.BlackboardBuildRecordingUrl;
 import com.elluminate.sas.BlackboardListRecordingLong;
@@ -17,8 +20,7 @@ import com.elluminate.sas.BlackboardSetRecordingSecureSignOn;
 import com.elluminate.sas.BlackboardUrlResponse;
 import com.elluminate.sas.ObjectFactory;
 
-import static org.jasig.portlet.blackboardvcportlet.dao.ws.WSDaoUtils.isSuccessful;
-
+@Service
 public class RecordingWSDaoImpl extends ContentWSDaoImpl implements RecordingWSDao {
 
 	@Override

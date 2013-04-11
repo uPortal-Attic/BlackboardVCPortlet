@@ -39,6 +39,7 @@
     <context:property-placeholder location="classpath:/webapp.properties" />
     
     <context:component-scan base-package="org.jasig.portlet.blackboardvcportlet.dao.impl" />
+    <context:component-scan base-package="org.jasig.portlet.blackboardvcportlet.dao.ws.impl" />
     <context:component-scan base-package="org.jasig.portlet.blackboardvcportlet.data" />
     <context:component-scan base-package="org.jasig.portlet.blackboardvcportlet.service.impl" />
     
