@@ -3,21 +3,16 @@ package org.jasig.portlet.blackboardvcportlet.dao.ws.impl;
 import javax.activation.DataHandler;
 
 import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceOperations;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.elluminate.sas.BlackboardListRepositoryMultimedia;
 import com.elluminate.sas.BlackboardListSessionContent;
-import com.elluminate.sas.BlackboardMultimediaResponseCollection;
 import com.elluminate.sas.BlackboardUploadRepositoryContent;
 import com.elluminate.sas.ObjectFactory;
 
 public abstract class ContentWSDaoImpl {
 	
-	private static final Logger logger = LoggerFactory.getLogger(ContentWSDaoImpl.class);
-	
-	public enum ContentType {Multimedia, Presentation, Recording} ;
+	public enum ContentType {Multimedia, Presentation} ;
 	
 	SASWebServiceOperations sasWebServiceOperations;
 	

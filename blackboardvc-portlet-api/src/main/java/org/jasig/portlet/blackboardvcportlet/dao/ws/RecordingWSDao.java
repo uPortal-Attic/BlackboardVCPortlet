@@ -2,14 +2,17 @@ package org.jasig.portlet.blackboardvcportlet.dao.ws;
 
 import java.util.List;
 
-public interface RecordingWSDao {
-	public List getRecordingLong(int userId, int groupingId, int sessionId, int creatorId, Object startTime, Object endTime, String sessionName);
+import com.elluminate.sas.BlackboardRecordingLongResponse;
+import com.elluminate.sas.BlackboardRecordingShortResponse;
 
-	public List getRecordingShort(int userId, int groupingId, int sessionId, int creatorId, Object startTime, Object endTime, String sessionName);
+public interface RecordingWSDao {
+	public List<BlackboardRecordingLongResponse> getRecordingLong(String userId, String groupingId, Long sessionId, String creatorId, Long startTime, Long endTime, String sessionName);
+
+	public List<BlackboardRecordingShortResponse> getRecordingShort(String userId, String groupingId, Long sessionId, String creatorId, Long startTime, Long endTime, String sessionName);
 	
-	public void removeRecording(int recordingId);
+	public boolean removeRecording(Long recordingId);
 	
-	public String buildRecordingUrl(int recordingId);
+	public String buildRecordingUrl(Long recordingId);
 	
-	public void updateRecordingSecureSignOn(int recordingId, String secureSignOn);
+	public boolean updateRecordingSecureSignOn(Long recordingId, boolean secureSignOn);
 }
