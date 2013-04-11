@@ -71,7 +71,7 @@ public class GlobalSettingsWSDaoImpl implements GlobalSettingsWSDao {
 	}
 
 	@Override
-	public void setApiCallbackUrl(String randomURLToken) {
+	public boolean setApiCallbackUrl(String randomURLToken) {
 		//create request object
 		final BlackboardSetApiCallbackUrl apiCallbackRequest = new ObjectFactory().createBlackboardSetApiCallbackUrl();
 		//create URL
@@ -81,7 +81,9 @@ public class GlobalSettingsWSDaoImpl implements GlobalSettingsWSDao {
 		BlackboardSuccessResponse apiCallbackUrlResponse = jaxbApiCallbackUrlResponse.getValue();
 		if(!apiCallbackUrlResponse.isSuccess()) {
 			logger.warn("Issue sending blackboard api callback URL");
+			return false;
 		}
+		return true;
 		
 	}
 

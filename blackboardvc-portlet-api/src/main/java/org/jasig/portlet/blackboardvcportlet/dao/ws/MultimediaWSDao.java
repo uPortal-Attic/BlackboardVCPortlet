@@ -2,25 +2,22 @@ package org.jasig.portlet.blackboardvcportlet.dao.ws;
 
 import java.util.List;
 
+import javax.activation.DataHandler;
+
+import com.elluminate.sas.BlackboardMultimediaResponse;
+
 public interface MultimediaWSDao {
 	//read
-	public List getRepositoryMultimedias(int creatorId, int multimediaId, String description);
-	public List getSessionRepositoryMultimedias(int sessionId);
+	public List<BlackboardMultimediaResponse> getRepositoryMultimedias(String creatorId, Long multimediaId, String description);
+	public List<BlackboardMultimediaResponse> getSessionRepositoryMultimedias(Long sessionId);
 	
 	//create
-	/**
-	 * Note this uploads the file then links it to the session
-	 * @param sessionId
-	 * @param creatorId
-	 * @param filename
-	 * @param description
-	 * @param content
-	 */
-	public void uploadRepositoryMultimedia(int sessionId, String creatorId, String filename, String description, Object content);
-	public void createSessionMultimedia(int sessionId, Object multimedia);
+	public BlackboardMultimediaResponse uploadRepositoryMultimedia(String creatorId, String filename, String description, DataHandler content);
+	public BlackboardMultimediaResponse createSessionMultimedia(Long sessionId, String creatorId, String filename, String description, DataHandler content);
+	public boolean linkSessionToMultimedia(Long sessionId, Long multimediaId);
 
 	//delete
-	public void removeRepositoryMultimedia(int multimediaId);
-	public void removeSessionMultimedia(int sessionId, int multimediaId);
+	public boolean removeRepositoryMultimedia(int multimediaId);
+	public boolean removeSessionMultimedia(int sessionId, int multimediaId);
 	
 }

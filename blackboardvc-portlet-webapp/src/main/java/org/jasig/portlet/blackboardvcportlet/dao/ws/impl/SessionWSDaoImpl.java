@@ -6,6 +6,7 @@ import javax.portlet.UnavailableException;
 import javax.xml.bind.JAXBElement;
 
 import org.jasig.portlet.blackboardvcportlet.dao.ws.SessionWSDao;
+import org.jasig.portlet.blackboardvcportlet.dao.ws.WSDaoUtils;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingMode;
 import org.jasig.portlet.blackboardvcportlet.service.SessionForm;
@@ -83,15 +84,12 @@ public class SessionWSDaoImpl implements SessionWSDao {
         final Object objGuestUrlResponse = sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/BuildSessionUrl", buildGuestUrlRequest);
         JAXBElement<BlackboardUrlResponse> jaxbGuestUrlResponse = (JAXBElement<BlackboardUrlResponse>) objGuestUrlResponse;
         return  jaxbGuestUrlResponse.getValue().getUrl();
-		
 	}
 
 	@Override
 	public boolean createSessionTelephony(int sessionId, BlackboardSetSessionTelephony telephony) {
 		telephony.setSessionId(sessionId);
-		final Object objSessionTelephonyResponse = sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/SetSessionTelephony", telephony);
-		JAXBElement<BlackboardSuccessResponse> response = (JAXBElement<BlackboardSuccessResponse>) objSessionTelephonyResponse;
-		return response.getValue().isSuccess();
+		return WSDaoUtils.isSuccessful(sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/SetSessionTelephony", telephony));
 	}
 
 	@Override
@@ -176,9 +174,7 @@ public class SessionWSDaoImpl implements SessionWSDao {
 	public boolean deleteSession(int sessionId) {
 		BlackboardRemoveSession request = new ObjectFactory().createBlackboardRemoveSession();
 		request.setSessionId(sessionId);
-		
-		final Object response = sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/RemoveSession", request);
-		return (response instanceof BlackboardSuccessResponse && ((BlackboardSuccessResponse)response).isSuccess());
+		return WSDaoUtils.isSuccessful(sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/RemoveSession", request));
 	}
 
 	@Override
@@ -195,7 +191,6 @@ public class SessionWSDaoImpl implements SessionWSDao {
 	private boolean clearSessionUserList(int sessionId, boolean isChairList) {
 		BlackboardClearSessionUserList request = new ObjectFactory().createBlackboardClearSessionUserList();
 		request.setSessionId(sessionId);
-		final Object response = sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/ClearSession"+ (isChairList ? "" : "Non"+"ChairList") , request);
-		return (response instanceof BlackboardSuccessResponse && ((BlackboardSuccessResponse)response).isSuccess());
+		return WSDaoUtils.isSuccessful(sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/ClearSession"+ (isChairList ? "" : "Non"+"ChairList") , request));
 	}
 }

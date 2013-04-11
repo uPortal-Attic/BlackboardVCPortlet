@@ -8,5 +8,5 @@ public interface GlobalSettingsWSDao {
 	public BlackboardServerConfigurationResponse getServerConfiguration();
 	public BlackboardServerQuotasResponse getServerQuota();
 	public BlackboardServerVersionResponse getServerVersions();
-	public void setApiCallbackUrl(String randomCallbackUrl);
+	public boolean setApiCallbackUrl(String randomCallbackUrl);
 }
