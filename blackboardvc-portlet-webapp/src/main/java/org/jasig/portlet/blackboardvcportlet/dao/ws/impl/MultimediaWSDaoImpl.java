@@ -6,34 +6,22 @@ import javax.activation.DataHandler;
 
 import org.jasig.portlet.blackboardvcportlet.dao.ws.MultimediaWSDao;
 import org.jasig.portlet.blackboardvcportlet.dao.ws.WSDaoUtils;
-import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceOperations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.support.DataAccessUtils;
 
 import com.elluminate.sas.BlackboardListRepositoryMultimedia;
-import com.elluminate.sas.BlackboardListSessionContent;
 import com.elluminate.sas.BlackboardMultimediaResponse;
 import com.elluminate.sas.BlackboardMultimediaResponseCollection;
 import com.elluminate.sas.BlackboardRemoveRepositoryMultimedia;
 import com.elluminate.sas.BlackboardRemoveSessionMultimedia;
 import com.elluminate.sas.BlackboardSetSessionMultimedia;
-import com.elluminate.sas.BlackboardUploadRepositoryContent;
 import com.elluminate.sas.ObjectFactory;
 
-public class MultimediaWSDaoImpl implements MultimediaWSDao { 
+public class MultimediaWSDaoImpl extends ContentWSDaoImpl implements MultimediaWSDao { 
 	
 	private static final Logger logger = LoggerFactory.getLogger(MultimediaWSDaoImpl.class);
 	
-	private SASWebServiceOperations sasWebServiceOperations;
-	
-	@Autowired
-	public void setSasWebServiceOperations(SASWebServiceOperations sasWebServiceOperations)
-	{
-		this.sasWebServiceOperations = sasWebServiceOperations;
-	}
-
 	@Override
 	public List<BlackboardMultimediaResponse> getRepositoryMultimedias(String creatorId, Long multimediaId, String description) {
 		BlackboardListRepositoryMultimedia request = new ObjectFactory().createBlackboardListRepositoryMultimedia();
@@ -53,25 +41,14 @@ public class MultimediaWSDaoImpl implements MultimediaWSDao {
 
 	@Override
 	public List<BlackboardMultimediaResponse> getSessionRepositoryMultimedias(Long sessionId) {
-		BlackboardListSessionContent request = new ObjectFactory().createBlackboardListSessionContent();
-		if(sessionId != null) {
-			request.setSessionId(sessionId);
-		}
-		final BlackboardMultimediaResponseCollection objSessionResponse = (BlackboardMultimediaResponseCollection)sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/ListSessionMultimedia", request);
+		final BlackboardMultimediaResponseCollection objSessionResponse = (BlackboardMultimediaResponseCollection)getSessionContent(sessionId, ContentType.Multimedia);
 		return objSessionResponse.getMultimediaResponses();
 	}
 
 	@Override
 	public BlackboardMultimediaResponse uploadRepositoryMultimedia(String creatorId,
 			String filename, String description, DataHandler content) {
-		
-		BlackboardUploadRepositoryContent request = new ObjectFactory().createBlackboardUploadRepositoryContent();
-		request.setCreatorId(creatorId);
-		request.setDescription(description);
-		request.setFilename(filename);
-		request.setContent(content);
-		
-		BlackboardMultimediaResponseCollection response = (BlackboardMultimediaResponseCollection) sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/UploadRepositoryMultimedia", request);
+		BlackboardMultimediaResponseCollection response = (BlackboardMultimediaResponseCollection) uploadContent(creatorId, filename, description, content, ContentType.Multimedia);
 		return DataAccessUtils.singleResult(response.getMultimediaResponses());
 		
 	}
