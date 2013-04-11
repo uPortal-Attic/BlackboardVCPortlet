@@ -30,12 +30,22 @@
         <param-name>contextConfigLocation</param-name>
         <param-value>/WEB-INF/context/*.xml</param-value>
     </context-param>
+    <context-param>
+        <param-name>portletContextConfigLocation</param-name>
+        <param-value>/WEB-INF/context/portlet/portletApplicationContext.xml</param-value>
+    </context-param>
+    
     <listener>
         <listener-class>org.springframework.web.util.WebAppRootListener</listener-class>
     </listener>
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
+    <listener>
+        <!-- MUST be listed after ContextLoaderListener -->
+        <listener-class>org.jasig.springframework.web.portlet.context.PortletContextLoaderListener</listener-class>
+    </listener>
+    
     <servlet>
         <servlet-name>callbackDispatcher</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>

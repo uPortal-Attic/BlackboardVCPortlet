@@ -13,6 +13,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+        </dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>blackboardvc-portlet-api</artifactId>
             <version>${project.version}</version>
@@ -99,6 +103,18 @@
         <dependency>
             <groupId>org.jasig.portlet.utils</groupId>
             <artifactId>portlet-ws-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portlet.utils</groupId>
+            <artifactId>portlet-security-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.springframework</groupId>
+            <artifactId>spring-webmvc-portlet-contrib</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.springframework</groupId>
+            <artifactId>spring-security-portlet-contrib</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>

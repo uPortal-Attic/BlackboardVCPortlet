@@ -20,12 +20,16 @@
 
 -->
 
-<portlet-app xmlns='http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd' version='1.0'>
+<portlet-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd"
+    version="2.0">
+    
     <portlet>
         <description>View and schedule web conferences</description>
         <portlet-name>BlackboardVCPortlet</portlet-name>
         <display-name>Collaborate</display-name>
-        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
+        <portlet-class>org.jasig.springframework.web.portlet.context.ContribDispatcherPortlet</portlet-class>
         <init-param>
             <name>contextConfigLocation</name>
             <value>/WEB-INF/context/portlet/BlackboardVCPortlet-portlet.xml</value>
@@ -64,11 +68,10 @@
             </preference>
         </portlet-preferences>
     
-    <security-role-ref>
-      <role-name>Collaborate-Administrators</role-name>
-      <role-link>local.30</role-link>
-    </security-role-ref>
-    
+        <security-role-ref>
+          <role-name>Collaborate-Administrators</role-name>
+          <role-link>local.30</role-link>
+        </security-role-ref>
     </portlet>
     
     <user-attribute>
@@ -87,4 +90,17 @@
         <name>mail</name>
     </user-attribute>
     
+    <filter>
+        <filter-name>springSecurityPortletFilterChain</filter-name>
+        <filter-class>org.jasig.springframework.web.portlet.filter.DelegatingPortletFilterProxy</filter-class>
+        <lifecycle>ACTION_PHASE</lifecycle>
+        <lifecycle>EVENT_PHASE</lifecycle>
+        <lifecycle>RENDER_PHASE</lifecycle>
+        <lifecycle>RESOURCE_PHASE</lifecycle>
+    </filter>
+    
+    <filter-mapping>
+        <filter-name>springSecurityPortletFilterChain</filter-name>
+        <portlet-name>*</portlet-name>
+    </filter-mapping>
 </portlet-app>
