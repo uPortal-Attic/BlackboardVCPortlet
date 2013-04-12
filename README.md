@@ -18,11 +18,15 @@ If you use https, you must have a global certificate which Collaborate can perfo
 **This portlet has been tested and deployed against uPortal 3.2.x**
 
 
-Security Configuration Summary
-    Roles
-        ROLE_FULL_ACCESS - Users that have full access to the session creation form (TODO flush out all access)
-    Permissions
-        org.jasig.portlet.blackboardvcportlet.data.Session
-            edit
-            delete
+# Security Configuration Summary
+
+## Roles
+* ROLE_FULL_ACCESS - Users that have full access to the session creation form (TODO flush out all access)
+
+## Permissions
+
+### org.jasig.portlet.blackboardvcportlet.data.Session
+* view
+* edit
+* delete
 
