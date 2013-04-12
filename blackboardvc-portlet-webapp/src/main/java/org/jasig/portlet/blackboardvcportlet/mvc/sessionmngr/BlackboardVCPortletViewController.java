@@ -27,9 +27,11 @@ import javax.portlet.PortletRequest;
 import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
 
+import org.jasig.portlet.blackboardvcportlet.dao.ConferenceUserDao;
 import org.jasig.portlet.blackboardvcportlet.dao.SessionDao;
-import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
+import org.jasig.portlet.blackboardvcportlet.data.Session;
+import org.jasig.portlet.blackboardvcportlet.security.ConferenceUserService;
 import org.jasig.portlet.blackboardvcportlet.service.AuthorisationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,16 +50,19 @@ import org.springframework.web.portlet.bind.annotation.ResourceMapping;
  */
 @Controller
 @RequestMapping("VIEW")
-public class BlackboardVCPortletViewController extends BaseController
+public class BlackboardVCPortletViewController
 {
 	private static final Logger logger = LoggerFactory.getLogger(BlackboardVCPortletViewController.class);
 
+	private ConferenceUserService conferenceUserService;
+	private ConferenceUserDao conferenceUserDao;
 	private SessionDao blackboardSessionDao;
 	
 //	private SessionService sessionService;
 //	private RecordingService recordingService;
 	private AuthorisationService authService;
 //	private UserService userService;
+	
 	
 	
 	@Autowired
@@ -78,6 +83,16 @@ public class BlackboardVCPortletViewController extends BaseController
 //	}
 
 	@Autowired
+    public void setConferenceUserService(ConferenceUserService conferenceUserService) {
+        this.conferenceUserService = conferenceUserService;
+    }
+
+	@Autowired
+    public void setConferenceUserDao(ConferenceUserDao conferenceUserDao) {
+        this.conferenceUserDao = conferenceUserDao;
+    }
+
+    @Autowired
 	public void setAuthService(AuthorisationService authService)
 	{
 		this.authService = authService;
@@ -92,7 +107,7 @@ public class BlackboardVCPortletViewController extends BaseController
 	@RenderMapping
 	public String view(PortletRequest request, ModelMap model)
 	{
-		final ConferenceUser blackboardUser = this.getConferenceUser(request);
+		final ConferenceUser blackboardUser = this.conferenceUserService.getCurrentConferenceUser();
 		
 		final boolean isAdmin = authService.isAdminAccess(request);
 		
@@ -103,10 +118,10 @@ public class BlackboardVCPortletViewController extends BaseController
         } else {
             sessions = new HashSet<Session>();
             
-            final Set<Session> chairedSessionsForUser = this.blackboardUserDao.getChairedSessionsForUser(blackboardUser);
+            final Set<Session> chairedSessionsForUser = this.conferenceUserDao.getChairedSessionsForUser(blackboardUser);
             sessions.addAll(chairedSessionsForUser);
             
-            final Set<Session> nonChairedSessionsForUser = this.blackboardUserDao.getNonChairedSessionsForUser(blackboardUser);
+            final Set<Session> nonChairedSessionsForUser = this.conferenceUserDao.getNonChairedSessionsForUser(blackboardUser);
             sessions.addAll(nonChairedSessionsForUser);
             
             //TODO get list of all recordings for user
@@ -158,7 +173,7 @@ public class BlackboardVCPortletViewController extends BaseController
 				logger.error("session is null!");
 			}
 
-            final ConferenceUser blackboardUser = getConferenceUser(request);
+			final ConferenceUser blackboardUser = this.conferenceUserService.getCurrentConferenceUser();
             final Set<ConferenceUser> sessionChairs = this.blackboardSessionDao.getSessionChairs(session);
             
 	        if (blackboardUser.equals(session.getCreator()) || sessionChairs.contains(blackboardUser) || authService.isAdminAccess(request)) {
@@ -231,7 +246,7 @@ public class BlackboardVCPortletViewController extends BaseController
 		response.setContentType("application/csv");
 		response.setProperty("Content-Disposition", "inline; filename=participantList_" + sessionId + ".csv");
 
-		final ConferenceUser blackboardUser = this.getConferenceUser(request);
+		final ConferenceUser blackboardUser = this.conferenceUserService.getCurrentConferenceUser();
 
 		PrintWriter stringWriter = null;
 		try

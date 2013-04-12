@@ -23,7 +23,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -93,8 +92,6 @@ public class ServerConfigurationImpl implements ServerConfiguration {
     /**
      * Used to keep lastUpdated up to date
      */
-    @PreUpdate
-    @PrePersist
     protected final void onUpdate() {
         lastUpdated = DateTime.now();
     }

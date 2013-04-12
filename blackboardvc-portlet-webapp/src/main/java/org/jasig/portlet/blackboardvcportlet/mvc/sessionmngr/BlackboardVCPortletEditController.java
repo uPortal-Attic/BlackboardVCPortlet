@@ -23,9 +23,11 @@ import javax.portlet.ActionResponse;
 import javax.portlet.PortletMode;
 import javax.portlet.RenderRequest;
 
+import org.jasig.portlet.blackboardvcportlet.dao.ConferenceUserDao;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
+import org.jasig.portlet.blackboardvcportlet.security.ConferenceUserService;
 import org.jasig.portlet.blackboardvcportlet.service.AuthorisationService;
 import org.jasig.portlet.blackboardvcportlet.service.RecordingService;
 import org.jasig.portlet.blackboardvcportlet.service.ServerConfigurationService;
@@ -53,17 +55,29 @@ import org.springframework.web.portlet.bind.annotation.RenderMapping;
  */
 @Controller
 @RequestMapping("EDIT")
-public class BlackboardVCPortletEditController extends BaseController
+public class BlackboardVCPortletEditController
 {
 	private static final Logger logger = LoggerFactory.getLogger(BlackboardVCPortletEditController.class);
 
-	private RecordingService recordingService;
+	private ConferenceUserService conferenceUserService;
+    private ConferenceUserDao conferenceUserDao;
+    private RecordingService recordingService;
 	private ServerConfigurationService serverConfigurationService;
 	private SessionService sessionService;
 //	private UserService userService;
 	private AuthorisationService authService;
 
 	@Autowired
+	public void setConferenceUserService(ConferenceUserService conferenceUserService) {
+        this.conferenceUserService = conferenceUserService;
+    }
+
+	@Autowired
+    public void setConferenceUserDao(ConferenceUserDao conferenceUserDao) {
+        this.conferenceUserDao = conferenceUserDao;
+    }
+
+    @Autowired
 	public void setRecordingService(RecordingService recordingService)
 	{
 		this.recordingService = recordingService;
@@ -124,7 +138,7 @@ public class BlackboardVCPortletEditController extends BaseController
             model.addAttribute("fullAccess", true);
         }
         
-        final ConferenceUser conferenceUser = this.getConferenceUser(request);
+        final ConferenceUser conferenceUser = this.conferenceUserService.getCurrentConferenceUser();
         final Session session = this.sessionService.getSession(conferenceUser, sessionId, fullAccess);
         //TODO if session is null
 
@@ -137,7 +151,7 @@ public class BlackboardVCPortletEditController extends BaseController
     //TODO @Valid on SessionForm
 	@ActionMapping(params = "action=Save Session")
 	public void saveSession(ActionRequest request, ActionResponse response, SessionForm sessionForm) throws Exception {
-	    final ConferenceUser conferenceUser = this.getConferenceUser(request);
+	    final ConferenceUser conferenceUser = this.conferenceUserService.getCurrentConferenceUser();
 	    final boolean fullAccess = this.authService.isFullAccess(request) || this.authService.isAdminAccess(request);
 	    
 	    this.sessionService.createOrUpdateSession(conferenceUser, sessionForm, fullAccess);

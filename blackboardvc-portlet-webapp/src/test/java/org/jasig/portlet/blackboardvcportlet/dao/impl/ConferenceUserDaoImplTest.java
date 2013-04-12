@@ -39,7 +39,7 @@ public class ConferenceUserDaoImplTest extends BaseJpaDaoTest {
         this.execute(new Callable<Object>() {
             @Override
             public Object call() {
-                final ConferenceUser user = conferenceUserDao.getBlackboardUser("user@example.com");
+                final ConferenceUser user = conferenceUserDao.getUser("user@example.com");
                 assertNull(user);
                 
                 return null;
@@ -86,7 +86,7 @@ public class ConferenceUserDaoImplTest extends BaseJpaDaoTest {
         this.execute(new Callable<Object>() {
             @Override
             public Object call() {
-                final ConferenceUser user = conferenceUserDao.createBlackboardUser("user@example.com", "Example User");
+                final ConferenceUser user = conferenceUserDao.createUser("user@example.com", "Example User");
 
                 assertNotNull(user);
                 assertEquals("user@example.com", user.getEmail());
@@ -101,10 +101,10 @@ public class ConferenceUserDaoImplTest extends BaseJpaDaoTest {
         this.execute(new Callable<Object>() {
             @Override
             public Object call() {
-                final ConferenceUser user = conferenceUserDao.createBlackboardUser("example.user@example.com", "Example User");
+                final ConferenceUser user = conferenceUserDao.createUser("example.user@example.com", "Example User");
                 user.getAttributes().put("EPPN", "user@example.com");
                 user.getAttributes().put("SPVI", "1234567");
-                conferenceUserDao.updateBlackboardUser(user);
+                conferenceUserDao.updateUser(user);
 
                 assertNotNull(user);
                 assertEquals("example.user@example.com", user.getEmail());
@@ -119,10 +119,10 @@ public class ConferenceUserDaoImplTest extends BaseJpaDaoTest {
         this.execute(new Callable<Object>() {
             @Override
             public Object call() {
-                final ConferenceUser user = conferenceUserDao.getBlackboardUser("user@example.com");
+                final ConferenceUser user = conferenceUserDao.getUser("user@example.com");
                 user.getAttributes().put("EPPN", "user@example.com");
                 user.getAttributes().put("SPVI", "1234567");
-                conferenceUserDao.updateBlackboardUser(user);
+                conferenceUserDao.updateUser(user);
 
                 assertNotNull(user);
                 assertEquals("user@example.com", user.getEmail());
@@ -137,10 +137,10 @@ public class ConferenceUserDaoImplTest extends BaseJpaDaoTest {
         this.execute(new Callable<Object>() {
             @Override
             public Object call() {
-                final ConferenceUser user = conferenceUserDao.createBlackboardUser("admin@example.com", "Example Admin");
+                final ConferenceUser user = conferenceUserDao.createUser("admin@example.com", "Example Admin");
                 user.getAttributes().put("EPPN", "admin@example.com");
                 user.getAttributes().put("SPVI", "789456");
-                conferenceUserDao.updateBlackboardUser(user);
+                conferenceUserDao.updateUser(user);
 
                 assertNotNull(user);
                 assertEquals("admin@example.com", user.getEmail());

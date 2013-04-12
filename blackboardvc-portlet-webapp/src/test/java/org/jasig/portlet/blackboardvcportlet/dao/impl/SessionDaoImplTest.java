@@ -205,7 +205,7 @@ public class SessionDaoImplTest extends BaseJpaDaoTest {
     }
 
     private void verifyUpdatedUsers() {
-        final ConferenceUser admin = conferenceUserDao.getBlackboardUser("admin@example.com");
+        final ConferenceUser admin = conferenceUserDao.getUser("admin@example.com");
         final Set<Session> adminChaired = conferenceUserDao.getChairedSessionsForUser(admin);
         assertNotNull(adminChaired);
         assertEquals(1, adminChaired.size());
@@ -214,7 +214,7 @@ public class SessionDaoImplTest extends BaseJpaDaoTest {
         assertEquals(0, adminNonChaired.size());
         
 
-        final ConferenceUser dalquist = conferenceUserDao.getBlackboardUser("dalquist@example.com");
+        final ConferenceUser dalquist = conferenceUserDao.getUser("dalquist@example.com");
         final Set<Session> dalquistChaired = conferenceUserDao.getChairedSessionsForUser(dalquist);
         assertNotNull(dalquistChaired);
         assertEquals(0, dalquistChaired.size());
@@ -223,7 +223,7 @@ public class SessionDaoImplTest extends BaseJpaDaoTest {
         assertEquals(1, dalquistNonChaired.size());
         
 
-        final ConferenceUser levett = conferenceUserDao.getBlackboardUser("levett@example.com");
+        final ConferenceUser levett = conferenceUserDao.getUser("levett@example.com");
         final Set<Session> levettChaired = conferenceUserDao.getChairedSessionsForUser(levett);
         assertNotNull(levettChaired);
         assertEquals(0, levettChaired.size());
@@ -233,7 +233,7 @@ public class SessionDaoImplTest extends BaseJpaDaoTest {
     }
 
     private void verifyCreatedUsers() {
-        final ConferenceUser admin = conferenceUserDao.getBlackboardUser("admin@example.com");
+        final ConferenceUser admin = conferenceUserDao.getUser("admin@example.com");
         final Set<Session> adminChaired = conferenceUserDao.getChairedSessionsForUser(admin);
         assertNotNull(adminChaired);
         assertEquals(1, adminChaired.size());
@@ -242,7 +242,7 @@ public class SessionDaoImplTest extends BaseJpaDaoTest {
         assertEquals(0, adminNonChaired.size());
         
 
-        final ConferenceUser dalquist = conferenceUserDao.getBlackboardUser("dalquist@example.com");
+        final ConferenceUser dalquist = conferenceUserDao.getUser("dalquist@example.com");
         final Set<Session> dalquistChaired = conferenceUserDao.getChairedSessionsForUser(dalquist);
         assertNotNull(dalquistChaired);
         assertEquals(1, dalquistChaired.size());
@@ -251,7 +251,7 @@ public class SessionDaoImplTest extends BaseJpaDaoTest {
         assertEquals(0, dalquistNonChaired.size());
         
 
-        final ConferenceUser levett = conferenceUserDao.getBlackboardUser("levett@example.com");
+        final ConferenceUser levett = conferenceUserDao.getUser("levett@example.com");
         final Set<Session> levettChaired = conferenceUserDao.getChairedSessionsForUser(levett);
         assertNotNull(levettChaired);
         assertEquals(0, levettChaired.size());

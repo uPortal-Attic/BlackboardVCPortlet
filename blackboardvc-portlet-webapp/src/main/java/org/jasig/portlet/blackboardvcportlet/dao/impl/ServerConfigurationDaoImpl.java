@@ -23,6 +23,7 @@ public class ServerConfigurationDaoImpl extends BaseJpaDao implements ServerConf
         if (serverConfiguration == null) {
             serverConfiguration = new ServerConfigurationImpl();
         }
+        serverConfiguration.onUpdate();
         
         if(serverConfiguration.getRandomCallbackUrl() == null) {
         	//Create random callback URL for blackboard callback

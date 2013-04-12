@@ -222,7 +222,7 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
             
             //User was modified, make sure we tell hibernate to persist them
             if (added) {
-                this.blackboardUserDao.updateBlackboardUser(user);
+                this.blackboardUserDao.updateUser(user);
             }
             
             //Add the user to the new set and make sure the user is in the existing set
@@ -244,7 +244,7 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
                 final ConferenceUserImpl user = this.blackboardUserDao.getUser(existingUser.getUserId());
                 final boolean removed = type.unassociateSession(user, blackboardSession);
                 if (removed) {
-                    this.blackboardUserDao.updateBlackboardUser(user);
+                    this.blackboardUserDao.updateUser(user);
                 }
             }
         }

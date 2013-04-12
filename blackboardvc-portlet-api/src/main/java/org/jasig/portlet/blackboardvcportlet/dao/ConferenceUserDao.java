@@ -11,15 +11,15 @@ public interface ConferenceUserDao {
 
     Set<Session> getNonChairedSessionsForUser(ConferenceUser user);
     
-    ConferenceUser createBlackboardUser(String email, String displayName);
+    ConferenceUser createUser(String email, String displayName);
 
-    ConferenceUser updateBlackboardUser(ConferenceUser user);
+    ConferenceUser updateUser(ConferenceUser user);
 
-    void deleteBlackboardUser(ConferenceUser message);
+    void deleteUser(ConferenceUser message);
     
     ConferenceUser getUser(long userId);
 
-    ConferenceUser getBlackboardUser(String email);
+    ConferenceUser getUser(String email);
 
     Set<ConferenceUser> findAllMatchingUsers(String email, Map<String, String> attributes);
     

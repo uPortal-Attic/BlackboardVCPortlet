@@ -85,7 +85,7 @@ public class RecordingServiceImpl implements RecordingService {
     {
         //TODO this is not bad if the data is all in cache but if it isn't it would be better to just run a query
         
-        final ConferenceUser blackboardUser = this.blackboardUserDao.getBlackboardUser(uid);
+        final ConferenceUser blackboardUser = this.blackboardUserDao.getUser(uid);
         
         final Set<SessionRecording> recordings = new LinkedHashSet<SessionRecording>();
         

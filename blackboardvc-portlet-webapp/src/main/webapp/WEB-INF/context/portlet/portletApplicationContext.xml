@@ -63,7 +63,7 @@
                                         <bean class="org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider">
                                             <property name="preAuthenticatedUserDetailsService">
                                                 <!-- Configurable - replace with custom impl or extension to add GrantedAuthorities -->
-                                                <bean class="org.springframework.security.web.authentication.preauth.PreAuthenticatedGrantedAuthoritiesUserDetailsService" />
+                                                <bean class="org.jasig.portlet.blackboardvcportlet.security.ConferenceUserPreAuthenticatedGrantedAuthoritiesUserDetailsService" />
                                             </property>
                                         </bean>
                                     </constructor-arg>

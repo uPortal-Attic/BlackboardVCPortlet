@@ -58,7 +58,7 @@ public class ConferenceUserDaoImpl extends BaseJpaDao implements InternalConfere
     
     @Override
     @Transactional
-    public ConferenceUserImpl createBlackboardUser(String email, String displayName) {
+    public ConferenceUserImpl createUser(String email, String displayName) {
         final ConferenceUserImpl user = new ConferenceUserImpl(email, displayName);
         
         this.getEntityManager().persist(user);
@@ -68,7 +68,7 @@ public class ConferenceUserDaoImpl extends BaseJpaDao implements InternalConfere
     
     @Override
     @Transactional
-    public ConferenceUser updateBlackboardUser(ConferenceUser user) {
+    public ConferenceUser updateUser(ConferenceUser user) {
         Validate.notNull(user, "user can not be null");
         
         this.getEntityManager().persist(user);
@@ -78,7 +78,7 @@ public class ConferenceUserDaoImpl extends BaseJpaDao implements InternalConfere
     
     @Override
     @Transactional
-    public void deleteBlackboardUser(ConferenceUser user) {
+    public void deleteUser(ConferenceUser user) {
         Validate.notNull(user, "user can not be null");
         
         final EntityManager entityManager = this.getEntityManager();
@@ -97,17 +97,17 @@ public class ConferenceUserDaoImpl extends BaseJpaDao implements InternalConfere
     @Override
     @Transactional
     public ConferenceUserImpl getOrCreateUser(String email) {
-        final ConferenceUserImpl user = this.getBlackboardUser(email);
+        final ConferenceUserImpl user = this.getUser(email);
         if (user != null) {
             return user;
         }
         
-        return this.createBlackboardUser(email, null);
+        return this.createUser(email, null);
     }
 
     @Override
     @OpenEntityManager
-    public ConferenceUserImpl getBlackboardUser(String email) {
+    public ConferenceUserImpl getUser(String email) {
         final NaturalIdQuery<ConferenceUserImpl> query = this.createNaturalIdQuery(ConferenceUserImpl.class);
         query.using(ConferenceUserImpl_.email, email);
         
