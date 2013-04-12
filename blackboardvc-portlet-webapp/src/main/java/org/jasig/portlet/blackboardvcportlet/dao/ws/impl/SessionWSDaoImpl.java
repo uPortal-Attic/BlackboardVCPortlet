@@ -3,6 +3,8 @@ package org.jasig.portlet.blackboardvcportlet.dao.ws.impl;
 import java.util.List;
 
 import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBElement.GlobalScope;
+import javax.xml.namespace.QName;
 
 import org.jasig.portlet.blackboardvcportlet.dao.ws.SessionWSDao;
 import org.jasig.portlet.blackboardvcportlet.dao.ws.WSDaoUtils;
@@ -76,7 +78,7 @@ public class SessionWSDaoImpl implements SessionWSDao {
 	}
 	
 	@Override
-	public String buildSessionUrl(long sessionId, String displayName) {
+	public String buildSessionUrl(Long sessionId, String displayName) {
 		BlackboardBuildSessionUrl buildGuestUrlRequest = new BlackboardBuildSessionUrl();
         buildGuestUrlRequest.setSessionId(sessionId);
         buildGuestUrlRequest.setDisplayName(displayName);
@@ -86,7 +88,7 @@ public class SessionWSDaoImpl implements SessionWSDao {
 	}
 
 	@Override
-	public boolean createSessionTelephony(int sessionId, BlackboardSetSessionTelephony telephony) {
+	public boolean createSessionTelephony(Long sessionId, BlackboardSetSessionTelephony telephony) {
 		telephony.setSessionId(sessionId);
 		return WSDaoUtils.isSuccessful(sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/SetSessionTelephony", telephony));
 	}
@@ -123,19 +125,21 @@ public class SessionWSDaoImpl implements SessionWSDao {
 			request.setSessionName(sessionName);
 		}
 		
-		BlackboardSessionResponseCollection responseCollection = (BlackboardSessionResponseCollection) sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/ListSession", request);
-		return responseCollection.getSessionResponses();
+		@SuppressWarnings("unchecked")
+		Object obj = sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/ListSession", request); 
+		JAXBElement<BlackboardSessionResponseCollection> responseCollection = (JAXBElement<BlackboardSessionResponseCollection>) obj;
+		return responseCollection.getValue().getSessionResponses();
 	}
 
 	@Override
-	public List<BlackboardSessionAttendanceResponse> getSessionAttendance(int sessionId, Object startTime) {
+	public List<BlackboardSessionAttendanceResponse> getSessionAttendance(Long sessionId, Object startTime) {
 		BlackboardListSessionAttendance request = new ObjectFactory().createBlackboardListSessionAttendance();
 		BlackboardListSessionAttendanceResponseCollection responseCollection = (BlackboardListSessionAttendanceResponseCollection) sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/ListSessionAttendance", request);
 		return responseCollection.getSessionAttendanceResponses();
 	}
 
 	@Override
-	public List<BlackboardSessionTelephonyResponse> getSessionTelephony(int sessionId) {
+	public List<BlackboardSessionTelephonyResponse> getSessionTelephony(Long sessionId) {
 		BlackboardSessionTelephony request = new ObjectFactory().createBlackboardSessionTelephony();
 		request.setSessionId(sessionId);
 		final BlackboardSessionTelephonyResponseCollection response = (BlackboardSessionTelephonyResponseCollection) sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/ListSessionTelephony", request);
@@ -144,7 +148,10 @@ public class SessionWSDaoImpl implements SessionWSDao {
 
 	@Override
 	public BlackboardSessionResponse updateSession(ConferenceUser user, SessionForm sessionForm, boolean fullAccess) {
-		final BlackboardUpdateSession updateSession = new ObjectFactory().createBlackboardUpdateSession();
+		final BlackboardSetSession updateSession = new ObjectFactory().createBlackboardSetSession();
+		
+		updateSession.setCreatorId(user.getEmail());
+		
 		updateSession.setSessionName(sessionForm.getSessionName());
 		updateSession.setStartTime(sessionForm.getStartTime().getMillis());
 		updateSession.setEndTime(sessionForm.getEndTime().getMillis());
@@ -165,31 +172,32 @@ public class SessionWSDaoImpl implements SessionWSDao {
         }
         
         final Object objSessionResponse = sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/UpdateSession", updateSession);
-        BlackboardSessionResponseCollection response = (BlackboardSessionResponseCollection) objSessionResponse;
-        return DataAccessUtils.singleResult(response.getSessionResponses());
+        @SuppressWarnings("unchecked")
+		JAXBElement<BlackboardSessionResponseCollection> response = (JAXBElement<BlackboardSessionResponseCollection>) objSessionResponse;
+        return DataAccessUtils.singleResult(response.getValue().getSessionResponses());
 	}
 
 	@Override
-	public boolean deleteSession(int sessionId) {
+	public boolean deleteSession(Long sessionId) {
 		BlackboardRemoveSession request = new ObjectFactory().createBlackboardRemoveSession();
 		request.setSessionId(sessionId);
 		return WSDaoUtils.isSuccessful(sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/RemoveSession", request));
 	}
 
 	@Override
-	public boolean clearSessionChairList(int sessionId) {
+	public boolean clearSessionChairList(Long sessionId) {
 		return clearSessionUserList(sessionId,true);
 	}
 
 	@Override
-	public boolean clearSessionNonChairList(int sessionId) {
+	public boolean clearSessionNonChairList(Long sessionId) {
 		return clearSessionUserList(sessionId,false);
 		
 	}
 	
-	private boolean clearSessionUserList(int sessionId, boolean isChairList) {
-		BlackboardClearSessionUserList request = new ObjectFactory().createBlackboardClearSessionUserList();
-		request.setSessionId(sessionId);
-		return WSDaoUtils.isSuccessful(sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/ClearSession"+ (isChairList ? "" : "Non"+"ChairList") , request));
+	private boolean clearSessionUserList(Long sessionId, boolean isChairList) {
+		BlackboardClearSessionUserList vo = new ObjectFactory().createBlackboardClearSessionUserList();
+		vo.setSessionId(sessionId);
+		return WSDaoUtils.isSuccessful(sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/ClearSession"+ (isChairList ? "" : "Non"+"ChairList") , new ObjectFactory().createClearSessionChairList(vo)));
 	}
 }
