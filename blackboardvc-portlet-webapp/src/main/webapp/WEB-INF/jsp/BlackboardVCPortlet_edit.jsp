@@ -19,24 +19,8 @@
 
 --%>
 
+<%@ include file="/WEB-INF/jsp/include.jsp"%>
 <%@ include file="/WEB-INF/jsp/header.jsp"%>
-
-<c:set var="namespace">
-	<portlet:namespace />
-</c:set>
-<c:if test="${!empty feedbackMessage}">
-	<div class="uportal-channel-success">
-		<spring:message code="${feedbackMessage}" />
-	</div>
-	<br />
-</c:if>
-
-<c:if test="${!empty warningMessage}">
-	<div class="uportal-channel-warning">
-		<spring:message code="${warningMessage}" />
-	</div>
-	<br />
-</c:if>
 
 <c:if test="${not empty errorMessage}">
 	<div class="uportal-channel-error">
@@ -95,7 +79,7 @@
 				<joda:format var="startHour" value="${session.startTime}" pattern="H" />
 				<joda:format var="startMinute" value="${session.startTime}" pattern="m" />
 				
-				<td><input style="width: 82px;" value="${startDate}" name="startDate" id="${namespace}startdatepicker" style="width: 70px;" type="text">&nbsp;
+				<td><input style="width: 82px;" value="${startDate}" name="startDate" id="${n}startdatepicker" style="width: 70px;" type="text">&nbsp;
 					<select name="startHour">
 						<c:forEach var="i" begin="0" end="23" step="1">
 							<option value="${i}" ${startHour == i ? 'selected' : ''}>${i}</option>
@@ -115,7 +99,7 @@
                 <joda:format var="endHour" value="${session.endTime}" pattern="H" />
                 <joda:format var="endMinute" value="${session.endTime}" pattern="m" />
                 
-				<td><input style="width: 82px;" value="${endDate}" name="endDate" id="${namespace}enddatepicker" style="width: 70px;" type="text">&nbsp; 
+				<td><input style="width: 82px;" value="${endDate}" name="endDate" id="${n}enddatepicker" style="width: 70px;" type="text">&nbsp; 
 					<select name="endHour">
 						<c:forEach var="i" begin="0" end="23" step="1">
 							<option value="${i}" ${endHour == i ? 'selected' : ''}>${i}</option>
@@ -156,8 +140,9 @@
 				<td></td>
 				<td class="uportal-channel-table-caption">The period before the start of the session during which users can enter the session.</td>
 			</tr>
+            <sec:authorize var="fullAccess" access="hasRole('ROLE_FULL_ACCESS')" />
 			<c:choose>
-				<c:when test="${!empty fullAccess}">
+				<c:when test="${fullAccess}">
 					<tr>
 						<td><span class="uportal-channel-strong">Max
 								Simultaneous Talkers: </span></td>
@@ -259,8 +244,8 @@
 						value="${session.permissionsOn}" />
 					<input type="hidden" name="raiseHandOnEnter"
 						value="${session.raiseHandOnEnter}" />
-					<input type="hidden" name="recordingModeType"
-						value="${session.recordingModeType}" />
+					<input type="hidden" name="recordingMode"
+						value="${session.recordingMode}" />
 					<input type="hidden" name="hideParticipantNames"
 						value="${session.hideParticipantNames}" />
 					<input type="hidden" name="allowInSessionInvites"
@@ -308,7 +293,7 @@
 				</tr>
 			</c:if>
 			<tr>
-				<td colspan="3"><input id="${namespace}moderatiorUidInput" name="moderatorUid" type="text">&nbsp;<input id="${namespace}addModeratorSubmit" name="action"
+				<td colspan="3"><input id="${n}moderatiorUidInput" name="moderatorUid" type="text">&nbsp;<input id="${n}addModeratorSubmit" name="action"
 					value="Add Moderator(s)" style="text-transform: none;"
 					class="uportal-button" type="submit"></td>
 			</tr>
@@ -362,9 +347,9 @@
 				</tr>
 			</c:if>
 			<tr>
-				<td colspan="3"><input id="${namespace}intParticipantInput"
+				<td colspan="3"><input id="${n}intParticipantInput"
 					name="intParticipants" type="text">&nbsp;<input
-					id="${namespace}addIntParticipantSubmit" name="action"
+					id="${n}addIntParticipantSubmit" name="action"
 					value="Add Participant(s)" style="text-transform: none;"
 					class="uportal-button" type="submit"></td>
 			</tr>
@@ -417,16 +402,16 @@
 		<tbody>
 			<tr>
 				<td>Display name:</td>
-				<td><input id="${namespace}extParticipantDisplayNameInput"
+				<td><input id="${n}extParticipantDisplayNameInput"
 					name="extParticipantDisplayName" type="text"></td>
 			</tr>
 			<tr>
 				<td>Email:</td>
-				<td><input id="${namespace}extParticipantEmailInput"
+				<td><input id="${n}extParticipantEmailInput"
 					name="extParticipantEmail" type="text"></td>
 			</tr>
 			<tr>
-				<td><input id="${namespace}addExtParticipantSubmit"
+				<td><input id="${n}addExtParticipantSubmit"
 					name="action" value="Add External Participant"
 					class="uportal-button" type="submit"></td>
 			</tr>
@@ -547,44 +532,44 @@
 		var $ = up.jQuery;
 		$(document).ready(
 				function() {
-					$("#${namespace}startdatepicker").datepicker({
+					$("#${n}startdatepicker").datepicker({
 						showButtonPanel : true,
 						dateFormat : 'mm/dd/yyyy'
 					});
-					$("#${namespace}enddatepicker").datepicker({
+					$("#${n}enddatepicker").datepicker({
 						showButtonPanel : true,
 						dateFormat : 'mm/dd/yyyy'
 					});
-					$('#${namespace}moderatiorUidInput').keypress(
+					$('#${n}moderatiorUidInput').keypress(
 							function(e) {
 								if (e.which == 13) {
-									$('#${namespace}addModeratorSubmit')
+									$('#${n}addModeratorSubmit')
 											.focus().click();
 									return false;
 								}
 							});
 <%--
-					$('#${namespace}intParticipantInput').keypress(
+					$('#${n}intParticipantInput').keypress(
 							function(e) {
 								if (e.which == 13) {
-									$('#${namespace}addIntParticipantSubmit')
+									$('#${n}addIntParticipantSubmit')
 											.focus().click();
 									return false;
 								}
 							});
 --%>
-					$('#${namespace}extParticipantDisplayNameInput').keypress(
+					$('#${n}extParticipantDisplayNameInput').keypress(
 							function(e) {
 								if (e.which == 13) {
-									$('#${namespace}addExtParticipantSubmit')
+									$('#${n}addExtParticipantSubmit')
 											.focus().click();
 									return false;
 								}
 							});
-					$('#${namespace}extParticipantEmailInput').keypress(
+					$('#${n}extParticipantEmailInput').keypress(
 							function(e) {
 								if (e.which == 13) {
-									$('#${namespace}addExtParticipantSubmit')
+									$('#${n}addExtParticipantSubmit')
 											.focus().click();
 									return false;
 								}

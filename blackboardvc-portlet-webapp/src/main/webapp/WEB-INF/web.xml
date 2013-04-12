@@ -46,6 +46,18 @@
         <listener-class>org.jasig.springframework.web.portlet.context.PortletContextLoaderListener</listener-class>
     </listener>
     
+    <filter>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    
+    <!-- TODO apply this filter to any request that requires the user already have an authenticated session with the portlet 
+    <filter-mapping>
+      <filter-name>springSecurityFilterChain</filter-name>
+      <servlet-name>ViewRendererServlet</servlet-name>
+    </filter-mapping>
+     -->
+    
     <servlet>
         <servlet-name>callbackDispatcher</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>

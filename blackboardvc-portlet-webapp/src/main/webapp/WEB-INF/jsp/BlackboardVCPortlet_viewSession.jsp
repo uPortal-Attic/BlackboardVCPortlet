@@ -21,7 +21,6 @@
 
 <%@ include file="/WEB-INF/jsp/header.jsp"%>
 
-<%PortletPreferences prefs = renderRequest.getPreferences();%> 
 <c:set var="context" value="${pageContext.request.contextPath}"/>
 <c:choose>
     <c:when test="${!empty errorMessage}">

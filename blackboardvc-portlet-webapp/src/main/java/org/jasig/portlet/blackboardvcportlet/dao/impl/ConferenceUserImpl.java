@@ -77,13 +77,17 @@ public class ConferenceUserImpl implements ConferenceUser {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private final Map<String, String> attributes = new HashMap<String, String>(0);
 
+    @OneToMany(targetEntity = SessionImpl.class, fetch = FetchType.LAZY, mappedBy = "creator")
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private final Set<Session> ownedSessions = new HashSet<Session>(0);
+
     @ManyToMany(targetEntity = SessionImpl.class, fetch = FetchType.LAZY, mappedBy = "chairs")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private Set<Session> chairedSessions = new HashSet<Session>(0);
+    private final Set<Session> chairedSessions = new HashSet<Session>(0);
     
     @ManyToMany(targetEntity = SessionImpl.class, fetch = FetchType.LAZY, mappedBy = "nonChairs")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private Set<Session> nonChairedSessions = new HashSet<Session>(0);
+    private final Set<Session> nonChairedSessions = new HashSet<Session>(0);
 
     //Exists only to allow cascading deletes, should NEVER be accessed by normal code
     @OneToMany(mappedBy = "user", targetEntity = UserSessionUrlImpl.class, cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, orphanRemoval = true)
@@ -133,6 +137,10 @@ public class ConferenceUserImpl implements ConferenceUser {
         return attributes;
     }
     
+    Set<Session> getOwnedSessions() {
+        return ownedSessions;
+    }
+
     Set<Session> getChairedSessions() {
         return chairedSessions;
     }

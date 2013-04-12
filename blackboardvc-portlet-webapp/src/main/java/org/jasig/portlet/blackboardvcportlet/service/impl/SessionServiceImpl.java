@@ -89,9 +89,9 @@ public class SessionServiceImpl implements SessionService
 
     @Override
     @Transactional
-    public void createOrUpdateSession(ConferenceUser user, SessionForm sessionForm, boolean fullAccess) {
+    public void createOrUpdateSession(ConferenceUser user, SessionForm sessionForm) {
         if (sessionForm.isNewSession()) {
-        	BlackboardSessionResponse sessionResponse = sessionWSDao.createSession(user, sessionForm, fullAccess);
+        	BlackboardSessionResponse sessionResponse = sessionWSDao.createSession(user, sessionForm);
         	String guestUrl = sessionWSDao.buildSessionUrl(sessionResponse.getSessionId(), "GUEST_PLACEHOLDER");
         	
         	//Remove guest username so that guest user's are prompted
@@ -99,18 +99,19 @@ public class SessionServiceImpl implements SessionService
         }
         else {
             //TODO just verifying access?
-            this.getSession(user, sessionForm.getSessionId(), fullAccess);
+            this.getSession(user, sessionForm.getSessionId());
         }
     }
 
     @Override
-    public Session getSession(ConferenceUser user, long sessionId, boolean fullAccess) {
+    public Session getSession(ConferenceUser user, long sessionId) {
         final Session session = this.sessionDao.getSession(sessionId);
         if (session == null) {
             return null;
         }
         
-        if (fullAccess || session.getCreator().equals(user)) {
+        //TODO spring-security check for admin
+        if (session.getCreator().equals(user)) {
             return session;
         }
         

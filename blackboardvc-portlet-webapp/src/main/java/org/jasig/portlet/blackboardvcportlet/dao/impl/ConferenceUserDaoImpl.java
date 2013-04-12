@@ -25,7 +25,21 @@ import com.google.common.collect.ImmutableSet;
 
 @Repository
 public class ConferenceUserDaoImpl extends BaseJpaDao implements InternalConferenceUserDao {
-    
+
+    @Override
+    public Set<Session> getOwnedSessionsForUser(ConferenceUser user) {
+        if (user == null) {
+            return null;
+        }
+        
+        final ConferenceUserImpl userImpl = this.getUser(user.getUserId());
+        if (userImpl == null) {
+            return null;
+        }
+
+        //Create a copy to trigger loading of the session data
+        return ImmutableSet.copyOf(userImpl.getOwnedSessions());
+    }
     @Override
     public Set<Session> getChairedSessionsForUser(ConferenceUser user) {
         if (user == null) {

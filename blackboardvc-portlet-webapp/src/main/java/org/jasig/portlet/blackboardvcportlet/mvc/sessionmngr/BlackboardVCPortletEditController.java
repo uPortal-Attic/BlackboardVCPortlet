@@ -28,7 +28,6 @@ import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.security.ConferenceUserService;
-import org.jasig.portlet.blackboardvcportlet.service.AuthorisationService;
 import org.jasig.portlet.blackboardvcportlet.service.RecordingService;
 import org.jasig.portlet.blackboardvcportlet.service.ServerConfigurationService;
 import org.jasig.portlet.blackboardvcportlet.service.SessionForm;
@@ -65,7 +64,6 @@ public class BlackboardVCPortletEditController
 	private ServerConfigurationService serverConfigurationService;
 	private SessionService sessionService;
 //	private UserService userService;
-	private AuthorisationService authService;
 
 	@Autowired
 	public void setConferenceUserService(ConferenceUserService conferenceUserService) {
@@ -101,12 +99,6 @@ public class BlackboardVCPortletEditController
 //		this.userService = userService;
 //	}
 
-	@Autowired
-	public void setAuthService(AuthorisationService authService)
-	{
-		this.authService = authService;
-	}
-	
 	@InitBinder
     public void initBinder(WebDataBinder binder) {
 	    final DateTimeFormatter formatter = new DateTimeFormatterBuilder().appendPattern("MM/dd/yyyy").toFormatter();
@@ -118,10 +110,6 @@ public class BlackboardVCPortletEditController
 	    final ServerConfiguration serverConfiguration = this.serverConfigurationService.getServerConfiguration();
         model.put("serverConfiguration", serverConfiguration);
 	    
-	    if (this.authService.isFullAccess(request) || this.authService.isAdminAccess(request)) {
-	        model.addAttribute("fullAccess", true);
-	    }
-
         final SessionForm sessionForm = new SessionForm(serverConfiguration);
         model.put("session", sessionForm);
 	    
@@ -133,13 +121,10 @@ public class BlackboardVCPortletEditController
         final ServerConfiguration serverConfiguration = this.serverConfigurationService.getServerConfiguration();
         model.put("serverConfiguration", serverConfiguration);
         
-        final boolean fullAccess = this.authService.isFullAccess(request) || this.authService.isAdminAccess(request);
-        if (fullAccess) {
-            model.addAttribute("fullAccess", true);
-        }
+//            model.addAttribute("fullAccess", true);
         
         final ConferenceUser conferenceUser = this.conferenceUserService.getCurrentConferenceUser();
-        final Session session = this.sessionService.getSession(conferenceUser, sessionId, fullAccess);
+        final Session session = this.sessionService.getSession(conferenceUser, sessionId);
         //TODO if session is null
 
         final SessionForm sessionForm = new SessionForm(session);
@@ -152,9 +137,8 @@ public class BlackboardVCPortletEditController
 	@ActionMapping(params = "action=Save Session")
 	public void saveSession(ActionRequest request, ActionResponse response, SessionForm sessionForm) throws Exception {
 	    final ConferenceUser conferenceUser = this.conferenceUserService.getCurrentConferenceUser();
-	    final boolean fullAccess = this.authService.isFullAccess(request) || this.authService.isAdminAccess(request);
-	    
-	    this.sessionService.createOrUpdateSession(conferenceUser, sessionForm, fullAccess);
+
+	    this.sessionService.createOrUpdateSession(conferenceUser, sessionForm);
 	    
 	    response.setPortletMode(PortletMode.VIEW);
 	}

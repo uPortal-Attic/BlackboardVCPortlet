@@ -34,13 +34,13 @@ public interface SessionService {
      * Creates or Updates a session for the user, form and access flag. This method throws an exception
      * if the specified user doesn't have access to edit the specified session
      */
-    void createOrUpdateSession(ConferenceUser user, SessionForm sessionForm, boolean fullAccess);
+    void createOrUpdateSession(ConferenceUser user, SessionForm sessionForm);
     
     /**
      * Get a session for the user and sessionId. This method throws an exception if the
      * specified user does not have access to view the session
      */
-    Session getSession(ConferenceUser user, long sessionId, boolean fullAccess);
+    Session getSession(ConferenceUser user, long sessionId);
     
     
 //	public Set<BlackboardSession> getSessionsForUser(String uid);

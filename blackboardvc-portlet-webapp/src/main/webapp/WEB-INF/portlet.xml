@@ -46,45 +46,15 @@
             <title>Web Conferencing</title>
             <short-title>Web Conferencing</short-title>
         </portlet-info>
-        <portlet-preferences>
-            <!-- The attribute to check for basic or full access.
-                 Attribute must be available below-->
-            <preference>
-                <name>userTypeAttribute</name>
-                <value>uid</value>
-            </preference>   
-            <!-- The values of the above attribute which will grant full access
-                 If the attribute or value isn't found then the portlet will
-                 default to basic access
-            -->      
-            <preference>
-                <name>fullAccessValues</name>
-                <value>staff</value>
-            </preference>
-            <!-- Role which grants admin access. Role must be available below-->
-            <preference>
-                <name>adminRole</name>
-                <value>Collaborate Administrators</value>
-            </preference>
-        </portlet-preferences>
     
         <security-role-ref>
-          <role-name>Collaborate-Administrators</role-name>
-          <role-link>local.30</role-link>
+          <role-name>ROLE_FULL_ACCESS</role-name>
+          <role-link>Portal Administrators</role-link>
         </security-role-ref>
     </portlet>
     
     <user-attribute>
-        <name>eduPersonAffiliation</name>
-    </user-attribute>
-     <user-attribute>
-        <name>eduPersonOrgUnitDN</name>
-    </user-attribute>
-     <user-attribute>
         <name>displayName</name>
-    </user-attribute>
-     <user-attribute>
-        <name>uid</name>
     </user-attribute>
     <user-attribute>
         <name>mail</name>

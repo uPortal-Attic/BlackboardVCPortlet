@@ -13,7 +13,7 @@ import com.elluminate.sas.BlackboardSetSessionTelephony;
 public interface SessionWSDao {
 	
 	//create
-	public BlackboardSessionResponse createSession(ConferenceUser user, SessionForm sessionForm, boolean fullAccess);
+	public BlackboardSessionResponse createSession(ConferenceUser user, SessionForm sessionForm);
 	public String buildSessionUrl(Long sessionId, String displayName);
 	//TODO : this might just go into create session
 	public boolean createSessionTelephony(Long sessionId, BlackboardSetSessionTelephony telephony);

@@ -10,6 +10,9 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+/**
+ * Pulls the current user's email address out of spring-security and then does a lookup via the user dao
+ */
 @Service
 public class ConferenceUserServiceImpl implements ConferenceUserService {
     private ConferenceUserDao conferenceUserDao;
@@ -27,6 +30,10 @@ public class ConferenceUserServiceImpl implements ConferenceUserService {
             return null;
         }
         
+        return getConferenceUser(authentication);
+    }
+
+    public ConferenceUser getConferenceUser(Authentication authentication) {
         final ConferenceSecurityUser principal = (ConferenceSecurityUser)authentication.getPrincipal();
         if (principal == null) {
             return null;
@@ -35,5 +42,4 @@ public class ConferenceUserServiceImpl implements ConferenceUserService {
         final String email = principal.getEmail();
         return this.conferenceUserDao.getUser(email);
     }
-
 }

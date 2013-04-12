@@ -21,8 +21,6 @@
 
 <%@ include file="/WEB-INF/jsp/header.jsp"%>
 
-<c:set var="namespace"><portlet:namespace/></c:set>
-
 <c:if test="${!empty errorMessage}">
     <div class="uportal-channel-error"><spring:message code="${errorMessage}" text="${errorMessage}"/></div><br/>
 </c:if>
