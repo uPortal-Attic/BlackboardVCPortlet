@@ -27,7 +27,7 @@ public interface SessionWSDao {
 	public List<BlackboardSessionTelephonyResponse> getSessionTelephony(Long sessionId);
 	
 	//update
-	public BlackboardSessionResponse updateSession(ConferenceUser user, SessionForm sessionForm, boolean fullAccess);
+	public BlackboardSessionResponse updateSession(ConferenceUser user, SessionForm sessionForm);
 	
 	//delete
 	public boolean deleteSession(Long sessionId);

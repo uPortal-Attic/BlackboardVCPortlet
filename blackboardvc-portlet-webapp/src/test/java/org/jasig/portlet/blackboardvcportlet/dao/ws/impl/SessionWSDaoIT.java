@@ -36,7 +36,7 @@ public class SessionWSDaoIT {
 	public void before() {
 		form = buildSession();
 		user = buildUser();
-		session = dao.createSession(user, form, true);
+		session = dao.createSession(user, form);
 	}
 	
 	@After
@@ -66,7 +66,7 @@ public class SessionWSDaoIT {
 		
 		//go from 3 to 4 (four hour meeting)
 		form.setEndTime((new DateTime()).plusHours(4).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0));
-		BlackboardSessionResponse updateSession = dao.updateSession(user, form, true);
+		BlackboardSessionResponse updateSession = dao.updateSession(user, form);
 		assertNotNull(updateSession);
 		assertEquals(form.getEndTime().getMillis(),updateSession.getEndTime());
 	}
