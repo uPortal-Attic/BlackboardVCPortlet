@@ -20,6 +20,7 @@ import com.elluminate.sas.BlackboardPresentationResponseCollection;
 import com.elluminate.sas.BlackboardRemoveRepositoryPresentation;
 import com.elluminate.sas.BlackboardRemoveSessionPresentation;
 import com.elluminate.sas.BlackboardSetSessionPresentation;
+import com.elluminate.sas.BlackboardUploadRepositoryContent;
 import com.elluminate.sas.ObjectFactory;
 
 @Service
@@ -37,8 +38,18 @@ public class PresentationWSDaoImpl extends ContentWSDaoImpl implements Presentat
 	
 	@Override
 	public BlackboardPresentationResponse uploadPresentation(String creatorId, String filename, String description, DataHandler data) {
-		BlackboardPresentationResponseCollection response = (BlackboardPresentationResponseCollection) uploadContent(creatorId, filename, description, data, ContentType.Presentation);
-		return DataAccessUtils.singleResult(response.getPresentationResponses()); 
+		BlackboardUploadRepositoryContent request = new ObjectFactory().createBlackboardUploadRepositoryContent();
+		request.setCreatorId(creatorId);
+		request.setDescription(description);
+		request.setFilename(filename);
+		request.setContent(data);
+		
+		JAXBElement<BlackboardUploadRepositoryContent> createUploadRepositoryPresentation = new ObjectFactory().createUploadRepositoryPresentation(request);
+		
+		@SuppressWarnings("unchecked")
+		JAXBElement<BlackboardPresentationResponseCollection> response = (JAXBElement<BlackboardPresentationResponseCollection>) sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/UploadRepositoryPresentation", createUploadRepositoryPresentation);
+		BlackboardPresentationResponseCollection unwrappedResponse = response.getValue();
+		return DataAccessUtils.singleResult(unwrappedResponse.getPresentationResponses()); 
 	}
 	
 	@Override
@@ -80,7 +91,9 @@ public class PresentationWSDaoImpl extends ContentWSDaoImpl implements Presentat
 		if(description != null) {
 			request.setDescription(description);
 		}
-		final BlackboardPresentationResponseCollection objSessionResponse = (BlackboardPresentationResponseCollection)sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/ListRepositoryPresentation", request);
+		@SuppressWarnings("unchecked")
+		final JAXBElement<BlackboardPresentationResponseCollection> response = (JAXBElement<BlackboardPresentationResponseCollection>)sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/ListRepositoryPresentation", request);
+		final BlackboardPresentationResponseCollection objSessionResponse = (BlackboardPresentationResponseCollection)response.getValue();
 		return objSessionResponse.getPresentationResponses();
 	}
 

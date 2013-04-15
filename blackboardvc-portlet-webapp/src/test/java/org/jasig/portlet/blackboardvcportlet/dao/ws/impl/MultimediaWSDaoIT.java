@@ -1,6 +1,6 @@
 package org.jasig.portlet.blackboardvcportlet.dao.ws.impl;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
