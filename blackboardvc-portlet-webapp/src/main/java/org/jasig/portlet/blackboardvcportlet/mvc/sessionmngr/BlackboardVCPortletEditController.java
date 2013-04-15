@@ -25,6 +25,7 @@ import javax.portlet.RenderRequest;
 
 import org.jasig.portlet.blackboardvcportlet.dao.ConferenceUserDao;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
+import org.jasig.portlet.blackboardvcportlet.data.RecordingMode;
 import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.security.ConferenceUserService;
@@ -42,6 +43,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.portlet.bind.annotation.ActionMapping;
@@ -104,6 +106,11 @@ public class BlackboardVCPortletEditController
 	    final DateTimeFormatter formatter = new DateTimeFormatterBuilder().appendPattern("MM/dd/yyyy").toFormatter();
         binder.registerCustomEditor(DateMidnight.class, new CustomDateMidnightEditor(formatter, false));
     }
+	
+	@ModelAttribute("recordingModes")
+	public RecordingMode[] getRecordingModes() {
+	    return RecordingMode.values();
+	}
 
 	@RenderMapping
 	public String displayNewSessionForm(RenderRequest request, ModelMap model) throws Exception {

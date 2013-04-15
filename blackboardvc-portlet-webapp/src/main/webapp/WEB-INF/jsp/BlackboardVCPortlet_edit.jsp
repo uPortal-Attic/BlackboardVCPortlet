@@ -51,9 +51,11 @@
 </portlet:renderURL>
 
 <form action="${formActionUrl}" method="post">
-    <input type="hidden" name="newSession" value="${session.newSession}" />
+  <%-- Using nestedPath as form:form does not work for portlets see: https://jira.springsource.org/browse/SPR-10382 --%>
+  <spring:nestedPath path="session">
+    <form:hidden path="newSession"/>
 	<c:if test="${!session.newSession}">
-		<input type="hidden" name="sessionId" value="${session.sessionId}" />
+        <form:hidden path="sessionId"/>
 	</c:if>
 	<table>
 		<tbody>
@@ -61,10 +63,10 @@
 				<td><span class="uportal-channel-strong">Session Name: </span></td>
 				<c:choose>
 					<c:when test="${session.newSession}">
-						<td><input name="sessionName" style="width: 50%;" class="uportal-input-text" value="${session.sessionName}" /></td>
+						<td><form:input path="sessionName" style="width: 50%;" class="uportal-input-text" /></td>
 					</c:when>
 					<c:otherwise>
-						<td><input type="hidden" name="sessionName" value="${session.sessionName}" />${session.sessionName}</td>
+						<td><form:hidden path="sessionName" />${session.sessionName}</td>
 					</c:otherwise>
 				</c:choose>
 
@@ -80,17 +82,17 @@
 				<joda:format var="startMinute" value="${session.startTime}" pattern="m" />
 				
 				<td><input style="width: 82px;" value="${startDate}" name="startDate" id="${n}startdatepicker" style="width: 70px;" type="text">&nbsp;
-					<select name="startHour">
-						<c:forEach var="i" begin="0" end="23" step="1">
-							<option value="${i}" ${startHour == i ? 'selected' : ''}>${i}</option>
-						</c:forEach>
-					</select>
+                    <form:select path="startHour">
+                        <c:forEach var="i" begin="0" end="23" step="1">
+                            <form:option value="${i}">${i}</form:option>
+                        </c:forEach>
+                    </form:select>
 					: 
-					<select name="startMinute">
+					<form:select path="startMinute">
 						<c:forEach var="i" begin="0" end="45" step="15">
-							<option value="${i}" ${startMinute == i ? 'selected' : ''}>${i}</option>
+							<form:option value="${i}">${i}</form:option>
 						</c:forEach>
-					</select>
+					</form:select>
 				</td>
 			</tr>
 			<tr>
@@ -100,17 +102,17 @@
                 <joda:format var="endMinute" value="${session.endTime}" pattern="m" />
                 
 				<td><input style="width: 82px;" value="${endDate}" name="endDate" id="${n}enddatepicker" style="width: 70px;" type="text">&nbsp; 
-					<select name="endHour">
+					<form:select path="endHour">
 						<c:forEach var="i" begin="0" end="23" step="1">
-							<option value="${i}" ${endHour == i ? 'selected' : ''}>${i}</option>
+							<form:option value="${i}">${i}</form:option>
 						</c:forEach>
-					</select>
+					</form:select>
 					:  
-					<select name="endMinute">
+					<form:select path="endMinute">
 						<c:forEach var="i" begin="0" end="45" step="15">
-							<option value="${i}" ${endMinute == i ? 'selected' : ''}>${i}</option>
+							<form:option value="${i}">${i}</form:option>
 						</c:forEach>
-					</select>
+					</form:select>
 				</td>
 			</tr>
 			<tr>
@@ -121,20 +123,16 @@
 			</tr>
 			<tr>
 				<td><span class="uportal-channel-strong">Early Session Entry: </span></td>
-				<td><select name="boundaryTime">
-						<option value="15"
-							${session.boundaryTime == "15" ? 'selected' : ''}>15 minutes</option>
-						<option value="30"
-							${session.boundaryTime == "30" ? 'selected' : ''}>30 minutes</option>
-						<option value="45"
-							${session.boundaryTime == "45" ? 'selected' : ''}>45 minutes</option>
-						<option value="60"
-							${session.boundaryTime == "60" ? 'selected' : ''}>1 hour</option>
-						<option value="120"
-							${session.boundaryTime == "120" ? 'selected' : ''}>2 hours</option>
-						<option value="180"
-							${session.boundaryTime == "180" ? 'selected' : ''}>3 hours</option>
-				</select></td>
+				<td>
+                  <form:select path="boundaryTime">
+						<form:option value="15">15 minutes</form:option>
+						<form:option value="30">30 minutes</form:option>
+						<form:option value="45">45 minutes</form:option>
+						<form:option value="60">1 hour</form:option>
+						<form:option value="120">2 hours</form:option>
+						<form:option value="180">3 hours</form:option>
+				  </form:select>
+                </td>
 			</tr>
 			<tr>
 				<td></td>
@@ -144,15 +142,13 @@
 			<c:choose>
 				<c:when test="${fullAccess}">
 					<tr>
-						<td><span class="uportal-channel-strong">Max
-								Simultaneous Talkers: </span></td>
+						<td><span class="uportal-channel-strong">Max Simultaneous Talkers: </span></td>
 						<td>
-							<select name="maxTalkers">
+							<form:select path="maxTalkers">
 								<c:forEach var="i" begin="1" end="${serverConfiguration.maxAvailableTalkers}" step="1">
-									<option value="${i}"
-										${session.maxTalkers == i ? 'selected' : ''}>${i}</option>
+									<form:option value="${i}">${i}</form:option>
 								</c:forEach>
-							</select>
+							</form:select>
 						</td>
 					</tr>
 					<tr>
@@ -160,15 +156,13 @@
 						<td class="uportal-channel-table-caption">Maximum number of simultaneous talkers allowed at the start of a session.</td>
 					</tr>
 					<tr>
-						<td><span class="uportal-channel-strong">Max Cameras:
-						</span></td>
+						<td><span class="uportal-channel-strong">Max Cameras: </span></td>
 						<td>
-							<select name="maxCameras">
+							<form:select path="maxCameras">
 								<c:forEach var="i" begin="1" end="${serverConfiguration.maxAvailableCameras}" step="1">
-									<option value="${i}"
-										${session.maxCameras == i ? 'selected' : ''}>${i}</option>
+									<form:option value="${i}">${i}</form:option>
 								</c:forEach>
-							</select>
+							</form:select>
 						</td>
 					</tr>
 					<tr>
@@ -177,8 +171,7 @@
 					</tr>
 					<tr>
 						<td><span class="uportal-channel-strong">Supervised: </span></td>
-						<td><input name="mustBeSupervised" type="checkbox" value="Y"
-							${session.mustBeSupervised ? 'checked' : ''} /></td>
+						<td><form:checkbox path="mustBeSupervised"/></td>
 					</tr>
 					<tr>
 						<td></td>
@@ -186,8 +179,7 @@
 					</tr>
 					<tr>
 						<td><span class="uportal-channel-strong">All Permissions: </span></td>
-						<td><input name="permissionsOn" type="checkbox" value="Y"
-							${session.permissionsOn ? 'checked' : ''} /></td>
+						<td><form:checkbox path="permissionsOn"/></td>
 					</tr>
 					<tr>
 						<td></td>
@@ -195,7 +187,7 @@
 					</tr>
 					<tr>
 						<td><span class="uportal-channel-strong">Raise Hand on Entry: </span></td>
-						<td><input name="raiseHandOnEnter" type="checkbox" value="Y" ${session.raiseHandOnEnter ? 'checked' : ''} /></td>
+						<td><form:checkbox path="raiseHandOnEnter"/></td>
 					</tr>
 					<tr>
 						<td></td>
@@ -203,14 +195,9 @@
 					</tr>
 					<tr>
 						<td><span class="uportal-channel-strong">Recording Mode: </span></td>
-						<td><select name="recordingMode" disabled>
-								<option value="MANUAL"
-									${session.recordingMode.name == "MANUAL" ? 'selected' : ''}>Manual</option>
-								<option value="AUTOMATIC"
-									${session.recordingMode.name == "AUTOMATIC" ? 'selected' : ''}>Automatic</option>
-								<option value="DISABLED"
-									${session.recordingMode.name == "DISABLED" ? 'selected' : ''}>Disabled</option>
-						</select> <input type="hidden" name="recordingMode" value="${session.recordingMode.name}" /></td>
+						<td>
+                          <form:select path="recordingMode" items="${recordingModes}" />
+                        </td>
 					</tr>
 					<tr>
 						<td></td>
@@ -218,7 +205,7 @@
 					</tr>
 					<tr>
 						<td><span class="uportal-channel-strong">Hide Names in Recordings: </span></td>
-						<td><input name="hideParticipantNames" type="checkbox" value="Y" ${session.hideParticipantNames  ? 'checked' : ''} /></td>
+						<td><form:checkbox path="hideParticipantNames"/></td>
 					</tr>
 					<tr>
 						<td></td>
@@ -226,7 +213,7 @@
 					</tr>
 					<tr>
 						<td><span class="uportal-channel-strong">Allow In-Session Invitations: </span></td>
-						<td><input name="allowInSessionInvites" type="checkbox" value="Y" ${session.allowInSessionInvites ? 'checked' : ''} /></td>
+						<td><form:checkbox path="allowInSessionInvites"/></td>
 					</tr>
 					<tr>
 						<td></td>
@@ -234,22 +221,14 @@
 					</tr>
 				</c:when>
 				<c:otherwise>
-					<input type="hidden" name="maxTalkers"
-						value="${session.maxTalkers}" />
-					<input type="hidden" name="maxCameras"
-						value="${session.maxCameras}" />
-					<input type="hidden" name="mustBeSupervised"
-						value="${session.mustBeSupervised}" />
-					<input type="hidden" name="permissionsOn"
-						value="${session.permissionsOn}" />
-					<input type="hidden" name="raiseHandOnEnter"
-						value="${session.raiseHandOnEnter}" />
-					<input type="hidden" name="recordingMode"
-						value="${session.recordingMode}" />
-					<input type="hidden" name="hideParticipantNames"
-						value="${session.hideParticipantNames}" />
-					<input type="hidden" name="allowInSessionInvites"
-						value="${session.allowInSessionInvites}" />
+                    <form:hidden path="maxTalkers"/>
+                    <form:hidden path="maxCameras"/>
+                    <form:hidden path="mustBeSupervised"/>
+                    <form:hidden path="permissionsOn"/>
+                    <form:hidden path="raiseHandOnEnter"/>
+                    <form:hidden path="recordingMode"/>
+                    <form:hidden path="hideParticipantNames"/>
+                    <form:hidden path="allowInSessionInvites"/>
 				</c:otherwise>
 			</c:choose>
 
@@ -525,6 +504,7 @@
 		</tbody>
 
 	</table>
+  </spring:nestedPath>
 </form>
 <script type="text/javascript">
     <rs:compressJs>

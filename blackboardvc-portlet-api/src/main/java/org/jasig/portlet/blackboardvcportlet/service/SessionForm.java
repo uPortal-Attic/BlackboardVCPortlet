@@ -36,8 +36,6 @@ public class SessionForm implements Serializable {
     private boolean newSession;
     private long sessionId;
     private String sessionName;
-    private DateTime startTime;
-    private DateTime endTime;
     private int boundaryTime;
     private int maxTalkers;
 	private int maxCameras;
@@ -63,8 +61,9 @@ public class SessionForm implements Serializable {
 	public SessionForm(ServerConfiguration serverConfiguration) {
         this.newSession = true;
         
-        this.startTime = DateTime.now().plusDays(1).hourOfDay().roundFloorCopy();
-        this.endTime = this.startTime.plusHours(1);
+        final DateTime startTime = DateTime.now().plusDays(1).hourOfDay().roundFloorCopy();
+        this.setStartTime(startTime);
+        this.setEndTime(startTime.plusHours(1));
         
         this.boundaryTime = serverConfiguration.getBoundaryTime();
 	    this.maxCameras = serverConfiguration.getMaxAvailableCameras();
@@ -77,8 +76,8 @@ public class SessionForm implements Serializable {
         
         this.sessionId = session.getSessionId();
         this.sessionName = session.getSessionName();
-        this.startTime = session.getStartTime();
-        this.endTime = session.getEndTime();
+        this.setStartTime(session.getStartTime());
+        this.setEndTime(session.getEndTime());
         this.boundaryTime = session.getBoundaryTime();
 	    this.maxTalkers = session.getMaxTalkers();
 	    this.maxCameras = session.getMaxCameras();
@@ -115,28 +114,20 @@ public class SessionForm implements Serializable {
     }
 
     public DateTime getStartTime() {
-        if (startTime == null && startDate != null) {
-            this.startTime = this.startDate.toDateTime().withHourOfDay(this.startHour).withMinuteOfHour(this.startMinute);
-        }
-        return startTime;
+        return this.startDate.toDateTime().withHourOfDay(this.startHour).withMinuteOfHour(this.startMinute);
     }
 
     public void setStartTime(DateTime startTime) {
-        this.startTime = startTime;
         this.startDate = startTime.toDateMidnight();
         this.startHour = startTime.getHourOfDay();
         this.startMinute = startTime.getMinuteOfHour();
     }
 
     public DateTime getEndTime() {
-        if (endTime == null && endDate != null) {
-            this.endTime = this.endDate.toDateTime().withHourOfDay(this.endHour).withMinuteOfHour(this.endMinute);
-        }
-        return endTime;
+        return this.endDate.toDateTime().withHourOfDay(this.endHour).withMinuteOfHour(this.endMinute);
     }
 
     public void setEndTime(DateTime endTime) {
-        this.endTime = endTime;
         this.endDate = endTime.toDateMidnight();
         this.endHour = endTime.getHourOfDay();
         this.endMinute = endTime.getMinuteOfHour();
@@ -265,7 +256,7 @@ public class SessionForm implements Serializable {
     @Override
     public String toString() {
         return "FullSessionForm [newSession=" + newSession + ", sessionId=" + sessionId + ", sessionName="
-                + sessionName + ", startTime=" + startTime + ", endTime=" + endTime + ", boundaryTime=" + boundaryTime
+                + sessionName + ", startTime=" + this.getStartTime() + ", endTime=" + this.getEndTime() + ", boundaryTime=" + boundaryTime
                 + ", maxTalkers=" + maxTalkers + ", maxCameras=" + maxCameras + ", mustBeSupervised="
                 + mustBeSupervised + ", permissionsOn=" + permissionsOn + ", raiseHandOnEnter=" + raiseHandOnEnter
                 + ", recordingMode=" + recordingMode + ", hideParticipantNames=" + hideParticipantNames
