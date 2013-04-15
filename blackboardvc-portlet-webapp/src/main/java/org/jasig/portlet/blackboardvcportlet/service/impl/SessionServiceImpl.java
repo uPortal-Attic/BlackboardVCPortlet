@@ -1,5 +1,6 @@
 package org.jasig.portlet.blackboardvcportlet.service.impl;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.jasig.portlet.blackboardvcportlet.dao.SessionDao;
@@ -11,6 +12,7 @@ import org.jasig.portlet.blackboardvcportlet.service.SessionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,13 +38,15 @@ public class SessionServiceImpl implements SessionService {
 	}
 
 	@PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#session, 'view')")
+	@PostFilter("hasPermission(#session, 'edit')")
     public Set<ConferenceUser> getSessionChairs(Session session) {
-        return sessionDao.getSessionChairs(session);
+        return new LinkedHashSet<ConferenceUser>(sessionDao.getSessionChairs(session));
     }
 
 	@PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#session, 'view')")
+    @PostFilter("hasPermission(#session, 'edit')")
     public Set<ConferenceUser> getSessionNonChairs(Session session) {
-        return sessionDao.getSessionNonChairs(session);
+        return new LinkedHashSet<ConferenceUser>(sessionDao.getSessionNonChairs(session));
     }
 
     @Override

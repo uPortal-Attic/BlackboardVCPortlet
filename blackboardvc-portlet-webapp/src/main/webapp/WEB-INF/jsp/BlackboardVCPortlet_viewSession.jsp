@@ -22,45 +22,49 @@
 <%@ include file="/WEB-INF/jsp/header.jsp"%>
 
 <table>
-    <tbody>
-       
-        <tr><td align="left">Session name: </td><td>${session.sessionName}</td></tr>
-        <tr><td align="left">Start time: </td><td><joda:format value="${session.startTime}" pattern="MM/dd/yyyy HH:mm" /></td></tr>
-        <tr><td align="left">End time: </td><td><joda:format value="${session.endTime}" pattern="MM/dd/yyyy HH:mm" /></td></tr>
-        <c:if test="${! empty guestUrl}">
-            <tr><td>Guest link: </td><td><a href="${guestUrl}" target="_blank">${guestUrl}</a></td></tr>  
-        </c:if>
-
-    </tbody>
-</table>
-<portlet:renderURL var="editSessionUrl" portletMode="EDIT" windowState="MAXIMIZED" >
+  <tbody>
+    <tr><td align="left">Session name: </td><td>${session.sessionName}</td></tr>
+    <tr><td align="left">Start time: </td><td><joda:format value="${session.startTime}" pattern="MM/dd/yyyy HH:mm" /></td></tr>
+    <tr><td align="left">End time: </td><td><joda:format value="${session.endTime}" pattern="MM/dd/yyyy HH:mm" /></td></tr>
+    <sec:authorize access="hasRole('ROLE_ADMIN') || hasPermission(#session, 'edit')">
+      <tr><td>Guest link: </td><td><a href="${session.guestUrl}" target="_blank">${session.guestUrl}</a></td></tr>  
+    </sec:authorize>
+  </tbody>
+</table>   
+<sec:authorize access="hasRole('ROLE_ADMIN') || hasPermission(#session, 'edit')">
+  <portlet:renderURL var="editSessionUrl" portletMode="EDIT" windowState="MAXIMIZED" >
     <portlet:param name="sessionId" value="${session.sessionId}" />
     <portlet:param name="action" value="editSession" />
-</portlet:renderURL>        
-<sec:authorize access="hasPermission(#session, 'edit')">
-    <div>&nbsp;<input value="Edit Session" name="${session.sessionId}" class="uportal-button" onclick="window.location='${editSessionUrl}'" type="button"></div><br/>
+  </portlet:renderURL>
+  <div>&nbsp; <a href="${editSessionUrl}" class="uportal-button">Edit Session</a></div><br/>
 </sec:authorize>
     
-<c:if test="${! empty showCSVDownload}">
-<div>
-	<portlet:resourceURL var="csvDownloadURL" id="csvDownload" />
-    <form target="_blank" action="${csvDownloadURL}" method="post">
-        <input type="hidden" name="sessionId" value="${session.sessionId}"/>
-        <input type="hidden" name="uid" value="${uid}"/>
-        <input type="submit" name="downloadSubmit" value="Download participant list (CSV file)"/>
-    </form>
-</div>
-    <br/>
-</c:if>    
+<sec:authorize access="hasRole('ROLE_ADMIN') || hasPermission(#session, 'edit')">
+  <div>
+    <h4>Moderators</h4>
+    <ul>
+      <c:forEach var="user" items="${sessionChairs}">
+        <li>${user.displayName}</li>
+      </c:forEach>
+    </ul>
+    <h4>Participants</h4>
+    <ul>
+      <c:forEach var="user" items="${sessionNonChairs}">
+        <li>${user.displayName}</li>
+      </c:forEach>
+    </ul>
+  </div>
+  <br/>
+</sec:authorize>    
 
 <c:choose>
-    <c:when test="${showLaunchSession eq 'false'}">
+    <c:when test="${empty launchUrl}">
         <div><b>Session is now closed</b></div><br/>
     </c:when>
     <c:otherwise>
-        <div><a href="${launchSessionUrl}" target="_blank">Launch session (Will open a new window)</a></div><br/>
+        <div><a href="${launchUrl}" target="_blank">Launch session (Will open a new window)</a></div><br/>
     </c:otherwise>
 </c:choose>
        
 <portlet:renderURL var="backUrl" portletMode="VIEW" />
-<input name="Back" value="Back" type="button" class="uportal-button" onclick="window.location='${backUrl}'"/>
+<a href="${backUrl}" class="uportal-button">Back</a>

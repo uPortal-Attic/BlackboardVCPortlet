@@ -57,7 +57,7 @@
         <tr>
             <td align="left"><input class="uportal-button" name="action" value="Save Recording" type="submit"></td>
                 <portlet:renderURL var="cancelAction" portletMode="VIEW" windowState="NORMAL"/>
-            <td align="right"><input class="uportal-button" name="cancel" value="Cancel" onclick="window.location='${cancelAction}'" type="button"></td>
+            <td align="right"><a href="${cancelAction}" class="uportal-button">Cancel</a></td>
         </tr>
     </tbody>
 

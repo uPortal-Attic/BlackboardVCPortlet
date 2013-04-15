@@ -27,14 +27,12 @@ import org.jasig.portlet.blackboardvcportlet.dao.ConferenceUserDao;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.security.ConferenceUserService;
-import org.jasig.portlet.blackboardvcportlet.service.SessionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 
 /**
@@ -44,20 +42,13 @@ import org.springframework.web.portlet.bind.annotation.RenderMapping;
  */
 @Controller
 @RequestMapping("VIEW")
-public class BlackboardVCPortletViewController
+public class ViewSessionListController
 {
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	private ConferenceUserService conferenceUserService;
 	private ConferenceUserDao conferenceUserDao;
-	private SessionService sessionService;
 	
-	
-	@Autowired
-	public void setSessionService(SessionService sessionService) {
-        this.sessionService = sessionService;
-    }
-
 	@Autowired
     public void setConferenceUserService(ConferenceUserService conferenceUserService) {
         this.conferenceUserService = conferenceUserService;
@@ -90,47 +81,5 @@ public class BlackboardVCPortletViewController
 		
 		//TODO get & add recordings, presentations & multimediate files
 		return "BlackboardVCPortlet_view";
-	}
-	
-	/**
-	 * Launch page for a specific session
-	 *
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	@RenderMapping(params = "action=viewSession")
-	public String viewSession(PortletRequest request, @RequestParam long sessionId, ModelMap model)	{
-        final Session session = this.sessionService.getSession(sessionId);
-        //TODO if session is null
-        model.addAttribute("session", session);
-
-        if (session.getEndTime().isAfterNow()) {
-            final ConferenceUser blackboardUser = this.conferenceUserService.getCurrentConferenceUser();
-            final Set<ConferenceUser> sessionChairs = this.sessionService.getSessionChairs(session);
-
-            if (sessionChairs.contains(blackboardUser)) {
-                model.addAttribute("guestUrl", session.getGuestUrl());
-            }
-
-            logger.debug("Session is still open, we can show the launch url");
-            final Set<ConferenceUser> sessionNonChairs = this.sessionService.getSessionNonChairs(session);
-
-            // If the user is specified in chair or non chair list then get the URL
-            if (sessionChairs.contains(blackboardUser) || sessionNonChairs.contains(blackboardUser)) {
-                //TODO need to lookup the UserSessionUrl
-
-                model.addAttribute("showLaunchSession", true);
-                logger.debug("User is in the chair/non-chair list");
-                logger.debug("gotten user sessionUrl");
-                model.addAttribute("launchSessionUrl", "TODO");
-            }
-        }
-        else {
-            logger.debug("Session is closed");
-            model.addAttribute("showLaunchSession", false);
-        }
-
-        return "BlackboardVCPortlet_viewSession";
 	}
 }
