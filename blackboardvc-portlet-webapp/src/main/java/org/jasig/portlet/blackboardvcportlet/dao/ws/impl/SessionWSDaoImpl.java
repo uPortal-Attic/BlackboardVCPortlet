@@ -1,6 +1,8 @@
 package org.jasig.portlet.blackboardvcportlet.dao.ws.impl;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.bind.JAXBElement;
 
@@ -151,7 +153,7 @@ public class SessionWSDaoImpl implements SessionWSDao {
 	}
 
 	@Override
-	public BlackboardSessionResponse updateSession(ConferenceUser user, long bbSessionId, SessionForm sessionForm) {
+	public BlackboardSessionResponse updateSession(long bbSessionId, SessionForm sessionForm) {
 		final BlackboardUpdateSession updateSession = new ObjectFactory().createBlackboardUpdateSession();
 
 		updateSession.setSessionId(bbSessionId);
@@ -179,8 +181,23 @@ public class SessionWSDaoImpl implements SessionWSDao {
 		JAXBElement<BlackboardSessionResponseCollection> response = (JAXBElement<BlackboardSessionResponseCollection>) objSessionResponse;
         return DataAccessUtils.singleResult(response.getValue().getSessionResponses());
 	}
-
+	
 	@Override
+    public BlackboardSessionResponse setSessionChairs(long bbSessionId, Set<ConferenceUser> sessionChairs) {
+	    final BlackboardUpdateSession updateSession = new ObjectFactory().createBlackboardUpdateSession();
+
+	    updateSession.setSessionId(bbSessionId);
+	    
+        final String chairList = buildUidList(sessionChairs);
+        updateSession.setChairList(chairList);
+        
+        final Object objSessionResponse = sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/UpdateSession", updateSession);
+        @SuppressWarnings("unchecked")
+        JAXBElement<BlackboardSessionResponseCollection> response = (JAXBElement<BlackboardSessionResponseCollection>) objSessionResponse;
+        return DataAccessUtils.singleResult(response.getValue().getSessionResponses());
+    }
+
+    @Override
 	public boolean deleteSession(Long sessionId) {
 		BlackboardRemoveSession request = new ObjectFactory().createBlackboardRemoveSession();
 		request.setSessionId(sessionId);
@@ -195,8 +212,19 @@ public class SessionWSDaoImpl implements SessionWSDao {
 	@Override
 	public boolean clearSessionNonChairList(Long sessionId) {
 		return clearSessionUserList(sessionId,false);
-		
 	}
+
+    private String buildUidList(Set<ConferenceUser> users) {
+        final StringBuilder uidBuilder = new StringBuilder();
+        for (final Iterator<ConferenceUser> userItr = users.iterator(); userItr.hasNext();) {
+            final ConferenceUser user = userItr.next();
+            uidBuilder.append(user.getEmail());
+            if (userItr.hasNext()) {
+                uidBuilder.append(',');
+            }
+        }
+        return uidBuilder.toString();
+    }
 	
 	private boolean clearSessionUserList(Long sessionId, boolean isChairList) {
 		BlackboardClearSessionUserList vo = new ObjectFactory().createBlackboardClearSessionUserList();

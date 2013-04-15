@@ -1,8 +1,10 @@
 package org.jasig.portlet.blackboardvcportlet.dao.ws;
 
 import java.util.List;
+import java.util.Set;
 
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
+import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.service.SessionForm;
 
 import com.elluminate.sas.BlackboardSessionAttendanceResponse;
@@ -27,7 +29,8 @@ public interface SessionWSDao {
 	public List<BlackboardSessionTelephonyResponse> getSessionTelephony(Long sessionId);
 	
 	//update
-	public BlackboardSessionResponse updateSession(ConferenceUser user, long bbSessionId, SessionForm sessionForm);
+	public BlackboardSessionResponse updateSession(long bbSessionId, SessionForm sessionForm);
+	public BlackboardSessionResponse setSessionChairs(long bbSessionId, Set<ConferenceUser> sessionChairs);
 	
 	//delete
 	public boolean deleteSession(Long sessionId);

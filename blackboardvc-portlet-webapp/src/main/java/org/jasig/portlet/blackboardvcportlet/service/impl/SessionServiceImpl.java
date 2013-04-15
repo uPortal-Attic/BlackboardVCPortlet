@@ -68,11 +68,24 @@ public class SessionServiceImpl implements SessionService {
         }
         else {
             final Session session = sessionDao.getSession(sessionForm.getSessionId());
-            final BlackboardSessionResponse sessionResponse = sessionWSDao.updateSession(user, session.getBbSessionId(), sessionForm);
+            final BlackboardSessionResponse sessionResponse = sessionWSDao.updateSession(session.getBbSessionId(), sessionForm);
             sessionDao.updateSession(sessionResponse);
         }
     }
+
+    @Override
+    @Transactional
+    @PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'edit')")
+    public void addSessionChair(long sessionId, ConferenceUser newSessionChair) {
+        final Session session = this.sessionDao.getSession(sessionId);
+        final Set<ConferenceUser> sessionChairs = new LinkedHashSet<ConferenceUser>(this.getSessionChairs(session));
+        sessionChairs.add(newSessionChair);
+        
+        final BlackboardSessionResponse sessionResponse = this.sessionWSDao.setSessionChairs(session.getBbSessionId(), sessionChairs);
+        sessionDao.updateSession(sessionResponse);
+    }
 	
+    
 	
 	
 

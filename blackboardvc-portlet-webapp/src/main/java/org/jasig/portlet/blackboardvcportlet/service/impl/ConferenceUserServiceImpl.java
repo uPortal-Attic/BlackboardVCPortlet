@@ -48,4 +48,14 @@ public class ConferenceUserServiceImpl implements ConferenceUserService {
         final String email = principal.getEmail();
         return this.conferenceUserDao.getUser(email);
     }
+
+    @Override
+    public ConferenceUser getOrCreateConferenceUser(String email, String displayName) {
+        final ConferenceUser user = this.conferenceUserDao.getUser(email);
+        if (user != null) {
+            return user;
+        }
+        
+        return this.conferenceUserDao.createUser(email, displayName);
+    }
 }

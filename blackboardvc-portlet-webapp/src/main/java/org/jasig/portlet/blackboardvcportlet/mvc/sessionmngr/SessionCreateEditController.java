@@ -18,18 +18,18 @@
  */
 package org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr;
 
+import java.util.Set;
+
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletMode;
 import javax.portlet.RenderRequest;
 
-import org.jasig.portlet.blackboardvcportlet.dao.ConferenceUserDao;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingMode;
 import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.security.ConferenceUserService;
-import org.jasig.portlet.blackboardvcportlet.service.RecordingService;
 import org.jasig.portlet.blackboardvcportlet.service.ServerConfigurationService;
 import org.jasig.portlet.blackboardvcportlet.service.SessionForm;
 import org.jasig.portlet.blackboardvcportlet.service.SessionService;
@@ -39,6 +39,7 @@ import org.joda.time.format.DateTimeFormatterBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.WebDataBinder;
@@ -49,6 +50,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 
+import com.google.common.collect.ImmutableSortedSet;
+
 /**
  * Controller class for Portlet EDIT related actions and render
  *
@@ -56,32 +59,18 @@ import org.springframework.web.portlet.bind.annotation.RenderMapping;
  */
 @Controller
 @RequestMapping("EDIT")
-public class BlackboardVCPortletEditController
+public class SessionCreateEditController
 {
-	private static final Logger logger = LoggerFactory.getLogger(BlackboardVCPortletEditController.class);
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	private ConferenceUserService conferenceUserService;
-    private ConferenceUserDao conferenceUserDao;
-    private RecordingService recordingService;
 	private ServerConfigurationService serverConfigurationService;
 	private SessionService sessionService;
-//	private UserService userService;
 
 	@Autowired
 	public void setConferenceUserService(ConferenceUserService conferenceUserService) {
         this.conferenceUserService = conferenceUserService;
     }
-
-	@Autowired
-    public void setConferenceUserDao(ConferenceUserDao conferenceUserDao) {
-        this.conferenceUserDao = conferenceUserDao;
-    }
-
-    @Autowired
-	public void setRecordingService(RecordingService recordingService)
-	{
-		this.recordingService = recordingService;
-	}
 
 	@Autowired
 	public void setServerConfigurationService(ServerConfigurationService serverConfigurationService)
@@ -94,12 +83,6 @@ public class BlackboardVCPortletEditController
 	{
 		this.sessionService = sessionService;
 	}
-
-//	@Autowired
-//	public void setUserService(UserService userService)
-//	{
-//		this.userService = userService;
-//	}
 
 	@InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -124,6 +107,8 @@ public class BlackboardVCPortletEditController
 	}
 
     @RenderMapping(params="sessionId")
+    //TODO need cglib
+    @PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'edit')")
     public String displayEditSessionForm(RenderRequest request, ModelMap model, @RequestParam long sessionId) throws Exception {
         final ServerConfiguration serverConfiguration = this.serverConfigurationService.getServerConfiguration();
         model.put("serverConfiguration", serverConfiguration);
@@ -134,11 +119,17 @@ public class BlackboardVCPortletEditController
         final SessionForm sessionForm = new SessionForm(session);
         model.put("session", sessionForm);
         
+        final Set<ConferenceUser> sessionChairs = this.sessionService.getSessionChairs(session);
+        model.addAttribute("sessionChairs", ImmutableSortedSet.copyOf(ConferenceUserDisplayNameComparator.INSTANCE, sessionChairs));
+        
+        final Set<ConferenceUser> sessionNonChairs = this.sessionService.getSessionNonChairs(session);
+        model.addAttribute("sessionNonChairs", ImmutableSortedSet.copyOf(ConferenceUserDisplayNameComparator.INSTANCE, sessionNonChairs));
+        
         return "BlackboardVCPortlet_edit";
     }
 	
     //TODO @Valid on SessionForm
-	@ActionMapping(params = "action=Save Session")
+	@ActionMapping(params = "action=saveSession")
 	public void saveSession(ActionRequest request, ActionResponse response, SessionForm sessionForm) throws Exception {
 	    final ConferenceUser conferenceUser = this.conferenceUserService.getCurrentConferenceUser();
 
@@ -147,7 +138,30 @@ public class BlackboardVCPortletEditController
 	    response.setPortletMode(PortletMode.VIEW);
 	}
 
+	//TODO @Valid on name/email
+    @ActionMapping(params = "action=Add Moderator")
+    public void addSessionChair(ActionResponse response, @RequestParam long sessionId, @RequestParam String displayName, @RequestParam String email) throws Exception {
+        final ConferenceUser newSessionChair = this.conferenceUserService.getOrCreateConferenceUser(email, displayName);
+        
+        this.sessionService.addSessionChair(sessionId, newSessionChair);
 
+        response.setPortletMode(PortletMode.EDIT);
+        response.setRenderParameter("sessionId", Long.toString(sessionId));
+    }
+
+    //TODO @Valid on name/email
+    @ActionMapping(params = "action=Delete Moderator(s)")
+    public void deleteSessionChairs(ActionResponse response, @RequestParam long sessionId, @RequestParam String[] deleteChair) throws Exception {
+//        final ConferenceUser newSessionChair = this.conferenceUserService.getOrCreateConferenceUser(email, displayName);
+//        
+//        this.sessionService.addSessionChair(sessionId, newSessionChair);
+
+        response.setPortletMode(PortletMode.EDIT);
+        response.setRenderParameter("sessionId", Long.toString(sessionId));
+    }
+	//
+	
+	
 
 	/*
 	 * disable recordings for limited users

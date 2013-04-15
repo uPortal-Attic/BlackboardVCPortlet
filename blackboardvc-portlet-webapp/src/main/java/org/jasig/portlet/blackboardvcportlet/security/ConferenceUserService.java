@@ -23,4 +23,10 @@ public interface ConferenceUserService {
      * @return The current authentication object
      */
     Authentication getCurrentAuthentication();
+    
+    /**
+     * Get an existing conference user by email or create a new one using the specified email
+     * and display name.
+     */
+    ConferenceUser getOrCreateConferenceUser(String email, String displayName);
 }
