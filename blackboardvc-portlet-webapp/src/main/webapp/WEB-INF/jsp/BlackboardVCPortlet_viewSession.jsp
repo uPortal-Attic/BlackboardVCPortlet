@@ -31,8 +31,8 @@
             <tbody>
                
                 <tr><td align="left">Session name: </td><td>${session.sessionName}</td></tr>
-                <tr><td align="left">Start time: </td><td><fmt:formatDate value="${session.startTime}" pattern="dd-MM-yyyy HH:mm" /></td></tr>
-                <tr><td align="left">End time: </td><td><fmt:formatDate value="${session.endTime}" pattern="dd-MM-yyyy HH:mm" /></td></tr>
+                <tr><td align="left">Start time: </td><td><joda:format value="${session.startTime}" pattern="MM/dd/yyyy HH:mm" /></td></tr>
+                <tr><td align="left">End time: </td><td><joda:format value="${session.endTime}" pattern="MM/dd/yyyy HH:mm" /></td></tr>
                 <c:if test="${! empty guestUrl}">
                     <tr><td>Guest link: </td><td><a href="${guestUrl}" target="_blank">${guestUrl}</a></td></tr>  
                 </c:if>
@@ -43,9 +43,9 @@
                   <portlet:param name="sessionId" value="${session.sessionId}" />
                   <portlet:param name="action" value="editSession" />
         </portlet:renderURL>        
-        <c:if test="${session.currUserCanEdit}">
+        <sec:authorize access="hasPermission(#session, 'edit')">
             <div>&nbsp;<input value="Edit Session" name="${session.sessionId}" class="uportal-button" onclick="window.location='${editSessionUrl}'" type="button"></div><br/>
-        </c:if>        
+        </sec:authorize>
             
         <c:if test="${! empty showCSVDownload}">
         <div>
