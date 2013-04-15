@@ -3,13 +3,12 @@ package org.jasig.portlet.blackboardvcportlet.dao.ws.impl;
 import java.util.List;
 
 import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBElement.GlobalScope;
-import javax.xml.namespace.QName;
 
 import org.jasig.portlet.blackboardvcportlet.dao.ws.SessionWSDao;
 import org.jasig.portlet.blackboardvcportlet.dao.ws.WSDaoUtils;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingMode;
+import org.jasig.portlet.blackboardvcportlet.security.SecurityExpressionEvaluator;
 import org.jasig.portlet.blackboardvcportlet.service.SessionForm;
 import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceOperations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,22 +29,26 @@ import com.elluminate.sas.BlackboardSessionTelephonyResponse;
 import com.elluminate.sas.BlackboardSessionTelephonyResponseCollection;
 import com.elluminate.sas.BlackboardSetSession;
 import com.elluminate.sas.BlackboardSetSessionTelephony;
-import com.elluminate.sas.BlackboardUpdateSession;
 import com.elluminate.sas.BlackboardUrlResponse;
 import com.elluminate.sas.ObjectFactory;
 
 @Service
 public class SessionWSDaoImpl implements SessionWSDao {
-	
 	private SASWebServiceOperations sasWebServiceOperations;
+	private SecurityExpressionEvaluator securityExpressionEvaluator;
 	
 	@Autowired
 	public void setSasWebServiceOperations(SASWebServiceOperations sasWebServiceOperations)
 	{
 		this.sasWebServiceOperations = sasWebServiceOperations;
 	}
+	
+	@Autowired
+    public void setSecurityExpressionEvaluator(SecurityExpressionEvaluator securityExpressionEvaluator) {
+        this.securityExpressionEvaluator = securityExpressionEvaluator;
+    }
 
-	@Override
+    @Override
 	public BlackboardSessionResponse createSession(ConferenceUser user, SessionForm sessionForm) {
 		final BlackboardSetSession setSession = new BlackboardSetSession();
         setSession.setCreatorId(user.getEmail());
@@ -53,21 +56,20 @@ public class SessionWSDaoImpl implements SessionWSDao {
         setSession.setStartTime(sessionForm.getStartTime().getMillis());
         setSession.setEndTime(sessionForm.getEndTime().getMillis());
         setSession.setBoundaryTime(sessionForm.getBoundaryTime());
-
-        //TODO spring-security authz check
-//        if (fullAccess) {
-//            setSession.setMaxTalkers(sessionForm.getMaxTalkers());
-//            setSession.setMaxCameras(sessionForm.getMaxCameras());
-//            setSession.setMustBeSupervised(sessionForm.isMustBeSupervised());
-//            setSession.setPermissionsOn(sessionForm.isPermissionsOn());
-//            setSession.setRaiseHandOnEnter(sessionForm.isRaiseHandOnEnter());
-//            final RecordingMode recordingMode = sessionForm.getRecordingMode();
-//            if (recordingMode != null) {
-//                setSession.setRecordingModeType(recordingMode.getBlackboardRecordingMode());
-//            }
-//            setSession.setHideParticipantNames(sessionForm.isHideParticipantNames());
-//            setSession.setAllowInSessionInvites(sessionForm.isAllowInSessionInvites());
-//        }
+        
+        if (securityExpressionEvaluator.authorize("hasRole('ROLE_FULL_ACCESS')")) {
+            setSession.setMaxTalkers(sessionForm.getMaxTalkers());
+            setSession.setMaxCameras(sessionForm.getMaxCameras());
+            setSession.setMustBeSupervised(sessionForm.isMustBeSupervised());
+            setSession.setPermissionsOn(sessionForm.isPermissionsOn());
+            setSession.setRaiseHandOnEnter(sessionForm.isRaiseHandOnEnter());
+            final RecordingMode recordingMode = sessionForm.getRecordingMode();
+            if (recordingMode != null) {
+                setSession.setRecordingModeType(recordingMode.getBlackboardRecordingMode());
+            }
+            setSession.setHideParticipantNames(sessionForm.isHideParticipantNames());
+            setSession.setAllowInSessionInvites(sessionForm.isAllowInSessionInvites());
+        }
 
         final Object objSessionResponse = sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/SetSession", setSession);
         JAXBElement<BlackboardSessionResponseCollection> jaxbSessionResponse = (JAXBElement<BlackboardSessionResponseCollection>) objSessionResponse;
@@ -126,8 +128,8 @@ public class SessionWSDaoImpl implements SessionWSDao {
 			request.setSessionName(sessionName);
 		}
 		
-		@SuppressWarnings("unchecked")
 		Object obj = sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/ListSession", request); 
+		@SuppressWarnings("unchecked")
 		JAXBElement<BlackboardSessionResponseCollection> responseCollection = (JAXBElement<BlackboardSessionResponseCollection>) obj;
 		return responseCollection.getValue().getSessionResponses();
 	}
@@ -158,19 +160,19 @@ public class SessionWSDaoImpl implements SessionWSDao {
 		updateSession.setEndTime(sessionForm.getEndTime().getMillis());
 		updateSession.setBoundaryTime(sessionForm.getBoundaryTime());
 
-//        if (fullAccess) {
-//        	updateSession.setMaxTalkers(sessionForm.getMaxTalkers());
-//        	updateSession.setMaxCameras(sessionForm.getMaxCameras());
-//        	updateSession.setMustBeSupervised(sessionForm.isMustBeSupervised());
-//        	updateSession.setPermissionsOn(sessionForm.isPermissionsOn());
-//        	updateSession.setRaiseHandOnEnter(sessionForm.isRaiseHandOnEnter());
-//            final RecordingMode recordingMode = sessionForm.getRecordingMode();
-//            if (recordingMode != null) {
-//            	updateSession.setRecordingModeType(recordingMode.getBlackboardRecordingMode());
-//            }
-//            updateSession.setHideParticipantNames(sessionForm.isHideParticipantNames());
-//            updateSession.setAllowInSessionInvites(sessionForm.isAllowInSessionInvites());
-//        }
+		if (securityExpressionEvaluator.authorize("hasRole('ROLE_FULL_ACCESS')")) {
+        	updateSession.setMaxTalkers(sessionForm.getMaxTalkers());
+        	updateSession.setMaxCameras(sessionForm.getMaxCameras());
+        	updateSession.setMustBeSupervised(sessionForm.isMustBeSupervised());
+        	updateSession.setPermissionsOn(sessionForm.isPermissionsOn());
+        	updateSession.setRaiseHandOnEnter(sessionForm.isRaiseHandOnEnter());
+            final RecordingMode recordingMode = sessionForm.getRecordingMode();
+            if (recordingMode != null) {
+            	updateSession.setRecordingModeType(recordingMode.getBlackboardRecordingMode());
+            }
+            updateSession.setHideParticipantNames(sessionForm.isHideParticipantNames());
+            updateSession.setAllowInSessionInvites(sessionForm.isAllowInSessionInvites());
+        }
         
         final Object objSessionResponse = sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/UpdateSession", updateSession);
         @SuppressWarnings("unchecked")

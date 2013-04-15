@@ -35,11 +35,11 @@
     
     <context:annotation-config />
     <context:component-scan base-package="org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr" />
-    
+    <!-- 
     <security:global-method-security secured-annotations="enabled" pre-post-annotations="enabled" proxy-target-class="true">
         <security:expression-handler ref="securityExpressionHandler"/>
     </security:global-method-security>
-    
+     -->
     <bean class="org.springframework.web.portlet.mvc.annotation.DefaultAnnotationHandlerMapping">
         <property name="applyWebRequestInterceptorsToRenderPhaseOnly" value="false" />
     	<property name="interceptors">

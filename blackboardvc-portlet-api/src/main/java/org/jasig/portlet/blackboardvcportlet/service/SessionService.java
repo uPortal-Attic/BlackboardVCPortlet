@@ -18,6 +18,8 @@
  */
 package org.jasig.portlet.blackboardvcportlet.service;
 
+import java.util.Set;
+
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
 
@@ -30,17 +32,22 @@ import org.jasig.portlet.blackboardvcportlet.data.Session;
  */
 
 public interface SessionService {
-    /**
-     * Creates or Updates a session for the user, form and access flag. This method throws an exception
-     * if the specified user doesn't have access to edit the specified session
-     */
-    void createOrUpdateSession(ConferenceUser user, SessionForm sessionForm);
     
     /**
      * Get a session for the user and sessionId. This method throws an exception if the
      * specified user does not have access to view the session
      */
-    Session getSession(ConferenceUser user, long sessionId);
+    Session getSession(long sessionId);
+    
+    /**
+     * Creates or Updates a session for the user, form and access flag. This method throws an exception
+     * if the specified user doesn't have access to edit the specified session
+     */
+    void createOrUpdateSession(ConferenceUser creator, SessionForm sessionForm);
+    
+    Set<ConferenceUser> getSessionChairs(Session session);
+
+    Set<ConferenceUser> getSessionNonChairs(Session session);
     
     
 //	public Set<BlackboardSession> getSessionsForUser(String uid);

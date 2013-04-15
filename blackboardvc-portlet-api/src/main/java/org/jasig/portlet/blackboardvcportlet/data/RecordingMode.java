@@ -26,6 +26,6 @@ public enum RecordingMode {
     }
     
     public String getName() {
-        return this.getName();
+        return this.name();
     }
 }

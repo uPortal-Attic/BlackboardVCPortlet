@@ -26,6 +26,6 @@ public enum AccessType {
     }
     
     public String getName() {
-        return this.getName();
+        return this.name();
     }
 }

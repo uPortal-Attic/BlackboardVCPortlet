@@ -18,20 +18,16 @@
  */
 package org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.portlet.PortletRequest;
-import javax.portlet.ResourceRequest;
-import javax.portlet.ResourceResponse;
 
 import org.jasig.portlet.blackboardvcportlet.dao.ConferenceUserDao;
-import org.jasig.portlet.blackboardvcportlet.dao.SessionDao;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.security.ConferenceUserService;
+import org.jasig.portlet.blackboardvcportlet.service.SessionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +36,6 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
-import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 
 /**
  * Controller for handling Portlet view mode
@@ -51,34 +46,17 @@ import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 @RequestMapping("VIEW")
 public class BlackboardVCPortletViewController
 {
-	private static final Logger logger = LoggerFactory.getLogger(BlackboardVCPortletViewController.class);
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	private ConferenceUserService conferenceUserService;
 	private ConferenceUserDao conferenceUserDao;
-	private SessionDao sessionDao;
-	
-//	private SessionService sessionService;
-//	private RecordingService recordingService;
-//	private UserService userService;
-	
+	private SessionService sessionService;
 	
 	
 	@Autowired
-	public void setSessionDao(SessionDao sessionDao) {
-        this.sessionDao = sessionDao;
+	public void setSessionService(SessionService sessionService) {
+        this.sessionService = sessionService;
     }
-
-//    @Autowired
-//	public void setSessionService(SessionService sessionService)
-//	{
-//		this.sessionService = sessionService;
-//	}
-
-//	@Autowired
-//	public void setRecordingService(RecordingService recordingService)
-//	{
-//		this.recordingService = recordingService;
-//	}
 
 	@Autowired
     public void setConferenceUserService(ConferenceUserService conferenceUserService) {
@@ -90,17 +68,10 @@ public class BlackboardVCPortletViewController
         this.conferenceUserDao = conferenceUserDao;
     }
 
-//	@Autowired
-//	public void setUserService(UserService userService)
-//	{
-//		this.userService = userService;
-//	}
-
 	@RenderMapping
 	public String view(PortletRequest request, ModelMap model)
 	{
 		final ConferenceUser conferenceUser = this.conferenceUserService.getCurrentConferenceUser();
-		
 		//TODO need logic like this to find "alias" users, perhaps we deal with this more at the data model level by merging users together
 		//this.conferenceUserDao.findAllMatchingUsers(blackboardUser.getEmail(), blackboardUser.getAttributes());
 		
@@ -129,157 +100,108 @@ public class BlackboardVCPortletViewController
 	 * @return
 	 */
 	@RenderMapping(params = "action=viewSession")
-	public String viewSession(PortletRequest request, @RequestParam long sessionId, ModelMap model)
-	{
-	    logger.debug("viewSession called");
+	public String viewSession(PortletRequest request, @RequestParam long sessionId, ModelMap model)	{
+        final Session session = this.sessionService.getSession(sessionId);
+        //TODO if session is null
+        model.addAttribute("session", session);
 
-		logger.debug("sessionId:" + sessionId);
+        if (session.getEndTime().isAfterNow()) {
+            final ConferenceUser blackboardUser = this.conferenceUserService.getCurrentConferenceUser();
+            final Set<ConferenceUser> sessionChairs = this.sessionService.getSessionChairs(session);
 
+            if (sessionChairs.contains(blackboardUser)) {
+                model.addAttribute("guestUrl", session.getGuestUrl());
+            }
+
+            logger.debug("Session is still open, we can show the launch url");
+            final Set<ConferenceUser> sessionNonChairs = this.sessionService.getSessionNonChairs(session);
+
+            // If the user is specified in chair or non chair list then get the URL
+            if (sessionChairs.contains(blackboardUser) || sessionNonChairs.contains(blackboardUser)) {
+                //TODO need to lookup the UserSessionUrl
+
+                model.addAttribute("showLaunchSession", true);
+                logger.debug("User is in the chair/non-chair list");
+                logger.debug("gotten user sessionUrl");
+                model.addAttribute("launchSessionUrl", "TODO");
+            }
+        }
+        else {
+            logger.debug("Session is closed");
+            model.addAttribute("showLaunchSession", false);
+        }
+
+        return "BlackboardVCPortlet_viewSession";
+	}
+
+//    /**
+//	 * CSV Download function
+//	 *
+//	 * @param request
+//	 * @param response
+//	 * @throws IOException 
+//	 */
+//	@ResourceMapping(value = "csvDownload")
+//	public void csvDownload(ResourceRequest request, @RequestParam long sessionId, ResourceResponse response) throws IOException
+//	{
+//		logger.debug("csvDownload called");
+//		logger.debug("sessionId:" + sessionId);
+//
+//		response.setCharacterEncoding("UTF-8");
+//		response.setContentType("application/csv");
+//		response.setProperty("Content-Disposition", "inline; filename=participantList_" + sessionId + ".csv");
+//
+//		final ConferenceUser blackboardUser = this.conferenceUserService.getCurrentConferenceUser();
+//
+//		PrintWriter stringWriter = null;
 //		try
 //		{
-			logger.debug("calling sessionService.getSession");
-			Session session = this.sessionDao.getSession(sessionId);
-			model.addAttribute("session", session);
-
-			logger.debug("done call");
-			if (session == null)
-			{
-				logger.error("session is null!");
-			}
-
-			final ConferenceUser blackboardUser = this.conferenceUserService.getCurrentConferenceUser();
-            final Set<ConferenceUser> sessionChairs = this.sessionDao.getSessionChairs(session);
-            
-	        if (canEdit(session, blackboardUser)) {
-	            model.addAttribute("currUserCanEdit", true);
-	        }
-	        else
-			{
-			    model.addAttribute("currUserCanEdit", false);
-			}
-	        
-	        
-			if (session.getEndTime().isAfterNow())
-			{
-				if (sessionChairs.contains(blackboardUser))
-				{
-					// Removing the username parameter will make collaborate prompt for the person's name
-					model.addAttribute("guestUrl", session.getGuestUrl().replaceFirst("&username=Guest", ""));
-				}
-
-				logger.debug("Session is still open, we can show the launch url");
-				final Set<ConferenceUser> sessionNonChairs = this.sessionDao.getSessionNonChairs(session);
-				
-				// If the user is specified in chair or non chair list then get the URL
-				if (sessionChairs.contains(blackboardUser) || sessionNonChairs.contains(blackboardUser))
-				{
-				    //TODO need to lookup the UserSessionUrl
-				    
-					model.addAttribute("showLaunchSession", true);
-					logger.debug("User is in the chair/non-chair list");
-					logger.debug("gotten user sessionUrl");
-					model.addAttribute("launchSessionUrl", "TODO");
-				}
-			} else
-			{
-				logger.debug("Session is closed");
-				model.addAttribute("showLaunchSession", false);
-			}
-
-
-			model.addAttribute("session", session);
-			if (sessionChairs.contains(blackboardUser))
-			{
-				model.addAttribute("showCSVDownload", true);
-			}
-			
-			//TODO use spring error handling
-//		catch (Exception e)
-//		{
-//			logger.error("error caught:", e);
-//			model.addAttribute("errorMessage", "A problem occurred retrieving the session details. If this problem re-occurs please contact support.");
+//			stringWriter = response.getWriter();
+//			//ByteArrayOutputStream outputStream = new ByteArrayOutputStream(response.getPortletOutputStream());
+//			stringWriter.println("UID,Display Name,Email address,Participant type");
+//			logger.debug("calling sessionService.getSession");
+//			
+//			final Session session = this.sessionService.getSession(sessionId);
+//			
+//			logger.debug("done call");
+//			if (session == null) {
+//				logger.error("session is null!");
+//				return;
+//			}
+//			
+//			final Set<ConferenceUser> sessionChairs = this.sessionService.getSessionChairs(session);
+//            if (!sessionChairs.contains(blackboardUser)) {
+//				logger.warn("User not authorised to see csv");
+//				return;
+//			}
+//
+//            
+//			logger.debug("Adding chair list into moderators");
+//			for (final ConferenceUser user : sessionChairs) {
+//				stringWriter.println(user.getEmail() + "," + user.getDisplayName() + "," + user.getEmail() + ",Moderator");
+//			}
+//			logger.debug("added moderators to CSV output");
+//
+//
+//			final Set<ConferenceUser> sessionNonChairs = this.sessionService.getSessionNonChairs(session);
+//			logger.debug("Adding nonchair list to participants");
+//            for (final ConferenceUser user : sessionNonChairs) {
+//                if (user.getAttributes().isEmpty()) {
+//                    stringWriter.println(user.getEmail() + "," + user.getDisplayName() + "," + user.getEmail() + ",External Participant");
+//                }
+//                else {
+//                    stringWriter.println(user.getEmail() + "," + user.getDisplayName() + "," + user.getEmail() + ",Internal Participant");
+//                }
+//            }
 //		}
-		return "BlackboardVCPortlet_viewSession";
-
-	}
-
-    private boolean canEdit(Session session, final ConferenceUser blackboardUser) {
-        if (blackboardUser.equals(session.getCreator())) {
-            return true;
-        }
-            
-        final Set<ConferenceUser> sessionChairs = this.sessionDao.getSessionChairs(session);
-        return sessionChairs.contains(blackboardUser);
-    }
-
-    /**
-	 * CSV Download function
-	 *
-	 * @param request
-	 * @param response
-	 * @throws IOException 
-	 */
-	@ResourceMapping(value = "csvDownload")
-	public void csvDownload(ResourceRequest request, @RequestParam long sessionId, ResourceResponse response) throws IOException
-	{
-		logger.debug("csvDownload called");
-		logger.debug("sessionId:" + sessionId);
-
-		response.setCharacterEncoding("UTF-8");
-		response.setContentType("application/csv");
-		response.setProperty("Content-Disposition", "inline; filename=participantList_" + sessionId + ".csv");
-
-		final ConferenceUser blackboardUser = this.conferenceUserService.getCurrentConferenceUser();
-
-		PrintWriter stringWriter = null;
-		try
-		{
-			stringWriter = response.getWriter();
-			//ByteArrayOutputStream outputStream = new ByteArrayOutputStream(response.getPortletOutputStream());
-			stringWriter.println("UID,Display Name,Email address,Participant type");
-			logger.debug("calling sessionService.getSession");
-			
-			final Session session = this.sessionDao.getSession(sessionId);
-			
-			logger.debug("done call");
-			if (session == null) {
-				logger.error("session is null!");
-				return;
-			}
-			
-			final Set<ConferenceUser> sessionChairs = this.sessionDao.getSessionChairs(session);
-            if (!sessionChairs.contains(blackboardUser)) {
-				logger.warn("User not authorised to see csv");
-				return;
-			}
-
-            
-			logger.debug("Adding chair list into moderators");
-			for (final ConferenceUser user : sessionChairs) {
-				stringWriter.println(user.getEmail() + "," + user.getDisplayName() + "," + user.getEmail() + ",Moderator");
-			}
-			logger.debug("added moderators to CSV output");
-
-
-			final Set<ConferenceUser> sessionNonChairs = this.sessionDao.getSessionNonChairs(session);
-			logger.debug("Adding nonchair list to participants");
-            for (final ConferenceUser user : sessionNonChairs) {
-                if (user.getAttributes().isEmpty()) {
-                    stringWriter.println(user.getEmail() + "," + user.getDisplayName() + "," + user.getEmail() + ",External Participant");
-                }
-                else {
-                    stringWriter.println(user.getEmail() + "," + user.getDisplayName() + "," + user.getEmail() + ",Internal Participant");
-                }
-            }
-		}
-		finally {
-		    stringWriter.close();
-		}
-		
-		//TODO use spring error handling
-//		catch (Exception e)
-//		{
-//			logger.error("Exception caught building model for CSV download", e);
+//		finally {
+//		    stringWriter.close();
 //		}
-	}
+//		
+//		//TODO use spring error handling
+////		catch (Exception e)
+////		{
+////			logger.error("Exception caught building model for CSV download", e);
+////		}
+//	}
 }

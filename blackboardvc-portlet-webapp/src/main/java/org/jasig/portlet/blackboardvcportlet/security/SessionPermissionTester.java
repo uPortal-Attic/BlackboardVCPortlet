@@ -1,5 +1,6 @@
 package org.jasig.portlet.blackboardvcportlet.security;
 
+import java.io.Serializable;
 import java.util.Set;
 
 import org.jasig.portlet.blackboardvcportlet.dao.SessionDao;
@@ -58,6 +59,12 @@ public class SessionPermissionTester implements PermissionTester<Session> {
         }
         
         return false;
+    }
+    
+    @Override
+    public boolean hasPermissionById(ConferenceUser user, Serializable targetId, Object permission) {
+        final Session session = this.sessionDao.getSession((Long)targetId);
+        return hasPermission(user, session, permission);
     }
 
     private boolean isNonChair(ConferenceUser user, Session session) {

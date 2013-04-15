@@ -21,6 +21,7 @@ If you use https, you must have a global certificate which Collaborate can perfo
 # Security Configuration Summary
 
 ## Roles
+* ROLE_ADMIN - Users that have full access to all functionality
 * ROLE_FULL_ACCESS - Users that have full access to the session creation form (TODO flush out all access)
 
 ## Permissions

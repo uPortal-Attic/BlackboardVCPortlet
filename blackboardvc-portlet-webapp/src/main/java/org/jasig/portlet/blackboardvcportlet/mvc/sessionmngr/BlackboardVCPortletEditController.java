@@ -121,10 +121,7 @@ public class BlackboardVCPortletEditController
         final ServerConfiguration serverConfiguration = this.serverConfigurationService.getServerConfiguration();
         model.put("serverConfiguration", serverConfiguration);
         
-//            model.addAttribute("fullAccess", true);
-        
-        final ConferenceUser conferenceUser = this.conferenceUserService.getCurrentConferenceUser();
-        final Session session = this.sessionService.getSession(conferenceUser, sessionId);
+        final Session session = this.sessionService.getSession(sessionId);
         //TODO if session is null
 
         final SessionForm sessionForm = new SessionForm(session);

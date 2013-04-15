@@ -33,7 +33,9 @@
 		http://www.springframework.org/schema/web-services http://www.springframework.org/schema/web-services/web-services-2.0.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
     <!-- 
-     | Setup the http based authentication using the pre-auth configuration below.
+     | Setup the http based authentication using the pre-auth configuration below. If a user is not
+     | preauthed and hits an intercepted URL they will be shown a 403 as there is no way to auth outside
+     | of the portal
      +-->
     <security:http use-expressions="true" entry-point-ref="http403EntryPoint">
         <security:intercept-url pattern="/**" />
@@ -42,29 +44,68 @@
     <bean id="http403EntryPoint" class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint" />
 
     <!-- 
-     | Setup the pre-authenticated provider as we're relying on the authentication information to be placed into
-     | the session by the portlet.
+     | Setup global method security using annotations
      +-->
-    <security:global-method-security secured-annotations="enabled" pre-post-annotations="enabled" proxy-target-class="true">
+    <security:global-method-security secured-annotations="enabled" pre-post-annotations="enabled">
         <security:expression-handler ref="securityExpressionHandler"/>
     </security:global-method-security>
+    
+    <!-- 
+     | Setup use of the preAuth manager
+     +-->
     <security:authentication-manager>
-        <security:authentication-provider ref="preAuthenticatedAuthenticationProvider" /> 
+        <security:authentication-provider ref="preAuthenticatedAuthenticationProvider" />
     </security:authentication-manager>
+    
+    <!-- 
+     | PreAuth provider to hook into the portlet app's preauth configuration
+     +-->
     <bean id="preAuthenticatedAuthenticationProvider" class="org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider">
         <property name="preAuthenticatedUserDetailsService">
             <bean class="org.springframework.security.web.authentication.preauth.PreAuthenticatedGrantedAuthoritiesUserDetailsService" />
         </property>
     </bean>
     
+    <!-- 
+     | Expression evaluator for method interceptor usage
+     +-->
     <bean id="securityExpressionHandler" class= "org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler">
         <property name="permissionEvaluator" ref="permissionEvaluator"/>
+        <property name="roleHierarchy" ref="roleHierarchy" />
     </bean>
     
+    <!-- 
+     | Expression evaluator for JSP usage
+     +-->
     <bean id="webSecurityExpressionHandler" class= "org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler">
         <property name="permissionEvaluator" ref="permissionEvaluator"/>
+        <property name="roleHierarchy" ref="roleHierarchy" />
     </bean>
     
-    <bean id="permissionEvaluator" class="org.jasig.portlet.blackboardvcportlet.security.BlackboardPermissionEvaluator" />
-
+    <!-- 
+     | Expression evaluator for in-code usage
+     +-->
+    <bean class="org.jasig.portlet.blackboardvcportlet.security.SecurityExpressionEvaluatorImpl">
+        <property name="permissionEvaluator" ref="permissionEvaluator"/>
+        <property name="roleHierarchy" ref="roleHierarchy" />
+    </bean>
+    
+    <!-- 
+     | Setup role hierarchy to simplify hasRole checks
+     +-->
+    <bean id="roleVoter" class="org.springframework.security.access.vote.RoleHierarchyVoter">
+        <constructor-arg ref="roleHierarchy" />
+    </bean>
+    <bean id="roleHierarchy" class="org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl">
+        <property name="hierarchy">
+            <value>
+                ROLE_ADMIN > ROLE_FULL_ACCESS
+            </value>
+        </property>
+    </bean>
+    
+    <!-- 
+     | permission evaluator that understands the portlet's domain objects
+     +-->
+    <bean id="permissionEvaluator" class="org.jasig.portlet.blackboardvcportlet.security.DelegatingPermissionEvaluator" />
 </beans>

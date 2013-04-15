@@ -2,93 +2,52 @@ package org.jasig.portlet.blackboardvcportlet.service.impl;
 
 import java.util.Set;
 
-import org.jasig.portlet.blackboardvcportlet.dao.ConferenceUserDao;
 import org.jasig.portlet.blackboardvcportlet.dao.SessionDao;
 import org.jasig.portlet.blackboardvcportlet.dao.ws.SessionWSDao;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
-import org.jasig.portlet.blackboardvcportlet.service.MailTemplateService;
-import org.jasig.portlet.blackboardvcportlet.service.RecordingService;
 import org.jasig.portlet.blackboardvcportlet.service.SessionForm;
 import org.jasig.portlet.blackboardvcportlet.service.SessionService;
-import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceOperations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.elluminate.sas.BlackboardSessionResponse;
 
 @Service
-public class SessionServiceImpl implements SessionService
-{
-	private static final Logger logger = LoggerFactory.getLogger(SessionServiceImpl.class);
+public class SessionServiceImpl implements SessionService {
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private SessionDao sessionDao;
-    private ConferenceUserDao conferenceUserDao;
-	private MailTemplateService mailTemplateService;
-//	private UserService userService;
-	private RecordingService recordingService;
-//	private SessionPresentationDao sessionPresentationDao;
-//	private SessionMultimediaDao sessionMultimediaDao;
-	private SASWebServiceOperations sasWebServiceOperations;
 	private SessionWSDao sessionWSDao;
-//	private ObjectFactory objectFactory;
 	
 	
 	@Autowired
 	public void setBlackboardSessionDao(SessionDao blackboardSessionDao) {
         this.sessionDao = blackboardSessionDao;
     }
-
-    @Autowired
-    public void setBlackboardUserDao(ConferenceUserDao blackboardUserDao) {
-        this.conferenceUserDao = blackboardUserDao;
-    }
-
-    @Autowired
-    public void setMailTemplateService(MailTemplateService mailTemplateService) {
-        this.mailTemplateService = mailTemplateService;
-    }
-
-//	@Autowired
-//	public void setUserService(UserService userService)
-//	{
-//		this.userService = userService;
-//	}
-
-	@Autowired
-	public void setRecordingService(RecordingService recordingService)
-	{
-		this.recordingService = recordingService;
-	}
-
-//	@Autowired
-//	public void setSessionPresentationDao(SessionPresentationDao sessionPresentationDao)
-//	{
-//		this.sessionPresentationDao = sessionPresentationDao;
-//	}
-//
-//	@Autowired
-//	public void setSessionMultimediaDao(SessionMultimediaDao sessionMultimediaDao)
-//	{
-//		this.sessionMultimediaDao = sessionMultimediaDao;
-//	}
-
-	@Autowired
-	public void setSasWebServiceOperations(SASWebServiceOperations sasWebServiceOperations)
-	{
-		this.sasWebServiceOperations = sasWebServiceOperations;
-	}
 	
 	@Autowired
 	public void setSessionWSDao(SessionWSDao value) {
 		this.sessionWSDao = value;
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#session, 'view')")
+    public Set<ConferenceUser> getSessionChairs(Session session) {
+        return sessionDao.getSessionChairs(session);
+    }
+
+	@PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#session, 'view')")
+    public Set<ConferenceUser> getSessionNonChairs(Session session) {
+        return sessionDao.getSessionNonChairs(session);
+    }
+
     @Override
     @Transactional
+    @PreAuthorize("#sessionForm.newSession || hasRole('ROLE_ADMIN') || hasPermission(#sessionForm.sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'edit')")
     public void createOrUpdateSession(ConferenceUser user, SessionForm sessionForm) {
         if (sessionForm.isNewSession()) {
         	BlackboardSessionResponse sessionResponse = sessionWSDao.createSession(user, sessionForm);
@@ -98,34 +57,14 @@ public class SessionServiceImpl implements SessionService
             sessionDao.createSession(sessionResponse, guestUrl.replace("&username=GUEST_PLACEHOLDER", ""));
         }
         else {
-            //TODO just verifying access?
-            this.getSession(user, sessionForm.getSessionId());
+            sessionWSDao.updateSession(user, sessionForm);
         }
     }
 
     @Override
-    public Session getSession(ConferenceUser user, long sessionId) {
-        final Session session = this.sessionDao.getSession(sessionId);
-        if (session == null) {
-            return null;
-        }
-        
-        //TODO spring-security check for admin
-        if (session.getCreator().equals(user)) {
-            return session;
-        }
-        
-        final Set<ConferenceUser> sessionChairs = this.sessionDao.getSessionChairs(session);
-        if (sessionChairs.contains(user)) {
-            return session;
-        }
-        
-        final Set<ConferenceUser> sessionNonChairs = this.sessionDao.getSessionNonChairs(session);
-        if (sessionNonChairs.contains(user)) {
-            return session;
-        }
-        
-        throw new RuntimeException("TODO better exception and error msg about illegal access");
+    @PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'view')")
+    public Session getSession(long sessionId) {
+        return this.sessionDao.getSession(sessionId);
     }
 	
 	

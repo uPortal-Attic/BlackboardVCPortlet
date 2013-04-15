@@ -36,6 +36,7 @@
     <sws:annotation-driven  />
     
     <aop:aspectj-autoproxy />
+    <aop:config />
     
     <context:annotation-config />
     <context:property-placeholder location="classpath:/webapp.properties" />

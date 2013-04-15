@@ -18,4 +18,9 @@ public interface ConferenceUserService {
      * @return The user for the specified {@link Authentication}
      */
     ConferenceUser getConferenceUser(Authentication authentication);
+    
+    /**
+     * @return The current authentication object
+     */
+    Authentication getCurrentAuthentication();
 }

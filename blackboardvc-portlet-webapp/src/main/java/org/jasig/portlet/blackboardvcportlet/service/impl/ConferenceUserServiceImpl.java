@@ -24,8 +24,7 @@ public class ConferenceUserServiceImpl implements ConferenceUserService {
 
     @Override
     public ConferenceUser getCurrentConferenceUser() {
-        final SecurityContext context = SecurityContextHolder.getContext();
-        final Authentication authentication = context.getAuthentication();
+        final Authentication authentication = getCurrentAuthentication();
         if (authentication == null) {
             return null;
         }
@@ -33,6 +32,13 @@ public class ConferenceUserServiceImpl implements ConferenceUserService {
         return getConferenceUser(authentication);
     }
 
+    @Override
+    public Authentication getCurrentAuthentication() {
+        final SecurityContext context = SecurityContextHolder.getContext();
+        return context.getAuthentication();
+    }
+
+    @Override
     public ConferenceUser getConferenceUser(Authentication authentication) {
         final ConferenceSecurityUser principal = (ConferenceSecurityUser)authentication.getPrincipal();
         if (principal == null) {
