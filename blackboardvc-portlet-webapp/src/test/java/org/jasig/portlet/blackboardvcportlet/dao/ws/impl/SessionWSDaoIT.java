@@ -21,7 +21,7 @@ import com.elluminate.sas.BlackboardSessionResponse;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/test-applicationContext.xml")
-public class SessionWSDaoIT extends AbstractWSTest {
+public class SessionWSDaoIT extends AbstractWSIT {
 	
 	@Autowired
 	private SessionWSDao dao;

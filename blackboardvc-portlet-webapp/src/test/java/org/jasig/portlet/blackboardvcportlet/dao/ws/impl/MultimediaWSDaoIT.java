@@ -28,7 +28,7 @@ import com.elluminate.sas.BlackboardSessionResponse;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/test-applicationContext.xml")
-public class MultimediaWSDaoIT extends AbstractWSTest {
+public class MultimediaWSDaoIT extends AbstractWSIT {
 
 	@Autowired
 	private MultimediaWSDao dao;

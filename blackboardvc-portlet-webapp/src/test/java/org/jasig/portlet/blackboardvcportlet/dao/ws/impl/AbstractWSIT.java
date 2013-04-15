@@ -9,7 +9,7 @@ import org.joda.time.DateTime;
 
 import com.elluminate.sas.BlackboardSessionResponse;
 
-public abstract class AbstractWSTest {
+public abstract class AbstractWSIT {
 	
 	BlackboardSessionResponse session;
 	SessionForm form;

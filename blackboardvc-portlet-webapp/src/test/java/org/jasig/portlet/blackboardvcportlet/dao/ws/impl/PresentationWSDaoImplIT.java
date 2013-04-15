@@ -7,7 +7,6 @@ import static org.junit.Assert.assertTrue;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +29,7 @@ import com.elluminate.sas.BlackboardSessionResponse;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/test-applicationContext.xml")
-public class PresentationWSDaoImplTest extends AbstractWSTest {
+public class PresentationWSDaoImplIT extends AbstractWSIT {
 	
 	@Autowired
 	private PresentationWSDao dao;
