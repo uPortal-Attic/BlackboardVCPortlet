@@ -46,25 +46,27 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'view')")
+    public Session getSession(long sessionId) {
+        return this.sessionDao.getSession(sessionId);
+    }
+
+    @Override
     @Transactional
     @PreAuthorize("#sessionForm.newSession || hasRole('ROLE_ADMIN') || hasPermission(#sessionForm.sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'edit')")
     public void createOrUpdateSession(ConferenceUser user, SessionForm sessionForm) {
         if (sessionForm.isNewSession()) {
-        	BlackboardSessionResponse sessionResponse = sessionWSDao.createSession(user, sessionForm);
-        	String guestUrl = sessionWSDao.buildSessionUrl(sessionResponse.getSessionId(), "GUEST_PLACEHOLDER");
+            final BlackboardSessionResponse sessionResponse = sessionWSDao.createSession(user, sessionForm);
+            final String guestUrl = sessionWSDao.buildSessionUrl(sessionResponse.getSessionId(), "GUEST_PLACEHOLDER");
         	
-        	//Remove guest username so that guest user's are prompted
+        	//Remove guest username so that guest user's are prompted when they use the URL
             sessionDao.createSession(sessionResponse, guestUrl.replace("&username=GUEST_PLACEHOLDER", ""));
         }
         else {
-            sessionWSDao.updateSession(user, sessionForm);
+            final Session session = sessionDao.getSession(sessionForm.getSessionId());
+            final BlackboardSessionResponse sessionResponse = sessionWSDao.updateSession(user, session.getBbSessionId(), sessionForm);
+            sessionDao.updateSession(sessionResponse);
         }
-    }
-
-    @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'view')")
-    public Session getSession(long sessionId) {
-        return this.sessionDao.getSession(sessionId);
     }
 	
 	

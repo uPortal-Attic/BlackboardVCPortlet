@@ -91,15 +91,16 @@ public class DelegatingPermissionEvaluator implements PermissionEvaluator {
         }
         
         if (tester == null) {
-            tester = FalsePermissionTester.INSTANCE;
+            logger.warn("No PermissionTester registered for {}, AlwaysDenyPermissionTester will be used for this type", targetType);
+            tester = AlwaysDenyPermissionTester.INSTANCE;
         }
         permissionTesterResolutionCache.put(targetType, tester);
         
         return tester;
     }
     
-    private static final class FalsePermissionTester implements PermissionTester<Object> {
-        public static final FalsePermissionTester INSTANCE = new FalsePermissionTester();
+    private static final class AlwaysDenyPermissionTester implements PermissionTester<Object> {
+        public static final AlwaysDenyPermissionTester INSTANCE = new AlwaysDenyPermissionTester();
         
         @Override
         public Class<Object> getDomainObjectType() {

@@ -60,7 +60,7 @@ public class SessionWSDaoIT extends AbstractWSIT {
 		
 		//go from 3 to 4 (four hour meeting)
 		form.setEndTime((new DateTime()).plusHours(4).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0));
-		BlackboardSessionResponse updateSession = dao.updateSession(user, form);
+		BlackboardSessionResponse updateSession = dao.updateSession(user, session.getSessionId(), form);
 		assertNotNull(updateSession);
 		assertEquals(form.getEndTime().getMillis(),updateSession.getEndTime());
 	}

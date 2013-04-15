@@ -29,6 +29,7 @@ import com.elluminate.sas.BlackboardSessionTelephonyResponse;
 import com.elluminate.sas.BlackboardSessionTelephonyResponseCollection;
 import com.elluminate.sas.BlackboardSetSession;
 import com.elluminate.sas.BlackboardSetSessionTelephony;
+import com.elluminate.sas.BlackboardUpdateSession;
 import com.elluminate.sas.BlackboardUrlResponse;
 import com.elluminate.sas.ObjectFactory;
 
@@ -150,11 +151,10 @@ public class SessionWSDaoImpl implements SessionWSDao {
 	}
 
 	@Override
-	public BlackboardSessionResponse updateSession(ConferenceUser user, SessionForm sessionForm) {
-		final BlackboardSetSession updateSession = new ObjectFactory().createBlackboardSetSession();
-		
-		updateSession.setCreatorId(user.getEmail());
-		
+	public BlackboardSessionResponse updateSession(ConferenceUser user, long bbSessionId, SessionForm sessionForm) {
+		final BlackboardUpdateSession updateSession = new ObjectFactory().createBlackboardUpdateSession();
+
+		updateSession.setSessionId(bbSessionId);
 		updateSession.setSessionName(sessionForm.getSessionName());
 		updateSession.setStartTime(sessionForm.getStartTime().getMillis());
 		updateSession.setEndTime(sessionForm.getEndTime().getMillis());
