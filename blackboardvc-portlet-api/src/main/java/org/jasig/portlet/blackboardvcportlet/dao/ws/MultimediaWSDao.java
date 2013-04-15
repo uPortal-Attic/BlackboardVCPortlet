@@ -17,7 +17,7 @@ public interface MultimediaWSDao {
 	public boolean linkSessionToMultimedia(Long sessionId, Long multimediaId);
 
 	//delete
-	public boolean removeRepositoryMultimedia(int multimediaId);
-	public boolean removeSessionMultimedia(int sessionId, int multimediaId);
+	public boolean removeRepositoryMultimedia(Long multimediaId);
+	public boolean removeSessionMultimedia(Long sessionId, Long multimediaId);
 	
 }

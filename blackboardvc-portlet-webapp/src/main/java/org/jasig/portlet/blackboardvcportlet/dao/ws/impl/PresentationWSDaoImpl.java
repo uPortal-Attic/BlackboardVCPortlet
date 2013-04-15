@@ -3,6 +3,7 @@ package org.jasig.portlet.blackboardvcportlet.dao.ws.impl;
 import java.util.List;
 
 import javax.activation.DataHandler;
+import javax.xml.bind.JAXBElement;
 
 import org.jasig.portlet.blackboardvcportlet.dao.ws.PresentationWSDao;
 import org.jasig.portlet.blackboardvcportlet.dao.ws.WSDaoUtils;
@@ -12,6 +13,8 @@ import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Service;
 
 import com.elluminate.sas.BlackboardListRepositoryPresentation;
+import com.elluminate.sas.BlackboardListSessionContent;
+import com.elluminate.sas.BlackboardMultimediaResponseCollection;
 import com.elluminate.sas.BlackboardPresentationResponse;
 import com.elluminate.sas.BlackboardPresentationResponseCollection;
 import com.elluminate.sas.BlackboardRemoveRepositoryPresentation;
@@ -54,8 +57,14 @@ public class PresentationWSDaoImpl extends ContentWSDaoImpl implements Presentat
 
 	@Override
 	public List<BlackboardPresentationResponse> getSessionPresentations(Long sessionId) {
-		final BlackboardPresentationResponseCollection objSessionResponse = (BlackboardPresentationResponseCollection)getSessionContent(sessionId, ContentType.Presentation);
-		return objSessionResponse.getPresentationResponses();
+		BlackboardListSessionContent request = new ObjectFactory().createBlackboardListSessionContent();
+		if(sessionId != null) {
+			request.setSessionId(sessionId);
+		}
+		JAXBElement<BlackboardListSessionContent> createListSessionPresentation = new ObjectFactory().createListSessionPresentation(request);
+		final JAXBElement<BlackboardPresentationResponseCollection> objSessionResponse = (JAXBElement<BlackboardPresentationResponseCollection>)sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/ListSessionPresentation", createListSessionPresentation);
+		
+		return objSessionResponse.getValue().getPresentationResponses();
 	}
 
 	@Override

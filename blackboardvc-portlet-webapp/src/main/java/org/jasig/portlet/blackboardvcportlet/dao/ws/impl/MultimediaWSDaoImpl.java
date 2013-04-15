@@ -3,6 +3,7 @@ package org.jasig.portlet.blackboardvcportlet.dao.ws.impl;
 import java.util.List;
 
 import javax.activation.DataHandler;
+import javax.xml.bind.JAXBElement;
 
 import org.jasig.portlet.blackboardvcportlet.dao.ws.MultimediaWSDao;
 import org.jasig.portlet.blackboardvcportlet.dao.ws.WSDaoUtils;
@@ -12,11 +13,13 @@ import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Service;
 
 import com.elluminate.sas.BlackboardListRepositoryMultimedia;
+import com.elluminate.sas.BlackboardListSessionContent;
 import com.elluminate.sas.BlackboardMultimediaResponse;
 import com.elluminate.sas.BlackboardMultimediaResponseCollection;
 import com.elluminate.sas.BlackboardRemoveRepositoryMultimedia;
 import com.elluminate.sas.BlackboardRemoveSessionMultimedia;
 import com.elluminate.sas.BlackboardSetSessionMultimedia;
+import com.elluminate.sas.BlackboardUploadRepositoryContent;
 import com.elluminate.sas.ObjectFactory;
 
 @Service
@@ -37,21 +40,37 @@ public class MultimediaWSDaoImpl extends ContentWSDaoImpl implements MultimediaW
 		if(description != null) {
 			request.setDescription(description);
 		}
-		final BlackboardMultimediaResponseCollection objSessionResponse = (BlackboardMultimediaResponseCollection)sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/ListRespositoryMultimedia", request);
-		return objSessionResponse.getMultimediaResponses();
+		final JAXBElement<BlackboardMultimediaResponseCollection> objSessionResponse = (JAXBElement<BlackboardMultimediaResponseCollection>)sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/ListRespositoryMultimedia", request);
+		return objSessionResponse.getValue().getMultimediaResponses();
 	}
 
 	@Override
 	public List<BlackboardMultimediaResponse> getSessionRepositoryMultimedias(Long sessionId) {
-		final BlackboardMultimediaResponseCollection objSessionResponse = (BlackboardMultimediaResponseCollection)getSessionContent(sessionId, ContentType.Multimedia);
-		return objSessionResponse.getMultimediaResponses();
+		BlackboardListSessionContent request = new ObjectFactory().createBlackboardListSessionContent();
+		if(sessionId != null) {
+			request.setSessionId(sessionId);
+		}
+		JAXBElement<BlackboardListSessionContent> createListSessionMultimedia = new ObjectFactory().createListSessionMultimedia(request);
+		@SuppressWarnings("unchecked")
+		final JAXBElement<BlackboardMultimediaResponseCollection> objSessionResponse = (JAXBElement<BlackboardMultimediaResponseCollection>)sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/ListSessionMultimedia", createListSessionMultimedia);
+		
+		return objSessionResponse.getValue().getMultimediaResponses();
 	}
 
 	@Override
 	public BlackboardMultimediaResponse uploadRepositoryMultimedia(String creatorId,
 			String filename, String description, DataHandler content) {
-		BlackboardMultimediaResponseCollection response = (BlackboardMultimediaResponseCollection) uploadContent(creatorId, filename, description, content, ContentType.Multimedia);
-		return DataAccessUtils.singleResult(response.getMultimediaResponses());
+		BlackboardUploadRepositoryContent request = new ObjectFactory().createBlackboardUploadRepositoryContent();
+		request.setCreatorId(creatorId);
+		request.setDescription(description);
+		request.setFilename(filename);
+		request.setContent(content);
+		
+		JAXBElement<BlackboardUploadRepositoryContent> realRequest = new ObjectFactory().createUploadRepositoryMultimedia(request);
+		
+		@SuppressWarnings("unchecked")
+		JAXBElement<BlackboardMultimediaResponseCollection> response = (JAXBElement<BlackboardMultimediaResponseCollection>) sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/UploadRepositoryMultimedia", realRequest); 
+		return DataAccessUtils.singleResult(response.getValue().getMultimediaResponses());
 		
 	}
 
@@ -79,7 +98,7 @@ public class MultimediaWSDaoImpl extends ContentWSDaoImpl implements MultimediaW
 	}
 
 	@Override
-	public boolean removeRepositoryMultimedia(int multimediaId) {
+	public boolean removeRepositoryMultimedia(Long multimediaId) {
 		BlackboardRemoveRepositoryMultimedia request = new ObjectFactory().createBlackboardRemoveRepositoryMultimedia();
 		request.setMultimediaId(multimediaId);
 		return WSDaoUtils.isSuccessful(sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/RemoveRepositoryMultimedia", request));
@@ -87,10 +106,7 @@ public class MultimediaWSDaoImpl extends ContentWSDaoImpl implements MultimediaW
 	}
 
 	@Override
-	public boolean removeSessionMultimedia(int sessionId, int multimediaId) {
-		
-		//TODO : Riddle me this, if I delete this link and the multimedia has no more session ties, it is also deleted? We may want to have a job that checks for this on occation
-		
+	public boolean removeSessionMultimedia(Long sessionId, Long multimediaId) {
 		BlackboardRemoveSessionMultimedia request = new ObjectFactory().createBlackboardRemoveSessionMultimedia();
 		request.setSessionId(sessionId);
 		request.setMultimediaId(multimediaId);

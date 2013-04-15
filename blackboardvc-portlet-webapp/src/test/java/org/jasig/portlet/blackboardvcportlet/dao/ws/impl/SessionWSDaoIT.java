@@ -1,14 +1,12 @@
 package org.jasig.portlet.blackboardvcportlet.dao.ws.impl;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
-import java.util.Map;
 
 import org.jasig.portlet.blackboardvcportlet.dao.ws.SessionWSDao;
-import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
-import org.jasig.portlet.blackboardvcportlet.service.SessionForm;
-import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
@@ -23,14 +21,10 @@ import com.elluminate.sas.BlackboardSessionResponse;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/test-applicationContext.xml")
-public class SessionWSDaoIT {
+public class SessionWSDaoIT extends AbstractWSTest {
 	
 	@Autowired
 	private SessionWSDao dao;
-	
-	private BlackboardSessionResponse session;
-	private SessionForm form;
-	private ConferenceUser user;
 	
 	@Before
 	public void before() {
@@ -109,72 +103,4 @@ public class SessionWSDaoIT {
 		BlackboardSessionResponse singleSession = DataAccessUtils.singleResult(sessions);
 		assertTrue(singleSession.getNonChairList().isEmpty());
 	}
-	
-	private ConferenceUser buildUser() {
-		ConferenceUser user = new ConferenceUser() {
-
-			private static final long serialVersionUID = 1L;
-			private String username = "test";
-			private String email = "my-test@example.com";
-			private long id = 1;
-			
-			@Override
-			public void setDisplayName(String displayName) {
-				username = displayName;
-				
-			}
-			
-			@Override
-			public long getUserId() {
-				return id;
-			}
-			
-			@Override
-			public String getEmail() {
-				return email;
-			}
-			
-			@Override
-			public String getDisplayName() {
-				return username;
-			}
-			
-			@Override
-			public Map<String, String> getAttributes() {
-				return null;
-			}
-		};
-		return user;
-		
-	}
-
-	private SessionForm buildSession() {
-		SessionForm newForm = new SessionForm();
-		newForm.setAllowInSessionInvites(false);
-		newForm.setBoundaryTime(0);
-		newForm.setHideParticipantNames(false);
-		newForm.setMaxCameras(1);
-		newForm.setMaxTalkers(1);
-		newForm.setMustBeSupervised(false);
-		newForm.setNewSession(true);
-		newForm.setPermissionsOn(false);
-		newForm.setRaiseHandOnEnter(false);
-		newForm.setSessionName("Test session");
-		
-		//start date/time
-		newForm.setStartDate(new DateMidnight());
-		newForm.setStartHour(0);
-		newForm.setStartMinute(0);
-		newForm.setStartTime((new DateTime()).plusHours(2).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0));
-		
-		//end date/time
-		newForm.setEndDate(new DateMidnight());
-		newForm.setEndHour(1);
-		newForm.setEndMinute(0);
-		newForm.setEndTime((new DateTime()).plusHours(3).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0));
-		
-		return newForm;
-	}
-	
-
 }
