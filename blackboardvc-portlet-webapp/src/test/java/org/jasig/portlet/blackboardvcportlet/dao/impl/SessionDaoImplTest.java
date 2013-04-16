@@ -9,9 +9,11 @@ import java.util.concurrent.Callable;
 
 import org.jasig.portlet.blackboardvcportlet.dao.ConferenceUserDao;
 import org.jasig.portlet.blackboardvcportlet.dao.MultimediaDao;
+import org.jasig.portlet.blackboardvcportlet.dao.PresentationDao;
 import org.jasig.portlet.blackboardvcportlet.dao.SessionDao;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.Multimedia;
+import org.jasig.portlet.blackboardvcportlet.data.Presentation;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,6 +23,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.elluminate.sas.BlackboardMultimediaResponse;
+import com.elluminate.sas.BlackboardPresentationResponse;
 import com.elluminate.sas.BlackboardSessionResponse;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -34,6 +37,8 @@ public class SessionDaoImplTest extends BaseJpaDaoTest {
     private ConferenceUserDao conferenceUserDao;
     @Autowired
     private MultimediaDao multimediaDao;
+    @Autowired
+    private PresentationDao presentationDao;
     
     
     @Test
@@ -160,8 +165,51 @@ public class SessionDaoImplTest extends BaseJpaDaoTest {
 	}
 	
 	@Test 
-	public void testRemoveLinkFromMultimedia() {
-		
+	public void testPresentationIntegration() {
+		//create a session with id sessionId
+    	this.execute(new Callable<Object>() {
+            @Override
+            public Object call() {
+            	BlackboardSessionResponse sessionResponse = generateSessionResponse();
+                
+                final Session session = sessionDao.createSession(sessionResponse, "http://www.example.com/session");
+                assertNotNull(session);
+
+                verifyCreatedSession();
+                verifyCreatedUsers();
+                
+                return null;
+            }
+        });
+    	
+    	//Create presentation and link it to the session
+    	this.execute(new Callable<Object>() {
+    		@Override
+    		public Object call() {
+    			final BlackboardPresentationResponse response = new BlackboardPresentationResponse();
+                response.setCreatorId("test@example.com");
+                response.setDescription("super sweet media");
+                response.setPresentationId(183838);
+                response.setSize(1024);
+                
+                final Presentation pres = presentationDao.createPresentation(response, "aliens_exist.pdf");
+                assertNotNull(pres);
+                
+                sessionDao.addPresentationToSession(SESSION_ID,	pres);
+                
+                final Session session = sessionDao.getSessionByBlackboardId(SESSION_ID);
+                assertNotNull(session.getPresentation());
+                
+                assertEquals(session.getPresentation(),pres);
+                
+                sessionDao.removePresentationFromSession(SESSION_ID);
+                final Session latestSession = sessionDao.getSessionByBlackboardId(SESSION_ID);
+                assertNull(latestSession.getPresentation());
+                
+                
+                return null;
+    		}
+    	});
 	}
     
     @Test

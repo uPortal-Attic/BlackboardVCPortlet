@@ -4,6 +4,7 @@ import java.util.Set;
 
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.Multimedia;
+import org.jasig.portlet.blackboardvcportlet.data.Presentation;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
 
@@ -33,4 +34,8 @@ public interface SessionDao {
 	Session deleteMultimediaFromSession(Long sessionId, Multimedia multimedia);
 
 	Set<Multimedia> getSessionMultimedias(Session session);
+
+	Session addPresentationToSession(Long sessionId, Presentation presentation);
+
+	Session removePresentationFromSession(Long sessionId);
 }

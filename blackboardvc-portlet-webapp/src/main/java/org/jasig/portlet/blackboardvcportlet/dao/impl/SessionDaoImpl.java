@@ -16,6 +16,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.jasig.jpa.BaseJpaDao;
 import org.jasig.jpa.OpenEntityManager;
+import org.jasig.portlet.blackboardvcportlet.dao.MultimediaDao;
+import org.jasig.portlet.blackboardvcportlet.dao.PresentationDao;
 import org.jasig.portlet.blackboardvcportlet.data.AccessType;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.Multimedia;
@@ -39,6 +41,21 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
     private CriteriaQuery<SessionImpl> findAllSessions;
     
     private InternalConferenceUserDao blackboardUserDao;
+    
+    private PresentationDao presentationDao;
+    
+    private MultimediaDao multimediaDao;
+    
+    @Autowired
+    public void setPresentationDao(PresentationDao dao) {
+    	this.presentationDao = dao;
+    }
+    
+    @Autowired
+    public void setMultimediaDao(MultimediaDao dao) {
+    	this.multimediaDao = dao;
+    }
+
 
     @Autowired
     public void setBlackboardUserDao(InternalConferenceUserDao blackboardUserDao) {
@@ -168,13 +185,52 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
     
     @Override
     @Transactional
+    public Session addPresentationToSession(Long sessionId, Presentation presentation) {
+    	SessionImpl blackboardSession = this.getSessionByBlackboardId(sessionId);
+    	if(blackboardSession == null) {
+    		throw new IncorrectResultSizeDataAccessException("No BlackboardSession could be found for sessionId " + sessionId, 1);
+    	}
+    	
+    	Presentation bbPresentation = presentationDao.getPresentationByBlackboardId(presentation.getbbPresentationId());
+    	
+    	if(bbPresentation == null) {
+    		throw new IncorrectResultSizeDataAccessException("No presentation could be found for blackboard presentationId " + presentation.getbbPresentationId(), 1);
+    	}
+    	
+    	blackboardSession.setPresentation(bbPresentation);
+    	
+    	this.getEntityManager().persist(blackboardSession);
+    	return blackboardSession;
+    }
+    
+    @Override
+    @Transactional
+    public Session removePresentationFromSession(Long sessionId) {
+    	SessionImpl blackboardSession = this.getSessionByBlackboardId(sessionId);
+    	if(blackboardSession == null) {
+    		throw new IncorrectResultSizeDataAccessException("No BlackboardSession could be found for sessionId " + sessionId, 1);
+    	}
+    	
+    	blackboardSession.setPresentation(null);
+    	
+    	this.getEntityManager().persist(blackboardSession);
+    	return blackboardSession;
+    }
+    
+    @Override
+    @Transactional
     public Session addMultimediaToSession(Long sessionId, Multimedia multimedia) {
     	final SessionImpl blackboardSession = this.getSessionByBlackboardId(sessionId);
     	if(blackboardSession == null) {
     		throw new IncorrectResultSizeDataAccessException("No BlackboardSession could be found for sessionId " + sessionId, 1);
     	}
     	
-    	blackboardSession.getMultimedias().add(multimedia);
+    	Multimedia mm = multimediaDao.getMultimediaByBlackboardId(multimedia.getBbMultimediaId());
+    	if(mm == null) {
+    		throw new IncorrectResultSizeDataAccessException("No multimedia could be found for blackboard multimediaId " + multimedia.getBbMultimediaId(), 1);
+    	}
+
+    	blackboardSession.getMultimedias().add(mm);
     	
     	this.getEntityManager().persist(blackboardSession);
     	return blackboardSession;
@@ -186,6 +242,12 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
     	final SessionImpl blackboardSession = this.getSessionByBlackboardId(sessionId);
     	if(blackboardSession == null) {
     		throw new IncorrectResultSizeDataAccessException("No BlackboardSession could be found for sessionId " + sessionId, 1);
+    	}
+    	
+		Multimedia mm = multimediaDao.getMultimediaByBlackboardId(multimedia.getBbMultimediaId());
+    	
+    	if(mm == null) {
+    		throw new IncorrectResultSizeDataAccessException("No multimedia could be found for blackboard multimediaId " + multimedia.getBbMultimediaId(), 1);
     	}
     	
     	blackboardSession.getMultimedias().remove(multimedia);

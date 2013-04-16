@@ -32,6 +32,7 @@
 
     <bean class="org.jasig.portlet.blackboardvcportlet.dao.impl.ConferenceUserDaoImpl" />
     <bean class="org.jasig.portlet.blackboardvcportlet.dao.impl.MultimediaDaoImpl" />
+    <bean class="org.jasig.portlet.blackboardvcportlet.dao.impl.PresentationDaoImpl" />
     <bean class="org.jasig.portlet.blackboardvcportlet.dao.impl.SessionDaoImpl" />
     <bean class="org.jasig.portlet.blackboardvcportlet.dao.impl.ServerConfigurationDaoImpl" />
     <bean class="org.jasig.portlet.blackboardvcportlet.dao.impl.ServerQuotaDaoImpl" />

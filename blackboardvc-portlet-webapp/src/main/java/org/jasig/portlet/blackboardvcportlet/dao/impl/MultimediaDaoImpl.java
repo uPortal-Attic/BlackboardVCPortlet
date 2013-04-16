@@ -34,7 +34,6 @@ public class MultimediaDaoImpl extends BaseJpaDao implements MultimediaDao {
         this.blackboardUserDao = blackboardUserDao;
     }
 
-	
 	@Override
     public void afterPropertiesSet() throws Exception {
         this.findAllMultimedia = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<MultimediaImpl>>() {

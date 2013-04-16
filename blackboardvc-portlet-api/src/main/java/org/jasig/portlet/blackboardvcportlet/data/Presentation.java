@@ -8,4 +8,6 @@ public interface Presentation {
 	public String getFilename();
 
 	public ConferenceUser getCreator();
+
+	public long getbbPresentationId();
 }

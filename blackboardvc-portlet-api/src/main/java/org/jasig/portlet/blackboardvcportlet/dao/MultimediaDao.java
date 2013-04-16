@@ -10,11 +10,9 @@ public interface MultimediaDao {
 
 	public abstract Set<Multimedia> getAllMultimedia();
 
-	public abstract Multimedia getMultimediaByBlackboardId(
-			long bbMultimediaId);
+	public abstract Multimedia getMultimediaByBlackboardId(long bbMultimediaId);
 
-	public abstract Multimedia createMultimedia(
-			BlackboardMultimediaResponse multimediaResponse, String filename);
+	public abstract Multimedia createMultimedia(BlackboardMultimediaResponse multimediaResponse, String filename);
 
 	public abstract void deleteMultimedia(Multimedia multimedia);
 

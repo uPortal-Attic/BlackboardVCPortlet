@@ -11,14 +11,18 @@ import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang.Validate;
 import org.jasig.jpa.BaseJpaDao;
+import org.jasig.jpa.OpenEntityManager;
 import org.jasig.portlet.blackboardvcportlet.dao.PresentationDao;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.Presentation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.elluminate.sas.BlackboardPresentationResponse;
 import com.google.common.base.Function;
 
+@Repository
 public class PresentationDaoImpl extends BaseJpaDao implements PresentationDao {
 	
 	private CriteriaQuery<PresentationImpl> findAllPresentation;
@@ -51,6 +55,7 @@ public class PresentationDaoImpl extends BaseJpaDao implements PresentationDao {
 	}
 
 	@Override
+	@OpenEntityManager
 	public Presentation getPresentationByBlackboardId(long bbPresentationId) {
 		final NaturalIdQuery<PresentationImpl> query = this.createNaturalIdQuery(PresentationImpl.class);
         query.using(PresentationImpl_.bbPresentationId, bbPresentationId);
@@ -59,7 +64,8 @@ public class PresentationDaoImpl extends BaseJpaDao implements PresentationDao {
 	}
 
 	@Override
-	public Presentation createMultimedia(BlackboardPresentationResponse presentationResponse, String filename) {
+	@Transactional
+	public Presentation createPresentation(BlackboardPresentationResponse presentationResponse, String filename) {
 		//Find the creator user
         final String creatorId = presentationResponse.getCreatorId();
         final ConferenceUser creator = this.blackboardUserDao.getOrCreateUser(creatorId);
@@ -74,7 +80,8 @@ public class PresentationDaoImpl extends BaseJpaDao implements PresentationDao {
 	}
 
 	@Override
-	public void deleteMultimedia(Presentation presentation) {
+	@Transactional
+	public void deletePresentation(Presentation presentation) {
 		Validate.notNull(presentation, "presentation can not be null");
         
         final EntityManager entityManager = this.getEntityManager();

@@ -146,7 +146,6 @@ public class MultimediaImpl implements Multimedia {
 		this.lastUpdated = lastUpdated;
 	}
 
-	@Override
 	public long getMultimediaId() {
 		return multimediaId;
 	}

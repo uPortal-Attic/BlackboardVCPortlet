@@ -10,8 +10,6 @@ public interface Multimedia {
 
 	public abstract DateTime getLastUpdated();
 
-	public abstract long getMultimediaId();
-
 	public abstract long getBbMultimediaId();
 
 	public abstract ConferenceUser getCreator();
