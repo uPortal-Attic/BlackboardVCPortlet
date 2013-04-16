@@ -30,6 +30,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.NaturalIdCache;
 import org.jasig.portlet.blackboardvcportlet.data.Multimedia;
+import org.jasig.portlet.blackboardvcportlet.data.Presentation;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.UserSessionUrl;
@@ -81,6 +82,10 @@ public class ConferenceUserImpl implements ConferenceUser {
     @OneToMany(targetEntity = MultimediaImpl.class, fetch = FetchType.LAZY, mappedBy = "creator")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private final Set<Multimedia> multimedias = new HashSet<Multimedia>(0);
+
+    @OneToMany(targetEntity = PresentationImpl.class, fetch = FetchType.LAZY, mappedBy = "creator")
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private final Set<Presentation> presentations = new HashSet<Presentation>(0);
 
     @OneToMany(targetEntity = SessionImpl.class, fetch = FetchType.LAZY, mappedBy = "creator")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)

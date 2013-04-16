@@ -45,6 +45,7 @@
         
         <mapping class="org.jasig.portlet.blackboardvcportlet.dao.impl.ConferenceUserImpl"/>
         <mapping class="org.jasig.portlet.blackboardvcportlet.dao.impl.MultimediaImpl"/>
+        <mapping class="org.jasig.portlet.blackboardvcportlet.dao.impl.PresentationImpl"/>
         <mapping class="org.jasig.portlet.blackboardvcportlet.dao.impl.SessionImpl"/>
         <mapping class="org.jasig.portlet.blackboardvcportlet.dao.impl.ServerConfigurationImpl"/>
         <mapping class="org.jasig.portlet.blackboardvcportlet.dao.impl.ServerQuotaImpl"/>

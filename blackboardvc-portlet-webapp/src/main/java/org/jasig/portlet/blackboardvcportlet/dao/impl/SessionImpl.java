@@ -50,6 +50,7 @@ import org.hibernate.annotations.NaturalIdCache;
 import org.hibernate.annotations.Type;
 import org.jasig.portlet.blackboardvcportlet.data.AccessType;
 import org.jasig.portlet.blackboardvcportlet.data.Multimedia;
+import org.jasig.portlet.blackboardvcportlet.data.Presentation;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingMode;
@@ -139,6 +140,13 @@ public class SessionImpl implements Session {
         inverseJoinColumns=@JoinColumn(name="MULTIMEDIA_ID")
     )
     private final Set<Multimedia> multimedias = new HashSet<Multimedia>(0);
+    
+    @ManyToMany(targetEntity = PresentationImpl.class, fetch = FetchType.LAZY)
+    @JoinTable(name="VC2_SESSION_PRESENTATION",
+        joinColumns= @JoinColumn(name="SESSION_ID"),
+        inverseJoinColumns=@JoinColumn(name="PRESENTATION_ID")
+    )
+    private final Set<Presentation> presentations = new HashSet<Presentation>(0);
     
     @Column(name="OPEN_CHAIR", nullable = false)
     private boolean openChair;
@@ -322,6 +330,10 @@ public class SessionImpl implements Session {
     Set<Multimedia> getMultimedias() {
 		return multimedias;
 	}
+    
+    Set<Presentation> getPresentations() {
+    	return presentations;
+    }
 
     @Override
     public DateTime getLastUpdated() {
