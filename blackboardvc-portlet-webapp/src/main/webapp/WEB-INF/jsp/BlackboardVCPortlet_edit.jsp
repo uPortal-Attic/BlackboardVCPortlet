@@ -405,40 +405,6 @@
             showButtonPanel : true,
             dateFormat : 'mm/dd/yyyy'
           });
-          $('#${n}moderatiorUidInput').keypress(
-              function(e) {
-                if (e.which == 13) {
-                  $('#${n}addModeratorSubmit')
-                      .focus().click();
-                  return false;
-                }
-              });
-<%--
-          $('#${n}intParticipantInput').keypress(
-              function(e) {
-                if (e.which == 13) {
-                  $('#${n}addIntParticipantSubmit')
-                      .focus().click();
-                  return false;
-                }
-              });
---%>
-          $('#${n}extParticipantDisplayNameInput').keypress(
-              function(e) {
-                if (e.which == 13) {
-                  $('#${n}addExtParticipantSubmit')
-                      .focus().click();
-                  return false;
-                }
-              });
-          $('#${n}extParticipantEmailInput').keypress(
-              function(e) {
-                if (e.which == 13) {
-                  $('#${n}addExtParticipantSubmit')
-                      .focus().click();
-                  return false;
-                }
-              });
         });
   });
     </rs:compressJs>
