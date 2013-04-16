@@ -14,4 +14,5 @@ public interface ConferenceUser extends Serializable {
     void setDisplayName(String displayName);
 
     Map<String, String> getAttributes();
+
 }

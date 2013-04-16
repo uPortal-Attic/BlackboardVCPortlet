@@ -3,6 +3,7 @@ package org.jasig.portlet.blackboardvcportlet.dao;
 import java.util.Map;
 import java.util.Set;
 
+import org.jasig.portlet.blackboardvcportlet.data.Multimedia;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 
@@ -12,6 +13,8 @@ public interface ConferenceUserDao {
     Set<Session> getChairedSessionsForUser(ConferenceUser user);
 
     Set<Session> getNonChairedSessionsForUser(ConferenceUser user);
+    
+    Set<Multimedia> getMultimediasForUser(ConferenceUser user);
     
     ConferenceUser createUser(String email, String displayName);
 

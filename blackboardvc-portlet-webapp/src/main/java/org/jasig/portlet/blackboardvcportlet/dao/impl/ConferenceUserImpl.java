@@ -29,6 +29,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.NaturalIdCache;
+import org.jasig.portlet.blackboardvcportlet.data.Multimedia;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.UserSessionUrl;
@@ -76,6 +77,10 @@ public class ConferenceUserImpl implements ConferenceUser {
             uniqueConstraints=@UniqueConstraint(columnNames={"USER_ID", "ATTR_NAME", "ATTR_VALUE"}))
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private final Map<String, String> attributes = new HashMap<String, String>(0);
+    
+    @OneToMany(targetEntity = MultimediaImpl.class, fetch = FetchType.LAZY, mappedBy = "creator")
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private final Set<Multimedia> multimedias = new HashSet<Multimedia>(0);
 
     @OneToMany(targetEntity = SessionImpl.class, fetch = FetchType.LAZY, mappedBy = "creator")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -147,6 +152,10 @@ public class ConferenceUserImpl implements ConferenceUser {
 
     Set<Session> getNonChairedSessions() {
         return nonChairedSessions;
+    }
+    
+    Set<Multimedia> getMultimedias() {
+    	return multimedias;
     }
 
     @Override

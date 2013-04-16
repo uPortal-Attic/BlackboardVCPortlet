@@ -49,6 +49,7 @@ import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.NaturalIdCache;
 import org.hibernate.annotations.Type;
 import org.jasig.portlet.blackboardvcportlet.data.AccessType;
+import org.jasig.portlet.blackboardvcportlet.data.Multimedia;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingMode;
@@ -131,6 +132,13 @@ public class SessionImpl implements Session {
         inverseJoinColumns=@JoinColumn(name="USER_ID")
     )
     private final Set<ConferenceUser> nonChairs = new HashSet<ConferenceUser>(0);
+    
+    @ManyToMany(targetEntity = MultimediaImpl.class, fetch = FetchType.LAZY)
+    @JoinTable(name="VC2_SESSION_MULTIMEDIA",
+        joinColumns= @JoinColumn(name="SESSION_ID"),
+        inverseJoinColumns=@JoinColumn(name="MULTIMEDIA_ID")
+    )
+    private final Set<Multimedia> multimedias = new HashSet<Multimedia>(0);
     
     @Column(name="OPEN_CHAIR", nullable = false)
     private boolean openChair;
@@ -222,7 +230,7 @@ public class SessionImpl implements Session {
         this.permissionsOn = permissionsOn;
     }
 
-    @Override
+	@Override
     public boolean isSecureSignOn() {
         return this.secureSignOn;
     }
@@ -309,6 +317,11 @@ public class SessionImpl implements Session {
     Set<ConferenceUser> getNonChairs() {
         return nonChairs;
     }
+    
+    
+    Set<Multimedia> getMultimedias() {
+		return multimedias;
+	}
 
     @Override
     public DateTime getLastUpdated() {

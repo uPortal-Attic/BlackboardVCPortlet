@@ -18,6 +18,7 @@ import org.jasig.jpa.BaseJpaDao;
 import org.jasig.jpa.OpenEntityManager;
 import org.jasig.portlet.blackboardvcportlet.data.AccessType;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
+import org.jasig.portlet.blackboardvcportlet.data.Multimedia;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingMode;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
@@ -76,6 +77,21 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
 
         //Create a copy to trigger loading of the user data
         return ImmutableSet.copyOf(sessionImpl.getChairs());
+    }
+    
+    @Override
+    public Set<Multimedia> getSessionMultimedias(Session session) {
+        if (session == null) {
+            return null;
+        }
+        
+        final SessionImpl sessionImpl = this.getSession(session.getSessionId());
+        if (sessionImpl == null) {
+            return null;
+        }
+
+        //Create a copy to trigger loading of the user data
+        return ImmutableSet.copyOf(sessionImpl.getMultimedias());
     }
 
     @Override
@@ -147,6 +163,34 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
         
         this.getEntityManager().persist(blackboardSession);
         return blackboardSession;
+    }
+    
+    @Override
+    @Transactional
+    public Session addMultimediaToSession(Long sessionId, Multimedia multimedia) {
+    	final SessionImpl blackboardSession = this.getSessionByBlackboardId(sessionId);
+    	if(blackboardSession == null) {
+    		throw new IncorrectResultSizeDataAccessException("No BlackboardSession could be found for sessionId " + sessionId, 1);
+    	}
+    	
+    	blackboardSession.getMultimedias().add(multimedia);
+    	
+    	this.getEntityManager().persist(blackboardSession);
+    	return blackboardSession;
+    }
+    
+    @Override
+    @Transactional
+    public Session deleteMultimediaFromSession(Long sessionId, Multimedia multimedia) {
+    	final SessionImpl blackboardSession = this.getSessionByBlackboardId(sessionId);
+    	if(blackboardSession == null) {
+    		throw new IncorrectResultSizeDataAccessException("No BlackboardSession could be found for sessionId " + sessionId, 1);
+    	}
+    	
+    	blackboardSession.getMultimedias().remove(multimedia);
+    	
+    	this.getEntityManager().persist(blackboardSession);
+    	return blackboardSession;
     }
 
     @Override

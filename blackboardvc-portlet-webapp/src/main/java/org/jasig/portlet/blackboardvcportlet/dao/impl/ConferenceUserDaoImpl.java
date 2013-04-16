@@ -17,6 +17,7 @@ import org.apache.commons.lang.Validate;
 import org.jasig.jpa.BaseJpaDao;
 import org.jasig.jpa.OpenEntityManager;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
+import org.jasig.portlet.blackboardvcportlet.data.Multimedia;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -78,6 +79,16 @@ public class ConferenceUserDaoImpl extends BaseJpaDao implements InternalConfere
         this.getEntityManager().persist(user);
         
         return user;
+    }
+    
+    @Override
+    public Set<Multimedia> getMultimediasForUser(ConferenceUser user) {
+    	if(user == null) {
+    		return null;
+    	}
+    	
+    	final ConferenceUserImpl userImpl = this.getUser(user.getUserId());
+    	return ImmutableSet.copyOf(userImpl.getMultimedias());
     }
     
     @Override

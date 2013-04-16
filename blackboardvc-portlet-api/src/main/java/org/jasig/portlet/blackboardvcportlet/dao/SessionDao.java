@@ -3,6 +3,7 @@ package org.jasig.portlet.blackboardvcportlet.dao;
 import java.util.Set;
 
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
+import org.jasig.portlet.blackboardvcportlet.data.Multimedia;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
 
@@ -26,4 +27,10 @@ public interface SessionDao {
     Session updateSession(BlackboardSessionResponse sessionResponse);
     
     void deleteSession(Session session);
+
+    Session addMultimediaToSession(Long sessionId, Multimedia multimedia);
+
+	Session deleteMultimediaFromSession(Long sessionId, Multimedia multimedia);
+
+	Set<Multimedia> getSessionMultimedias(Session session);
 }
