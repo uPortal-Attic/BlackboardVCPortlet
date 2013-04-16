@@ -56,4 +56,6 @@ public interface SessionService {
     void addSessionNonChair(long sessionId, String displayName, String email);
     
     void removeSessionNonChairs(long sessionId, String... emails);
+    
+    void removeSession(long sessionId);
 }

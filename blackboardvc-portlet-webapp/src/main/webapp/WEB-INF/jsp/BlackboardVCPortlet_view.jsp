@@ -22,6 +22,8 @@
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 <%@ include file="/WEB-INF/jsp/header.jsp"%>
 
+
+<div id="${n}blackboardCollaboratePortlet">
 <portlet:actionURL portletMode="EDIT" var="deleteSessionActionUrl">
   <portlet:param name="action" value="deleteSessions" />
 </portlet:actionURL>
@@ -42,7 +44,6 @@
       </tr>
     </tbody>
   </table>
-  
   <c:choose>
     <c:when test="${fn:length(sessions) gt 0}">
       <table width="100%">
@@ -81,7 +82,6 @@
               </td>
             </tr>
           </c:forEach>
-  
         </tbody>
       </table>
       <hr />
@@ -93,9 +93,9 @@
   </c:choose>
 </form>
 
+<%--
 <c:choose>
   <c:when test="${fn:length(recordings) gt 0}">
-
     <table width="100%">
       <tbody>
         <tr>
@@ -167,22 +167,27 @@
     <hr />
   </c:otherwise>
 </c:choose>
+ --%>
 <script type="text/javascript">
 <rs:compressJs>
-    up.jQuery(function() {
-    var $ = up.jQuery;
-    $(document).ready(
-        function() {
-          $('#${n}selectAllSessions').click(
-              function() {
-                $('.${n}deleteSession').attr('checked', this.checked);
-              });
-          $('#${n}selectAllRecordings').click(
-              function() {
-                $('.${n}deleteRecording').attr('checked', this.checked);
-              });
-        });
+up.jQuery(function() {
+  var $ = up.jQuery;
+
+  $(document).ready(function() {
+	$('#${n}blackboardCollaboratePortlet .${n}deleteSession').click(function() {
+	  if (!$(this).is(':checked')) {
+		$('#${n}blackboardCollaboratePortlet #${n}selectAllSessions').attr('checked', false);
+	  }
+	  else if ($('#${n}blackboardCollaboratePortlet .${n}deleteSession').not(':checked').length == 0) {
+		$('#${n}blackboardCollaboratePortlet #${n}selectAllSessions').attr('checked', true);
+	  }
+	});
+       
+    $('#${n}blackboardCollaboratePortlet #${n}selectAllSessions').click(function() {
+      $('#${n}blackboardCollaboratePortlet .${n}deleteSession').attr('checked', $(this).is(':checked'));
+    });
   });
+});
 </rs:compressJs>
 </script>
-
+</div>
