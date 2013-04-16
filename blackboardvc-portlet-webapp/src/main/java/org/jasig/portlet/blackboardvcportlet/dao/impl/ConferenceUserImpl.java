@@ -162,6 +162,10 @@ public class ConferenceUserImpl implements ConferenceUser {
     Set<Multimedia> getMultimedias() {
     	return multimedias;
     }
+    
+    Set<Presentation> getPresentations() {
+    	return presentations;
+    }
 
     @Override
     public String toString() {

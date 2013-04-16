@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.SequenceGenerator;
@@ -76,7 +77,7 @@ public class PresentationImpl implements Presentation {
     @Type(type = "dateTime")
     private DateTime lastUpdated;
 	
-	@ManyToMany(targetEntity = SessionImpl.class, fetch = FetchType.LAZY, mappedBy = "presentations")
+	@OneToMany(targetEntity = SessionImpl.class, fetch = FetchType.LAZY, mappedBy = "presentation")
 	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private final Set<Session> sessions = new HashSet<Session>(0);
 	

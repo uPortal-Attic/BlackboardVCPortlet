@@ -29,6 +29,8 @@ public interface Session extends Serializable {
     DateTime getEndTime();
     
     ConferenceUser getCreator();
+    
+    Presentation getPresentation();
 
     int getBoundaryTime();
 

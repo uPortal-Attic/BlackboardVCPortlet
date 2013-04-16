@@ -93,6 +93,10 @@ public class SessionImpl implements Session {
     @JoinColumn(name = "CREATOR", nullable = false)
     private final ConferenceUser creator;
     
+    @ManyToOne(targetEntity = PresentationImpl.class)
+    @JoinColumn(name = "PRESENTATION", nullable = true)
+    private Presentation presentation;
+    
     @Column(name="SESSION_NAME", nullable = false, length = 1000)
     private String sessionName;
     
@@ -140,13 +144,6 @@ public class SessionImpl implements Session {
         inverseJoinColumns=@JoinColumn(name="MULTIMEDIA_ID")
     )
     private final Set<Multimedia> multimedias = new HashSet<Multimedia>(0);
-    
-    @ManyToMany(targetEntity = PresentationImpl.class, fetch = FetchType.LAZY)
-    @JoinTable(name="VC2_SESSION_PRESENTATION",
-        joinColumns= @JoinColumn(name="SESSION_ID"),
-        inverseJoinColumns=@JoinColumn(name="PRESENTATION_ID")
-    )
-    private final Set<Presentation> presentations = new HashSet<Presentation>(0);
     
     @Column(name="OPEN_CHAIR", nullable = false)
     private boolean openChair;
@@ -218,6 +215,7 @@ public class SessionImpl implements Session {
         this.entityVersion = -1;
         this.bbSessionId = bbSessionId;
         this.creator = creator;
+        
     }
 
     /**
@@ -331,10 +329,6 @@ public class SessionImpl implements Session {
 		return multimedias;
 	}
     
-    Set<Presentation> getPresentations() {
-    	return presentations;
-    }
-
     @Override
     public DateTime getLastUpdated() {
         return lastUpdated;
@@ -456,6 +450,15 @@ public class SessionImpl implements Session {
     @Override
     public ConferenceUser getCreator() {
         return creator;
+    }
+    
+    @Override
+    public Presentation getPresentation() {
+    	return presentation;
+    }
+    
+    public void setPresentation(Presentation value) {
+    	this.presentation = value;
     }
 
     @Override
