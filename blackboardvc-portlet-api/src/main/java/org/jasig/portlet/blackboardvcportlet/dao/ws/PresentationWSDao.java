@@ -18,17 +18,24 @@ public interface PresentationWSDao {
 	 * @param content
 	 * @return 
 	 */
-	public BlackboardPresentationResponse uploadPresentation(Long sessionId, String creatorId, String filename, String description, DataHandler data);
+	public BlackboardPresentationResponse uploadPresentation(long sessionId, String creatorId, String filename, String description, DataHandler data);
 	public BlackboardPresentationResponse uploadPresentation(String creatorId, String filename, String description, DataHandler data);
-	public boolean linkPresentationToSession(Long sessionId, Long presentationId);
+	public boolean linkPresentationToSession(long sessionId, long presentationId);
 
 	//read
-	public List<BlackboardPresentationResponse> getSessionPresentations(Long sessionId);
+	public List<BlackboardPresentationResponse> getSessionPresentations(long sessionId);
+	/**
+	 * Must specify at least one piece of criteria, and can have multiple
+	 * @param creatorId
+	 * @param presentationId Long instead of long so we can pass in null to the search
+	 * @param description
+	 * @return
+	 */
 	public List<BlackboardPresentationResponse> getRepositoryPresentations(String creatorId, Long presentationId, String description);
 	
 	//delete
-	public boolean deletePresentation(Long presentationId);
-	public boolean deleteSessionPresenation(Long sessionId, Long presenationId);
+	public boolean deletePresentation(long presentationId);
+	public boolean deleteSessionPresenation(long sessionId, long presenationId);
 	
 
 	

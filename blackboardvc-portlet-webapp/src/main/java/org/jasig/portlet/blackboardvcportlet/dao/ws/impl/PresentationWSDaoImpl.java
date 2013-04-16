@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import com.elluminate.sas.BlackboardListRepositoryPresentation;
 import com.elluminate.sas.BlackboardListSessionContent;
-import com.elluminate.sas.BlackboardMultimediaResponseCollection;
 import com.elluminate.sas.BlackboardPresentationResponse;
 import com.elluminate.sas.BlackboardPresentationResponseCollection;
 import com.elluminate.sas.BlackboardRemoveRepositoryPresentation;
@@ -29,7 +28,7 @@ public class PresentationWSDaoImpl extends ContentWSDaoImpl implements Presentat
 	private static final Logger logger = LoggerFactory.getLogger(PresentationWSDaoImpl.class);
 	
 	@Override
-	public BlackboardPresentationResponse uploadPresentation(Long sessionId, String creatorId, String filename, String description, DataHandler data) {
+	public BlackboardPresentationResponse uploadPresentation(long sessionId, String creatorId, String filename, String description, DataHandler data) {
 		BlackboardPresentationResponse response = uploadPresentation(creatorId, filename, description, data);
 		if(!linkPresentationToSession(sessionId, response.getPresentationId()))
 			logger.error("Error linking presentation ("+response.getPresentationId()+") to session ("+sessionId+"), however upload was successful.");
@@ -53,7 +52,7 @@ public class PresentationWSDaoImpl extends ContentWSDaoImpl implements Presentat
 	}
 	
 	@Override
-	public boolean linkPresentationToSession(Long sessionId, Long presentationId) {
+	public boolean linkPresentationToSession(long sessionId, long presentationId) {
 		BlackboardSetSessionPresentation request = new ObjectFactory().createBlackboardSetSessionPresentation();
 		request.setPresentationId(presentationId);
 		request.setSessionId(sessionId);
@@ -67,12 +66,12 @@ public class PresentationWSDaoImpl extends ContentWSDaoImpl implements Presentat
 	}
 
 	@Override
-	public List<BlackboardPresentationResponse> getSessionPresentations(Long sessionId) {
+	public List<BlackboardPresentationResponse> getSessionPresentations(long sessionId) {
 		BlackboardListSessionContent request = new ObjectFactory().createBlackboardListSessionContent();
-		if(sessionId != null) {
-			request.setSessionId(sessionId);
-		}
+		request.setSessionId(sessionId);
+		
 		JAXBElement<BlackboardListSessionContent> createListSessionPresentation = new ObjectFactory().createListSessionPresentation(request);
+		@SuppressWarnings("unchecked")
 		final JAXBElement<BlackboardPresentationResponseCollection> objSessionResponse = (JAXBElement<BlackboardPresentationResponseCollection>)sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/ListSessionPresentation", createListSessionPresentation);
 		
 		return objSessionResponse.getValue().getPresentationResponses();
@@ -81,6 +80,9 @@ public class PresentationWSDaoImpl extends ContentWSDaoImpl implements Presentat
 	@Override
 	public List<BlackboardPresentationResponse> getRepositoryPresentations(String creatorId, Long presentationId, String description) {
 		BlackboardListRepositoryPresentation request = new ObjectFactory().createBlackboardListRepositoryPresentation();
+		if(creatorId == null && presentationId == null && description == null) {
+			throw new IllegalStateException("You must specify at least one piece of criteria");
+		}
 		if(creatorId != null) {
 			request.setCreatorId(creatorId);
 		}
@@ -98,7 +100,7 @@ public class PresentationWSDaoImpl extends ContentWSDaoImpl implements Presentat
 	}
 
 	@Override
-	public boolean deletePresentation(Long presentationId) {
+	public boolean deletePresentation(long presentationId) {
 		BlackboardRemoveRepositoryPresentation request = new ObjectFactory().createBlackboardRemoveRepositoryPresentation();
 		request.setPresentationId(presentationId);
 		return WSDaoUtils.isSuccessful(sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/RemoveRepositoryPresentation", request));
@@ -106,9 +108,7 @@ public class PresentationWSDaoImpl extends ContentWSDaoImpl implements Presentat
 	}
 
 	@Override
-	public boolean deleteSessionPresenation(Long sessionId, Long presentationId) {
-		//TODO : Riddle me this, if I delete this link and the presentation has no more session ties, it is also deleted? We may want to have a job that checks for this on occasion
-		
+	public boolean deleteSessionPresenation(long sessionId, long presentationId) {
 		BlackboardRemoveSessionPresentation request = new ObjectFactory().createBlackboardRemoveSessionPresentation();
 		request.setSessionId(sessionId);
 		request.setPresentationId(presentationId);

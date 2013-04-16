@@ -85,7 +85,7 @@ public class SessionWSDaoImpl implements SessionWSDao {
 	}
 	
 	@Override
-	public String buildSessionUrl(Long sessionId, String displayName) {
+	public String buildSessionUrl(long sessionId, String displayName) {
 		BlackboardBuildSessionUrl buildGuestUrlRequest = new BlackboardBuildSessionUrl();
         buildGuestUrlRequest.setSessionId(sessionId);
         buildGuestUrlRequest.setDisplayName(displayName);
@@ -96,7 +96,7 @@ public class SessionWSDaoImpl implements SessionWSDao {
 	}
 
 	@Override
-	public boolean createSessionTelephony(Long sessionId, BlackboardSetSessionTelephony telephony) {
+	public boolean createSessionTelephony(long sessionId, BlackboardSetSessionTelephony telephony) {
 		telephony.setSessionId(sessionId);
 		return WSDaoUtils.isSuccessful(sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/SetSessionTelephony", telephony));
 	}
@@ -106,6 +106,12 @@ public class SessionWSDaoImpl implements SessionWSDao {
 			String creatorId, Long startTime, Long endTime, String sessionName) {
 		//build search request
 		BlackboardListSession request = new ObjectFactory().createBlackboardListSession();
+		
+		if(userId == null && groupingId == null && sessionId == null && creatorId == null 
+				&& startTime == null && endTime == null && sessionName == null) {
+			throw new IllegalStateException("You must specify at least 1 piece of criteria");
+		}
+		
 		if(userId != null) {
 			request.setUserId(userId);
 		}
@@ -140,14 +146,14 @@ public class SessionWSDaoImpl implements SessionWSDao {
 	}
 
 	@Override
-	public List<BlackboardSessionAttendanceResponse> getSessionAttendance(Long sessionId, Object startTime) {
+	public List<BlackboardSessionAttendanceResponse> getSessionAttendance(long sessionId, Object startTime) {
 		BlackboardListSessionAttendance request = new ObjectFactory().createBlackboardListSessionAttendance();
 		BlackboardListSessionAttendanceResponseCollection responseCollection = (BlackboardListSessionAttendanceResponseCollection) sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/ListSessionAttendance", request);
 		return responseCollection.getSessionAttendanceResponses();
 	}
 
 	@Override
-	public List<BlackboardSessionTelephonyResponse> getSessionTelephony(Long sessionId) {
+	public List<BlackboardSessionTelephonyResponse> getSessionTelephony(long sessionId) {
 		BlackboardSessionTelephony request = new ObjectFactory().createBlackboardSessionTelephony();
 		request.setSessionId(sessionId);
 		final BlackboardSessionTelephonyResponseCollection response = (BlackboardSessionTelephonyResponseCollection) sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/ListSessionTelephony", request);
@@ -215,19 +221,19 @@ public class SessionWSDaoImpl implements SessionWSDao {
     }
 
     @Override
-	public boolean deleteSession(Long sessionId) {
+	public boolean deleteSession(long sessionId) {
 		BlackboardRemoveSession request = new ObjectFactory().createBlackboardRemoveSession();
 		request.setSessionId(sessionId);
 		return WSDaoUtils.isSuccessful(sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/RemoveSession", request));
 	}
 
 	@Override
-	public boolean clearSessionChairList(Long sessionId) {
+	public boolean clearSessionChairList(long sessionId) {
 		return clearSessionUserList(sessionId,true);
 	}
 
 	@Override
-	public boolean clearSessionNonChairList(Long sessionId) {
+	public boolean clearSessionNonChairList(long sessionId) {
 		return clearSessionUserList(sessionId,false);
 	}
 

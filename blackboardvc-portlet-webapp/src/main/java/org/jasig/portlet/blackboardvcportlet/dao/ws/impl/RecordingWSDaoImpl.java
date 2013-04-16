@@ -24,8 +24,13 @@ import static org.jasig.portlet.blackboardvcportlet.dao.ws.WSDaoUtils.isSuccessf
 public class RecordingWSDaoImpl extends ContentWSDaoImpl implements RecordingWSDao {
 
 	@Override
-	public List<BlackboardRecordingLongResponse> getRecordingLong(String userId, String groupingId, Long sessionId, String creatorId, Long startTime, Long endTime, String sessionName) {
+	public List<BlackboardRecordingLongResponse> getRecordingLong(String userId, String groupingId, Long sessionId, String creatorId,
+			           												Long startTime, Long endTime, String sessionName) {
 		BlackboardListRecordingLong request = new ObjectFactory().createBlackboardListRecordingLong();
+		
+		if(userId == null && groupingId == null && sessionId == null && creatorId == null && startTime == null && endTime == null && sessionName == null) {
+			throw new IllegalStateException("You must specify at least one piece of criteria");
+		}
 		
 		if(userId != null) {
 			request.setUserId(userId);
@@ -57,6 +62,10 @@ public class RecordingWSDaoImpl extends ContentWSDaoImpl implements RecordingWSD
 	public List<BlackboardRecordingShortResponse> getRecordingShort(String userId, String groupingId, Long sessionId, String creatorId, Long startTime, Long endTime, String sessionName) {
 		BlackboardListRecordingShort request = new ObjectFactory().createBlackboardListRecordingShort();
 		
+		if(userId == null && groupingId == null && sessionId == null && creatorId == null && startTime == null && endTime == null && sessionName == null) {
+			throw new IllegalStateException("You must specify at least one piece of criteria");
+		}
+		
 		if(userId != null) {
 			request.setUserId(userId);
 		}
@@ -84,7 +93,7 @@ public class RecordingWSDaoImpl extends ContentWSDaoImpl implements RecordingWSD
 	}
 
 	@Override
-	public boolean removeRecording(Long recordingId) {
+	public boolean removeRecording(long recordingId) {
 		BlackboardRemoveRecording request = new ObjectFactory().createBlackboardRemoveRecording();
 		request.setRecordingId(recordingId);
 		return WSDaoUtils.isSuccessful(sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/RemoveRecording", request));
@@ -92,7 +101,7 @@ public class RecordingWSDaoImpl extends ContentWSDaoImpl implements RecordingWSD
 	}
 
 	@Override
-	public String buildRecordingUrl(Long recordingId) {
+	public String buildRecordingUrl(long recordingId) {
 		BlackboardBuildRecordingUrl request = new ObjectFactory().createBlackboardBuildRecordingUrl();
 		request.setRecordingId(recordingId);
 		BlackboardUrlResponse response = (BlackboardUrlResponse)sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/BuildRecordingUrl", request);
@@ -101,7 +110,7 @@ public class RecordingWSDaoImpl extends ContentWSDaoImpl implements RecordingWSD
 	}
 
 	@Override
-	public boolean updateRecordingSecureSignOn(Long recordingId, boolean secureSignOn) {
+	public boolean updateRecordingSecureSignOn(long recordingId, boolean secureSignOn) {
 		BlackboardSetRecordingSecureSignOn request = new ObjectFactory().createBlackboardSetRecordingSecureSignOn();
 		request.setRecordingId(recordingId);
 		request.setSecureSignOn(secureSignOn);
