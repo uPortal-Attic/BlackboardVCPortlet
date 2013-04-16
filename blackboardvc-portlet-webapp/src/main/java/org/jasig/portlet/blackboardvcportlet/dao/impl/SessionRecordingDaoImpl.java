@@ -26,7 +26,8 @@ import com.google.common.collect.ImmutableSet.Builder;
 
 @Repository
 public class SessionRecordingDaoImpl extends BaseJpaDao implements SessionRecordingDao {
-    private InternalSessionDao sessionDao;
+    
+	private InternalSessionDao sessionDao;
     
 
     private ParameterExpression<Long> recordingIdParameter;
