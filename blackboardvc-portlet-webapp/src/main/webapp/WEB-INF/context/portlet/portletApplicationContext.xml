@@ -33,12 +33,13 @@
 
     <context:annotation-config />
     
-    <aop:config proxy-target-class="true" />
-    <!-- 
-    <security:global-method-security secured-annotations="enabled" pre-post-annotations="enabled" proxy-target-class="true">
-        <security:expression-handler ref="securityExpressionHandler"/>
-    </security:global-method-security>
-     -->
+    <aop:config />
+    
+    <!-- Configure the multipart resolver -->
+    <bean id="portletMultipartResolver" class="org.springframework.web.portlet.multipart.CommonsPortletMultipartResolver">  
+        <property name="maxUploadSize" value="10000000"/>
+    </bean>
+     
     <!-- TODO need to get user attributes here -->
     <bean id="preAuthenticatedAuthenticationDetailsSource" class="org.jasig.springframework.security.portlet.authentication.PortletPreAuthenticatedAuthenticationDetailsSource">
         <property name="mappableRolesRetriever">

@@ -21,7 +21,9 @@ package org.jasig.portlet.blackboardvcportlet.service;
 import java.util.Set;
 
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
+import org.jasig.portlet.blackboardvcportlet.data.Multimedia;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
+import org.springframework.web.multipart.MultipartFile;
 
 
 /**
@@ -45,9 +47,13 @@ public interface SessionService {
      */
     void createOrUpdateSession(ConferenceUser creator, SessionForm sessionForm);
     
+    void removeSession(long sessionId);
+    
     Set<ConferenceUser> getSessionChairs(Session session);
 
     Set<ConferenceUser> getSessionNonChairs(Session session);
+    
+    Set<Multimedia> getSessionMultimedia(Session session);
     
     void addSessionChair(long sessionId, String displayName, String email);
     
@@ -57,5 +63,5 @@ public interface SessionService {
     
     void removeSessionNonChairs(long sessionId, String... emails);
     
-    void removeSession(long sessionId);
+    void addMultimedia(long sessionId, MultipartFile file);
 }

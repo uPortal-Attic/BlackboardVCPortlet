@@ -45,6 +45,7 @@ public class ServerQuotaDaoImpl extends BaseJpaDao implements ServerQuotaDao {
         serverQuota.setDiskQuotaAvailable(quotasResponse.getDiskQuotaAvailable());
         serverQuota.setSessionQuota(quotasResponse.getSessionQuota());
         serverQuota.setSessionQuotaAvailable(quotasResponse.getSessionQuotaAvailable());
+        serverQuota.onUpdate();
         
         this.getEntityManager().persist(serverQuota);
         

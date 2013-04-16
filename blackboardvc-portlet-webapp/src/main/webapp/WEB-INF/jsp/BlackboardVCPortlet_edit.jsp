@@ -168,8 +168,8 @@
           <tr>
             <td><span class="uportal-channel-strong">Recording Mode: </span></td>
             <td>
-                          <form:select path="recordingMode" items="${recordingModes}" />
-                        </td>
+              <form:select path="recordingMode" items="${recordingModes}" />
+            </td>
           </tr>
           <tr>
             <td></td>
@@ -295,102 +295,81 @@
       </tbody>
     </table>
   </form>
+
+  <sec:authorize var="fullAccess" access="hasRole('ROLE_FULL_ACCESS')">
+    <br/>
+    <div class="uportal-channel-subtitle">4. File upload</div>
+    <hr>
+    <div class="uportal-channel-subtitle">
+      <spring:message code="editscreen.presentationuploadsubtitle" text="Presentation upload" />
+    </div>
+    <portlet:actionURL portletMode="EDIT" var="managePresentationActionUrl" />
+    <form action="${managePresentationActionUrl}" method="post" enctype="multipart/form-data">
+      <input type="hidden" name="sessionId" value="${session.sessionId}" />
+      <spring:message var="presentationUploadSubtitle" code="editscreen.presentationuploadsubtitle" text="Presentation upload"/>
+      <table summary="${presentationUploadSubtitle}">
+        <thead>
+          <tr class="uportal-channel-table-header">
+            <th>Filename</th>
+            <th style="width: 70px;"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <c:if test="${!empty presentation}">
+            <tr class="uportal-channel-table-row-odd">
+              <td>${presentation.filename}</td>
+              <td>
+                <input type="hidden" name="presentationId" value="${presentation.presentationId}" />
+                <input value="Delete Presentation" name="action" class="uportal-button" type="submit">
+              </td>
+            </tr>
+          </c:if>
+          <tr>
+            <td><input name="presentationUpload" size="40" type="file"></td>
+            <td><input value="Upload Presentation" name="action" class="uportal-button" type="submit"></td>
+          </tr>
+          <tr>
+            <td colspan="2" class="uportal-channel-table-caption">
+              <spring:message code="editscreen.presentationuploadcaption" text="Select a presentation/plan file to upload. You can only attach one file at a time." />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </form>
+
+    <div class="uportal-channel-subtitle">
+      <spring:message code="editscreen.multimediauploadsubtitle" text="Multimedia upload" />
+    </div>
+    <portlet:actionURL portletMode="EDIT" var="manageMultimediaActionUrl" />
+    <form action="${manageMultimediaActionUrl}" method="post" enctype="multipart/form-data">
+      <input type="hidden" name="sessionId" value="${session.sessionId}" />
+      <table summary="Multimedia upload">
+        <thead>
+          <tr class="uportal-channel-table-header">
+            <th>Filename</th>
+            <th><input value="Delete Multimedia Item(s)" name="action" class="uportal-button" type="submit" /></th>
+          </tr>
+        </thead>
+        <tbody>
+          <c:forEach items="${sessionMultimedia}" var="multimediaItem" varStatus="loopStatus">
+            <tr class="${loopStatus.index % 2 == 0 ? 'uportal-channel-table-row-odd' : 'uportal-channel-table-row-even'}">
+              <td>${multimediaItem.filename}</td>
+              <td><input type="checkbox" name="deleteMultimediaFiles" value="${multimediaItem.multimediaId}" /></td>
+            </tr>
+          </c:forEach>
+          <tr>
+            <td><input name="multimediaUpload" size="40" type="file" accept=".mpeg,.mpg,.mpe,.mov,.qt,.swf,.m4v,.mp3,.mp4,.mpeg,.wmv"></td>
+            <td><input value="Upload Multimedia" name="action" class="uportal-button" type="submit"></td>
+          </tr>
+          <tr>
+            <td colspan="2" class="uportal-channel-table-caption">Select other multimedia files to upload. Any files will be scanned for viruses upon upload.</td>
+          </tr>
+        </tbody>
+      </table>
+    </form>
+  </sec:authorize>
 </c:if>
 
-
-<%--
-  <c:choose>
-    <c:when test="${!empty fullAccess}">
-      <c:if test="${session.sessionId ne 0}">
-        <div class="uportal-channel-subtitle">4. File upload</div>
-        <hr />
-        <div class="uportal-channel-subtitle">
-          <spring:message code="editscreen.presentationuploadsubtitle"
-            text="Presentation upload" />
-        </div>
-        <table
-          summary="<spring:message code="editscreen.presentationuploadsubtitle" text="Presentation upload"/>">
-          <thead>
-            <tr class="uportal-channel-table-header">
-              <th>Filename</th>
-              <th style="width: 70px;"></th>
-            </tr>
-          </thead>
-          <tbody>
-            <c:if test="${!empty presentation}">
-              <tr class="uportal-channel-table-row-odd">
-                <input type="hidden" name="presentationId"
-                  value="${presentation.presentationId}" />
-                <td>${presentation.fileName}</td>
-                <td><input value="Delete Presentation" name="action"
-                  class="uportal-button" type="submit"></td>
-              </tr>
-            </c:if>
-            <tr>
-              <td colspan="2"><input name="presentationUpload" size="40"
-                type="file">&nbsp;<input value="Upload Presentation"
-                name="action" class="uportal-button" type="submit"></td>
-            </tr>
-            <tr>
-              <td colspan="2" class="uportal-channel-table-caption"><spring:message
-                  code="editscreen.presentationuploadcaption"
-                  text="Select a presentation/plan file to upload. You can only attach one file at a time." /></td>
-            </tr>
-
-          </tbody>
-        </table>
-
-        <div class="uportal-channel-subtitle">
-          <spring:message code="editscreen.multimediauploadsubtitle"
-            text="Multimedia upload" />
-        </div>
-
-
-
-        <table summary="Multimedia upload">
-          <thead>
-            <tr class="uportal-channel-table-header">
-              <th>Filename</th>
-              <th style="width: 70px;"></th>
-            </tr>
-          </thead>
-          <tbody>
-
-            <c:if test="${!empty multimedia}">
-              <c:forEach items="${multimedia}" var="multimediaItem"
-                varStatus="loopStatus">
-                <tr
-                  class="${loopStatus.index % 2 == 0 ? 'uportal-channel-table-row-odd' : 'uportal-channel-table-row-even'}">
-                  <input type="hidden" name="multimediaId"
-                    value="${multimediaItem.multimediaId}" />
-                  <td>${multimediaItem.fileName}</td>
-                  <td><input type="checkbox" name="deleteMultimediaFiles"
-                    value="${multimediaItem.multimediaId}" /></td>
-                </tr>
-              </c:forEach>
-
-              <tr>
-                <td colspan="3"><input value="Delete Multimedia Item(s)"
-                  name="action" class="uportal-button" type="submit"></td>
-              </tr>
-
-            </c:if>
-            <tr>
-              <td colspan="2"><input name="multimediaUpload" size="40"
-                type="file">&nbsp;<input value="Upload Multimedia"
-                name="action" class="uportal-button" type="submit"></td>
-            </tr>
-            <tr>
-              <td colspan="2" class="uportal-channel-table-caption">Select
-                other multimedia files to upload. Any files will be scanned for
-                viruses upon upload.</td>
-            </tr>
-          </tbody>
-        </table>
-      </c:if>
-    </c:when>
-  </c:choose>
---%>
 <script type="text/javascript">
     <rs:compressJs>
   up.jQuery(function() {

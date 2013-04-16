@@ -22,8 +22,10 @@ import java.util.Set;
 
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletMode;
+import javax.portlet.PortletModeException;
 
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
+import org.jasig.portlet.blackboardvcportlet.data.Multimedia;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingMode;
 import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
@@ -44,6 +46,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 
@@ -93,7 +96,7 @@ public class SessionCreateEditController
 	}
 
 	@RenderMapping
-	public String displayNewSessionForm(ModelMap model) throws Exception {
+	public String displayNewSessionForm(ModelMap model) throws PortletModeException {
 	    final ServerConfiguration serverConfiguration = this.serverConfigurationService.getServerConfiguration();
         model.put("serverConfiguration", serverConfiguration);
 	    
@@ -104,7 +107,7 @@ public class SessionCreateEditController
 	}
 
     @RenderMapping(params="sessionId")
-    public String displayEditSessionForm(ModelMap model, @RequestParam long sessionId) throws Exception {
+    public String displayEditSessionForm(ModelMap model, @RequestParam long sessionId) throws PortletModeException {
         final ServerConfiguration serverConfiguration = this.serverConfigurationService.getServerConfiguration();
         model.put("serverConfiguration", serverConfiguration);
         
@@ -120,12 +123,17 @@ public class SessionCreateEditController
         final Set<ConferenceUser> sessionNonChairs = this.sessionService.getSessionNonChairs(session);
         model.addAttribute("sessionNonChairs", ImmutableSortedSet.copyOf(ConferenceUserDisplayNameComparator.INSTANCE, sessionNonChairs));
         
+        final Set<Multimedia> sessionMultimedia = this.sessionService.getSessionMultimedia(session);
+        model.addAttribute("sessionMultimedia", ImmutableSortedSet.copyOf(MultimediaNameComparator.INSTANCE, sessionMultimedia));
+        
+        //TODO get session presentation
+        
         return "BlackboardVCPortlet_edit";
     }
 	
     //TODO @Valid on SessionForm
 	@ActionMapping(params = "action=saveSession")
-	public void saveSession(ActionResponse response, SessionForm sessionForm) throws Exception {
+	public void saveSession(ActionResponse response, SessionForm sessionForm) throws PortletModeException {
 	    final ConferenceUser conferenceUser = this.conferenceUserService.getCurrentConferenceUser();
 
 	    this.sessionService.createOrUpdateSession(conferenceUser, sessionForm);
@@ -134,7 +142,7 @@ public class SessionCreateEditController
 	}
     
     @ActionMapping(params = "action=deleteSessions")
-    public void deleteSession(ActionResponse response, @RequestParam long[] deleteSession) throws Exception {
+    public void deleteSession(ActionResponse response, @RequestParam long[] deleteSession) throws PortletModeException {
         //TODO do in try/catch?
         for (final long sessionId : deleteSession) {
             this.sessionService.removeSession(sessionId);
@@ -145,7 +153,7 @@ public class SessionCreateEditController
 
 	//TODO @Valid on name/email
     @ActionMapping(params = "action=Add Moderator")
-    public void addSessionChair(ActionResponse response, @RequestParam long sessionId, @RequestParam String displayName, @RequestParam String email) throws Exception {
+    public void addSessionChair(ActionResponse response, @RequestParam long sessionId, @RequestParam String displayName, @RequestParam String email) throws PortletModeException {
         this.sessionService.addSessionChair(sessionId, displayName, email);
 
         response.setPortletMode(PortletMode.EDIT);
@@ -154,7 +162,7 @@ public class SessionCreateEditController
 
     //TODO @Valid on deleteChair (must be email)
     @ActionMapping(params = "action=Delete Moderator(s)")
-    public void deleteSessionChairs(ActionResponse response, @RequestParam long sessionId, @RequestParam String[] deleteChair) throws Exception {
+    public void deleteSessionChairs(ActionResponse response, @RequestParam long sessionId, @RequestParam String[] deleteChair) throws PortletModeException {
         this.sessionService.removeSessionChairs(sessionId, deleteChair);
 
         response.setPortletMode(PortletMode.EDIT);
@@ -163,7 +171,7 @@ public class SessionCreateEditController
 
     //TODO @Valid on name/email
     @ActionMapping(params = "action=Add Participant")
-    public void addSessionNonChair(ActionResponse response, @RequestParam long sessionId, @RequestParam String displayName, @RequestParam String email) throws Exception {
+    public void addSessionNonChair(ActionResponse response, @RequestParam long sessionId, @RequestParam String displayName, @RequestParam String email) throws PortletModeException {
         this.sessionService.addSessionNonChair(sessionId, displayName, email);
 
         response.setPortletMode(PortletMode.EDIT);
@@ -172,8 +180,17 @@ public class SessionCreateEditController
 
     //TODO @Valid on deleteNonChair (must be email)
     @ActionMapping(params = "action=Delete Participant(s)")
-    public void deleteSessionNonChairs(ActionResponse response, @RequestParam long sessionId, @RequestParam String[] deleteNonChair) throws Exception {
+    public void deleteSessionNonChairs(ActionResponse response, @RequestParam long sessionId, @RequestParam String[] deleteNonChair) throws PortletModeException {
         this.sessionService.removeSessionNonChairs(sessionId, deleteNonChair);
+
+        response.setPortletMode(PortletMode.EDIT);
+        response.setRenderParameter("sessionId", Long.toString(sessionId));
+    }
+    
+    //TODO @Valid on multimediaUpload file types ".mpeg, .mpg, .mpe, .mov, .qt, .swf, .m4v, .mp3, .mp4, .mpeg, .wmv"
+    @ActionMapping(params = "action=Upload Multimedia")
+    public void uploadMultimedia(ActionResponse response, @RequestParam long sessionId, @RequestParam MultipartFile multimediaUpload) throws PortletModeException {
+        this.sessionService.addMultimedia(sessionId, multimediaUpload);
 
         response.setPortletMode(PortletMode.EDIT);
         response.setRenderParameter("sessionId", Long.toString(sessionId));

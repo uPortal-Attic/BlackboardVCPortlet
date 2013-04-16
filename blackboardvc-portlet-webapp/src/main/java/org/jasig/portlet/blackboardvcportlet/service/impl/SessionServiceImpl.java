@@ -1,8 +1,16 @@
 package org.jasig.portlet.blackboardvcportlet.service.impl;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
+import javax.servlet.ServletContext;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.jasig.portlet.blackboardvcportlet.dao.ConferenceUserDao;
 import org.jasig.portlet.blackboardvcportlet.dao.MultimediaDao;
 import org.jasig.portlet.blackboardvcportlet.dao.SessionDao;
@@ -24,12 +32,16 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.ServletContextAware;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.WebUtils;
 import org.springframework.ws.client.WebServiceClientException;
 
+import com.elluminate.sas.BlackboardMultimediaResponse;
 import com.elluminate.sas.BlackboardSessionResponse;
 
 @Service
-public class SessionServiceImpl implements SessionService {
+public class SessionServiceImpl implements SessionService, ServletContextAware {
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	private ConferenceUserService conferenceUserService;
@@ -40,6 +52,7 @@ public class SessionServiceImpl implements SessionService {
 	private MultimediaWSDao multimediaWSDao;
 	private PresentationWSDao presentationWSDao;
 	private RecordingWSDao recordingWSDao;
+	private File tempDir;
 	
 	@Autowired
 	public void setMultimediaDao(MultimediaDao multimediaDao) {
@@ -80,12 +93,18 @@ public class SessionServiceImpl implements SessionService {
     public void setRecordingWSDao(RecordingWSDao recordingWSDao) {
         this.recordingWSDao = recordingWSDao;
     }
+    
+    @Override
+    public void setServletContext(ServletContext servletContext) {
+        this.tempDir = WebUtils.getTempDir(servletContext);
+    }
 
     /**
 	 * A user needs "edit" to view the set of session chairs but we don't want the call to fail
 	 * if they only have "view" permission. So we pre-auth them with view and then filter all
 	 * the results unless they have "edit"
 	 */
+    @Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#session, 'view')")
 	@PostFilter("hasRole('ROLE_ADMIN') || hasPermission(#session, 'edit')")
     public Set<ConferenceUser> getSessionChairs(Session session) {
@@ -93,14 +112,27 @@ public class SessionServiceImpl implements SessionService {
     }
 
     /**
-     * A user needs "edit" to view the set of session chairs but we don't want the call to fail
+     * A user needs "edit" to view the set of session non chairs but we don't want the call to fail
      * if they only have "view" permission. So we pre-auth them with view and then filter all
      * the results unless they have "edit"
      */
+    @Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#session, 'view')")
     @PostFilter("hasRole('ROLE_ADMIN') || hasPermission(#session, 'edit')")
     public Set<ConferenceUser> getSessionNonChairs(Session session) {
         return new LinkedHashSet<ConferenceUser>(sessionDao.getSessionNonChairs(session));
+    }
+
+    /**
+     * A user needs "edit" and ROLE_FULL_ACCESS to view the set of session multemedia
+     * but we don't want the call to fail if they only have "view" permission. So we
+     * pre-auth them with view and then filter all the results unless they have ROLE_FULL_ACCESS and "edit"
+     */
+    @Override
+    @PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#session, 'view')")
+    @PostFilter("hasRole('ROLE_ADMIN') || (hasRole('ROLE_FULL_ACCESS') && hasPermission(#session, 'edit'))")
+    public Set<Multimedia> getSessionMultimedia(Session session) {
+        return new LinkedHashSet<Multimedia>(sessionDao.getSessionMultimedias(session));
     }
 
     @Override
@@ -108,7 +140,6 @@ public class SessionServiceImpl implements SessionService {
     public Session getSession(long sessionId) {
         return this.sessionDao.getSession(sessionId);
     }
-    
 
     /*
      * Not rolling back for WS related exceptions so the work done "so far" is still persisted to the database in
@@ -218,5 +249,47 @@ public class SessionServiceImpl implements SessionService {
         
         final BlackboardSessionResponse sessionResponse = this.sessionWSDao.setSessionNonChairs(session.getBbSessionId(), sessionNonChairs);
         sessionDao.updateSession(sessionResponse);
+    }
+
+    @Override
+    @Transactional
+    @PreAuthorize("hasRole('ROLE_ADMIN') || (hasRole('ROLE_FULL_ACCESS') && hasPermission(#sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'edit'))")
+    public void addMultimedia(long sessionId, MultipartFile file) {
+        final Session session = this.sessionDao.getSession(sessionId);
+        final ConferenceUser conferenceUser = this.conferenceUserService.getCurrentConferenceUser();
+        
+        final BlackboardMultimediaResponse multimediaResponse = createSessionMultimedia(session, conferenceUser, file);
+        
+        //Add Multimedia object to local DB
+        final String filename = FilenameUtils.getName(file.getOriginalFilename());
+        final Multimedia multimedia = this.multimediaDao.createMultimedia(multimediaResponse, filename);
+        
+        //Associate Multimedia with session
+        this.sessionDao.addMultimediaToSession(session.getBbSessionId(), multimedia);
+    }
+
+    private BlackboardMultimediaResponse createSessionMultimedia(Session session, ConferenceUser conferenceUser, MultipartFile file) {
+        final String filename = FilenameUtils.getName(file.getOriginalFilename());
+        
+        File multimediaFile = null;
+        try {
+            //Transfer the uploaded file to our own temp file so we can use a FileDataSource
+            multimediaFile = File.createTempFile(filename, ".tmp", this.tempDir);
+            file.transferTo(multimediaFile);
+            
+            //Upload the file to BB
+            return this.multimediaWSDao.createSessionMultimedia(
+                session.getBbSessionId(), 
+                conferenceUser.getEmail(), 
+                filename, 
+                "",
+                new DataHandler(new FileDataSource(multimediaFile)));
+        }
+        catch (IOException e) {
+            throw new RuntimeException("Failed to upload multimedia file '" + filename + "'", e);
+        }
+        finally {
+            FileUtils.deleteQuietly(multimediaFile);
+        }
     }
 }
