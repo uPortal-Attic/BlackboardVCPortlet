@@ -3,10 +3,12 @@ package org.jasig.portlet.blackboardvcportlet.service.impl;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.jasig.portlet.blackboardvcportlet.dao.ConferenceUserDao;
 import org.jasig.portlet.blackboardvcportlet.dao.SessionDao;
 import org.jasig.portlet.blackboardvcportlet.dao.ws.SessionWSDao;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
+import org.jasig.portlet.blackboardvcportlet.security.ConferenceUserService;
 import org.jasig.portlet.blackboardvcportlet.service.SessionForm;
 import org.jasig.portlet.blackboardvcportlet.service.SessionService;
 import org.slf4j.Logger;
@@ -23,15 +25,26 @@ import com.elluminate.sas.BlackboardSessionResponse;
 public class SessionServiceImpl implements SessionService {
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
+	private ConferenceUserService conferenceUserService;
+	private ConferenceUserDao conferenceUserDao;
     private SessionDao sessionDao;
 	private SessionWSDao sessionWSDao;
 	
-	
 	@Autowired
-	public void setBlackboardSessionDao(SessionDao blackboardSessionDao) {
-        this.sessionDao = blackboardSessionDao;
+	public void setConferenceUserDao(ConferenceUserDao conferenceUserDao) {
+        this.conferenceUserDao = conferenceUserDao;
     }
-	
+
+    @Autowired
+	public void setConferenceUserService(ConferenceUserService conferenceUserService) {
+        this.conferenceUserService = conferenceUserService;
+    }
+
+	@Autowired
+    public void setSessionDao(SessionDao sessionDao) {
+        this.sessionDao = sessionDao;
+    }
+
 	@Autowired
 	public void setSessionWSDao(SessionWSDao value) {
 		this.sessionWSDao = value;
@@ -76,7 +89,9 @@ public class SessionServiceImpl implements SessionService {
     @Override
     @Transactional
     @PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'edit')")
-    public void addSessionChair(long sessionId, ConferenceUser newSessionChair) {
+    public void addSessionChair(long sessionId, String displayName, String email) {
+        final ConferenceUser newSessionChair = this.conferenceUserService.getOrCreateConferenceUser(email, displayName);
+        
         final Session session = this.sessionDao.getSession(sessionId);
         final Set<ConferenceUser> sessionChairs = new LinkedHashSet<ConferenceUser>(this.getSessionChairs(session));
         sessionChairs.add(newSessionChair);
@@ -84,7 +99,26 @@ public class SessionServiceImpl implements SessionService {
         final BlackboardSessionResponse sessionResponse = this.sessionWSDao.setSessionChairs(session.getBbSessionId(), sessionChairs);
         sessionDao.updateSession(sessionResponse);
     }
+
+    @Override
+    @Transactional
+    @PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'edit')")
+    public void removeSessionChairs(long sessionId, String... emails) {
+        final Session session = this.sessionDao.getSession(sessionId);
+        final Set<ConferenceUser> sessionChairs = new LinkedHashSet<ConferenceUser>(this.getSessionChairs(session));
+        
+        for (final String email : emails) {
+            final ConferenceUser user = conferenceUserDao.getUser(email);
+            if (user != null) {
+                sessionChairs.remove(user);
+            }
+        }
+        
+        final BlackboardSessionResponse sessionResponse = this.sessionWSDao.setSessionChairs(session.getBbSessionId(), sessionChairs);
+        sessionDao.updateSession(sessionResponse);
+    }
 	
+    
     
 	
 	

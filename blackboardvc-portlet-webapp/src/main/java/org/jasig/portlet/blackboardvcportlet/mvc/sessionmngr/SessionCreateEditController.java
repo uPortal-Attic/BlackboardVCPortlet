@@ -141,32 +141,21 @@ public class SessionCreateEditController
 	//TODO @Valid on name/email
     @ActionMapping(params = "action=Add Moderator")
     public void addSessionChair(ActionResponse response, @RequestParam long sessionId, @RequestParam String displayName, @RequestParam String email) throws Exception {
-        final ConferenceUser newSessionChair = this.conferenceUserService.getOrCreateConferenceUser(email, displayName);
-        
-        this.sessionService.addSessionChair(sessionId, newSessionChair);
+        this.sessionService.addSessionChair(sessionId, displayName, email);
 
         response.setPortletMode(PortletMode.EDIT);
         response.setRenderParameter("sessionId", Long.toString(sessionId));
     }
 
-    //TODO @Valid on name/email
+    //TODO @Valid on deleteChair (must be email)
     @ActionMapping(params = "action=Delete Moderator(s)")
     public void deleteSessionChairs(ActionResponse response, @RequestParam long sessionId, @RequestParam String[] deleteChair) throws Exception {
-//        final ConferenceUser newSessionChair = this.conferenceUserService.getOrCreateConferenceUser(email, displayName);
-//        
-//        this.sessionService.addSessionChair(sessionId, newSessionChair);
+        this.sessionService.removeSessionChairs(sessionId, deleteChair);
 
         response.setPortletMode(PortletMode.EDIT);
         response.setRenderParameter("sessionId", Long.toString(sessionId));
     }
-	//
-	
-	
-
-	/*
-	 * disable recordings for limited users
-	 * 
-	 */
+    
 	
 	
 //		logger.debug("renderEditView called");

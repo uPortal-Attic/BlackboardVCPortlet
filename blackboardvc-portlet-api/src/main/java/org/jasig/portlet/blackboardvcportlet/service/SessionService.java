@@ -49,5 +49,7 @@ public interface SessionService {
 
     Set<ConferenceUser> getSessionNonChairs(Session session);
     
-    void addSessionChair(long sessionId, ConferenceUser newSessionChair);
+    void addSessionChair(long sessionId, String displayName, String email);
+    
+    void removeSessionChairs(long sessionId, String... emails);
 }
