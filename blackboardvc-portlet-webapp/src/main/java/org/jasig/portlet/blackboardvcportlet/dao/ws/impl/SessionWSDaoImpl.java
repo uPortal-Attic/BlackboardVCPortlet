@@ -75,6 +75,7 @@ public class SessionWSDaoImpl implements SessionWSDao {
         }
 
         final Object objSessionResponse = sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/SetSession", setSession);
+        @SuppressWarnings("unchecked")
         JAXBElement<BlackboardSessionResponseCollection> jaxbSessionResponse = (JAXBElement<BlackboardSessionResponseCollection>) objSessionResponse;
         
         final BlackboardSessionResponseCollection sessionResponses = jaxbSessionResponse.getValue();
@@ -89,6 +90,7 @@ public class SessionWSDaoImpl implements SessionWSDao {
         buildGuestUrlRequest.setSessionId(sessionId);
         buildGuestUrlRequest.setDisplayName(displayName);
         final Object objGuestUrlResponse = sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/BuildSessionUrl", buildGuestUrlRequest);
+        @SuppressWarnings("unchecked")
         JAXBElement<BlackboardUrlResponse> jaxbGuestUrlResponse = (JAXBElement<BlackboardUrlResponse>) objGuestUrlResponse;
         return  jaxbGuestUrlResponse.getValue().getUrl();
 	}
@@ -190,6 +192,21 @@ public class SessionWSDaoImpl implements SessionWSDao {
 	    
         final String chairList = buildUidList(sessionChairs);
         updateSession.setChairList(chairList);
+        
+        final Object objSessionResponse = sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/UpdateSession", updateSession);
+        @SuppressWarnings("unchecked")
+        JAXBElement<BlackboardSessionResponseCollection> response = (JAXBElement<BlackboardSessionResponseCollection>) objSessionResponse;
+        return DataAccessUtils.singleResult(response.getValue().getSessionResponses());
+    }
+    
+    @Override
+    public BlackboardSessionResponse setSessionNonChairs(long bbSessionId, Set<ConferenceUser> sessionNonChairs) {
+        final BlackboardUpdateSession updateSession = new ObjectFactory().createBlackboardUpdateSession();
+
+        updateSession.setSessionId(bbSessionId);
+        
+        final String chairList = buildUidList(sessionNonChairs);
+        updateSession.setNonChairList(chairList);
         
         final Object objSessionResponse = sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/UpdateSession", updateSession);
         @SuppressWarnings("unchecked")

@@ -257,121 +257,48 @@
       </tbody>
     </table>
   </form>
-</c:if>
 
-<%--
-<div class="uportal-channel-subtitle">3. Participants</div>
-<hr>
 
-  <div class="uportal-channel-subtitle">Internal participants</div>
-  <table>
-    <c:if test="${fn:length(intParticipants) gt 0}">
+  <br/>
+  <div class="uportal-channel-subtitle">3. Participants</div>
+  <hr>
+  <portlet:actionURL portletMode="EDIT" var="manageParticipantActionUrl" />
+  <form action="${manageParticipantActionUrl}" method="post">
+    <input type="hidden" name="sessionId" value="${session.sessionId}" />
+    <table>
       <thead>
         <tr class="uportal-channel-table-header">
-          <th>Username</th>
           <th>Name</th>
           <th>Email address</th>
-          <th></th>
+          <th><input value="Delete Participant(s)" name="action" class="uportal-button" type="submit" /></th>
         </tr>
       </thead>
-    </c:if>
-    <tbody>
-      <c:forEach var="intParticipant" items="${intParticipants}" varStatus="loopStatus">
-        <input type="hidden" name="intParticipantUids"
-          value="${intParticipant.uid}" />
-        <input type="hidden" name="intParticipantDisplayNames"
-          value="${intParticipant.displayName}" />
-        <input type="hidden" name="intParticipantEmails"
-          value="${intParticipant.email}" />
-        <tr
-          class="${loopStatus.index % 2 == 0 ? 'uportal-channel-table-row-odd' : 'uportal-channel-table-row-even'}">
-          <td>${intParticipant.uid}</td>
-          <td>${intParticipant.displayName}</td>
-          <td>${intParticipant.email}</td>
-          <td><input value="${loopStatus.index}" name="deleteIntParticipant" type="checkbox" /></td>
-        </tr>
-      </c:forEach>
-      <c:if test="${fn:length(intParticipants) gt 0}">
+      <tbody>
+        <c:forEach var="user" items="${sessionNonChairs}" varStatus="loopStatus">
+          <tr class="${loopStatus.index % 2 == 0 ? 'uportal-channel-table-row-odd' : 'uportal-channel-table-row-even'}">
+          <td>${user.displayName}</td>
+          <td>${user.email}</td>
+          <td><input value="${user.email}" name="deleteNonChair" type="checkbox" /></td>
+          </tr>
+        </c:forEach>
         <tr>
-          <td colspan="3"><input value="Delete Internal Participant(s)"
-            name="action" style="text-transform: none;" class="uportal-button"
-            type="submit"></td>
+          <td>
+            <input name="displayName" type="text" />
+          </td>
+          <td>
+            <input name="email" type="text" />
+          </td>
+          <td>
+            <input id="${n}addParticipantSubmit" name="action" value="Add Participant" class="uportal-button" type="submit"/>
+          </td>
         </tr>
-      </c:if>
-      <tr>
-        <td colspan="3"><input id="${n}intParticipantInput"
-          name="intParticipants" type="text">&nbsp;<input
-          id="${n}addIntParticipantSubmit" name="action"
-          value="Add Participant(s)" style="text-transform: none;"
-          class="uportal-button" type="submit"></td>
-      </tr>
-      <tr>
-        <td colspan="3" class="uportal-channel-table-caption">You can
-          search for participants using uun or display name. To search for
-          multiple participants, separate each with a comma.</td>
-      </tr>
-    </tbody>
-  </table>
+      </tbody>
+    </table>
+  </form>
+</c:if>
 
-<div class="uportal-channel-subtitle">External participants</div>
-  <table>
-    <c:if test="${fn:length(extParticipants) gt 0}">
-      <thead>
-        <tr class="uportal-channel-table-header">
-          <th>Display Name</th>
-          <th>Email address</th>
-          <th></th>
-        </tr>
-      </thead>
-    </c:if>
-    <tbody>
-      <c:forEach var="extParticipant" items="${extParticipants}"
-        varStatus="loopStatus">
 
-        <input type="hidden" name="extParticipantDisplayNames"
-          value="${extParticipant.displayName}" />
-        <input type="hidden" name="extParticipantEmails"
-          value="${extParticipant.email}" />
-        <tr
-          class="${loopStatus.index % 2 == 0 ? 'uportal-channel-table-row-odd' : 'uportal-channel-table-row-even'}">
-          <td><c:out value="${extParticipant.displayName}" /></td>
-          <td><c:out value="${extParticipant.email}" /></td>
-          <td><input value="${loopStatus.index}"
-            name="deleteExtParticipant" type="checkbox" /></td>
-        </tr>
-      </c:forEach>
-      <c:if test="${fn:length(extParticipants) gt 0}">
-        <tr>
-          <td colspan="3"><input value="Delete External Participant(s)"
-            name="action" style="text-transform: none;" class="uportal-button"
-            type="submit"></td>
-        </tr>
-      </c:if>
-    </tbody>
-  </table>
-  <table>
-    <tbody>
-      <tr>
-        <td>Display name:</td>
-        <td><input id="${n}extParticipantDisplayNameInput"
-          name="extParticipantDisplayName" type="text"></td>
-      </tr>
-      <tr>
-        <td>Email:</td>
-        <td><input id="${n}extParticipantEmailInput"
-          name="extParticipantEmail" type="text"></td>
-      </tr>
-      <tr>
-        <td><input id="${n}addExtParticipantSubmit"
-          name="action" value="Add External Participant"
-          class="uportal-button" type="submit"></td>
-      </tr>
-      <tr>
-        <td colspan="3" class="uportal-channel-table-caption">Enter an
-          external participant.</td>
-      </tr>
-    </tbody>
-  </table>
+<%--
   <c:choose>
     <c:when test="${!empty fullAccess}">
       <c:if test="${session.sessionId ne 0}">

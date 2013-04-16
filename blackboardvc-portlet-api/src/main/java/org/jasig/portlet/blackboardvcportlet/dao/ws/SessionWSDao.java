@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
-import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.service.SessionForm;
 
 import com.elluminate.sas.BlackboardSessionAttendanceResponse;
@@ -31,6 +30,7 @@ public interface SessionWSDao {
 	//update
 	public BlackboardSessionResponse updateSession(long bbSessionId, SessionForm sessionForm);
 	public BlackboardSessionResponse setSessionChairs(long bbSessionId, Set<ConferenceUser> sessionChairs);
+	public BlackboardSessionResponse setSessionNonChairs(long bbSessionId, Set<ConferenceUser> sessionNonChairs);
 	
 	//delete
 	public boolean deleteSession(Long sessionId);

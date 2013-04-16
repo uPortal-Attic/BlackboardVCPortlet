@@ -155,6 +155,24 @@ public class SessionCreateEditController
         response.setPortletMode(PortletMode.EDIT);
         response.setRenderParameter("sessionId", Long.toString(sessionId));
     }
+
+    //TODO @Valid on name/email
+    @ActionMapping(params = "action=Add Participant")
+    public void addSessionNonChair(ActionResponse response, @RequestParam long sessionId, @RequestParam String displayName, @RequestParam String email) throws Exception {
+        this.sessionService.addSessionNonChair(sessionId, displayName, email);
+
+        response.setPortletMode(PortletMode.EDIT);
+        response.setRenderParameter("sessionId", Long.toString(sessionId));
+    }
+
+    //TODO @Valid on deleteNonChair (must be email)
+    @ActionMapping(params = "action=Delete Participant(s)")
+    public void deleteSessionNonChairs(ActionResponse response, @RequestParam long sessionId, @RequestParam String[] deleteNonChair) throws Exception {
+        this.sessionService.removeSessionNonChairs(sessionId, deleteNonChair);
+
+        response.setPortletMode(PortletMode.EDIT);
+        response.setRenderParameter("sessionId", Long.toString(sessionId));
+    }
     
 	
 	
