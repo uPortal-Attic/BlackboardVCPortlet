@@ -157,17 +157,7 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
         
         //Create and populate a new blackboardSession
         final SessionImpl session = new SessionImpl(sessionResponse.getSessionId(), creator);
-        //add creator as a chair if not already
-        sessionResponse.setChairList((sessionResponse.getChairList() == null 
-        								|| sessionResponse.getChairList().length() == 0
-        							 ) ? creator.getEmail() 
-        							   : (sessionResponse.getChairList() != null 
-        							   		&& sessionResponse.getChairList().indexOf( creator.getEmail()) != -1
-        							   	 ) ? sessionResponse.getChairList()
-        							   	   : sessionResponse.getChairList() + "," + creator.getEmail()
-        							);
         
-
         updateBlackboardSession(sessionResponse, session);
         
         session.setGuestUrl(guestUrl);
@@ -322,6 +312,16 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
         session.setVersionId(sessionResponse.getVersionId());
         session.setPermissionsOn(sessionResponse.isPermissionsOn());
         session.setSecureSignOn(sessionResponse.isSecureSignOn());
+        
+        //add creator as a chair if not already
+        sessionResponse.setChairList((sessionResponse.getChairList() == null 
+        								|| sessionResponse.getChairList().length() == 0
+        							 ) ? session.getCreator().getEmail() 
+        							   : (sessionResponse.getChairList() != null 
+        							   		&& sessionResponse.getChairList().indexOf( session.getCreator().getEmail()) != -1
+        							   	 ) ? sessionResponse.getChairList()
+        							   	   : sessionResponse.getChairList() + "," + session.getCreator().getEmail()
+        							);
         
         updateUserList(sessionResponse, session, UserListType.CHAIR);
         

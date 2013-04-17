@@ -413,7 +413,7 @@ public class SessionDaoImplTest extends BaseJpaDaoTest {
         
         final Set<ConferenceUser> sessionChairs = sessionDao.getSessionChairs(session);
         assertNotNull(sessionChairs);
-        assertEquals(1, sessionChairs.size());
+        assertEquals(2, sessionChairs.size());
         
         final Set<ConferenceUser> sessionNonChairs = sessionDao.getSessionNonChairs(session);
         assertNotNull(sessionNonChairs);
