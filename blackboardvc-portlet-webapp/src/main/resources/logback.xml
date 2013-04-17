@@ -70,10 +70,12 @@
     <logger name="org.jasig.portlet.blackboardvcportlet" additivity="false" level="DEBUG">
         <appender-ref ref="LOG"/>
     </logger>
+    <!-- 
     <logger name="org.apache.http" additivity="false" level="DEBUG">
         <appender-ref ref="LOG"/>
     </logger>
     <logger name="org.springframework.security" additivity="false" level="DEBUG">
         <appender-ref ref="LOG"/>
     </logger>
+     -->
 </configuration>
