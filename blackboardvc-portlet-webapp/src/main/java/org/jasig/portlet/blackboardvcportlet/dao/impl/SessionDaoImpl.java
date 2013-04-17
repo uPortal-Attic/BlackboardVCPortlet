@@ -56,6 +56,7 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
     	this.multimediaDao = dao;
     }
 
+
     @Autowired
     public void setConferenceUserDao(InternalConferenceUserDao conferenceUserDao) {
         this.conferenceUserDao = conferenceUserDao;
@@ -156,6 +157,17 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
         
         //Create and populate a new blackboardSession
         final SessionImpl session = new SessionImpl(sessionResponse.getSessionId(), creator);
+        //add creator as a chair if not already
+        sessionResponse.setChairList((sessionResponse.getChairList() == null 
+        								|| sessionResponse.getChairList().length() == 0
+        							 ) ? creator.getEmail() 
+        							   : (sessionResponse.getChairList() != null 
+        							   		&& sessionResponse.getChairList().indexOf( creator.getEmail()) != -1
+        							   	 ) ? sessionResponse.getChairList()
+        							   	   : sessionResponse.getChairList() + "," + creator.getEmail()
+        							);
+        
+
         updateBlackboardSession(sessionResponse, session);
         
         session.setGuestUrl(guestUrl);

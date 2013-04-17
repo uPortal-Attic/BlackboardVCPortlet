@@ -3,6 +3,7 @@ package org.jasig.portlet.blackboardvcportlet.dao.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -128,6 +129,42 @@ public class SessionDaoImplTest extends BaseJpaDaoTest {
     }
     
     @Test
+    public void testCreateSessionAddsCreatorAsAModeratorAKAChair() {
+    	//create a session with id SESSION_ID
+    	this.execute(new Callable<Object>() {
+            @Override
+            public Object call() {
+            	BlackboardSessionResponse sessionResponse = generateSessionResponse();
+                
+                final Session session = sessionDao.createSession(sessionResponse, "http://www.example.com/session");
+                assertNotNull(session);
+
+                verifyCreatedSession();
+                verifyCreatedUsers();
+
+                return null;
+            }
+        });
+    	
+    	//Create url and link it to the session
+    	this.execute(new Callable<Object>() {
+    		@Override
+    		public Object call() {
+    			final Session session = sessionDao.getSessionByBlackboardId(SESSION_ID);
+    			assertNotNull(session);
+    			
+    			Set<ConferenceUser> sessionChairs = sessionDao.getSessionChairs(session);
+    			
+    			assertNotNull(sessionChairs);
+    			assertEquals(2,sessionChairs.size());
+    			assertTrue(sessionChairs.contains(session.getCreator()));
+    			
+                return null;
+    		}
+    	});
+    }
+    
+    @Test
 	public void testLinkMultimediaToSession() {
     	//create a session with id sessionId
     	this.execute(new Callable<Object>() {
@@ -205,6 +242,26 @@ public class SessionDaoImplTest extends BaseJpaDaoTest {
     		}
     	});
 	}
+    
+    @Test
+    public void testCreateSessionAndAddCreatorToTheChairListDOTShouldOnlyAddThemOnce() {
+    	//create a session with id SESSION_ID
+    	this.execute(new Callable<Object>() {
+            @Override
+            public Object call() {
+            	BlackboardSessionResponse sessionResponse = generateSessionResponse();
+                sessionResponse.setChairList(sessionResponse.getChairList() + ",admin@example.com");
+                final Session session = sessionDao.createSession(sessionResponse, "http://www.example.com/session");
+                
+                Set<ConferenceUser> sessionChairs = sessionDao.getSessionChairs(session);
+                assertEquals(2,sessionChairs.size());
+
+                
+                
+                return null;
+            }
+        });
+    }
 	
 	@Test 
 	public void testPresentationIntegration() {
@@ -303,7 +360,7 @@ public class SessionDaoImplTest extends BaseJpaDaoTest {
                 sessionResponse.setBoundaryTime(30);
                 sessionResponse.setAccessType(2);
                 sessionResponse.setRecordings(false);
-                sessionResponse.setChairList("admin@example.com");
+                sessionResponse.setChairList("test@example.com");
                 sessionResponse.setNonChairList("levett@example.com,dalquist@example.com");
                 sessionResponse.setOpenChair(false);
                 sessionResponse.setPermissionsOn(true);
@@ -443,7 +500,7 @@ public class SessionDaoImplTest extends BaseJpaDaoTest {
         sessionResponse.setBoundaryTime(30);
         sessionResponse.setAccessType(2);
         sessionResponse.setRecordings(false);
-        sessionResponse.setChairList("admin@example.com,dalquist@example.com");
+        sessionResponse.setChairList("dalquist@example.com");
         sessionResponse.setNonChairList("levett@example.com");
         sessionResponse.setOpenChair(false);
         sessionResponse.setPermissionsOn(true);
