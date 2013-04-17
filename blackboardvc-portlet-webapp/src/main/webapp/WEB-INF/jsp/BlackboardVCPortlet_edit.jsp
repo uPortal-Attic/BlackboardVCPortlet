@@ -354,7 +354,7 @@
           <c:forEach items="${sessionMultimedia}" var="multimediaItem" varStatus="loopStatus">
             <tr class="${loopStatus.index % 2 == 0 ? 'uportal-channel-table-row-odd' : 'uportal-channel-table-row-even'}">
               <td>${multimediaItem.filename}</td>
-              <td><input type="checkbox" name="deleteMultimediaFiles" value="${multimediaItem.multimediaId}" /></td>
+              <td><input type="checkbox" name="deleteMultimedia" value="${multimediaItem.multimediaId}" /></td>
             </tr>
           </c:forEach>
           <tr>

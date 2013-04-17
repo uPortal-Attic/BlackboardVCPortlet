@@ -185,10 +185,10 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
     
     @Override
     @Transactional
-    public Session addPresentationToSession(Long sessionId, Presentation presentation) {
-    	SessionImpl blackboardSession = this.getSessionByBlackboardId(sessionId);
+    public Session addPresentationToSession(Session session, Presentation presentation) {
+    	SessionImpl blackboardSession = this.getSession(session.getSessionId());
     	if(blackboardSession == null) {
-    		throw new IncorrectResultSizeDataAccessException("No BlackboardSession could be found for sessionId " + sessionId, 1);
+    		throw new IncorrectResultSizeDataAccessException("No BlackboardSession could be found for sessionId " + session.getSessionId(), 1);
     	}
     	
     	Presentation bbPresentation = presentationDao.getPresentationByBlackboardId(presentation.getbbPresentationId());
@@ -205,11 +205,11 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
     
     @Override
     @Transactional
-    public Session removePresentationFromSession(Long sessionId) {
-    	SessionImpl blackboardSession = this.getSessionByBlackboardId(sessionId);
-    	if(blackboardSession == null) {
-    		throw new IncorrectResultSizeDataAccessException("No BlackboardSession could be found for sessionId " + sessionId, 1);
-    	}
+    public Session removePresentationFromSession(Session session) {
+        SessionImpl blackboardSession = this.getSession(session.getSessionId());
+        if(blackboardSession == null) {
+            throw new IncorrectResultSizeDataAccessException("No BlackboardSession could be found for sessionId " + session.getSessionId(), 1);
+        }
     	
     	blackboardSession.setPresentation(null);
     	
@@ -219,11 +219,11 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
     
     @Override
     @Transactional
-    public Session addMultimediaToSession(Long sessionId, Multimedia multimedia) {
-    	final SessionImpl blackboardSession = this.getSessionByBlackboardId(sessionId);
-    	if(blackboardSession == null) {
-    		throw new IncorrectResultSizeDataAccessException("No BlackboardSession could be found for sessionId " + sessionId, 1);
-    	}
+    public Session addMultimediaToSession(Session session, Multimedia multimedia) {
+        SessionImpl blackboardSession = this.getSession(session.getSessionId());
+        if(blackboardSession == null) {
+            throw new IncorrectResultSizeDataAccessException("No BlackboardSession could be found for sessionId " + session.getSessionId(), 1);
+        }
     	
     	Multimedia mm = multimediaDao.getMultimediaByBlackboardId(multimedia.getBbMultimediaId());
     	if(mm == null) {
@@ -238,11 +238,11 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
     
     @Override
     @Transactional
-    public Session deleteMultimediaFromSession(Long sessionId, Multimedia multimedia) {
-    	final SessionImpl blackboardSession = this.getSessionByBlackboardId(sessionId);
-    	if(blackboardSession == null) {
-    		throw new IncorrectResultSizeDataAccessException("No BlackboardSession could be found for sessionId " + sessionId, 1);
-    	}
+    public Session deleteMultimediaFromSession(Session session, Multimedia multimedia) {
+        SessionImpl blackboardSession = this.getSession(session.getSessionId());
+        if(blackboardSession == null) {
+            throw new IncorrectResultSizeDataAccessException("No BlackboardSession could be found for sessionId " + session.getSessionId(), 1);
+        }
     	
 		Multimedia mm = multimediaDao.getMultimediaByBlackboardId(multimedia.getBbMultimediaId());
     	

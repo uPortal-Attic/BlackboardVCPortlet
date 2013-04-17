@@ -2,7 +2,9 @@ package org.jasig.portlet.blackboardvcportlet.service.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.activation.DataHandler;
@@ -28,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.oxm.XmlMappingException;
+import org.springframework.remoting.soap.SoapFaultException;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -39,6 +42,9 @@ import org.springframework.ws.client.WebServiceClientException;
 
 import com.elluminate.sas.BlackboardMultimediaResponse;
 import com.elluminate.sas.BlackboardSessionResponse;
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterators;
 
 @Service
 public class SessionServiceImpl implements SessionService, ServletContextAware {
@@ -151,21 +157,41 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
     public void removeSession(long sessionId) {
         final Session session = this.sessionDao.getSession(sessionId);
         
+        final Set<Long> bbMultimediaIds = getBlackboardMultimediaIds(session);
         final Set<Multimedia> multimedias = this.sessionDao.getSessionMultimedias(session);
         for (final Multimedia multimedia : multimedias) {
-            //Un-link multimedia file from session
-            this.multimediaWSDao.removeSessionMultimedia(session.getBbSessionId(), multimedia.getBbMultimediaId());
-            this.sessionDao.deleteMultimediaFromSession(sessionId, multimedia);
-            
-            //Delete multimedia file from repository
-            this.multimediaWSDao.removeRepositoryMultimedia(multimedia.getBbMultimediaId());
-            this.multimediaDao.deleteMultimedia(multimedia);
+            removeMultimediaFromSession(session, bbMultimediaIds, multimedia);
         }
         
         //TODO delete presentation
         
         this.sessionWSDao.deleteSession(session.getBbSessionId());
         this.sessionDao.deleteSession(session);
+    }
+
+    private void removeMultimediaFromSession(Session session, Set<Long> bbMultimediaIds, Multimedia multimedia) {
+        //Un-link multimedia file from session
+        if (bbMultimediaIds.contains(multimedia.getBbMultimediaId())) {
+            this.multimediaWSDao.removeSessionMultimedia(session.getBbSessionId(), multimedia.getBbMultimediaId());
+        }
+        this.sessionDao.deleteMultimediaFromSession(session, multimedia);
+
+        //Delete multimedia file from repository
+        try {
+            this.multimediaWSDao.removeRepositoryMultimedia(multimedia.getBbMultimediaId());
+        }
+        catch (SoapFaultException e) {
+            //See if the multimedia file actually exists
+            final List<BlackboardMultimediaResponse> userMultimedias = this.multimediaWSDao.getRepositoryMultimedias(null, multimedia.getBbMultimediaId(), null);
+            
+            //Multimedia file exists but we failed to remove it, throw the exception
+            if (!userMultimedias.isEmpty()) {
+                throw e;
+            }
+            
+            //Multimedia file doesn't exist on the BB side, remove our local DB version
+        }
+        this.multimediaDao.deleteMultimedia(multimedia);
     }
 
     @Override
@@ -265,7 +291,32 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
         final Multimedia multimedia = this.multimediaDao.createMultimedia(multimediaResponse, filename);
         
         //Associate Multimedia with session
-        this.sessionDao.addMultimediaToSession(session.getBbSessionId(), multimedia);
+        this.sessionDao.addMultimediaToSession(session, multimedia);
+    }
+    
+    @Override
+    @Transactional(noRollbackFor = { WebServiceClientException.class, XmlMappingException.class })
+    @PreAuthorize("hasRole('ROLE_ADMIN') || (hasRole('ROLE_FULL_ACCESS') && hasPermission(#sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'edit'))")
+    public void deleteMultimedia(long sessionId, long... multimediaIds) {
+        final Session session = this.sessionDao.getSession(sessionId);
+        
+        final Set<Long> bbMultimediaIds = getBlackboardMultimediaIds(session);
+        for (final long multimediaId : multimediaIds) {
+            final Multimedia multimedia = this.multimediaDao.getMultimedia(multimediaId);
+            removeMultimediaFromSession(session, bbMultimediaIds, multimedia);
+        }
+    }
+
+    private Set<Long> getBlackboardMultimediaIds(final Session session) {
+        final List<BlackboardMultimediaResponse> multimedias = this.multimediaWSDao.getSessionMultimedias(session.getBbSessionId());
+        final Iterator<BlackboardMultimediaResponse> multimediasItr = multimedias.iterator();
+        return ImmutableSet.copyOf(
+            Iterators.transform(multimediasItr, 
+                new Function<BlackboardMultimediaResponse, Long>() {
+                    public Long apply(BlackboardMultimediaResponse r) {
+                        return r.getMultimediaId();
+                    }
+                }));
     }
 
     private BlackboardMultimediaResponse createSessionMultimedia(Session session, ConferenceUser conferenceUser, MultipartFile file) {

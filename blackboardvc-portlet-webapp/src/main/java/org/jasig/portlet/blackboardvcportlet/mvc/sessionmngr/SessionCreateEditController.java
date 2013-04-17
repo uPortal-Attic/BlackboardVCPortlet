@@ -50,7 +50,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 
-import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.Ordering;
 
 /**
  * Controller class for Portlet EDIT related actions and render
@@ -118,13 +118,13 @@ public class SessionCreateEditController
         model.put("session", sessionForm);
         
         final Set<ConferenceUser> sessionChairs = this.sessionService.getSessionChairs(session);
-        model.addAttribute("sessionChairs", ImmutableSortedSet.copyOf(ConferenceUserDisplayNameComparator.INSTANCE, sessionChairs));
+        model.addAttribute("sessionChairs", Ordering.from(ConferenceUserDisplayNameComparator.INSTANCE).sortedCopy(sessionChairs));
         
         final Set<ConferenceUser> sessionNonChairs = this.sessionService.getSessionNonChairs(session);
-        model.addAttribute("sessionNonChairs", ImmutableSortedSet.copyOf(ConferenceUserDisplayNameComparator.INSTANCE, sessionNonChairs));
+        model.addAttribute("sessionNonChairs", Ordering.from(ConferenceUserDisplayNameComparator.INSTANCE).sortedCopy(sessionNonChairs));
         
         final Set<Multimedia> sessionMultimedia = this.sessionService.getSessionMultimedia(session);
-        model.addAttribute("sessionMultimedia", ImmutableSortedSet.copyOf(MultimediaNameComparator.INSTANCE, sessionMultimedia));
+        model.addAttribute("sessionMultimedia", Ordering.from(MultimediaNameComparator.INSTANCE).sortedCopy(sessionMultimedia));
         
         //TODO get session presentation
         
@@ -191,6 +191,14 @@ public class SessionCreateEditController
     @ActionMapping(params = "action=Upload Multimedia")
     public void uploadMultimedia(ActionResponse response, @RequestParam long sessionId, @RequestParam MultipartFile multimediaUpload) throws PortletModeException {
         this.sessionService.addMultimedia(sessionId, multimediaUpload);
+
+        response.setPortletMode(PortletMode.EDIT);
+        response.setRenderParameter("sessionId", Long.toString(sessionId));
+    }
+
+    @ActionMapping(params = "action=Delete Multimedia Item(s)")
+    public void deleteMultimedia(ActionResponse response, @RequestParam long sessionId, @RequestParam long[] deleteMultimedia) throws PortletModeException {
+        this.sessionService.deleteMultimedia(sessionId, deleteMultimedia);
 
         response.setPortletMode(PortletMode.EDIT);
         response.setRenderParameter("sessionId", Long.toString(sessionId));

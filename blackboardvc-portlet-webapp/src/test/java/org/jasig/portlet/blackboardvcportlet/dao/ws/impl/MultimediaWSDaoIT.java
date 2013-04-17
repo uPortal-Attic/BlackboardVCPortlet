@@ -49,7 +49,7 @@ public class MultimediaWSDaoIT extends AbstractWSIT {
 	public void after() {
 		List<BlackboardSessionResponse> sessions = sessionDao.getSessions(null, null, null, user.getEmail(), null, null, null);
 		for(BlackboardSessionResponse session : sessions ) {
-			List<BlackboardMultimediaResponse> repositoryMultimedias = dao.getSessionRepositoryMultimedias(session.getSessionId());
+			List<BlackboardMultimediaResponse> repositoryMultimedias = dao.getSessionMultimedias(session.getSessionId());
 			for(BlackboardMultimediaResponse multimedia : repositoryMultimedias) {
 				dao.removeSessionMultimedia(session.getSessionId(),multimedia.getMultimediaId());
 			}
@@ -67,10 +67,11 @@ public class MultimediaWSDaoIT extends AbstractWSIT {
 		List<BlackboardMultimediaResponse> repositoryMultimedias = dao.getRepositoryMultimedias(user.getEmail(), null, null);
 		assertEquals(repositoryMultimedias.size(),0);
 	}
+    
 
 	@Test
 	public void getSessionRepositoryMultimediasTest() throws IOException {
-		List<BlackboardMultimediaResponse> sessionRepositoryMultimedias = dao.getSessionRepositoryMultimedias(session.getSessionId());
+		List<BlackboardMultimediaResponse> sessionRepositoryMultimedias = dao.getSessionMultimedias(session.getSessionId());
 		assertTrue(sessionRepositoryMultimedias.size() == 0);
 	}
 	
@@ -89,7 +90,7 @@ public class MultimediaWSDaoIT extends AbstractWSIT {
 		
 		multimedias.add(createSessionMultimedia.getMultimediaId());
 		
-		List<BlackboardMultimediaResponse> repositoryMultimedias = dao.getSessionRepositoryMultimedias(session.getSessionId());
+		List<BlackboardMultimediaResponse> repositoryMultimedias = dao.getSessionMultimedias(session.getSessionId());
 		assertNotNull(repositoryMultimedias);
 		assertTrue(repositoryMultimedias.size() == 1);
 	}
@@ -103,7 +104,7 @@ public class MultimediaWSDaoIT extends AbstractWSIT {
 		
 		assertTrue(linkSessionToMultimedia);
 		
-		List<BlackboardMultimediaResponse> repositoryMultimedias = dao.getSessionRepositoryMultimedias(session.getSessionId());
+		List<BlackboardMultimediaResponse> repositoryMultimedias = dao.getSessionMultimedias(session.getSessionId());
 		assertNotNull(repositoryMultimedias);
 		assertTrue(repositoryMultimedias.size() == 1);
 		

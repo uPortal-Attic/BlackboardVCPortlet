@@ -118,7 +118,8 @@ public class SessionDaoImplTest extends BaseJpaDaoTest {
                 assertNotNull(mm);
                 
                 //add link
-                sessionDao.addMultimediaToSession(SESSION_ID, mm);
+                final Session session = sessionDao.getSessionByBlackboardId(SESSION_ID);
+                sessionDao.addMultimediaToSession(session, mm);
                 return null;
     		}
     	});
@@ -144,7 +145,7 @@ public class SessionDaoImplTest extends BaseJpaDaoTest {
     			Session session = sessionDao.getSessionByBlackboardId(SESSION_ID);
     			assertNotNull(session);
     			Multimedia mm = multimediaDao.getMultimediaByBlackboardId(183838);
-    			sessionDao.deleteMultimediaFromSession(SESSION_ID,mm);
+    			sessionDao.deleteMultimediaFromSession(session, mm);
     			
     			return null;
     		}
@@ -195,16 +196,16 @@ public class SessionDaoImplTest extends BaseJpaDaoTest {
                 final Presentation pres = presentationDao.createPresentation(response, "aliens_exist.pdf");
                 assertNotNull(pres);
                 
-                sessionDao.addPresentationToSession(SESSION_ID,	pres);
+                Session session = sessionDao.getSessionByBlackboardId(SESSION_ID);
+                sessionDao.addPresentationToSession(session,	pres);
                 
-                final Session session = sessionDao.getSessionByBlackboardId(SESSION_ID);
+                session = sessionDao.getSessionByBlackboardId(SESSION_ID);
                 assertNotNull(session.getPresentation());
-                
                 assertEquals(session.getPresentation(),pres);
                 
-                sessionDao.removePresentationFromSession(SESSION_ID);
-                final Session latestSession = sessionDao.getSessionByBlackboardId(SESSION_ID);
-                assertNull(latestSession.getPresentation());
+                sessionDao.removePresentationFromSession(session);
+                session = sessionDao.getSessionByBlackboardId(SESSION_ID);
+                assertNull(session.getPresentation());
                 
                 
                 return null;

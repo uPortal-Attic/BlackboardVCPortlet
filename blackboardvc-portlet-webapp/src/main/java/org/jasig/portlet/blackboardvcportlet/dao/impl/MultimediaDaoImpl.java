@@ -53,8 +53,13 @@ public class MultimediaDaoImpl extends BaseJpaDao implements MultimediaDao {
         final TypedQuery<MultimediaImpl> query = this.createQuery(this.findAllMultimedia);
         return new LinkedHashSet<Multimedia>(query.getResultList());
     }
-	
+    
 	@Override
+    public Multimedia getMultimedia(long multimediaId) {
+        return this.getEntityManager().find(MultimediaImpl.class, multimediaId);
+    }
+
+    @Override
 	@OpenEntityManager
     public MultimediaImpl getMultimediaByBlackboardId(long bbMultimediaId) {
         final NaturalIdQuery<MultimediaImpl> query = this.createNaturalIdQuery(MultimediaImpl.class);

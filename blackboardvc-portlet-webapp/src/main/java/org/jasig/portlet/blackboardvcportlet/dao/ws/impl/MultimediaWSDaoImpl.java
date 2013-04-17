@@ -50,9 +50,9 @@ public class MultimediaWSDaoImpl extends ContentWSDaoImpl implements MultimediaW
 	}
 
 	@Override
-	public List<BlackboardMultimediaResponse> getSessionRepositoryMultimedias(long sessionId) {
+	public List<BlackboardMultimediaResponse> getSessionMultimedias(long bbSessionId) {
 		BlackboardListSessionContent request = new ObjectFactory().createBlackboardListSessionContent();
-		request.setSessionId(sessionId);
+		request.setSessionId(bbSessionId);
 		
 		JAXBElement<BlackboardListSessionContent> createListSessionMultimedia = new ObjectFactory().createListSessionMultimedia(request);
 		@SuppressWarnings("unchecked")
@@ -79,24 +79,24 @@ public class MultimediaWSDaoImpl extends ContentWSDaoImpl implements MultimediaW
 	}
 
 	@Override
-	public BlackboardMultimediaResponse createSessionMultimedia(long sessionId, String creatorId, String filename, String description, DataHandler content) {
+	public BlackboardMultimediaResponse createSessionMultimedia(long bbSessionId, String creatorId, String filename, String description, DataHandler content) {
 		BlackboardMultimediaResponse multimediaMetaData = uploadRepositoryMultimedia(creatorId, filename, description, content);
-		if(!linkSessionToMultimedia(sessionId, multimediaMetaData.getMultimediaId())) {
-			logger.error("Error linking multimedia ("+multimediaMetaData.getMultimediaId()+") to session ("+sessionId+"), however upload was successful.");
+		if(!linkSessionToMultimedia(bbSessionId, multimediaMetaData.getMultimediaId())) {
+			logger.error("Error linking multimedia ("+multimediaMetaData.getMultimediaId()+") to session ("+bbSessionId+"), however upload was successful.");
 		}
 		return multimediaMetaData;
 	}
 	
 	@Override
-	public boolean linkSessionToMultimedia(long sessionId, long multimediaId) {
+	public boolean linkSessionToMultimedia(long bbSessionId, long multimediaId) {
 		BlackboardSetSessionMultimedia request = new ObjectFactory().createBlackboardSetSessionMultimedia();
 		request.setMultimediaIds(Long.toString(multimediaId));
-		request.setSessionId(sessionId);
+		request.setSessionId(bbSessionId);
 		
 		if(WSDaoUtils.isSuccessful(sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/SetSessionMultimedia", request))) {
 			return true;
 		} else {
-			logger.error("Issue linking the multimedia id " + multimediaId + " with session " + sessionId);
+			logger.error("Issue linking the multimedia id " + multimediaId + " with session " + bbSessionId);
 			return false;
 		}
 	}
@@ -110,9 +110,9 @@ public class MultimediaWSDaoImpl extends ContentWSDaoImpl implements MultimediaW
 	}
 
 	@Override
-	public boolean removeSessionMultimedia(long sessionId, long multimediaId) {
+	public boolean removeSessionMultimedia(long bbSessionId, long multimediaId) {
 		BlackboardRemoveSessionMultimedia request = new ObjectFactory().createBlackboardRemoveSessionMultimedia();
-		request.setSessionId(sessionId);
+		request.setSessionId(bbSessionId);
 		request.setMultimediaId(multimediaId);
 		
 		return WSDaoUtils.isSuccessful(sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/RemoveSessionMultimedia", request));
