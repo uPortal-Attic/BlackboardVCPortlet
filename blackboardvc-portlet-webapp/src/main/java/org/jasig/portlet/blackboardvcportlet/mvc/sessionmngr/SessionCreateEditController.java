@@ -126,7 +126,7 @@ public class SessionCreateEditController
         final Set<Multimedia> sessionMultimedia = this.sessionService.getSessionMultimedia(session);
         model.addAttribute("sessionMultimedia", Ordering.from(MultimediaNameComparator.INSTANCE).sortedCopy(sessionMultimedia));
         
-        //TODO get session presentation
+        model.addAttribute("presentation", session.getPresentation()); 
         
         return "BlackboardVCPortlet_edit";
     }
@@ -199,6 +199,23 @@ public class SessionCreateEditController
     @ActionMapping(params = "action=Delete Multimedia Item(s)")
     public void deleteMultimedia(ActionResponse response, @RequestParam long sessionId, @RequestParam long[] deleteMultimedia) throws PortletModeException {
         this.sessionService.deleteMultimedia(sessionId, deleteMultimedia);
+
+        response.setPortletMode(PortletMode.EDIT);
+        response.setRenderParameter("sessionId", Long.toString(sessionId));
+    }
+    
+    //TODO @Valid on presentationUpload file types ".wbd, .wbp, .elp, .elpx"
+    @ActionMapping(params = "action=Upload Presentation")
+    public void uploadPresentation(ActionResponse response, @RequestParam long sessionId, @RequestParam MultipartFile presentationUpload) throws PortletModeException {
+        this.sessionService.addPresentation(sessionId, presentationUpload);
+
+        response.setPortletMode(PortletMode.EDIT);
+        response.setRenderParameter("sessionId", Long.toString(sessionId));
+    }
+
+    @ActionMapping(params = "action=Delete Presentation")
+    public void deletePresentation(ActionResponse response, @RequestParam long sessionId) throws PortletModeException {
+        this.sessionService.deletePresentation(sessionId);
 
         response.setPortletMode(PortletMode.EDIT);
         response.setRenderParameter("sessionId", Long.toString(sessionId));

@@ -319,13 +319,12 @@
             <tr class="uportal-channel-table-row-odd">
               <td>${presentation.filename}</td>
               <td>
-                <input type="hidden" name="presentationId" value="${presentation.presentationId}" />
                 <input value="Delete Presentation" name="action" class="uportal-button" type="submit">
               </td>
             </tr>
           </c:if>
           <tr>
-            <td><input name="presentationUpload" size="40" type="file"></td>
+            <td><input name="presentationUpload" size="40" type="file" accept=".wbd,.wbp,.elp,.elpx"></td>
             <td><input value="Upload Presentation" name="action" class="uportal-button" type="submit"></td>
           </tr>
           <tr>

@@ -15,6 +15,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.jasig.portlet.blackboardvcportlet.dao.ConferenceUserDao;
 import org.jasig.portlet.blackboardvcportlet.dao.MultimediaDao;
+import org.jasig.portlet.blackboardvcportlet.dao.PresentationDao;
 import org.jasig.portlet.blackboardvcportlet.dao.SessionDao;
 import org.jasig.portlet.blackboardvcportlet.dao.UserSessionUrlDao;
 import org.jasig.portlet.blackboardvcportlet.dao.ws.MultimediaWSDao;
@@ -23,6 +24,7 @@ import org.jasig.portlet.blackboardvcportlet.dao.ws.RecordingWSDao;
 import org.jasig.portlet.blackboardvcportlet.dao.ws.SessionWSDao;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.Multimedia;
+import org.jasig.portlet.blackboardvcportlet.data.Presentation;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.data.UserSessionUrl;
 import org.jasig.portlet.blackboardvcportlet.security.ConferenceUserService;
@@ -43,6 +45,7 @@ import org.springframework.web.util.WebUtils;
 import org.springframework.ws.client.WebServiceClientException;
 
 import com.elluminate.sas.BlackboardMultimediaResponse;
+import com.elluminate.sas.BlackboardPresentationResponse;
 import com.elluminate.sas.BlackboardSessionResponse;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
@@ -56,6 +59,7 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
 	private ConferenceUserDao conferenceUserDao;
     private SessionDao sessionDao;
     private MultimediaDao multimediaDao;
+    private PresentationDao presentationDao;
 	private SessionWSDao sessionWSDao;
 	private MultimediaWSDao multimediaWSDao;
 	private PresentationWSDao presentationWSDao;
@@ -69,7 +73,13 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
 		this.userSessionUrlDao = dao;
 	}
 	
+	
 	@Autowired
+	public void setPresentationDao(PresentationDao presentationDao) {
+        this.presentationDao = presentationDao;
+    }
+
+    @Autowired
 	public void setMultimediaDao(MultimediaDao multimediaDao) {
         this.multimediaDao = multimediaDao;
     }
@@ -329,6 +339,72 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
             removeMultimediaFromSession(session, bbMultimediaIds, multimedia);
         }
     }
+    
+    @Override
+    @Transactional
+    @PreAuthorize("hasRole('ROLE_ADMIN') || (hasRole('ROLE_FULL_ACCESS') && hasPermission(#sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'edit'))")
+    public void addPresentation(long sessionId, MultipartFile file) {
+        final Session session = this.sessionDao.getSession(sessionId);
+        if (session.getPresentation() != null) {
+            this.deletePresentation(session.getSessionId());
+        }
+        
+        final ConferenceUser conferenceUser = this.conferenceUserService.getCurrentConferenceUser();
+        
+        final BlackboardPresentationResponse presentationResponse = createSessionPresentation(session, conferenceUser, file);
+        
+        final String filename = FilenameUtils.getName(file.getOriginalFilename());
+        final Presentation presentation = this.presentationDao.createPresentation(presentationResponse, filename);
+        
+        //Associate Presentation with session
+        this.sessionDao.addPresentationToSession(session, presentation);
+    }
+    
+    @Override
+    @Transactional
+    @PreAuthorize("hasRole('ROLE_ADMIN') || (hasRole('ROLE_FULL_ACCESS') && hasPermission(#sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'edit'))")
+    public void deletePresentation(long sessionId) {
+        final Session session = this.sessionDao.getSession(sessionId);
+        final Presentation presentation = session.getPresentation();
+        if (presentation == null) {
+            return;
+        }
+        
+        try {
+            this.presentationWSDao.deleteSessionPresenation(session.getBbSessionId(), presentation.getbbPresentationId());
+        }
+        catch (SoapFaultException e) {
+            //See if the presentation association actually exists
+            final List<BlackboardPresentationResponse> sessionPresentations = this.presentationWSDao.getSessionPresentations(session.getBbSessionId());
+            
+            //Session presentation exists but failed to remove it, throw the exception
+            if (!sessionPresentations.isEmpty()) {
+                throw e;
+            }
+            
+            //Presentation association doesn't exist but we still need to delete the association no our side.
+        }
+        this.sessionDao.removePresentationFromSession(session);
+        
+        
+        try {
+            this.presentationWSDao.deletePresentation(presentation.getbbPresentationId());
+        }
+        catch (SoapFaultException e) {
+            //See if the presentation actually exists
+            final List<BlackboardPresentationResponse> repositoryPresentations = this.presentationWSDao.getRepositoryPresentations(null, presentation.getbbPresentationId(), null);
+            
+            //Presentation exists but failed to remove it, throw the exception
+            if (!repositoryPresentations.isEmpty()) {
+                throw e;
+            }
+            
+            //Presentation doesn't exist but we still need to delete the association no our side.
+        }
+        this.presentationDao.deletePresentation(presentation);
+        
+        this.sessionDao.removePresentationFromSession(session);
+    }
 
     private Set<Long> getBlackboardMultimediaIds(final Session session) {
         final List<BlackboardMultimediaResponse> multimedias = this.multimediaWSDao.getSessionMultimedias(session.getBbSessionId());
@@ -358,6 +434,32 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
                 filename, 
                 "",
                 new DataHandler(new FileDataSource(multimediaFile)));
+        }
+        catch (IOException e) {
+            throw new RuntimeException("Failed to upload multimedia file '" + filename + "'", e);
+        }
+        finally {
+            FileUtils.deleteQuietly(multimediaFile);
+        }
+    }
+
+    //TODO consolidate these, extract uploadPresentation/createSessionMultimedia to generic interface and use that
+    private BlackboardPresentationResponse createSessionPresentation(Session session, ConferenceUser conferenceUser, MultipartFile file) {
+        final String filename = FilenameUtils.getName(file.getOriginalFilename());
+        
+        File multimediaFile = null;
+        try {
+            //Transfer the uploaded file to our own temp file so we can use a FileDataSource
+            multimediaFile = File.createTempFile(filename, ".tmp", this.tempDir);
+            file.transferTo(multimediaFile);
+            
+            //Upload the file to BB
+            return this.presentationWSDao.uploadPresentation(
+                    session.getBbSessionId(), 
+                    conferenceUser.getEmail(), 
+                    filename, 
+                    "",
+                    new DataHandler(new FileDataSource(multimediaFile)));
         }
         catch (IOException e) {
             throw new RuntimeException("Failed to upload multimedia file '" + filename + "'", e);

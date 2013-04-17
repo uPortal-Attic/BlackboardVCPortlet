@@ -63,6 +63,10 @@ public interface SessionService {
     
     void removeSessionNonChairs(long sessionId, String... emails);
     
+    void addPresentation(long sessionId, MultipartFile file);
+    
+    void deletePresentation(long sessionId);
+    
     void addMultimedia(long sessionId, MultipartFile file);
     
     void deleteMultimedia(long sessionId, long... multimediaIds);
