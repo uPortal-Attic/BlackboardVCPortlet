@@ -87,7 +87,7 @@ public class ConferenceUserImpl implements ConferenceUser {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private final Set<Presentation> presentations = new HashSet<Presentation>(0);
 
-    @OneToMany(targetEntity = SessionImpl.class, fetch = FetchType.LAZY, mappedBy = "creator")
+    @OneToMany(targetEntity = SessionImpl.class, fetch = FetchType.LAZY, mappedBy = "creator", orphanRemoval = true, cascade = {CascadeType.ALL})
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private final Set<Session> ownedSessions = new HashSet<Session>(0);
 

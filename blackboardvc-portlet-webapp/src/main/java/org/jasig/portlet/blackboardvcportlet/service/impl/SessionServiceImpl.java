@@ -16,6 +16,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.jasig.portlet.blackboardvcportlet.dao.ConferenceUserDao;
 import org.jasig.portlet.blackboardvcportlet.dao.MultimediaDao;
 import org.jasig.portlet.blackboardvcportlet.dao.SessionDao;
+import org.jasig.portlet.blackboardvcportlet.dao.UserSessionUrlDao;
 import org.jasig.portlet.blackboardvcportlet.dao.ws.MultimediaWSDao;
 import org.jasig.portlet.blackboardvcportlet.dao.ws.PresentationWSDao;
 import org.jasig.portlet.blackboardvcportlet.dao.ws.RecordingWSDao;
@@ -23,6 +24,7 @@ import org.jasig.portlet.blackboardvcportlet.dao.ws.SessionWSDao;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.Multimedia;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
+import org.jasig.portlet.blackboardvcportlet.data.UserSessionUrl;
 import org.jasig.portlet.blackboardvcportlet.security.ConferenceUserService;
 import org.jasig.portlet.blackboardvcportlet.service.SessionForm;
 import org.jasig.portlet.blackboardvcportlet.service.SessionService;
@@ -59,6 +61,13 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
 	private PresentationWSDao presentationWSDao;
 	private RecordingWSDao recordingWSDao;
 	private File tempDir;
+
+	private UserSessionUrlDao userSessionUrlDao;
+	
+	@Autowired
+	public void setUserSessionUrlDao (UserSessionUrlDao dao) {
+		this.userSessionUrlDao = dao;
+	}
 	
 	@Autowired
 	public void setMultimediaDao(MultimediaDao multimediaDao) {
@@ -117,6 +126,19 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
         return new LinkedHashSet<ConferenceUser>(sessionDao.getSessionChairs(session));
     }
 
+	@PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#session, 'view')")
+	public String getOrCreateSessionUrl(ConferenceUser user, Session session) {
+		//check for the url in the db
+		UserSessionUrl url = userSessionUrlDao.getUserSessionUrlsBySessionAndUser(session, user);
+		
+		if(url == null) {
+			//if null then create a user's session url via web service call
+			String urlString = sessionWSDao.buildSessionUrl(session.getBbSessionId(), user.getDisplayName());
+			//save to the database
+			url = userSessionUrlDao.createUserSessionUrl(session, user, urlString);
+		}
+		return url.getUrl();
+	}
     /**
      * A user needs "edit" to view the set of session non chairs but we don't want the call to fail
      * if they only have "view" permission. So we pre-auth them with view and then filter all
@@ -146,6 +168,7 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
     public Session getSession(long sessionId) {
         return this.sessionDao.getSession(sessionId);
     }
+    
 
     /*
      * Not rolling back for WS related exceptions so the work done "so far" is still persisted to the database in

@@ -86,13 +86,13 @@ public class SessionWSDaoImpl implements SessionWSDao {
 	
 	@Override
 	public String buildSessionUrl(long sessionId, String displayName) {
-		BlackboardBuildSessionUrl buildGuestUrlRequest = new BlackboardBuildSessionUrl();
-        buildGuestUrlRequest.setSessionId(sessionId);
-        buildGuestUrlRequest.setDisplayName(displayName);
-        final Object objGuestUrlResponse = sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/BuildSessionUrl", buildGuestUrlRequest);
+		BlackboardBuildSessionUrl buildSessionUrlRequest = new BlackboardBuildSessionUrl();
+		buildSessionUrlRequest.setSessionId(sessionId);
+		buildSessionUrlRequest.setDisplayName(displayName);
+        final Object urlResponseObject = sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/BuildSessionUrl", buildSessionUrlRequest);
         @SuppressWarnings("unchecked")
-        JAXBElement<BlackboardUrlResponse> jaxbGuestUrlResponse = (JAXBElement<BlackboardUrlResponse>) objGuestUrlResponse;
-        return  jaxbGuestUrlResponse.getValue().getUrl();
+        JAXBElement<BlackboardUrlResponse> jaxbResponse = (JAXBElement<BlackboardUrlResponse>) urlResponseObject;
+        return  jaxbResponse.getValue().getUrl();
 	}
 
 	@Override

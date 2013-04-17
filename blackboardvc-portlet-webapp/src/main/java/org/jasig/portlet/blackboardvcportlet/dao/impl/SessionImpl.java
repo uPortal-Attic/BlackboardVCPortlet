@@ -196,6 +196,8 @@ public class SessionImpl implements Session {
     //Exists only to allow cascading deletes, should NEVER be accessed by normal code
     @OneToMany(mappedBy = "session", targetEntity = UserSessionUrlImpl.class, cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, orphanRemoval = true)
     private transient final Set<UserSessionUrl> userUrls = null;
+    
+
 
     /**
      * needed by hibernate

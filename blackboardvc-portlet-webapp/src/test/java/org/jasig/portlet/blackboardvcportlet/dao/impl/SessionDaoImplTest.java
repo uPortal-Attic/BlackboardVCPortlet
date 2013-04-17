@@ -11,10 +11,12 @@ import org.jasig.portlet.blackboardvcportlet.dao.ConferenceUserDao;
 import org.jasig.portlet.blackboardvcportlet.dao.MultimediaDao;
 import org.jasig.portlet.blackboardvcportlet.dao.PresentationDao;
 import org.jasig.portlet.blackboardvcportlet.dao.SessionDao;
+import org.jasig.portlet.blackboardvcportlet.dao.UserSessionUrlDao;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.Multimedia;
 import org.jasig.portlet.blackboardvcportlet.data.Presentation;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
+import org.jasig.portlet.blackboardvcportlet.data.UserSessionUrl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,8 @@ public class SessionDaoImplTest extends BaseJpaDaoTest {
     private MultimediaDao multimediaDao;
     @Autowired
     private PresentationDao presentationDao;
+    @Autowired
+    private UserSessionUrlDao userSessionUrlDao;
     
     
     @Test
@@ -84,6 +88,42 @@ public class SessionDaoImplTest extends BaseJpaDaoTest {
                 return null;
             }
         });
+    }
+    
+    @Test
+    public void testCreateSessionURLThenDeletingSession() {
+    	//create a session with id SESSION_ID
+    	this.execute(new Callable<Object>() {
+            @Override
+            public Object call() {
+            	BlackboardSessionResponse sessionResponse = generateSessionResponse();
+                
+                final Session session = sessionDao.createSession(sessionResponse, "http://www.example.com/session");
+                assertNotNull(session);
+
+                verifyCreatedSession();
+                verifyCreatedUsers();
+                
+                return null;
+            }
+        });
+    	
+    	//Create url and link it to the session
+    	this.execute(new Callable<Object>() {
+    		@Override
+    		public Object call() {
+    			final Session session = sessionDao.getSessionByBlackboardId(SESSION_ID);
+    			assertNotNull(session);
+    			final ConferenceUser user = conferenceUserDao.getUser("admin@example.com");
+    			assertNotNull(user);
+    			UserSessionUrl url = userSessionUrlDao.createUserSessionUrl(session, user, "http://www.example.com/aliens");
+    			assertNotNull(url);
+    			
+    			sessionDao.deleteSession(session);
+    			
+                return null;
+    		}
+    	});
     }
     
     @Test

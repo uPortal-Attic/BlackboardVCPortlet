@@ -80,8 +80,7 @@ public class ViewSessionController
             final ConferenceUser conferenceUser = this.conferenceUserService.getCurrentConferenceUser();
             
             if (session.getCreator().equals(conferenceUser) || sessionChairs.contains(conferenceUser) || sessionNonChairs.contains(conferenceUser)) {
-                //TODO get the UserSessionUrl
-                model.addAttribute("launchUrl", "TODO");
+                model.addAttribute("launchUrl", this.sessionService.getOrCreateSessionUrl(conferenceUser, session));
             }
             else {
                 //Fall back to guest URL

@@ -66,4 +66,6 @@ public interface SessionService {
     void addMultimedia(long sessionId, MultipartFile file);
     
     void deleteMultimedia(long sessionId, long... multimediaIds);
+
+	String getOrCreateSessionUrl(ConferenceUser user, Session session);
 }
