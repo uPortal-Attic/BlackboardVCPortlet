@@ -191,11 +191,11 @@ public class SessionImpl implements Session {
     
     //Exists only to allow cascading deletes, should NEVER be accessed by normal code
     @OneToMany(mappedBy = "session", targetEntity = SessionRecordingImpl.class, cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, orphanRemoval = true)
-    private transient final Set<SessionRecording> sessionRecordings = null;
+    private final Set<SessionRecording> sessionRecordings = new HashSet<SessionRecording>(0);
     
     //Exists only to allow cascading deletes, should NEVER be accessed by normal code
     @OneToMany(mappedBy = "session", targetEntity = UserSessionUrlImpl.class, cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, orphanRemoval = true)
-    private transient final Set<UserSessionUrl> userUrls = null;
+    private final Set<UserSessionUrl> userUrls = new HashSet<UserSessionUrl>(0);
     
 
 

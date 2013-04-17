@@ -1,7 +1,6 @@
 package org.jasig.portlet.blackboardvcportlet.dao.impl;
 
 import javax.persistence.Cacheable;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -46,12 +45,12 @@ public class UserSessionUrlImpl implements UserSessionUrl {
     private final long urlId;
     
     @NaturalId
-    @ManyToOne(targetEntity = SessionImpl.class, optional = false , cascade = {CascadeType.ALL})
+    @ManyToOne(targetEntity = SessionImpl.class, optional = false)
     @JoinColumn(name = "SESSION_ID", nullable = false)
     private final Session session;
 
     @NaturalId
-    @ManyToOne(targetEntity = ConferenceUserImpl.class, optional = false , cascade = {CascadeType.ALL})
+    @ManyToOne(targetEntity = ConferenceUserImpl.class, optional = false )
     @JoinColumn(name = "USER_ID", nullable = false)
     private final ConferenceUser user;
     

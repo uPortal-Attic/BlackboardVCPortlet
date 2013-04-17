@@ -24,7 +24,7 @@
   <root level="TRACE">
     <appender-ref ref="N"/>
   </root>
-  <!-- 
+   
   <logger name="org.hibernate.SQL" additivity="false" level="DEBUG">
     <appender-ref ref="C"/>
   </logger>
@@ -34,5 +34,5 @@
   <logger name="org.hibernate.tool.hbm2ddl" additivity="false" level="DEBUG">
     <appender-ref ref="C"/>
   </logger>
-   -->
+  
 </configuration>

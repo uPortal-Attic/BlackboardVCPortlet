@@ -104,6 +104,11 @@ public class SessionDaoImplTest extends BaseJpaDaoTest {
                 verifyCreatedSession();
                 verifyCreatedUsers();
                 
+                final ConferenceUser user = conferenceUserDao.getUser("admin@example.com");
+    			assertNotNull(user);
+    			UserSessionUrl url = userSessionUrlDao.createUserSessionUrl(session, user, "http://www.example.com/aliens");
+    			assertNotNull(url);
+                
                 return null;
             }
         });
@@ -114,10 +119,6 @@ public class SessionDaoImplTest extends BaseJpaDaoTest {
     		public Object call() {
     			final Session session = sessionDao.getSessionByBlackboardId(SESSION_ID);
     			assertNotNull(session);
-    			final ConferenceUser user = conferenceUserDao.getUser("admin@example.com");
-    			assertNotNull(user);
-    			UserSessionUrl url = userSessionUrlDao.createUserSessionUrl(session, user, "http://www.example.com/aliens");
-    			assertNotNull(url);
     			
     			sessionDao.deleteSession(session);
     			
