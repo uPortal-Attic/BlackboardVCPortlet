@@ -40,7 +40,7 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
     
     private CriteriaQuery<SessionImpl> findAllSessions;
     
-    private InternalConferenceUserDao blackboardUserDao;
+    private InternalConferenceUserDao conferenceUserDao;
     
     private PresentationDao presentationDao;
     
@@ -56,10 +56,9 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
     	this.multimediaDao = dao;
     }
 
-
     @Autowired
-    public void setBlackboardUserDao(InternalConferenceUserDao blackboardUserDao) {
-        this.blackboardUserDao = blackboardUserDao;
+    public void setConferenceUserDao(InternalConferenceUserDao conferenceUserDao) {
+        this.conferenceUserDao = conferenceUserDao;
     }
     
     @Override
@@ -94,7 +93,7 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
         }
 
         //Create a copy to trigger loading of the user data
-        return ImmutableSet.copyOf(sessionImpl.getChairs());
+        return ImmutableSet.<ConferenceUser>copyOf(sessionImpl.getChairs());
     }
     
     @Override
@@ -124,7 +123,7 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
         }
 
         //Create a copy to trigger loading of the user data
-        return ImmutableSet.copyOf(sessionImpl.getNonChairs());
+        return ImmutableSet.<ConferenceUser>copyOf(sessionImpl.getNonChairs());
     }
     
     @Override
@@ -153,34 +152,39 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
     public SessionImpl createSession(BlackboardSessionResponse sessionResponse, String guestUrl) {
         //Find the creator user
         final String creatorId = sessionResponse.getCreatorId();
-        final ConferenceUser creator = this.blackboardUserDao.getOrCreateUser(creatorId);
+        final ConferenceUserImpl creator = this.conferenceUserDao.getOrCreateUser(creatorId);
         
         //Create and populate a new blackboardSession
-        final SessionImpl blackboardSession = new SessionImpl(sessionResponse.getSessionId(), creator);
-        updateBlackboardSession(sessionResponse, blackboardSession);
+        final SessionImpl session = new SessionImpl(sessionResponse.getSessionId(), creator);
+        updateBlackboardSession(sessionResponse, session);
         
-        blackboardSession.setGuestUrl(guestUrl);
+        session.setGuestUrl(guestUrl);
 
         //Persist and return the new session
-        this.getEntityManager().persist(blackboardSession);
-        return blackboardSession;
+        final EntityManager entityManager = this.getEntityManager();
+        entityManager.persist(session);
+        
+        creator.getOwnedSessions().add(session);
+        entityManager.persist(creator);
+        
+        return session;
     }
 
     @Override
     @Transactional
     public SessionImpl updateSession(BlackboardSessionResponse sessionResponse) {
         //Find the existing blackboardSession
-        final SessionImpl blackboardSession = this.getSessionByBlackboardId(sessionResponse.getSessionId());
-        if (blackboardSession == null) {
+        final SessionImpl session = this.getSessionByBlackboardId(sessionResponse.getSessionId());
+        if (session == null) {
             //TODO should this automatically fall back to create?
             throw new IncorrectResultSizeDataAccessException("No BlackboardSession could be found for sessionId " + sessionResponse.getSessionId(), 1);
         }
         
         //Copy over the response data
-        updateBlackboardSession(sessionResponse, blackboardSession);
+        updateBlackboardSession(sessionResponse, session);
         
-        this.getEntityManager().persist(blackboardSession);
-        return blackboardSession;
+        this.getEntityManager().persist(session);
+        return session;
     }
     
     @Override
@@ -261,11 +265,25 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
     public void deleteSession(Session session) {
         Validate.notNull(session, "session can not be null");
         
+        final SessionImpl sessionImpl = this.getSession(session.getSessionId());
         final EntityManager entityManager = this.getEntityManager();
-        if (!entityManager.contains(session)) {
-            session = entityManager.merge(session);
+        
+        
+        final ConferenceUserImpl creator = sessionImpl.getCreator();
+        creator.getOwnedSessions().remove(sessionImpl);
+        entityManager.persist(creator);
+        
+        for (final ConferenceUserImpl user : sessionImpl.getChairs()) {
+            user.getChairedSessions().remove(sessionImpl);
+            entityManager.persist(user);
         }
-        entityManager.remove(session);        
+        
+        for (final ConferenceUserImpl user : sessionImpl.getNonChairs()) {
+            user.getNonChairedSessions().remove(sessionImpl);
+            entityManager.persist(user);
+        }
+        
+        entityManager.remove(sessionImpl);
     }
 
     /**
@@ -311,7 +329,7 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
         final String userList = type.getUserList(sessionResponse);
         final String[] userIds = USER_LIST_DELIM.split(userList);
         
-        final Set<ConferenceUser> existingUsers = type.getUserSet(blackboardSession);
+        final Set<ConferenceUserImpl> existingUsers = type.getUserSet(blackboardSession);
         final Set<ConferenceUser> newUsers = new HashSet<ConferenceUser>(userIds.length);
         for (String userId : userIds) {
             userId = StringUtils.trimToNull(userId);
@@ -322,14 +340,14 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
             }
             
             //find the DB user object for the chair
-            final ConferenceUserImpl user = this.blackboardUserDao.getOrCreateUser(userId);
+            final ConferenceUserImpl user = this.conferenceUserDao.getOrCreateUser(userId);
             
             //Update the user's set of chaired sessions
             final boolean added = type.associateSession(user, blackboardSession);
             
             //User was modified, make sure we tell hibernate to persist them
             if (added) {
-                this.blackboardUserDao.updateUser(user);
+                this.conferenceUserDao.updateUser(user);
             }
             
             //Add the user to the new set and make sure the user is in the existing set
@@ -340,7 +358,7 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
         //Use this approach to remove any users that are no longer in the list. Mutating the existing
         //collection is slightly more expensive in CPU time but significantly less expensive for the
         //hibernate layer to persist
-        for (final Iterator<ConferenceUser> existingUserItr = existingUsers.iterator(); existingUserItr.hasNext();) {
+        for (final Iterator<ConferenceUserImpl> existingUserItr = existingUsers.iterator(); existingUserItr.hasNext();) {
             final ConferenceUser existingUser = existingUserItr.next();
             //Check each existing user to see if they should no longer be a chair
             if (!newUsers.contains(existingUser)) {
@@ -348,10 +366,10 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
                 existingUserItr.remove();
                 
                 //Update the user's associate with the session
-                final ConferenceUserImpl user = this.blackboardUserDao.getUser(existingUser.getUserId());
+                final ConferenceUserImpl user = this.conferenceUserDao.getUser(existingUser.getUserId());
                 final boolean removed = type.unassociateSession(user, blackboardSession);
                 if (removed) {
-                    this.blackboardUserDao.updateUser(user);
+                    this.conferenceUserDao.updateUser(user);
                 }
             }
         }
@@ -369,17 +387,19 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
             }
 
             @Override
-            public Set<ConferenceUser> getUserSet(SessionImpl blackboardSession) {
+            public Set<ConferenceUserImpl> getUserSet(SessionImpl blackboardSession) {
                 return blackboardSession.getChairs();
             }
 
             @Override
-            public boolean associateSession(ConferenceUserImpl user, Session session) {
+            public boolean associateSession(ConferenceUserImpl user, SessionImpl session) {
+                session.getChairs().add(user); 
                 return user.getChairedSessions().add(session);
             }
 
             @Override
-            public boolean unassociateSession(ConferenceUserImpl user, Session session) {
+            public boolean unassociateSession(ConferenceUserImpl user, SessionImpl session) {
+                session.getChairs().remove(user);
                 return user.getChairedSessions().remove(session);
             }
         },
@@ -390,27 +410,29 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
             }
 
             @Override
-            public Set<ConferenceUser> getUserSet(SessionImpl blackboardSession) {
+            public Set<ConferenceUserImpl> getUserSet(SessionImpl blackboardSession) {
                 return blackboardSession.getNonChairs();
             }
 
             @Override
-            public boolean associateSession(ConferenceUserImpl user, Session session) {
+            public boolean associateSession(ConferenceUserImpl user, SessionImpl session) {
+                session.getNonChairs().add(user); 
                 return user.getNonChairedSessions().add(session);
             }
 
             @Override
-            public boolean unassociateSession(ConferenceUserImpl user, Session session) {
+            public boolean unassociateSession(ConferenceUserImpl user, SessionImpl session) {
+                session.getNonChairs().remove(user);
                 return user.getNonChairedSessions().remove(session);
             }
         };
         
         abstract String getUserList(BlackboardSessionResponse sessionResponse);
         
-        abstract Set<ConferenceUser> getUserSet(SessionImpl blackboardSession);
+        abstract Set<ConferenceUserImpl> getUserSet(SessionImpl blackboardSession);
         
-        abstract boolean associateSession(ConferenceUserImpl user, Session session);
+        abstract boolean associateSession(ConferenceUserImpl user, SessionImpl session);
         
-        abstract boolean unassociateSession(ConferenceUserImpl user, Session session);
+        abstract boolean unassociateSession(ConferenceUserImpl user, SessionImpl session);
     }
 }

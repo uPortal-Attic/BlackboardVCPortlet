@@ -85,17 +85,29 @@ public class SessionWSDaoImpl implements SessionWSDao {
 	}
 	
 	@Override
-	public String buildSessionUrl(long sessionId, String displayName) {
+	public String buildSessionUrl(long sessionId, ConferenceUser user) {
 		BlackboardBuildSessionUrl buildSessionUrlRequest = new BlackboardBuildSessionUrl();
 		buildSessionUrlRequest.setSessionId(sessionId);
-		buildSessionUrlRequest.setDisplayName(displayName);
+		buildSessionUrlRequest.setDisplayName(user.getDisplayName());
+		buildSessionUrlRequest.setUserId(user.getEmail());
         final Object urlResponseObject = sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/BuildSessionUrl", buildSessionUrlRequest);
         @SuppressWarnings("unchecked")
         JAXBElement<BlackboardUrlResponse> jaxbResponse = (JAXBElement<BlackboardUrlResponse>) urlResponseObject;
         return  jaxbResponse.getValue().getUrl();
 	}
-
+	
 	@Override
+    public String buildGuestSessionUrl(long sessionId) {
+        BlackboardBuildSessionUrl buildSessionUrlRequest = new BlackboardBuildSessionUrl();
+        buildSessionUrlRequest.setSessionId(sessionId);
+        buildSessionUrlRequest.setDisplayName("GUEST_PLACEHOLDER");
+        final Object urlResponseObject = sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/BuildSessionUrl", buildSessionUrlRequest);
+        @SuppressWarnings("unchecked")
+        JAXBElement<BlackboardUrlResponse> jaxbResponse = (JAXBElement<BlackboardUrlResponse>) urlResponseObject;
+        return  jaxbResponse.getValue().getUrl().replace("&username=GUEST_PLACEHOLDER", "");
+    }
+
+    @Override
 	public boolean createSessionTelephony(long sessionId, BlackboardSetSessionTelephony telephony) {
 		telephony.setSessionId(sessionId);
 		return WSDaoUtils.isSuccessful(sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/SetSessionTelephony", telephony));

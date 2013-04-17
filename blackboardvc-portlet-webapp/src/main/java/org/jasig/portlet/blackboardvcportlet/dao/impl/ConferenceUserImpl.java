@@ -101,7 +101,7 @@ public class ConferenceUserImpl implements ConferenceUser {
 
     //Exists only to allow cascading deletes, should NEVER be accessed by normal code
     @OneToMany(mappedBy = "user", targetEntity = UserSessionUrlImpl.class, cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, orphanRemoval = true)
-    private transient final Set<UserSessionUrl> userUrls = null;
+    private final Set<UserSessionUrl> userUrls = new HashSet<UserSessionUrl>(0);
     
     /**
      * needed by hibernate

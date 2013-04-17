@@ -67,7 +67,7 @@ public class SessionWSDaoIT extends AbstractWSIT {
 	
 	@Test
 	public void buildSessionUrlTest() {
-		String url = dao.buildSessionUrl(session.getSessionId(), "GUEST");
+		String url = dao.buildGuestSessionUrl(session.getSessionId());
 		assertNotNull(url);
 		
 	}

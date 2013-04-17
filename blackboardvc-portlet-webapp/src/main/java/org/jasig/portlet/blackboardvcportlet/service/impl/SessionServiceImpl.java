@@ -137,13 +137,14 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
     }
 
 	@PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#session, 'view')")
+	@Transactional
 	public String getOrCreateSessionUrl(ConferenceUser user, Session session) {
 		//check for the url in the db
 		UserSessionUrl url = userSessionUrlDao.getUserSessionUrlsBySessionAndUser(session, user);
 		
 		if(url == null) {
 			//if null then create a user's session url via web service call
-			String urlString = sessionWSDao.buildSessionUrl(session.getBbSessionId(), user.getDisplayName());
+			String urlString = sessionWSDao.buildSessionUrl(session.getBbSessionId(), user);
 			//save to the database
 			url = userSessionUrlDao.createUserSessionUrl(session, user, urlString);
 		}
@@ -233,10 +234,10 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
     public void createOrUpdateSession(ConferenceUser user, SessionForm sessionForm) {
         if (sessionForm.isNewSession()) {
             final BlackboardSessionResponse sessionResponse = sessionWSDao.createSession(user, sessionForm);
-            final String guestUrl = sessionWSDao.buildSessionUrl(sessionResponse.getSessionId(), "GUEST_PLACEHOLDER");
+            final String guestUrl = sessionWSDao.buildGuestSessionUrl(sessionResponse.getSessionId());
         	
         	//Remove guest username so that guest user's are prompted when they use the URL
-            sessionDao.createSession(sessionResponse, guestUrl.replace("&username=GUEST_PLACEHOLDER", ""));
+            sessionDao.createSession(sessionResponse, guestUrl);
         }
         else {
             final Session session = sessionDao.getSession(sessionForm.getSessionId());

@@ -15,7 +15,8 @@ public interface SessionWSDao {
 	
 	//create
 	public BlackboardSessionResponse createSession(ConferenceUser user, SessionForm sessionForm);
-	public String buildSessionUrl(long sessionId, String displayName);
+	public String buildGuestSessionUrl(long sessionId);
+	public String buildSessionUrl(long sessionId, ConferenceUser user);
 	//TODO : this might just go into create session
 	public boolean createSessionTelephony(long sessionId, BlackboardSetSessionTelephony telephony);
 
