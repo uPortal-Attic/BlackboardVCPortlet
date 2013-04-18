@@ -72,4 +72,6 @@ public interface SessionService {
     void deleteMultimedia(long sessionId, long... multimediaIds);
 
 	String getOrCreateSessionUrl(ConferenceUser user, Session session);
+
+	boolean isSessionParticipant(Session session, ConferenceUser user);
 }

@@ -1,11 +1,12 @@
-Dear ${displayName}
+${displayName}:
 
-${creatorDetails} invited you to participate in the following Collaborate session: ${sessionName}
+The following Blackboard Collaborate session has been cancelled:
+ 
+Name:   ${sessionName}
+Type:   ${sessionType}
+Starts: ${sessionStartTime}
+Ends:   ${sessionEndTime}
 
-Session Details
-Start Date and Time: ${sessionStartTime}
-End Date and Time: ${sessionEndTime}
+${creatorName} 
 
-This session has now been cancelled.
-
-Please contact ${creatorDetails} if you have any questions.
+Email: ${creatorEmail}

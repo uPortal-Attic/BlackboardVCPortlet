@@ -135,6 +135,14 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
     public Set<ConferenceUser> getSessionChairs(Session session) {
         return new LinkedHashSet<ConferenceUser>(sessionDao.getSessionChairs(session));
     }
+    
+    @Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#session, 'view')")
+    public boolean isSessionParticipant(Session session, ConferenceUser user) {
+    	ConferenceUser userFromDB = conferenceUserDao.getUser(user.getUserId());
+    	return (sessionDao.getSessionChairs(session).contains(userFromDB)
+    			|| sessionDao.getSessionNonChairs(session).contains(userFromDB));
+    }
 
 	@PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#session, 'view')")
 	@Transactional

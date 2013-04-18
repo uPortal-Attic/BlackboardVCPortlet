@@ -79,7 +79,7 @@ public class ViewSessionController
         if (session.getEndTime().isAfterNow()) {
             final ConferenceUser conferenceUser = this.conferenceUserService.getCurrentConferenceUser();
             
-            if (sessionChairs.contains(conferenceUser) || sessionNonChairs.contains(conferenceUser)) {
+            if (sessionService.isSessionParticipant(session, conferenceUser)) {
                 model.addAttribute("launchUrl", this.sessionService.getOrCreateSessionUrl(conferenceUser, session));
             }
             else {
