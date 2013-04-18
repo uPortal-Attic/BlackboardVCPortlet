@@ -3,11 +3,7 @@ package org.jasig.portlet.blackboardvcportlet.dao.ws.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
 
-import org.hibernate.annotations.Any;
 import org.jasig.portlet.blackboardvcportlet.dao.ws.GlobalSettingsWSDao;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,13 +20,17 @@ import com.elluminate.sas.BlackboardServerVersionResponse;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/test-applicationContext.xml")
 public class GlobalSettingsWSDaoImplIT {
-	private static final Logger logger = LoggerFactory.getLogger(GlobalSettingsWSDaoImplIT.class);
+
+	
+	private GlobalSettingsWSDao dao;
 	
 	@Autowired
-	private GlobalSettingsWSDao dao;
+	public void setGlobalSettingWSDao (GlobalSettingsWSDao dao) {
+		this.dao = dao;
+	}
 
 	@Test
-	public void getServerConfigurationTest() {
+	public void getServerConfigurationTest() throws Exception {
 		BlackboardServerConfigurationResponse response = dao.getServerConfiguration();
 		assertNotNull(response);
 		assertEquals(response.getBoundaryTime(),30);
@@ -40,17 +40,17 @@ public class GlobalSettingsWSDaoImplIT {
 	}
 	
 	@Test
-	public void getServerQuotaTest() {
+	public void getServerQuotaTest() throws Exception {
 		BlackboardServerQuotasResponse response = dao.getServerQuota();
 		assertNotNull(response);
-		assertEquals(response.getDiskQuota(),1073741824);
-		assertEquals(response.getDiskQuotaAvailable(),1073741806);
-		assertEquals(response.getSessionQuota(),1024);
-		assertEquals(response.getSessionQuotaAvailable(),1006);
+		assertEquals(1073741824, response.getDiskQuota());
+		assertEquals(1062919645, response.getDiskQuotaAvailable());
+		assertEquals(1024, response.getSessionQuota());
+		assertEquals(996, response.getSessionQuotaAvailable());
 	}
 	
 	@Test
-	public void getServerVersionsTest() {
+	public void getServerVersionsTest() throws Exception {
 		BlackboardServerVersionResponse serverVersions = dao.getServerVersions();
 		assertNotNull(serverVersions);
 		long versionId = serverVersions.getVersionId();
@@ -64,7 +64,7 @@ public class GlobalSettingsWSDaoImplIT {
 	}
 	
 	@Test
-	public void setApiCallbackUrlTest() {
+	public void setApiCallbackUrlTest() throws Exception {
 		boolean setApiCallbackUrl = dao.setApiCallbackUrl("THISWILLBREAKTHINGSSOBECAREFUL");
 		assertTrue(setApiCallbackUrl);
 	}
