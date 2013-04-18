@@ -75,11 +75,11 @@ public class ViewSessionController
         model.addAttribute("sessionNonChairs", ImmutableSortedSet.copyOf(ConferenceUserDisplayNameComparator.INSTANCE, sessionNonChairs));
         
         //Session hasn't completed yet, show session launch URL
-        //TODO should we check if we are within the "boundary time"? 
+        //TODO should we check if we are within the "boundary time"?
         if (session.getEndTime().isAfterNow()) {
             final ConferenceUser conferenceUser = this.conferenceUserService.getCurrentConferenceUser();
             
-            if (session.getCreator().equals(conferenceUser) || sessionChairs.contains(conferenceUser) || sessionNonChairs.contains(conferenceUser)) {
+            if (sessionChairs.contains(conferenceUser) || sessionNonChairs.contains(conferenceUser)) {
                 model.addAttribute("launchUrl", this.sessionService.getOrCreateSessionUrl(conferenceUser, session));
             }
             else {
