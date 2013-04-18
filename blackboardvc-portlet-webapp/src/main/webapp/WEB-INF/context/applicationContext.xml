@@ -39,7 +39,9 @@
     <aop:config />
     
     <context:annotation-config />
-    <context:property-placeholder location="classpath:/webapp.properties" />
+    <bean id="propertySourcesPlaceholderConfigurer" class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
+        <property name="locations" value="classpath:/webapp.properties" />
+    </bean>
     
     <context:component-scan base-package="org.jasig.portlet.blackboardvcportlet.dao" />
     <context:component-scan base-package="org.jasig.portlet.blackboardvcportlet.data" />
@@ -100,8 +102,10 @@
         <property name="marshaller" ref="elluminateMarshaller"/>
         <property name="unmarshaller" ref="elluminateMarshaller"/>
         <property name="messageSender" ref="webServiceMessageSender"/>
-        <property name="checkConnectionForFault" value="false" />
-        <property name="defaultUri" value="${sas.defaultUri}"/>
+        <property name="destinationProvider" ref="sasDestinationProvider" />
+    </bean>
+    <bean id="sasDestinationProvider" class="org.jasig.springframework.ws.client.support.destination.FailSafeWsdl11DestinationProvider">
+        <property name="wsdl" value="${sas.defaultUri}" />
     </bean>
     <bean id="elluminateObjectFactory" class="com.elluminate.sas.ObjectFactory"/>
     <bean id="elluminateMarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">

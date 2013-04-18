@@ -35,6 +35,7 @@
     
     <context:annotation-config />
     <context:component-scan base-package="org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr" />
+    <bean parent="propertySourcesPlaceholderConfigurer" />
 
     <bean class="org.springframework.web.portlet.mvc.annotation.DefaultAnnotationHandlerMapping">
         <property name="applyWebRequestInterceptorsToRenderPhaseOnly" value="false" />

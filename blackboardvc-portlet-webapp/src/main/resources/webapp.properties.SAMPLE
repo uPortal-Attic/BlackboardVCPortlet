@@ -1,11 +1,16 @@
-bbc.username=
-bbc.password=
-bbc.callbackURL=https://my-test.wisc.edu/BlackboardVCPortlet/callback/recCallback/
+## Web Service Configuration
+bbc.username=WISCONSIN-ADMIN
+bbc.password=Wared4aM
+bbc.callbackURL=https://my-qa.wisc.edu/BlackboardVCPortlet/callback/recCallback/
+sas.defaultUri=https://sas-int.elluminate.com/site/external/adapter/default/v3/webservice.wsdl
+
+## Local Database Configuration
+bbc.db.driverClassName=org.hsqldb.jdbcDriver
 bbc.db.jdbc=jdbc:hsqldb:hsql://localhost:8887/uPortal
 bbc.db.username=sa
 bbc.db.password=
-hibernate.dialect=org.hibernate.dialect.HSQLDialect
-bbc.db.driverClassName=org.hsqldb.jdbcDriver
+
+## Email Notification Configuration
 mail.host=localhost
 mail.from=me@people.com
 mail.port=25
@@ -13,4 +18,8 @@ mail.extParticipantMailMessage.subject=Collaborate Session Invite
 mail.moderatorMailMessage.subject=Collaborate Session Invite
 mail.sessionDeletionMessage.subject=Collaborate Session Cancellation
 mail.intParticipantMailMessage.subject=Collaborate Session Invite
-sas.defaultUri=https://sas-int.elluminate.com/site/external/adapter/default/v3/webservice.event
+
+## User Attribute Configuration
+emailAttributeName=mail
+displayNameAttributeName=displayName
+uniqueUserAttributeNames=wiscedupvi,eppn,spvi

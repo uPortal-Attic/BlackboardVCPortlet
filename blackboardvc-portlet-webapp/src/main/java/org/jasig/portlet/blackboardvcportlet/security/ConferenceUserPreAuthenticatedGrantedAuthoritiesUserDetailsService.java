@@ -10,6 +10,7 @@ import org.jasig.portlet.blackboardvcportlet.dao.ConferenceUserDao;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.springframework.security.portlet.authentication.PortletAuthenticationDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -40,14 +41,17 @@ public class ConferenceUserPreAuthenticatedGrantedAuthoritiesUserDetailsService 
         this.transactionOperations = transactionOperations;
     }
 
+    @Value("${emailAttributeName:mail}")
     public void setEmailAttributeName(List<String> emailAttributeName) {
         this.emailAttributeName = emailAttributeName;
     }
 
+    @Value("${displayNameAttributeName:displayName}")
     public void setDisplayNameAttributeName(List<String> displayNameAttributeName) {
         this.displayNameAttributeName = displayNameAttributeName;
     }
 
+    @Value("${uniqueUserAttributeNames:}")
     public void setUniqueUserAttributeNames(List<String> uniqueUserAttributeNames) {
         this.uniqueUserAttributeNames = uniqueUserAttributeNames;
     }
