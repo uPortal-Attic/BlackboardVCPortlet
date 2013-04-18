@@ -360,7 +360,7 @@ public class SessionDaoImplTest extends BaseJpaDaoTest {
                 sessionResponse.setBoundaryTime(30);
                 sessionResponse.setAccessType(2);
                 sessionResponse.setRecordings(false);
-                sessionResponse.setChairList("test@example.com");
+                sessionResponse.setChairList("admin@example.com,test@example.com");
                 sessionResponse.setNonChairList("levett@example.com,dalquist@example.com");
                 sessionResponse.setOpenChair(false);
                 sessionResponse.setPermissionsOn(true);
@@ -500,7 +500,7 @@ public class SessionDaoImplTest extends BaseJpaDaoTest {
         sessionResponse.setBoundaryTime(30);
         sessionResponse.setAccessType(2);
         sessionResponse.setRecordings(false);
-        sessionResponse.setChairList("dalquist@example.com");
+        sessionResponse.setChairList("admin@example.com,dalquist@example.com");
         sessionResponse.setNonChairList("levett@example.com");
         sessionResponse.setOpenChair(false);
         sessionResponse.setPermissionsOn(true);
