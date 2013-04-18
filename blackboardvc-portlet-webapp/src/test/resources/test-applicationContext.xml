@@ -39,6 +39,10 @@
     <sws:annotation-driven/>
     
     <task:scheduler id="scheduler" pool-size="10" />
+    
+    <bean class="org.jasig.springframework.mockito.MockitoFactoryBean" >
+    	<constructor-arg value="org.jasig.portlet.blackboardvcportlet.security.SecurityExpressionEvaluator" />
+    </bean>
 
     <!--Spring Web Services Client-->
     <bean id="sasWebServicesTemplate" class="org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceTemplate">

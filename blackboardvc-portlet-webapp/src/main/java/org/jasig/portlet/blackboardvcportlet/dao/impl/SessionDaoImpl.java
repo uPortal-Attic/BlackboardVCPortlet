@@ -313,16 +313,6 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
         session.setPermissionsOn(sessionResponse.isPermissionsOn());
         session.setSecureSignOn(sessionResponse.isSecureSignOn());
         
-        //add creator as a chair if not already
-        sessionResponse.setChairList((sessionResponse.getChairList() == null 
-        								|| sessionResponse.getChairList().length() == 0
-        							 ) ? session.getCreator().getEmail() 
-        							   : (sessionResponse.getChairList() != null 
-        							   		&& sessionResponse.getChairList().indexOf( session.getCreator().getEmail()) != -1
-        							   	 ) ? sessionResponse.getChairList()
-        							   	   : sessionResponse.getChairList() + "," + session.getCreator().getEmail()
-        							);
-        
         updateUserList(sessionResponse, session, UserListType.CHAIR);
         
         updateUserList(sessionResponse, session, UserListType.NON_CHAIR);

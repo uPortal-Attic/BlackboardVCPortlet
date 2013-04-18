@@ -3,10 +3,15 @@ package org.jasig.portlet.blackboardvcportlet.dao.ws.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.any;
 
 import java.util.List;
+import java.util.Map;
 
 import org.jasig.portlet.blackboardvcportlet.dao.ws.SessionWSDao;
+import org.jasig.portlet.blackboardvcportlet.security.SecurityExpressionEvaluator;
+import org.jasig.springframework.mockito.MockitoFactoryBean;
 import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
@@ -26,8 +31,15 @@ public class SessionWSDaoIT extends AbstractWSIT {
 	@Autowired
 	private SessionWSDao dao;
 	
+	@Autowired
+	private SecurityExpressionEvaluator security;
+	
+	@SuppressWarnings("unchecked")
 	@Before
 	public void before() {
+		MockitoFactoryBean.resetAllMocks();
+		when(security.authorize(any(String.class))).thenReturn(true);
+		when(security.authorize(any(String.class),any(Map.class))).thenReturn(true);
 		form = buildSession();
 		user = buildUser();
 		session = dao.createSession(user, form);
@@ -66,8 +78,18 @@ public class SessionWSDaoIT extends AbstractWSIT {
 	}
 	
 	@Test
-	public void buildSessionUrlTest() {
+	public void buildSessionGuestUrlTest() {
 		String url = dao.buildGuestSessionUrl(session.getSessionId());
+		assertNotNull(url);
+		
+	}
+	
+	/**
+	 * This test case assumes the creator is initially added as a chair (moderator)
+	 */
+	@Test
+	public void buildSessionUrlTest() {
+		String url = dao.buildSessionUrl(session.getSessionId(), user);
 		assertNotNull(url);
 		
 	}
