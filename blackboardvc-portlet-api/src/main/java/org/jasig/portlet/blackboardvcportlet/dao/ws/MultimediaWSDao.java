@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.activation.DataHandler;
 
+import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceOperations;
+
 import com.elluminate.sas.BlackboardMultimediaResponse;
 
 public interface MultimediaWSDao {
@@ -27,4 +29,6 @@ public interface MultimediaWSDao {
     boolean removeRepositoryMultimedia(long bbMultimediaId);
     boolean removeSessionMultimedia(long bbSessionId, long bbMultimediaId);
 	
+    //for unit tests
+    public void setSasWebServiceOperations(SASWebServiceOperations sasWebServiceOperations);
 }

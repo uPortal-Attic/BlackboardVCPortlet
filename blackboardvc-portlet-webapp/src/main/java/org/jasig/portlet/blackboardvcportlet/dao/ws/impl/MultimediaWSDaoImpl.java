@@ -7,8 +7,10 @@ import javax.xml.bind.JAXBElement;
 
 import org.jasig.portlet.blackboardvcportlet.dao.ws.MultimediaWSDao;
 import org.jasig.portlet.blackboardvcportlet.dao.ws.WSDaoUtils;
+import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceOperations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Service;
 
@@ -23,9 +25,17 @@ import com.elluminate.sas.BlackboardUploadRepositoryContent;
 import com.elluminate.sas.ObjectFactory;
 
 @Service
-public class MultimediaWSDaoImpl extends ContentWSDaoImpl implements MultimediaWSDao { 
+public class MultimediaWSDaoImpl implements MultimediaWSDao { 
 	
 	private static final Logger logger = LoggerFactory.getLogger(MultimediaWSDaoImpl.class);
+	
+	private SASWebServiceOperations sasWebServiceOperations;
+	
+	@Autowired
+	public void setSasWebServiceOperations(SASWebServiceOperations sasWebServiceOperations)
+	{
+		this.sasWebServiceOperations = sasWebServiceOperations;
+	}
 	
 	@Override
 	public List<BlackboardMultimediaResponse> getRepositoryMultimedias(String creatorId, Long multimediaId, String description) {
