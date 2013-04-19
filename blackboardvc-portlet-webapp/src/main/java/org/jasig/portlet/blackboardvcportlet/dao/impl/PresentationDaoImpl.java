@@ -27,11 +27,11 @@ public class PresentationDaoImpl extends BaseJpaDao implements PresentationDao {
 	
 	private CriteriaQuery<PresentationImpl> findAllPresentation;
 	
-	private InternalConferenceUserDao blackboardUserDao;
+	private InternalConferenceUserDao conferenceUserDao;
 	
 	@Autowired
-    public void setBlackboardUserDao(InternalConferenceUserDao blackboardUserDao) {
-        this.blackboardUserDao = blackboardUserDao;
+    public void setConferenceUserDao(InternalConferenceUserDao conferenceUserDao) {
+        this.conferenceUserDao = conferenceUserDao;
     }
 	
 	@Override
@@ -68,14 +68,22 @@ public class PresentationDaoImpl extends BaseJpaDao implements PresentationDao {
 	public Presentation createPresentation(BlackboardPresentationResponse presentationResponse, String filename) {
 		//Find the creator user
         final String creatorId = presentationResponse.getCreatorId();
-        final ConferenceUser creator = this.blackboardUserDao.getOrCreateUser(creatorId);
+        ConferenceUserImpl creator = this.conferenceUserDao.getUserByUniqueId(creatorId);
+        if (creator == null) {
+            logger.warn("Internal user {} doesn't exist for {}. Creating a bare bones user to compensate", creatorId, presentationResponse);
+            creator = this.conferenceUserDao.createInternalUser(creatorId);
+        }
         
         //Create and populate a new presentation
-        final PresentationImpl bbPresentation = new PresentationImpl(presentationResponse.getPresentationId(),creator);
+        final PresentationImpl bbPresentation = new PresentationImpl(presentationResponse.getPresentationId(), creator);
         updateBlackboardPresentation(presentationResponse, filename, bbPresentation);
-
+        
         //Persist and return the new presentation
         this.getEntityManager().persist(bbPresentation);
+        
+        creator.getPresentations().add(bbPresentation);
+        this.getEntityManager().persist(creator);
+        
         return bbPresentation;
 	}
 
@@ -85,10 +93,15 @@ public class PresentationDaoImpl extends BaseJpaDao implements PresentationDao {
 		Validate.notNull(presentation, "presentation can not be null");
         
         final EntityManager entityManager = this.getEntityManager();
-        if (!entityManager.contains(presentation)) {
-        	presentation = entityManager.merge(presentation);
-        }
-        entityManager.remove(presentation);
+        
+        final PresentationImpl presentationImpl = entityManager.find(PresentationImpl.class, presentation.getPresentationId());
+        
+        final ConferenceUser creator = presentationImpl.getCreator();
+        final ConferenceUserImpl creatorImpl = this.conferenceUserDao.getUser(creator.getUserId());
+        creatorImpl.getPresentations().remove(presentationImpl);
+        
+        entityManager.remove(presentationImpl);
+        entityManager.remove(creatorImpl);
 	}
 	
 	private void updateBlackboardPresentation(BlackboardPresentationResponse presentationResponse, String filename, PresentationImpl presentation) {

@@ -18,58 +18,11 @@
  */
 package org.jasig.portlet.blackboardvcportlet.service;
 
-import java.util.Set;
-
-import javax.portlet.PortletPreferences;
-
-import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
 
 /**
  * Service Class for handling Recording interactions
  * @author Richard Good
  */
-public interface RecordingService
-{
-//	/**
-//     * Get the recordings for a session
-//     * @param sessionId Long
-//     * @return Set<RecordingShort>
-//     */
-//    public Set<SessionRecording> getRecordingsForSession(long sessionId);
-    
-    /**
-     * Get a specific recording
-     * @param recordingId Long
-     * @return RecordingShort
-     */
-    public SessionRecording getRecording(long recordingId);
-    
-    /**
-     * Get the recordings for a user
-     * @param uid String
-     * @return Set<RecordingShort>
-     */
-    public Set<SessionRecording> getRecordingsForUser(String uid);
-    
-    /**
-     * Get recordings as Admin
-     * @return Set<RecordingShort>
-     */
-    public Set<SessionRecording> getRecordingsForAdmin();
-    
-    /**
-     * Delete a recording
-     * @param prefs PortletPreferences
-     * @param recordingId Long
-     * @throws Exception 
-     */
-    public void deleteRecording(PortletPreferences prefs, long recordingId) throws Exception;
-    
-    /**
-     * Updates the local recordings cache from Collaborate for a particular session
-     *
-	 * @param sessionId Long
-	 * @return Set<RecordingShort>
-     */
-    public Set<SessionRecording> updateSessionRecordings(long sessionId);
+public interface RecordingService {
+    void updateSessionRecordings(long sessionId);
 }

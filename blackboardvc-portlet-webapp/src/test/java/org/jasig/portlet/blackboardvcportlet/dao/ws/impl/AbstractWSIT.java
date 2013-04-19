@@ -1,6 +1,7 @@
 package org.jasig.portlet.blackboardvcportlet.dao.ws.impl;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.service.SessionForm;
@@ -44,11 +45,34 @@ public abstract class AbstractWSIT {
 			public String getDisplayName() {
 				return username;
 			}
-			
-			@Override
-			public Map<String, String> getAttributes() {
-				return null;
-			}
+
+            @Override
+            public String getUniqueId() {
+                return email;
+            }
+
+            @Override
+            public void setEmail(String email) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public Set<String> getAdditionalEmails() {
+                // TODO Auto-generated method stub
+                return null;
+            }
+
+            @Override
+            public String getInvitationKey() {
+                // TODO Auto-generated method stub
+                return null;
+            }
+
+            @Override
+            public boolean isExternal() {
+                // TODO Auto-generated method stub
+                return false;
+            }
 		};
 		return user;
 		

@@ -27,11 +27,11 @@ public class MultimediaDaoImpl extends BaseJpaDao implements MultimediaDao {
 	
 	private CriteriaQuery<MultimediaImpl> findAllMultimedia;
 	
-	private InternalConferenceUserDao blackboardUserDao;
+	private InternalConferenceUserDao conferenceUserDao;
 
     @Autowired
-    public void setBlackboardUserDao(InternalConferenceUserDao blackboardUserDao) {
-        this.blackboardUserDao = blackboardUserDao;
+    public void setConferenceUserDao(InternalConferenceUserDao conferenceUserDao) {
+        this.conferenceUserDao = conferenceUserDao;
     }
 
 	@Override
@@ -73,14 +73,22 @@ public class MultimediaDaoImpl extends BaseJpaDao implements MultimediaDao {
     public MultimediaImpl createMultimedia(BlackboardMultimediaResponse multimediaResponse, String filename) {
         //Find the creator user
         final String creatorId = multimediaResponse.getCreatorId();
-        final ConferenceUser creator = this.blackboardUserDao.getOrCreateUser(creatorId);
+        ConferenceUserImpl creator = this.conferenceUserDao.getUserByUniqueId(creatorId);
+        if (creator == null) {
+            logger.warn("Internal user {} doesn't exist for {}. Creating a bare bones user to compensate", creatorId, multimediaResponse);
+            creator = this.conferenceUserDao.createInternalUser(creatorId);
+        }
         
         //Create and populate a new blackboardMultimedia
-        final MultimediaImpl blackboardMultimedia = new MultimediaImpl(multimediaResponse.getMultimediaId(),creator);
+        final MultimediaImpl blackboardMultimedia = new MultimediaImpl(multimediaResponse.getMultimediaId(), creator);
         updateBlackboardMultimedia(multimediaResponse, filename, blackboardMultimedia);
 
         //Persist and return the new multimedia
         this.getEntityManager().persist(blackboardMultimedia);
+        
+        creator.getMultimedias().add(blackboardMultimedia);
+        this.getEntityManager().persist(creator);
+        
         return blackboardMultimedia;
     }
 	
@@ -90,10 +98,15 @@ public class MultimediaDaoImpl extends BaseJpaDao implements MultimediaDao {
         Validate.notNull(multimedia, "multimedia can not be null");
         
         final EntityManager entityManager = this.getEntityManager();
-        if (!entityManager.contains(multimedia)) {
-        	multimedia = entityManager.merge(multimedia);
-        }
-        entityManager.remove(multimedia);        
+        
+        final MultimediaImpl multimediaImpl = entityManager.find(MultimediaImpl.class, multimedia.getMultimediaId());
+        
+        final ConferenceUser creator = multimediaImpl.getCreator();
+        final ConferenceUserImpl creatorImpl = this.conferenceUserDao.getUser(creator.getUserId());
+        creatorImpl.getMultimedias().remove(multimediaImpl);
+        
+        entityManager.remove(multimediaImpl);
+        entityManager.remove(creatorImpl);      
     }
 
     private void updateBlackboardMultimedia(BlackboardMultimediaResponse multimediaResponse, String filename, MultimediaImpl multimedia) {

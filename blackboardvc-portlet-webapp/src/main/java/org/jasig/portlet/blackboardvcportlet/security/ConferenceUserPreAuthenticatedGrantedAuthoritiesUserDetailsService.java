@@ -1,9 +1,9 @@
 package org.jasig.portlet.blackboardvcportlet.security;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.jasig.portlet.blackboardvcportlet.dao.ConferenceUserDao;
@@ -24,12 +24,13 @@ import com.google.common.collect.ImmutableList;
 
 public class ConferenceUserPreAuthenticatedGrantedAuthoritiesUserDetailsService extends
         PreAuthenticatedGrantedAuthoritiesUserDetailsService {
+    private static final Pattern ATTRIBUTE_NAME_SEPERATOR = Pattern.compile(",");
     
     private ConferenceUserDao conferenceUserDao;
     private TransactionOperations transactionOperations;
+    private List<String> uniqueIdAttributeName = ImmutableList.of("uid");
     private List<String> emailAttributeName = ImmutableList.of("mail");
     private List<String> displayNameAttributeName = ImmutableList.of("displayName");
-    private List<String> uniqueUserAttributeNames = Collections.emptyList();
 
     @Autowired
     public void setConferenceUserDao(ConferenceUserDao conferenceUserDao) {
@@ -42,18 +43,18 @@ public class ConferenceUserPreAuthenticatedGrantedAuthoritiesUserDetailsService 
     }
 
     @Value("${emailAttributeName:mail}")
-    public void setEmailAttributeName(List<String> emailAttributeName) {
-        this.emailAttributeName = emailAttributeName;
+    public void setEmailAttributeName(String emailAttributeName) {
+        this.emailAttributeName = ImmutableList.copyOf(ATTRIBUTE_NAME_SEPERATOR.split(emailAttributeName));
     }
 
     @Value("${displayNameAttributeName:displayName}")
-    public void setDisplayNameAttributeName(List<String> displayNameAttributeName) {
-        this.displayNameAttributeName = displayNameAttributeName;
+    public void setDisplayNameAttributeName(String displayNameAttributeName) {
+        this.displayNameAttributeName = ImmutableList.copyOf(ATTRIBUTE_NAME_SEPERATOR.split(displayNameAttributeName));
     }
 
-    @Value("${uniqueUserAttributeNames:}")
-    public void setUniqueUserAttributeNames(List<String> uniqueUserAttributeNames) {
-        this.uniqueUserAttributeNames = uniqueUserAttributeNames;
+    @Value("${uniqueIdAttributeName:uid}")
+    public void setUniqueIdAttributeName(String uniqueIdAttributeName) {
+        this.uniqueIdAttributeName = ImmutableList.copyOf(ATTRIBUTE_NAME_SEPERATOR.split(uniqueIdAttributeName));
     }
 
     @Override
@@ -66,15 +67,16 @@ public class ConferenceUserPreAuthenticatedGrantedAuthoritiesUserDetailsService 
     }
 
     protected ConferenceUser setupConferenceUser(final PortletAuthenticationDetails authenticationDetails) {
+        final String uniqueId = getAttribute(authenticationDetails, this.uniqueIdAttributeName, true);
         final String mail = getAttribute(authenticationDetails, this.emailAttributeName, true);
         final String displayName = getAttribute(authenticationDetails, this.displayNameAttributeName, false);
         
         return this.transactionOperations.execute(new TransactionCallback<ConferenceUser>() {
             @Override
             public ConferenceUser doInTransaction(TransactionStatus status) {
-                ConferenceUser user = conferenceUserDao.getUser(mail);
+                ConferenceUser user = conferenceUserDao.getUserByUniqueId(uniqueId);
                 if (user == null) {
-                    user = conferenceUserDao.createUser(mail, displayName);
+                    user = conferenceUserDao.createInternalUser(uniqueId);
                 }
                 
                 boolean modified = false;
@@ -85,23 +87,11 @@ public class ConferenceUserPreAuthenticatedGrantedAuthoritiesUserDetailsService 
                     user.setDisplayName(displayName);
                 }
                 
-                //Update all key user attributes
-                final Map<String, String> userInfo = authenticationDetails.getUserInfo();
-                final Map<String, String> userAttributes = user.getAttributes();
-                for (final String keyUserAttributeName : uniqueUserAttributeNames) {
-                    final String value = userInfo.get(keyUserAttributeName);
-                    if (StringUtils.isNotEmpty(value)) {
-                        final String prevValue = userAttributes.put(keyUserAttributeName, value);
-                        modified |= StringUtils.equals(prevValue, value);
-                    }
-                    else {
-                        final String prevValue = userAttributes.remove(keyUserAttributeName);
-                        modified |= prevValue != null;
-                    }
+                //Update with current email
+                if (!StringUtils.equals(user.getEmail(), mail)) {
+                    modified = true;
+                    user.setEmail(mail);
                 }
-                
-                //Remove any attributes that are not part of the defined set
-                modified |= userAttributes.keySet().retainAll(uniqueUserAttributeNames);
                 
                 if (modified) {
                     //Persist modification

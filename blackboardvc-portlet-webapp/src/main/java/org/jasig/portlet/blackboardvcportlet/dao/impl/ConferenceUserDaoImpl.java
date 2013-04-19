@@ -2,17 +2,16 @@ package org.jasig.portlet.blackboardvcportlet.dao.impl;
 
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.MapJoin;
-import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.Validate;
 import org.jasig.jpa.BaseJpaDao;
 import org.jasig.jpa.OpenEntityManager;
@@ -23,11 +22,48 @@ import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 
 @Repository
 public class ConferenceUserDaoImpl extends BaseJpaDao implements InternalConferenceUserDao {
+    private ParameterExpression<String> emailParameter;
+    
+    private CriteriaQuery<ConferenceUserImpl> getUsersByPrimaryEmailQuery;
+    private CriteriaQuery<ConferenceUserImpl> getUsersByAnyEmailQuery;
 
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        this.emailParameter = this.createParameterExpression(String.class, "email");
+        
+        this.getUsersByPrimaryEmailQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<ConferenceUserImpl>>() {
+            @Override
+            public CriteriaQuery<ConferenceUserImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<ConferenceUserImpl> criteriaQuery = cb.createQuery(ConferenceUserImpl.class);
+                final Root<ConferenceUserImpl> definitionRoot = criteriaQuery.from(ConferenceUserImpl.class);
+                criteriaQuery.select(definitionRoot);
+                criteriaQuery.where(cb.equal(definitionRoot.get(ConferenceUserImpl_.email), emailParameter));
+
+                return criteriaQuery;
+            }
+        });
+
+        this.getUsersByAnyEmailQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<ConferenceUserImpl>>() {
+            @Override
+            public CriteriaQuery<ConferenceUserImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<ConferenceUserImpl> criteriaQuery = cb.createQuery(ConferenceUserImpl.class);
+                final Root<ConferenceUserImpl> definitionRoot = criteriaQuery.from(ConferenceUserImpl.class);
+                criteriaQuery.select(definitionRoot);
+                criteriaQuery.where(cb.or(
+                        cb.equal(definitionRoot.get(ConferenceUserImpl_.email), emailParameter),
+                        cb.isMember(emailParameter, definitionRoot.get(ConferenceUserImpl_.additionalEmails))
+                    ));
+
+                return criteriaQuery;
+            }
+        });
+    }
+    
     @Override
     public Set<Session> getOwnedSessionsForUser(ConferenceUser user) {
         if (user == null) {
@@ -74,12 +110,30 @@ public class ConferenceUserDaoImpl extends BaseJpaDao implements InternalConfere
     
     @Override
     @Transactional
-    public ConferenceUserImpl createUser(String email, String displayName) {
-        final ConferenceUserImpl user = new ConferenceUserImpl(email, displayName);
+    public ConferenceUserImpl createInternalUser(String uniqueId) {
+        final ConferenceUserImpl user = new ConferenceUserImpl(uniqueId);
+        this.getEntityManager().persist(user);
+        
+        return user;
+    }
+    
+    
+    @Override
+    @Transactional
+    public ConferenceUserImpl createExternalUser(String displayName, String email) {
+        final String invitationToken = RandomStringUtils.randomAlphanumeric(20);
+        final ConferenceUserImpl user = new ConferenceUserImpl(email, invitationToken);
+        user.setDisplayName(displayName);
         
         this.getEntityManager().persist(user);
         
         return user;
+    }
+    
+    @Override
+    @Transactional
+    public ConferenceUserImpl createExternalUser(String email) {
+        return this.createExternalUser(null, email);
     }
     
     @Override
@@ -131,53 +185,40 @@ public class ConferenceUserDaoImpl extends BaseJpaDao implements InternalConfere
     }
 
     @Override
-    @Transactional
-    public ConferenceUserImpl getOrCreateUser(String email) {
-        final ConferenceUserImpl user = this.getUser(email);
-        if (user != null) {
-            return user;
-        }
-        
-        return this.createUser(email, null);
-    }
-
-    @Override
     @OpenEntityManager
-    public ConferenceUserImpl getUser(String email) {
+    public ConferenceUserImpl getUserByUniqueId(String uniqueId) {
         final NaturalIdQuery<ConferenceUserImpl> query = this.createNaturalIdQuery(ConferenceUserImpl.class);
-        query.using(ConferenceUserImpl_.email, email);
+        query.using(ConferenceUserImpl_.uniqueId, uniqueId);
+        query.using(ConferenceUserImpl_.external, false);
         
         return query.load();
     }
     
     @Override
-    public Set<ConferenceUser> findAllMatchingUsers(String email, Map<String, String> attributes) {
-        final CriteriaQuery<ConferenceUserImpl> criteriaQuery = createSearchQuery(email, attributes);
+    @OpenEntityManager
+    public ConferenceUserImpl getExternalUserByEmail(String email) {
+        final NaturalIdQuery<ConferenceUserImpl> query = this.createNaturalIdQuery(ConferenceUserImpl.class);
+        query.using(ConferenceUserImpl_.uniqueId, email);
+        query.using(ConferenceUserImpl_.external, true);
         
-        final TypedQuery<ConferenceUserImpl> query = this.createQuery(criteriaQuery);
-        final List<ConferenceUserImpl> results = query.getResultList();
-        return new LinkedHashSet<ConferenceUser>(results);
+        return query.load();
     }
-
-    private CriteriaQuery<ConferenceUserImpl> createSearchQuery(String email, Map<String, String> attributes) {
-        final CriteriaBuilder cb = this.getEntityManager().getCriteriaBuilder();
-        final CriteriaQuery<ConferenceUserImpl> criteriaQuery = cb.createQuery(ConferenceUserImpl.class);
-        final Root<ConferenceUserImpl> bbu = criteriaQuery.from(ConferenceUserImpl.class);
+    
+    @Override
+    public Set<ConferenceUser> getUsersByAnyEmail(String email) {
+        final TypedQuery<ConferenceUserImpl> query = this.createQuery(this.getUsersByAnyEmailQuery);
+        query.setParameter(this.emailParameter, email);
         
-        //Fetch the attributes in one query
-        bbu.fetch(ConferenceUserImpl_.attributes);
-
-        //Use a MapJoin to filter the results by attribute
-        final MapJoin<ConferenceUserImpl, String, String> attrJoin = bbu.join(ConferenceUserImpl_.attributes);
-        final Predicate[] predicates = new Predicate[attributes.size() + 1];
-        predicates[0] = cb.equal(bbu.get(ConferenceUserImpl_.email), email);
-        int pIdx = 1;
-        for (final Map.Entry<String, String> attrEntry : attributes.entrySet()) {
-            predicates[pIdx] = cb.and(cb.equal(attrJoin.key(), attrEntry.getKey()), cb.equal(attrJoin.value(), attrEntry.getValue()));
-            pIdx++;
-        }
+        final List<ConferenceUserImpl> resultList = query.getResultList();
+        return new LinkedHashSet<ConferenceUser>(resultList);
+    }
+    
+    @Override
+    public Set<ConferenceUser> getUsersByPrimaryEmail(String email) {
+        final TypedQuery<ConferenceUserImpl> query = this.createQuery(this.getUsersByPrimaryEmailQuery);
+        query.setParameter(this.emailParameter, email);
         
-        criteriaQuery.where(cb.or(predicates));
-        return criteriaQuery;
+        final List<ConferenceUserImpl> resultList = query.getResultList();
+        return new LinkedHashSet<ConferenceUser>(resultList);
     }
 }

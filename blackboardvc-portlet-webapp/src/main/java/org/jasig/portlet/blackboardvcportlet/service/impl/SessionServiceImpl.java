@@ -205,7 +205,7 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
             removeMultimediaFromSession(session, bbMultimediaIds, multimedia);
         }
         
-        //TODO delete presentation
+        this.deletePresentation(session.getSessionId());
         
         this.sessionWSDao.deleteSession(session.getBbSessionId());
         this.sessionDao.deleteSession(session);
@@ -258,7 +258,7 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
     @Transactional
     @PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'edit')")
     public void addSessionChair(long sessionId, String displayName, String email) {
-        final ConferenceUser newSessionChair = this.conferenceUserService.getOrCreateConferenceUser(email, displayName);
+        final ConferenceUser newSessionChair = this.conferenceUserService.getOrCreateConferenceUser(displayName, email);
         
         final Session session = this.sessionDao.getSession(sessionId);
         final Set<ConferenceUser> sessionChairs = new LinkedHashSet<ConferenceUser>(this.getSessionChairs(session));
@@ -271,12 +271,12 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
     @Override
     @Transactional
     @PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'edit')")
-    public void removeSessionChairs(long sessionId, String... emails) {
+    public void removeSessionChairs(long sessionId, long... userIds) {
         final Session session = this.sessionDao.getSession(sessionId);
         final Set<ConferenceUser> sessionChairs = new LinkedHashSet<ConferenceUser>(this.getSessionChairs(session));
         
-        for (final String email : emails) {
-            final ConferenceUser user = conferenceUserDao.getUser(email);
+        for (final long userId : userIds) {
+            final ConferenceUser user = conferenceUserDao.getUser(userId);
             if (user != null) {
                 sessionChairs.remove(user);
             }
@@ -290,7 +290,7 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
     @Transactional
     @PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'edit')")
     public void addSessionNonChair(long sessionId, String displayName, String email) {
-        final ConferenceUser newSessionNonChair = this.conferenceUserService.getOrCreateConferenceUser(email, displayName);
+        final ConferenceUser newSessionNonChair = this.conferenceUserService.getOrCreateConferenceUser(displayName, email);
         
         final Session session = this.sessionDao.getSession(sessionId);
         final Set<ConferenceUser> sessionNonChairs = new LinkedHashSet<ConferenceUser>(this.getSessionNonChairs(session));
@@ -304,12 +304,12 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
     @Override
     @Transactional
     @PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'edit')")
-    public void removeSessionNonChairs(long sessionId, String... emails) {
+    public void removeSessionNonChairs(long sessionId, long... userIds) {
         final Session session = this.sessionDao.getSession(sessionId);
         final Set<ConferenceUser> sessionNonChairs = new LinkedHashSet<ConferenceUser>(this.getSessionNonChairs(session));
         
-        for (final String email : emails) {
-            final ConferenceUser user = conferenceUserDao.getUser(email);
+        for (final long userId : userIds) {
+            final ConferenceUser user = conferenceUserDao.getUser(userId);
             if (user != null) {
                 sessionNonChairs.remove(user);
             }
@@ -380,7 +380,7 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
         }
         
         try {
-            this.presentationWSDao.deleteSessionPresenation(session.getBbSessionId(), presentation.getbbPresentationId());
+            this.presentationWSDao.deleteSessionPresenation(session.getBbSessionId(), presentation.getBbPresentationId());
         }
         catch (SoapFaultException e) {
             //See if the presentation association actually exists
@@ -397,11 +397,11 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
         
         
         try {
-            this.presentationWSDao.deletePresentation(presentation.getbbPresentationId());
+            this.presentationWSDao.deletePresentation(presentation.getBbPresentationId());
         }
         catch (SoapFaultException e) {
             //See if the presentation actually exists
-            final List<BlackboardPresentationResponse> repositoryPresentations = this.presentationWSDao.getRepositoryPresentations(null, presentation.getbbPresentationId(), null);
+            final List<BlackboardPresentationResponse> repositoryPresentations = this.presentationWSDao.getRepositoryPresentations(null, presentation.getBbPresentationId(), null);
             
             //Presentation exists but failed to remove it, throw the exception
             if (!repositoryPresentations.isEmpty()) {

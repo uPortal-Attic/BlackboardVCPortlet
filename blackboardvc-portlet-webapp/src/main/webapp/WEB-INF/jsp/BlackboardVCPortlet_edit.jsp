@@ -240,7 +240,7 @@
           <tr class="${loopStatus.index % 2 == 0 ? 'uportal-channel-table-row-odd' : 'uportal-channel-table-row-even'}">
           <td>${user.displayName}</td>
           <td>${user.email}</td>
-          <td><input value="${user.email}" name="deleteChair" type="checkbox" /></td>
+          <td><input value="${user.userId}" name="chairId" type="checkbox" /></td>
           </tr>
         </c:forEach>
         <tr>
@@ -278,7 +278,7 @@
           <tr class="${loopStatus.index % 2 == 0 ? 'uportal-channel-table-row-odd' : 'uportal-channel-table-row-even'}">
           <td>${user.displayName}</td>
           <td>${user.email}</td>
-          <td><input value="${user.email}" name="deleteNonChair" type="checkbox" /></td>
+          <td><input value="${user.userId}" name="nonChairId" type="checkbox" /></td>
           </tr>
         </c:forEach>
         <tr>

@@ -254,7 +254,10 @@ public class SessionWSDaoImpl implements SessionWSDao {
         final StringBuilder uidBuilder = new StringBuilder();
         for (final Iterator<ConferenceUser> userItr = users.iterator(); userItr.hasNext();) {
             final ConferenceUser user = userItr.next();
-            uidBuilder.append(user.getEmail());
+            if (user.isExternal()) {
+                uidBuilder.append(ConferenceUser.EXTERNAL_USERID_PREFIX);
+            }
+            uidBuilder.append(user.getUniqueId());
             if (userItr.hasNext()) {
                 uidBuilder.append(',');
             }

@@ -9,15 +9,15 @@ import org.springframework.security.core.userdetails.User;
 public class ConferenceSecurityUser extends User {
     private static final long serialVersionUID = 1L;
     
-    private final String email;
+    private final String uniqueId;
 
     public ConferenceSecurityUser(String username, ConferenceUser conferenceUser, Collection<? extends GrantedAuthority> authorities) {
         super(username, "", authorities);
         
-        this.email = conferenceUser.getEmail();;
+        this.uniqueId = conferenceUser.getUniqueId();
     }
 
-    public String getEmail() {
-        return email;
+    public String getUniqueId() {
+        return uniqueId;
     }
 }

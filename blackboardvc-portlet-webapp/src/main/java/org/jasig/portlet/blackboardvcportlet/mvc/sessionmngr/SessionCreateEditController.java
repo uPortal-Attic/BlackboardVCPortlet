@@ -24,6 +24,7 @@ import javax.portlet.ActionResponse;
 import javax.portlet.PortletMode;
 import javax.portlet.PortletModeException;
 
+import org.apache.commons.lang.StringUtils;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.Multimedia;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingMode;
@@ -154,6 +155,9 @@ public class SessionCreateEditController
 	//TODO @Valid on name/email
     @ActionMapping(params = "action=Add Moderator")
     public void addSessionChair(ActionResponse response, @RequestParam long sessionId, @RequestParam String displayName, @RequestParam String email) throws PortletModeException {
+        displayName = StringUtils.trimToNull(displayName);
+        email = StringUtils.trimToNull(email);
+        
         this.sessionService.addSessionChair(sessionId, displayName, email);
 
         response.setPortletMode(PortletMode.EDIT);
@@ -162,8 +166,8 @@ public class SessionCreateEditController
 
     //TODO @Valid on deleteChair (must be email)
     @ActionMapping(params = "action=Delete Moderator(s)")
-    public void deleteSessionChairs(ActionResponse response, @RequestParam long sessionId, @RequestParam String[] deleteChair) throws PortletModeException {
-        this.sessionService.removeSessionChairs(sessionId, deleteChair);
+    public void deleteSessionChairs(ActionResponse response, @RequestParam long sessionId, @RequestParam long[] chairId) throws PortletModeException {
+        this.sessionService.removeSessionChairs(sessionId, chairId);
 
         response.setPortletMode(PortletMode.EDIT);
         response.setRenderParameter("sessionId", Long.toString(sessionId));
@@ -172,6 +176,9 @@ public class SessionCreateEditController
     //TODO @Valid on name/email
     @ActionMapping(params = "action=Add Participant")
     public void addSessionNonChair(ActionResponse response, @RequestParam long sessionId, @RequestParam String displayName, @RequestParam String email) throws PortletModeException {
+        displayName = StringUtils.trimToNull(displayName);
+        email = StringUtils.trimToNull(email);
+        
         this.sessionService.addSessionNonChair(sessionId, displayName, email);
 
         response.setPortletMode(PortletMode.EDIT);
@@ -180,8 +187,8 @@ public class SessionCreateEditController
 
     //TODO @Valid on deleteNonChair (must be email)
     @ActionMapping(params = "action=Delete Participant(s)")
-    public void deleteSessionNonChairs(ActionResponse response, @RequestParam long sessionId, @RequestParam String[] deleteNonChair) throws PortletModeException {
-        this.sessionService.removeSessionNonChairs(sessionId, deleteNonChair);
+    public void deleteSessionNonChairs(ActionResponse response, @RequestParam long sessionId, @RequestParam long[] nonChairId) throws PortletModeException {
+        this.sessionService.removeSessionNonChairs(sessionId, nonChairId);
 
         response.setPortletMode(PortletMode.EDIT);
         response.setRenderParameter("sessionId", Long.toString(sessionId));

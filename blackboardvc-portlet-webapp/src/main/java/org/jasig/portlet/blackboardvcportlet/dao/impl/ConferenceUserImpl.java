@@ -1,13 +1,10 @@
 package org.jasig.portlet.blackboardvcportlet.dao.impl;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -15,25 +12,27 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
 
-import org.apache.commons.lang.Validate;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.NaturalIdCache;
+import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.Multimedia;
 import org.jasig.portlet.blackboardvcportlet.data.Presentation;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
-import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.UserSessionUrl;
+import org.springframework.util.Assert;
 
 @Entity
 @Table(name = "VC2_USER")
@@ -63,21 +62,33 @@ public class ConferenceUserImpl implements ConferenceUser {
     private final long entityVersion;
     
     @NaturalId
-    @Column(name="EMAIL", length = 500, nullable = false)
-    private final String email;
+    @Column(name="UNIQUE_ID", length = 500, nullable = false)
+    private final String uniqueId;
+    
+    @NaturalId
+    @Column(name="IS_EXTERNAL", nullable = false)
+    private final boolean external;
+    
+    @Index(name="VC2_IDX__USER_INVITE")
+    @Column(name="INVITE_KEY", length = 500)
+    private final String invitationKey;
     
     @Column(name="DISPLAY_NAME", length = 500)
     private String displayName;
-    
-    @ElementCollection
-    @MapKeyColumn(name="ATTR_NAME")
-    @Column(name="ATTR_VALUE", nullable = false)
-    @CollectionTable(
-            name="VC2_USER_ATTR", 
-            joinColumns=@JoinColumn(name="USER_ID"),
-            uniqueConstraints=@UniqueConstraint(columnNames={"USER_ID", "ATTR_NAME", "ATTR_VALUE"}))
+
+    @Index(name="VC2_IDX__USER_EMAIL")
+    @Column(name="EMAIL", length = 500)
+    private String email;
+
+    @ElementCollection(fetch =FetchType.EAGER, targetClass = String.class)
+    @JoinTable(
+        name = "VC2_USER_EMAILS",
+        joinColumns = @JoinColumn(name = "USER_ID")
+    )
+    @Column(name = "EMAIL", length=600)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private final Map<String, String> attributes = new HashMap<String, String>(0);
+    @Fetch(FetchMode.JOIN)
+    private final Set<String> additionalEmails = new HashSet<String>(0);
     
     @OneToMany(targetEntity = MultimediaImpl.class, fetch = FetchType.LAZY, mappedBy = "creator")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -110,17 +121,43 @@ public class ConferenceUserImpl implements ConferenceUser {
     private ConferenceUserImpl() {
         this.userId = -1;
         this.entityVersion = -1;
-        this.email = null;
-    }
 
-    ConferenceUserImpl(String email, String displayName) {
-        Validate.notNull(email, "email for user cannot be null");
+        this.uniqueId = null;
+        this.email = null;
+        this.external = false;
+        this.invitationKey = null;
+    }
+    
+    /**
+     * Creates a new internal user
+     */
+    ConferenceUserImpl(String uniqueId) {
+        Assert.notNull(uniqueId, "uniqueId cannot be null");
         
         this.userId = -1;
         this.entityVersion = -1;
-        this.email = email;
-        this.displayName = displayName;
+        
+        this.uniqueId = uniqueId;
+        this.external = false;
+        this.invitationKey = null;
     }
+    
+    /**
+     * Creates a new external user
+     */
+    ConferenceUserImpl(String email, String invitationKey) {
+        Assert.notNull(email, "email cannot be null");
+        Assert.notNull(invitationKey, "invitationKey cannot be null");
+        
+        this.userId = -1;
+        this.entityVersion = -1;
+        
+        this.uniqueId = email;
+        this.email = email;
+        this.external = true;
+        this.invitationKey = invitationKey;
+    }
+    
 
     @Override
     public long getUserId() {
@@ -128,8 +165,22 @@ public class ConferenceUserImpl implements ConferenceUser {
     }
 
     @Override
+    public String getUniqueId() {
+        return this.uniqueId;
+    }
+    
+    public boolean isExternal() {
+        return external;
+    }
+
+    @Override
     public String getEmail() {
         return email;
+    }
+
+    @Override
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @Override
@@ -141,12 +192,17 @@ public class ConferenceUserImpl implements ConferenceUser {
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
-
+    
     @Override
-    public Map<String, String> getAttributes() {
-        return attributes;
+    public String getInvitationKey() {
+        return this.invitationKey;
     }
     
+    @Override
+    public Set<String> getAdditionalEmails() {
+        return this.additionalEmails;
+    }
+
     Set<Session> getOwnedSessions() {
         return ownedSessions;
     }
@@ -169,14 +225,15 @@ public class ConferenceUserImpl implements ConferenceUser {
 
     @Override
     public String toString() {
-        return "BlackboardUser [userId=" + userId + ", entityVersion=" + entityVersion + ", displayName=" + displayName + ", email=" + email + ", attributes=" + attributes + "]";
+        return "ConferenceUserImpl [userId=" + userId + ", uniqueId=" + uniqueId + ", displayName=" + displayName + ", email=" + email + "]";
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((email == null) ? 0 : email.hashCode());
+        result = prime * result + (external ? 1231 : 1237);
+        result = prime * result + ((uniqueId == null) ? 0 : uniqueId.hashCode());
         return result;
     }
 
@@ -189,11 +246,13 @@ public class ConferenceUserImpl implements ConferenceUser {
         if (getClass() != obj.getClass())
             return false;
         ConferenceUserImpl other = (ConferenceUserImpl) obj;
-        if (email == null) {
-            if (other.email != null)
+        if (external != other.external)
+            return false;
+        if (uniqueId == null) {
+            if (other.uniqueId != null)
                 return false;
         }
-        else if (!email.equals(other.email))
+        else if (!uniqueId.equals(other.uniqueId))
             return false;
         return true;
     }

@@ -1,12 +1,11 @@
 package org.jasig.portlet.blackboardvcportlet.dao;
 
-import java.util.Map;
 import java.util.Set;
 
+import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.Multimedia;
 import org.jasig.portlet.blackboardvcportlet.data.Presentation;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
-import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 
 public interface ConferenceUserDao {
     Set<Session> getOwnedSessionsForUser(ConferenceUser user);
@@ -17,20 +16,25 @@ public interface ConferenceUserDao {
     
     Set<Multimedia> getMultimediasForUser(ConferenceUser user);
     
-    ConferenceUser createUser(String email, String displayName);
+    Set<Presentation> getPresentationsForUser(ConferenceUser user);
+    
+    ConferenceUser createInternalUser(String uniqueId);
+    
+    ConferenceUser createExternalUser(String displayName, String email);
+    
+    ConferenceUser createExternalUser(String email);
 
     ConferenceUser updateUser(ConferenceUser user);
 
     void deleteUser(ConferenceUser message);
     
     ConferenceUser getUser(long userId);
-
-    ConferenceUser getUser(String email);
-
-    Set<ConferenceUser> findAllMatchingUsers(String email, Map<String, String> attributes);
-
-	Set<Presentation> getPresentationsForUser(ConferenceUser user);
     
-    //TODO add API for getting chaired and nonChaired sessions for a user
+    ConferenceUser getUserByUniqueId(String uniqueId);
 
+    ConferenceUser getExternalUserByEmail(String email);
+    
+    Set<ConferenceUser> getUsersByPrimaryEmail(String email);
+    
+    Set<ConferenceUser> getUsersByAnyEmail(String email);
 }

@@ -59,6 +59,9 @@
     <user-attribute>
         <name>mail</name>
     </user-attribute>
+    <user-attribute>
+        <name>eppn</name>
+    </user-attribute>
     
     <filter>
         <filter-name>springSecurityPortletFilterChain</filter-name>

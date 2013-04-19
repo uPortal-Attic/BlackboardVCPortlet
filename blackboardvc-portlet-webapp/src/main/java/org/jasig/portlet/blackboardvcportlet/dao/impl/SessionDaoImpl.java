@@ -41,9 +41,7 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
     private CriteriaQuery<SessionImpl> findAllSessions;
     
     private InternalConferenceUserDao conferenceUserDao;
-    
     private PresentationDao presentationDao;
-    
     private MultimediaDao multimediaDao;
     
     @Autowired
@@ -153,7 +151,12 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
     public SessionImpl createSession(BlackboardSessionResponse sessionResponse, String guestUrl) {
         //Find the creator user
         final String creatorId = sessionResponse.getCreatorId();
-        final ConferenceUserImpl creator = this.conferenceUserDao.getOrCreateUser(creatorId);
+        ConferenceUserImpl creator = this.conferenceUserDao.getUserByUniqueId(creatorId);
+        if (creator == null) {
+            //This should be pretty rare as the creator should be the currently authd user
+            logger.warn("Internal user for session creator {} doesn't exist for session {}. Creating a bare bones user to compensate", creatorId, sessionResponse.getSessionId());
+            creator = this.conferenceUserDao.createInternalUser(creatorId);
+        }
         
         //Create and populate a new blackboardSession
         final SessionImpl session = new SessionImpl(sessionResponse.getSessionId(), creator);
@@ -197,10 +200,10 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
     		throw new IncorrectResultSizeDataAccessException("No BlackboardSession could be found for sessionId " + session.getSessionId(), 1);
     	}
     	
-    	Presentation bbPresentation = presentationDao.getPresentationByBlackboardId(presentation.getbbPresentationId());
+    	Presentation bbPresentation = presentationDao.getPresentationByBlackboardId(presentation.getBbPresentationId());
     	
     	if(bbPresentation == null) {
-    		throw new IncorrectResultSizeDataAccessException("No presentation could be found for blackboard presentationId " + presentation.getbbPresentationId(), 1);
+    		throw new IncorrectResultSizeDataAccessException("No presentation could be found for blackboard presentationId " + presentation.getBbPresentationId(), 1);
     	}
     	
     	blackboardSession.setPresentation(bbPresentation);
@@ -318,7 +321,6 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
         updateUserList(sessionResponse, session, UserListType.NON_CHAIR);
     }
     
-    
     /**
      * Syncs the user list (chair or non-chair) from the {@link BlackboardSessionResponse} to the {@link SessionImpl}. Handles
      * creating/updating the associated {@link ConferenceUser} objects
@@ -333,16 +335,30 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
         
         final Set<ConferenceUserImpl> existingUsers = type.getUserSet(blackboardSession);
         final Set<ConferenceUser> newUsers = new HashSet<ConferenceUser>(userIds.length);
-        for (String userId : userIds) {
-            userId = StringUtils.trimToNull(userId);
+        for (String bbUserId : userIds) {
+            bbUserId = StringUtils.trimToNull(bbUserId);
             
             //Skip empty/null userIds
-            if (userId == null) {
+            if (bbUserId == null) {
                 continue;
             }
             
-            //find the DB user object for the chair
-            final ConferenceUserImpl user = this.conferenceUserDao.getOrCreateUser(userId);
+            //Get/Create the participating user
+            ConferenceUserImpl user;
+            if (bbUserId.startsWith(ConferenceUser.EXTERNAL_USERID_PREFIX)) {
+                final String externalUserEmail = bbUserId.substring(ConferenceUser.EXTERNAL_USERID_PREFIX.length());
+                user = this.conferenceUserDao.getExternalUserByEmail(externalUserEmail);
+                if (user == null) {
+                    user = this.conferenceUserDao.createExternalUser(externalUserEmail);
+                }
+            }
+            else {
+                user = this.conferenceUserDao.getUserByUniqueId(bbUserId);
+                if (user == null) {
+                    logger.warn("Internal user for {} creator {} doesn't exist for session {}. Creating a bare bones user to compensate", bbUserId, type, sessionResponse.getSessionId());
+                    user = this.conferenceUserDao.createInternalUser(bbUserId);
+                }
+            }
             
             //Update the user's set of chaired sessions
             final boolean added = type.associateSession(user, blackboardSession);

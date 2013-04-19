@@ -30,24 +30,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.context.ServletContextAware;
-import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 import org.springframework.web.servlet.ModelAndView;
-
-import javax.servlet.ServletContext;
 
 /**
  * Controller for session finish callback.
  * @author Richard Good
  */
 @Controller
-public class BlackboardVCPortletCallbackController implements ServletContextAware
-{
+public class BlackboardVCPortletCallbackController {
 	private static final Logger logger = LoggerFactory.getLogger(BlackboardVCPortletCallbackController.class);
 
     private RecordingService recordingService;
     private ServerConfigurationService serverConfigurationService;
-    private static ServletContext servletContext;
     
     @Autowired
     public void setServerConfigurationService(ServerConfigurationService value) 
@@ -59,11 +53,6 @@ public class BlackboardVCPortletCallbackController implements ServletContextAwar
 	public void setRecordingService(RecordingService recordingService)
 	{
 		this.recordingService = recordingService;
-	}
-	
-	@Override
-	public void setServletContext(ServletContext servletContext) {
-		this.servletContext = servletContext;
 	}
 	
 	@ResponseStatus(value = HttpStatus.NOT_FOUND)
@@ -78,14 +67,14 @@ public class BlackboardVCPortletCallbackController implements ServletContextAwar
     @RequestMapping("/recCallback/{securityToken:.*}")
     public ModelAndView callback(
             @PathVariable("securityToken") String securityToken,
-            @RequestParam("session_id") String sessionId,
+            @RequestParam("session_id") long sessionId,
             @RequestParam("room_opened_millis") long roomOpenedMillis,
             @RequestParam("room_closed_millis") long roomClosedMillis, 
             @RequestParam("rec_playback_link") String recPlaybackLink) throws Exception {
     	
         final ServerConfiguration serverConfiguration = serverConfigurationService.getServerConfiguration();
         if(serverConfiguration.getRandomCallbackUrl().equalsIgnoreCase(securityToken)) {
-        	recordingService.updateSessionRecordings(Long.valueOf(sessionId));
+        	recordingService.updateSessionRecordings(sessionId);
         } else {
         	logger.error("Invalid callback URL provided. Expected :" + serverConfiguration.getRandomCallbackUrl() + "; Received : " + securityToken);
         	throw new ResourceNotFoundException();

@@ -52,9 +52,9 @@ public class PresentationDaoImplTest extends BaseJpaDaoTest {
                 assertNotNull(pres);
                 
                 assertEquals(1024, pres.getSize());
-                assertEquals(183838, pres.getbbPresentationId());
+                assertEquals(183838, pres.getBbPresentationId());
                 
-                Presentation pullFromDB = dao.getPresentationByBlackboardId(pres.getbbPresentationId());
+                Presentation pullFromDB = dao.getPresentationByBlackboardId(pres.getBbPresentationId());
                 assertNotNull(pullFromDB);
                 
                 return null;
@@ -78,7 +78,7 @@ public class PresentationDaoImplTest extends BaseJpaDaoTest {
                 
                 dao.deletePresentation(pres);
                 
-                Presentation shouldBeNull = dao.getPresentationByBlackboardId(pres.getbbPresentationId());
+                Presentation shouldBeNull = dao.getPresentationByBlackboardId(pres.getBbPresentationId());
                 assertNull(shouldBeNull);
                 return null;
             }
