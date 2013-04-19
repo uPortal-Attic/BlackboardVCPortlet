@@ -1,0 +1,13 @@
+<ListRecordingLongResponseCollection xmlns="http://sas.elluminate.com/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<RecordingLongResponse>
+		<roomStartDate xsi:type="xs:long">1364566500000</roomStartDate>
+		<roomEndDate xsi:type="xs:long">1364566500001</roomEndDate>
+		<recordingURL xsi:type="xs:string">http://www.internet.com</recordingURL>
+		<secureSignOn xsi:type="xs:boolean">false</secureSignOn>
+		<recordingId xsi:type="xs:long">1</recordingId>
+		<roomStartDate xsi:type="xs:long">1364566500000</roomStartDate>
+		<recordingSize xsi:type="xs:long">10000</recordingSize>
+		<roomName xsi:type="xs:string">Le Room</roomName>
+		<sessionId xsi:type="xs:long">1</sessionId>
+	</RecordingLongResponse>
+</ListRecordingLongResponseCollection>
