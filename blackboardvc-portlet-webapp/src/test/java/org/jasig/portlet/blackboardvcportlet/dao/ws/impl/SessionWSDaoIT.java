@@ -25,7 +25,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.elluminate.sas.BlackboardSessionResponse;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:/test-applicationContext.xml")
+@ContextConfiguration(locations = "classpath:/integration-test-applicationContext.xml")
 public class SessionWSDaoIT extends AbstractWSIT {
 	
 	@Autowired

@@ -19,7 +19,7 @@ import com.elluminate.sas.BlackboardRecordingShortResponse;
 import com.elluminate.sas.BlackboardSessionResponse;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:/test-applicationContext.xml")
+@ContextConfiguration(locations = "classpath:/integration-test-applicationContext.xml")
 public class RecordingWSDaoImplIT extends AbstractWSIT {
 	
 	@Autowired

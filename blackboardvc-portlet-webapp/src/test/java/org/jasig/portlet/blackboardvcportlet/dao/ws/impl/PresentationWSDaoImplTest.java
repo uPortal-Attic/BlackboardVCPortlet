@@ -18,6 +18,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.elluminate.sas.BlackboardPresentationResponseCollection;
@@ -25,7 +26,8 @@ import com.elluminate.sas.BlackboardSessionResponse;
 import com.elluminate.sas.BlackboardSuccessResponse;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-public class PresentationWSDaoImplTest extends PresentationWSDaoImplIT {
+@ContextConfiguration(locations = "classpath:/test-applicationContext.xml")
+public class PresentationWSDaoImplTest extends PresentationWSDaoImplTestBase {
 	@Mock
 	private SASWebServiceOperations sasWebServiceOperations;
 	@Mock
@@ -34,12 +36,13 @@ public class PresentationWSDaoImplTest extends PresentationWSDaoImplIT {
 	private SessionWSDao sessionDao;
 	
 	@Before
-	public void thebefore() throws JAXBException {
+	public void before() throws Exception {
 		MockitoAnnotations.initMocks(this);
+		super.sessionDao = this.sessionDao;
 		when(sasWebServiceOperations.marshalSendAndReceiveToSAS(Matchers.contains("http://sas.elluminate.com/ListSessionPresentation"), any(Object.class))).thenReturn(getSinglePresentation());
 		when(sessionDao.createSession(any(ConferenceUser.class), any(SessionForm.class))).thenReturn(session);
-		super.sessionDao = this.sessionDao;
 		dao.setSasWebServiceOperations(sasWebServiceOperations);
+		super.before();
 	}
 	
 	@Test

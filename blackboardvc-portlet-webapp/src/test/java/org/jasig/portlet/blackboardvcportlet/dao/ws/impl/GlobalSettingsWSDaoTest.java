@@ -18,6 +18,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.elluminate.sas.BlackboardGetServerConfigurationResponseCollection;
@@ -26,7 +27,8 @@ import com.elluminate.sas.BlackboardGetServerVersionResponseCollection;
 import com.elluminate.sas.BlackboardSuccessResponse;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-public class GlobalSettingsWSDaoTest extends GlobalSettingsWSDaoImplIT {
+@ContextConfiguration(locations = "classpath:/test-applicationContext.xml")
+public class GlobalSettingsWSDaoTest extends GlobalSettingsWSDaoImplTestBase {
 	
 	@Autowired 
 	private GlobalSettingsWSDao dao;
