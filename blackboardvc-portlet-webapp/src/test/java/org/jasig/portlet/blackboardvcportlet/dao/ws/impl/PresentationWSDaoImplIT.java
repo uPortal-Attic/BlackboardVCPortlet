@@ -32,10 +32,10 @@ import com.elluminate.sas.BlackboardSessionResponse;
 public class PresentationWSDaoImplIT extends AbstractWSIT {
 	
 	@Autowired
-	private PresentationWSDao dao;
+	PresentationWSDao dao;
 	
 	@Autowired
-	private SessionWSDao sessionDao;
+	SessionWSDao sessionDao;
 	
 	private Map<Long, BlackboardPresentationResponse> presentations = new HashMap <Long, BlackboardPresentationResponse>();
 	
@@ -64,13 +64,13 @@ public class PresentationWSDaoImplIT extends AbstractWSIT {
 	}
 
 	@Test
-	public void uploadPresentationTest() throws IOException {
+	public void uploadPresentationTest() throws Exception {
 		BlackboardPresentationResponse createRepoPresentation = createRepoPresentation();
 		assertNotNull(createRepoPresentation);
 	}
 
 	@Test
-	public void linkPresentationToSessionTest() throws IOException {
+	public void linkPresentationToSessionTest() throws Exception {
 		BlackboardPresentationResponse createRepoPresentation = createRepoPresentation();
 		assertNotNull(createRepoPresentation);
 		assertTrue(dao.linkPresentationToSession(session.getSessionId(), createRepoPresentation.getPresentationId()));
@@ -78,14 +78,14 @@ public class PresentationWSDaoImplIT extends AbstractWSIT {
 	}
 
 	@Test
-	public void getSessionPresentations() throws IOException {
+	public void getSessionPresentations() throws Exception {
 		linkPresentationToSessionTest();
 		List<BlackboardPresentationResponse> sessionPresentations = dao.getSessionPresentations(session.getSessionId());
 		assertEquals(sessionPresentations.size(),1);
 	}
 
 	@Test
-	public void getRepositoryPresentationsTest() throws IOException {
+	public void getRepositoryPresentationsTest() throws Exception {
 		BlackboardPresentationResponse repoPresentation = createRepoPresentation();
 		List<BlackboardPresentationResponse> repositoryPresentations = dao.getRepositoryPresentations(user.getUniqueId(), repoPresentation.getPresentationId(), null);
 		assertNotNull(repositoryPresentations);
@@ -94,7 +94,7 @@ public class PresentationWSDaoImplIT extends AbstractWSIT {
 	}
 
 	@Test
-	public void deletePresentation() throws IOException {
+	public void deletePresentation() throws Exception {
 		BlackboardPresentationResponse repoPresentation = createRepoPresentation();
 		boolean deletePresentation = dao.deletePresentation(repoPresentation.getPresentationId());
 		presentations.remove(repoPresentation.getPresentationId());
@@ -102,14 +102,14 @@ public class PresentationWSDaoImplIT extends AbstractWSIT {
 	}
 
 	@Test
-	public void deleteSessionPresenation() throws IOException {
+	public void deleteSessionPresenation() throws Exception {
 		BlackboardPresentationResponse createRepoPresentation = createRepoPresentation();
 		assertNotNull(createRepoPresentation);
 		assertTrue(dao.linkPresentationToSession(session.getSessionId(), createRepoPresentation.getPresentationId()));
 		dao.deleteSessionPresenation(session.getSessionId(), createRepoPresentation.getPresentationId());
 	}
 	
-	private BlackboardPresentationResponse createRepoPresentation() throws IOException {
+	private BlackboardPresentationResponse createRepoPresentation() throws Exception {
 		InputStream is = new ByteArrayInputStream("fdsdfsfsdadsfasfda".getBytes());
         ByteArrayDataSource rawData = new ByteArrayDataSource(is,"video/mpeg");
 		DataHandler dataHandler = new DataHandler(rawData);
