@@ -40,7 +40,7 @@
         <td><span class="uportal-channel-strong">Session Name: </span></td>
         <c:choose>
           <c:when test="${session.newSession}">
-            <td><form:input path="sessionName" style="width: 50%;" class="uportal-input-text" /><form:errors path="sessionName" cssClass="error"/></td>
+            <td><form:input path="sessionName" style="width: 50%;" class="uportal-input-text" />&nbsp;&nbsp;<form:errors path="sessionName" cssClass="error"/></td>
           </c:when>
           <c:otherwise>
             <td><form:hidden path="sessionName" />${session.sessionName}</td>

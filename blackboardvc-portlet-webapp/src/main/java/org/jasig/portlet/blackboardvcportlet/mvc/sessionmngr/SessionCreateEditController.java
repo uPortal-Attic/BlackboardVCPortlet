@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -102,16 +103,36 @@ public class SessionCreateEditController
 	}
 
     @RenderMapping(params="sessionId")
-    public String displayEditSessionForm(ModelMap model, @RequestParam long sessionId) throws PortletModeException {
+    public String displayEditSessionForm(ModelMap model, @RequestParam long sessionId) throws PortletModeException
+	{
         final ServerConfiguration serverConfiguration = this.serverConfigurationService.getServerConfiguration();
         model.put("serverConfiguration", serverConfiguration);
-        
-        final Session session = this.sessionService.getSession(sessionId);
-        //TODO if session is null
 
-        final SessionForm sessionForm = new SessionForm(session);
-        model.put("session", sessionForm);
-        
+		final Session session = this.sessionService.getSession(sessionId);
+		//TODO if session is null
+
+		// Update model to match pattern that jsp is looking for
+		// ie, sessionForm -> session AND BindingResult.sessionForm -> BindingResult.session
+		SessionForm sessionForm = (SessionForm)model.get("sessionForm");
+		if (sessionForm == null)
+		{
+			sessionForm = new SessionForm(session);
+		}
+		else
+		{
+			// Do removal in else statement to avoid second iteration through Hashmap
+			model.remove("sessionForm");
+		}
+        model.addAttribute("session", sessionForm);
+
+		// Add BindingResult.session to model (if exists)....
+		BeanPropertyBindingResult bindingResult = (BeanPropertyBindingResult)model.get("org.springframework.validation.BindingResult.sessionForm");
+		if (bindingResult != null)
+		{
+			model.addAttribute("org.springframework.validation.BindingResult.session", bindingResult);
+			model.remove("org.springframework.validation.BindingResult.sessionForm");
+		}
+
         final Set<ConferenceUser> sessionChairs = this.sessionService.getSessionChairs(session);
         model.addAttribute("sessionChairs", ImmutableSortedSet.copyOf(ConferenceUserDisplayNameComparator.INSTANCE, sessionChairs));
         
@@ -128,12 +149,17 @@ public class SessionCreateEditController
 	
     //TODO @Valid on SessionForm
 	@ActionMapping(params = "action=saveSession")
-	public void saveSession(ActionResponse response, @Valid SessionForm sessionForm, BindingResult bindingResult) throws PortletModeException
+	public void saveSession(ActionResponse response, @Valid SessionForm session, BindingResult bindingResult) throws PortletModeException
 	{
-		if (!bindingResult.hasErrors())
+		if (bindingResult.hasErrors())
+		{
+			response.setPortletMode(PortletMode.EDIT);
+			response.setRenderParameter("sessionId", Long.toString(session.getSessionId()));
+		}
+		else
 		{
 			final ConferenceUser conferenceUser = this.conferenceUserService.getCurrentConferenceUser();
-			this.sessionService.createOrUpdateSession(conferenceUser, sessionForm);
+			this.sessionService.createOrUpdateSession(conferenceUser, session);
 			response.setPortletMode(PortletMode.VIEW);
 		}
 	}
