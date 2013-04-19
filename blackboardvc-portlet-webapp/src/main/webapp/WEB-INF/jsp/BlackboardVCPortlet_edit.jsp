@@ -40,7 +40,7 @@
         <td><span class="uportal-channel-strong">Session Name: </span></td>
         <c:choose>
           <c:when test="${session.newSession}">
-            <td><form:input path="sessionName" style="width: 50%;" class="uportal-input-text" /></td>
+            <td><form:input path="sessionName" style="width: 50%;" class="uportal-input-text" /><form:errors path="sessionName" cssClass="error"/></td>
           </c:when>
           <c:otherwise>
             <td><form:hidden path="sessionName" />${session.sessionName}</td>
@@ -56,6 +56,7 @@
         <td><span class="uportal-channel-strong">Start Date and Time: </span></td>
         <td>
           <form:input id="${n}startdatepicker" path="startDate" style="width: 82px;"/>&nbsp;
+          <form:errors path="startDate" cssClass="error"/>&nbsp;
           <form:select path="startHour">
               <c:forEach var="i" begin="0" end="23" step="1">
                   <form:option value="${i}">${i}</form:option>
@@ -67,6 +68,8 @@
                   <form:option value="${i}">${i}</form:option>
               </c:forEach>
           </form:select>
+            <form:errors path="startHour" cssClass="error"/>&nbsp;
+            <form:errors path="startMinute" cssClass="error"/>
         </td>
       </tr>
       <tr>
@@ -74,7 +77,8 @@
                 
         <td>
           <form:input id="${n}enddatepicker" path="endDate" style="width: 82px;"/>&nbsp;
-          <form:select path="endHour">
+            <form:errors path="endDate" cssClass="error"/>&nbsp;
+            <form:select path="endHour">
             <c:forEach var="i" begin="0" end="23" step="1">
               <form:option value="${i}">${i}</form:option>
             </c:forEach>
@@ -85,6 +89,8 @@
               <form:option value="${i}">${i}</form:option>
             </c:forEach>
           </form:select>
+            <form:errors path="endHour" cssClass="error"/>&nbsp;
+            <form:errors path="endMinute" cssClass="error"/>&nbsp;
         </td>
       </tr>
       <tr>
@@ -377,12 +383,10 @@
     $(document).ready(
         function() {
           $("#${n}startdatepicker").datepicker({
-            showButtonPanel : true,
-            dateFormat : 'mm/dd/yyyy'
+            showButtonPanel : true
           });
           $("#${n}enddatepicker").datepicker({
-            showButtonPanel : true,
-            dateFormat : 'mm/dd/yyyy'
+            showButtonPanel : true
           });
         });
   });

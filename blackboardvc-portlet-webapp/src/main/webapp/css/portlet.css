@@ -20,3 +20,8 @@
 /* New success style */
 .uportal-channel-success, 
 p.uportal-channel-success {padding:1em 1em 1em 3em; border:2px solid; color:#004800; background:#D1F0E0 url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/accept.png) 1em 1em no-repeat;}
+
+.error
+{
+    color: #ff0000;
+}

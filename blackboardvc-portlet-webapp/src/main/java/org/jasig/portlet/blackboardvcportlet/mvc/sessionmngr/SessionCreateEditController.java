@@ -18,17 +18,8 @@
  */
 package org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr;
 
-import java.util.Set;
-
-import javax.portlet.ActionResponse;
-import javax.portlet.PortletMode;
-import javax.portlet.PortletModeException;
-
-import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
-import org.jasig.portlet.blackboardvcportlet.data.Multimedia;
-import org.jasig.portlet.blackboardvcportlet.data.RecordingMode;
-import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
-import org.jasig.portlet.blackboardvcportlet.data.Session;
+import com.google.common.collect.ImmutableSortedSet;
+import org.jasig.portlet.blackboardvcportlet.data.*;
 import org.jasig.portlet.blackboardvcportlet.security.ConferenceUserService;
 import org.jasig.portlet.blackboardvcportlet.service.ServerConfigurationService;
 import org.jasig.portlet.blackboardvcportlet.service.SessionForm;
@@ -41,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -49,8 +41,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
-
-import com.google.common.collect.ImmutableSortedSet;
+import javax.portlet.ActionResponse;
+import javax.portlet.PortletMode;
+import javax.portlet.PortletModeException;
+import javax.validation.Valid;
+import java.util.Set;
 
 /**
  * Controller class for Portlet EDIT related actions and render
@@ -133,12 +128,14 @@ public class SessionCreateEditController
 	
     //TODO @Valid on SessionForm
 	@ActionMapping(params = "action=saveSession")
-	public void saveSession(ActionResponse response, SessionForm sessionForm) throws PortletModeException {
-	    final ConferenceUser conferenceUser = this.conferenceUserService.getCurrentConferenceUser();
-
-	    this.sessionService.createOrUpdateSession(conferenceUser, sessionForm);
-	    
-	    response.setPortletMode(PortletMode.VIEW);
+	public void saveSession(ActionResponse response, @Valid SessionForm sessionForm, BindingResult bindingResult) throws PortletModeException
+	{
+		if (!bindingResult.hasErrors())
+		{
+			final ConferenceUser conferenceUser = this.conferenceUserService.getCurrentConferenceUser();
+			this.sessionService.createOrUpdateSession(conferenceUser, sessionForm);
+			response.setPortletMode(PortletMode.VIEW);
+		}
 	}
     
     @ActionMapping(params = "action=deleteSessions")

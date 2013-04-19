@@ -92,6 +92,7 @@
         <hibernate.version>4.1.9.Final</hibernate.version>
         <hibernate-jpamodelgen.version>1.2.0.Final</hibernate-jpamodelgen.version>
         <hibernate-jpa-api.version>1.0.1.Final</hibernate-jpa-api.version>
+        <hibernate-validator.version>4.3.1.Final</hibernate-validator.version>
         <jackson.version>1.9.7</jackson.version>
         <jaxb2basics.version>0.6.3</jaxb2basics.version>
         <portlet-utils.version>1.1.0</portlet-utils.version>
@@ -282,6 +283,11 @@
                 <groupId>org.hibernate.javax.persistence</groupId>
                 <artifactId>hibernate-jpa-2.0-api</artifactId>
                 <version>${hibernate-jpa-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>${hibernate-validator.version}</version>
             </dependency>
             <dependency>
                 <groupId>javax.sql</groupId>

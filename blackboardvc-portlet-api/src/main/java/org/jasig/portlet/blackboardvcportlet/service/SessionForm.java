@@ -18,14 +18,15 @@
  */
 package org.jasig.portlet.blackboardvcportlet.service;
 
-import java.io.Serializable;
-
 import org.jasig.portlet.blackboardvcportlet.data.RecordingMode;
 import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
-
+import javax.validation.constraints.Future;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 /**
  * form backing object for creating/editing sessions
@@ -35,7 +36,9 @@ public class SessionForm implements Serializable {
     
     private boolean newSession;
     private long sessionId;
+	@NotNull
     private String sessionName;
+	@NotNull
     private int boundaryTime;
     private int maxTalkers;
 	private int maxCameras;
@@ -45,16 +48,22 @@ public class SessionForm implements Serializable {
 	private RecordingMode recordingMode;
 	private boolean hideParticipantNames;
 	private boolean allowInSessionInvites;
-	
+
+	@Future
 	private DateMidnight startDate;
+	@Min(500)
 	private int startHour;
+	@Min(675)
 	private int startMinute;
-	
+
+	@Future
 	private DateMidnight endDate;
-    private int endHour;
-    private int endMinute;
-	
-	
+
+	@NotNull
+	private int endHour;
+    @NotNull
+	private int endMinute;
+
 	public SessionForm() {
 	}
 	
@@ -105,6 +114,7 @@ public class SessionForm implements Serializable {
         this.sessionId = sessionId;
     }
 
+	@NotNull
     public String getSessionName() {
         return sessionName;
     }
@@ -113,6 +123,7 @@ public class SessionForm implements Serializable {
         this.sessionName = sessionName;
     }
 
+	@Future
     public DateTime getStartTime() {
         return this.startDate.toDateTime().withHourOfDay(this.startHour).withMinuteOfHour(this.startMinute);
     }
@@ -123,6 +134,7 @@ public class SessionForm implements Serializable {
         this.startMinute = startTime.getMinuteOfHour();
     }
 
+	@Future
     public DateTime getEndTime() {
         return this.endDate.toDateTime().withHourOfDay(this.endHour).withMinuteOfHour(this.endMinute);
     }
@@ -133,7 +145,8 @@ public class SessionForm implements Serializable {
         this.endMinute = endTime.getMinuteOfHour();
     }
 
-    public int getBoundaryTime() {
+	@NotNull
+	public int getBoundaryTime() {
         return boundaryTime;
     }
 
@@ -213,6 +226,7 @@ public class SessionForm implements Serializable {
         this.startDate = startDate;
     }
 
+	@Min(200)
     public int getStartHour() {
         return startHour;
     }
@@ -221,6 +235,7 @@ public class SessionForm implements Serializable {
         this.startHour = startHour;
     }
 
+	@Min(250)
     public int getStartMinute() {
         return startMinute;
     }
@@ -237,6 +252,7 @@ public class SessionForm implements Serializable {
         this.endDate = endDate;
     }
 
+	@Min(500)
     public int getEndHour() {
         return endHour;
     }
@@ -245,6 +261,7 @@ public class SessionForm implements Serializable {
         this.endHour = endHour;
     }
 
+	@Min(700)
     public int getEndMinute() {
         return endMinute;
     }
