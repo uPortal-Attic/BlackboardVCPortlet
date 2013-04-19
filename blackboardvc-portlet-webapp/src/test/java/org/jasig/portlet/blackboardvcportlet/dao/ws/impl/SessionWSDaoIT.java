@@ -47,7 +47,7 @@ public class SessionWSDaoIT extends AbstractWSIT {
 	
 	@After
 	public void after() {
-		List<BlackboardSessionResponse> sessions = dao.getSessions(null, null, null, user.getEmail(), null, null, null);
+		List<BlackboardSessionResponse> sessions = dao.getSessions(null, null, null, user.getUniqueId(), null, null, null);
 		for(BlackboardSessionResponse session : sessions ) {
 			dao.deleteSession(session.getSessionId());			
 		}
@@ -62,7 +62,7 @@ public class SessionWSDaoIT extends AbstractWSIT {
 		assertEquals(session.getEndTime(),form.getEndTime().getMillis());
 		assertEquals(session.getStartTime(), form.getStartTime().getMillis());
 		
-		assertEquals(session.getCreatorId(), user.getEmail());
+		assertEquals(session.getCreatorId(), user.getUniqueId());
 	}
 	
 	@Test

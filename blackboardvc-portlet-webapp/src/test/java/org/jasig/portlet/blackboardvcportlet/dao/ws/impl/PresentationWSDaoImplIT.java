@@ -48,7 +48,7 @@ public class PresentationWSDaoImplIT extends AbstractWSIT {
 	
 	@After
 	public void after() {
-		List<BlackboardSessionResponse> sessions = sessionDao.getSessions(null, null, null, user.getEmail(), null, null, null);
+		List<BlackboardSessionResponse> sessions = sessionDao.getSessions(null, null, null, user.getUniqueId(), null, null, null);
 		for(BlackboardSessionResponse session : sessions ) {
 			List<BlackboardPresentationResponse> sessionPresentations = dao.getSessionPresentations(session.getSessionId());
 			for(BlackboardPresentationResponse presenation : sessionPresentations) {
@@ -87,7 +87,7 @@ public class PresentationWSDaoImplIT extends AbstractWSIT {
 	@Test
 	public void getRepositoryPresentationsTest() throws IOException {
 		BlackboardPresentationResponse repoPresentation = createRepoPresentation();
-		List<BlackboardPresentationResponse> repositoryPresentations = dao.getRepositoryPresentations(user.getEmail(), repoPresentation.getPresentationId(), null);
+		List<BlackboardPresentationResponse> repositoryPresentations = dao.getRepositoryPresentations(user.getUniqueId(), repoPresentation.getPresentationId(), null);
 		assertNotNull(repositoryPresentations);
 		assertEquals(repositoryPresentations.size(),1);
 		assertEquals(repoPresentation,repositoryPresentations.get(0));
@@ -114,7 +114,7 @@ public class PresentationWSDaoImplIT extends AbstractWSIT {
         ByteArrayDataSource rawData = new ByteArrayDataSource(is,"video/mpeg");
 		DataHandler dataHandler = new DataHandler(rawData);
 
-		BlackboardPresentationResponse presenetation = dao.uploadPresentation(user.getEmail(), "test.elp", "aliens",dataHandler);
+		BlackboardPresentationResponse presenetation = dao.uploadPresentation(user.getUniqueId(), "test.elp", "aliens",dataHandler);
         presentations.put(presenetation.getPresentationId(), presenetation);
         return presenetation;
 	}

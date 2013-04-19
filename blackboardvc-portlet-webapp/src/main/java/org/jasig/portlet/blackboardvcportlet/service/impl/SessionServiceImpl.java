@@ -439,7 +439,7 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
             //Upload the file to BB
             return this.multimediaWSDao.createSessionMultimedia(
                 session.getBbSessionId(), 
-                conferenceUser.getEmail(), 
+                conferenceUser.getUniqueId(), 
                 filename, 
                 "",
                 new DataHandler(new FileDataSource(multimediaFile)));
@@ -465,7 +465,7 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
             //Upload the file to BB
             return this.presentationWSDao.uploadPresentation(
                     session.getBbSessionId(), 
-                    conferenceUser.getEmail(), 
+                    conferenceUser.getUniqueId(), 
                     filename, 
                     "",
                     new DataHandler(new FileDataSource(multimediaFile)));

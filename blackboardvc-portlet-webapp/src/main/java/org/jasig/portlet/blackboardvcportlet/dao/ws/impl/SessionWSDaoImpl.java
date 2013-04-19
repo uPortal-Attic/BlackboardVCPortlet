@@ -54,12 +54,12 @@ public class SessionWSDaoImpl implements SessionWSDao {
     @Override
 	public BlackboardSessionResponse createSession(ConferenceUser user, SessionForm sessionForm) {
 		final BlackboardSetSession setSession = new BlackboardSetSession();
-        setSession.setCreatorId(user.getEmail());
+        setSession.setCreatorId(user.getUniqueId());
         setSession.setSessionName(sessionForm.getSessionName());
         setSession.setStartTime(sessionForm.getStartTime().getMillis());
         setSession.setEndTime(sessionForm.getEndTime().getMillis());
         setSession.setBoundaryTime(sessionForm.getBoundaryTime());
-        setSession.setChairList(user.getEmail());
+        setSession.setChairList(user.getUniqueId());
         
         if (securityExpressionEvaluator.authorize("hasRole('ROLE_FULL_ACCESS')")) {
             setSession.setMaxTalkers(sessionForm.getMaxTalkers());
@@ -90,7 +90,7 @@ public class SessionWSDaoImpl implements SessionWSDao {
 		BlackboardBuildSessionUrl buildSessionUrlRequest = new BlackboardBuildSessionUrl();
 		buildSessionUrlRequest.setSessionId(sessionId);
 		buildSessionUrlRequest.setDisplayName(user.getDisplayName());
-		buildSessionUrlRequest.setUserId(user.getEmail());
+		buildSessionUrlRequest.setUserId(user.getUniqueId());
         final Object urlResponseObject = sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/BuildSessionUrl", buildSessionUrlRequest);
         @SuppressWarnings("unchecked")
         JAXBElement<BlackboardUrlResponse> jaxbResponse = (JAXBElement<BlackboardUrlResponse>) urlResponseObject;

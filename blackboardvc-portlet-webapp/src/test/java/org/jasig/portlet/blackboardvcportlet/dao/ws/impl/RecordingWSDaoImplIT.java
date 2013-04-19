@@ -37,7 +37,7 @@ public class RecordingWSDaoImplIT extends AbstractWSIT {
 	
 	@After
 	public void after() {
-		List<BlackboardSessionResponse> sessions = sessionDao.getSessions(null, null, null, user.getEmail(), null, null, null);
+		List<BlackboardSessionResponse> sessions = sessionDao.getSessions(null, null, null, user.getUniqueId(), null, null, null);
 		for(BlackboardSessionResponse session : sessions ) {
 			
 			sessionDao.deleteSession(session.getSessionId());			
@@ -46,13 +46,13 @@ public class RecordingWSDaoImplIT extends AbstractWSIT {
 
 	@Test
 	public void getRecordingLongTest() {
-		List<BlackboardRecordingLongResponse> recordingLongList = dao.getRecordingLong(user.getEmail(), null,session.getSessionId(), user.getEmail(), session.getStartTime(), session.getEndTime(), session.getSessionName());
+		List<BlackboardRecordingLongResponse> recordingLongList = dao.getRecordingLong(user.getUniqueId(), null,session.getSessionId(), user.getEmail(), session.getStartTime(), session.getEndTime(), session.getSessionName());
 		assertNotNull(recordingLongList);
 	}
 
 	@Test
 	public void getRecordingShortTest(){
-		List<BlackboardRecordingShortResponse> recordingShort = dao.getRecordingShort(user.getEmail(), null,session.getSessionId(), user.getEmail(), session.getStartTime(), session.getEndTime(), session.getSessionName());
+		List<BlackboardRecordingShortResponse> recordingShort = dao.getRecordingShort(user.getUniqueId(), null,session.getSessionId(), user.getEmail(), session.getStartTime(), session.getEndTime(), session.getSessionName());
 		assertNotNull(recordingShort);
 		
 	}

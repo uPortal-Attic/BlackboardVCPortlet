@@ -47,7 +47,7 @@ public class MultimediaWSDaoIT extends AbstractWSIT {
 	
 	@After
 	public void after() {
-		List<BlackboardSessionResponse> sessions = sessionDao.getSessions(null, null, null, user.getEmail(), null, null, null);
+		List<BlackboardSessionResponse> sessions = sessionDao.getSessions(null, null, null, user.getUniqueId(), null, null, null);
 		for(BlackboardSessionResponse session : sessions ) {
 			List<BlackboardMultimediaResponse> repositoryMultimedias = dao.getSessionMultimedias(session.getSessionId());
 			for(BlackboardMultimediaResponse multimedia : repositoryMultimedias) {
@@ -64,7 +64,7 @@ public class MultimediaWSDaoIT extends AbstractWSIT {
 	
 	@Test
 	public void getRepositoryMultimediasTest () {
-		List<BlackboardMultimediaResponse> repositoryMultimedias = dao.getRepositoryMultimedias(user.getEmail(), null, null);
+		List<BlackboardMultimediaResponse> repositoryMultimedias = dao.getRepositoryMultimedias(user.getUniqueId(), null, null);
 		assertEquals(repositoryMultimedias.size(),0);
 	}
     
@@ -86,7 +86,7 @@ public class MultimediaWSDaoIT extends AbstractWSIT {
 		InputStream is = new ByteArrayInputStream("TEST2".getBytes());
         ByteArrayDataSource rawData = new ByteArrayDataSource(is,"video/mpeg");
 		DataHandler dataHandler = new DataHandler(rawData);
-		BlackboardMultimediaResponse createSessionMultimedia = dao.createSessionMultimedia(session.getSessionId(), user.getEmail(), "test.mpeg", "aliens",dataHandler);
+		BlackboardMultimediaResponse createSessionMultimedia = dao.createSessionMultimedia(session.getSessionId(), user.getUniqueId(), "test.mpeg", "aliens",dataHandler);
 		
 		multimedias.add(createSessionMultimedia.getMultimediaId());
 		
@@ -136,7 +136,7 @@ public class MultimediaWSDaoIT extends AbstractWSIT {
         ByteArrayDataSource rawData = new ByteArrayDataSource(is,"video/mpeg");
 		DataHandler dataHandler = new DataHandler(rawData);
 
-        BlackboardMultimediaResponse uploadRepositoryMultimedia = dao.uploadRepositoryMultimedia(user.getEmail(), "test.mpeg", "aliens",dataHandler);
+        BlackboardMultimediaResponse uploadRepositoryMultimedia = dao.uploadRepositoryMultimedia(user.getUniqueId(), "test.mpeg", "aliens",dataHandler);
         multimedias.add(uploadRepositoryMultimedia.getMultimediaId());
         return uploadRepositoryMultimedia;
 	}
