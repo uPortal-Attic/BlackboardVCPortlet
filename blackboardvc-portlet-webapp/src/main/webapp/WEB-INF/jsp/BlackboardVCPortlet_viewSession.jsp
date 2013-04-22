@@ -19,7 +19,15 @@
 
 --%>
 
+<%@ include file="/WEB-INF/jsp/include.jsp"%>
 <%@ include file="/WEB-INF/jsp/header.jsp"%>
+
+<div id="${n}" class="blackboardVCRoot">
+<c:if test="${!empty prefs['helpUrl'][0]}">
+	<div class="help-link">
+	  <a href="${prefs['helpUrl'][0]}" target="_blank">Help</a>
+	</div>
+</c:if>
 
 <table>
   <tbody>
@@ -68,3 +76,5 @@
        
 <portlet:renderURL var="backUrl" portletMode="VIEW" />
 <a href="${backUrl}" class="uportal-button">Back</a>
+
+</div>
