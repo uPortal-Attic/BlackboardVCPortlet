@@ -3,17 +3,18 @@ package org.jasig.portlet.blackboardvcportlet.data;
 import org.joda.time.DateTime;
 
 public interface Multimedia {
+    long getMultimediaId();
 
-	public abstract String getDescription();
+	String getDescription();
 
-	public abstract long getSize();
+	long getSize();
 
-	public abstract DateTime getLastUpdated();
+	DateTime getLastUpdated();
 
-	public abstract long getBbMultimediaId();
+	long getBbMultimediaId();
 
-	public abstract ConferenceUser getCreator();
+	ConferenceUser getCreator();
 
-	public String getFilename();
+	String getFilename();
 
 }

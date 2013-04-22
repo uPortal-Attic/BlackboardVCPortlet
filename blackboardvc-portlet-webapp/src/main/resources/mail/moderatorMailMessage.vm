@@ -1,11 +1,16 @@
-Dear ${displayName}
+${displayName}:
 
-You have been enrolled as a Moderator and are invited by ${creatorDetails} to attend the following Collaborate session: ${sessionName}
+You have scheduled the following Blackboard Collaborate session:
 
-Session Details
-Start Date and Time: ${sessionStartTime}
-End Date and Time: ${sessionEndTime}
+Name: ${sessionName}
+Type: ${sessionType}
+Starts: ${sessionStartTime}
+Ends: ${sessionEndTime}
 
-To join the session, click on the following link to launch uPortal: ${launchURL}
+To join the session, please click on the link below within ${boundaryTime} minutes of the specified time.
 
-Contact ${creatorDetails} if you have any questions about the session.
+${userURL}
+
+To invite others to join the session, e-mail the following link:
+
+${guestURL}

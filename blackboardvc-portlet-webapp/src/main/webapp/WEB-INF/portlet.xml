@@ -49,7 +49,7 @@
     
         <security-role-ref>
           <role-name>ROLE_FULL_ACCESS</role-name>
-          <role-link>Portal Administrators</role-link>
+          <role-link>Everyone</role-link>
         </security-role-ref>
     </portlet>
     
@@ -58,6 +58,9 @@
     </user-attribute>
     <user-attribute>
         <name>mail</name>
+    </user-attribute>
+    <user-attribute>
+        <name>eppn</name>
     </user-attribute>
     
     <filter>

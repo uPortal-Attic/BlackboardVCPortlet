@@ -9,6 +9,8 @@ import com.elluminate.sas.BlackboardMultimediaResponse;
 public interface MultimediaDao {
 
 	public abstract Set<Multimedia> getAllMultimedia();
+	
+	public abstract Multimedia getMultimedia(long multimediaId);
 
 	public abstract Multimedia getMultimediaByBlackboardId(long bbMultimediaId);
 

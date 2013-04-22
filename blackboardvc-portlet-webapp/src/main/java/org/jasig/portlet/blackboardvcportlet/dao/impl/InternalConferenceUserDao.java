@@ -8,5 +8,11 @@ import org.jasig.portlet.blackboardvcportlet.dao.ConferenceUserDao;
 interface InternalConferenceUserDao extends ConferenceUserDao {
     ConferenceUserImpl getUser(long userId);
     
-    ConferenceUserImpl getOrCreateUser(String email);
+    ConferenceUserImpl getUserByUniqueId(String uniqueId);
+    
+    ConferenceUserImpl createInternalUser(String uniqueId);
+    
+    ConferenceUserImpl getExternalUserByEmail(String email);
+    
+    ConferenceUserImpl createExternalUser(String email);
 }

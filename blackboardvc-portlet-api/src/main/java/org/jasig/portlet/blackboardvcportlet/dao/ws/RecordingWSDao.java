@@ -2,6 +2,8 @@ package org.jasig.portlet.blackboardvcportlet.dao.ws;
 
 import java.util.List;
 
+import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceOperations;
+
 import com.elluminate.sas.BlackboardRecordingLongResponse;
 import com.elluminate.sas.BlackboardRecordingShortResponse;
 
@@ -37,4 +39,6 @@ public interface RecordingWSDao {
 	public String buildRecordingUrl(long recordingId);
 	
 	public boolean updateRecordingSecureSignOn(long recordingId, boolean secureSignOn);
+	
+	public void setSasWebServiceOperations(SASWebServiceOperations sasWebServiceOperations);
 }

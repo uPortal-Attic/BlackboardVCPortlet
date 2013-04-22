@@ -50,11 +50,11 @@ public class UserSessionUrlImpl implements UserSessionUrl {
     private final Session session;
 
     @NaturalId
-    @ManyToOne(targetEntity = ConferenceUserImpl.class, optional = false)
+    @ManyToOne(targetEntity = ConferenceUserImpl.class, optional = false )
     @JoinColumn(name = "USER_ID", nullable = false)
     private final ConferenceUser user;
     
-    @Column(name = "ENTITY_VERSION", nullable = false)
+    @Column(name = "URL", nullable = false)
     private final String url;
     
     /**

@@ -29,13 +29,13 @@ public interface SessionDao {
     
     void deleteSession(Session session);
 
-    Session addMultimediaToSession(Long sessionId, Multimedia multimedia);
+    Session addMultimediaToSession(Session session, Multimedia multimedia);
 
-	Session deleteMultimediaFromSession(Long sessionId, Multimedia multimedia);
+	Session deleteMultimediaFromSession(Session session, Multimedia multimedia);
 
 	Set<Multimedia> getSessionMultimedias(Session session);
 
-	Session addPresentationToSession(Long sessionId, Presentation presentation);
+	Session addPresentationToSession(Session session, Presentation presentation);
 
-	Session removePresentationFromSession(Long sessionId);
+	Session removePresentationFromSession(Session session);
 }

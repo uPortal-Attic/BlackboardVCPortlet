@@ -51,10 +51,8 @@ import org.hibernate.annotations.Type;
 import org.jasig.portlet.blackboardvcportlet.data.AccessType;
 import org.jasig.portlet.blackboardvcportlet.data.Multimedia;
 import org.jasig.portlet.blackboardvcportlet.data.Presentation;
-import org.jasig.portlet.blackboardvcportlet.data.Session;
-import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingMode;
-import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
+import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.data.UserSessionUrl;
 import org.joda.time.DateTime;
 
@@ -91,7 +89,7 @@ public class SessionImpl implements Session {
     
     @ManyToOne(targetEntity = ConferenceUserImpl.class, optional = false)
     @JoinColumn(name = "CREATOR", nullable = false)
-    private final ConferenceUser creator;
+    private final ConferenceUserImpl creator;
     
     @ManyToOne(targetEntity = PresentationImpl.class)
     @JoinColumn(name = "PRESENTATION", nullable = true)
@@ -129,14 +127,14 @@ public class SessionImpl implements Session {
         joinColumns= @JoinColumn(name="SESSION_ID"),
         inverseJoinColumns=@JoinColumn(name="USER_ID")
     )
-    private final Set<ConferenceUser> chairs = new HashSet<ConferenceUser>(0);
+    private final Set<ConferenceUserImpl> chairs = new HashSet<ConferenceUserImpl>(0);
     
     @ManyToMany(targetEntity = ConferenceUserImpl.class, fetch = FetchType.LAZY)
     @JoinTable(name="VC2_SESSION_NONCHAIRS",
         joinColumns= @JoinColumn(name="SESSION_ID"),
         inverseJoinColumns=@JoinColumn(name="USER_ID")
     )
-    private final Set<ConferenceUser> nonChairs = new HashSet<ConferenceUser>(0);
+    private final Set<ConferenceUserImpl> nonChairs = new HashSet<ConferenceUserImpl>(0);
     
     @ManyToMany(targetEntity = MultimediaImpl.class, fetch = FetchType.LAZY)
     @JoinTable(name="VC2_SESSION_MULTIMEDIA",
@@ -191,11 +189,13 @@ public class SessionImpl implements Session {
     
     //Exists only to allow cascading deletes, should NEVER be accessed by normal code
     @OneToMany(mappedBy = "session", targetEntity = SessionRecordingImpl.class, cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, orphanRemoval = true)
-    private transient final Set<SessionRecording> sessionRecordings = null;
+    private final Set<SessionRecordingImpl> sessionRecordings = new HashSet<SessionRecordingImpl>(0);
     
     //Exists only to allow cascading deletes, should NEVER be accessed by normal code
     @OneToMany(mappedBy = "session", targetEntity = UserSessionUrlImpl.class, cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, orphanRemoval = true)
-    private transient final Set<UserSessionUrl> userUrls = null;
+    private final Set<UserSessionUrl> userUrls = new HashSet<UserSessionUrl>(0);
+    
+
 
     /**
      * needed by hibernate
@@ -208,14 +208,13 @@ public class SessionImpl implements Session {
         this.creator = null;
     }
     
-    SessionImpl(long bbSessionId, ConferenceUser creator) {
+    SessionImpl(long bbSessionId, ConferenceUserImpl creator) {
         Validate.notNull(creator, "creator cannot be null");
             
         this.sessionId = -1;
         this.entityVersion = -1;
         this.bbSessionId = bbSessionId;
         this.creator = creator;
-        
     }
 
     /**
@@ -316,11 +315,11 @@ public class SessionImpl implements Session {
         this.nonChairNotes = nonChairNotes;
     }
 
-    Set<ConferenceUser> getChairs() {
+    Set<ConferenceUserImpl> getChairs() {
         return chairs;
     }
 
-    Set<ConferenceUser> getNonChairs() {
+    Set<ConferenceUserImpl> getNonChairs() {
         return nonChairs;
     }
     
@@ -448,7 +447,7 @@ public class SessionImpl implements Session {
     }
 
     @Override
-    public ConferenceUser getCreator() {
+    public ConferenceUserImpl getCreator() {
         return creator;
     }
     

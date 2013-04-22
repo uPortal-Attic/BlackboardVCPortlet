@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.jasig.portlet.blackboardvcportlet.dao.ws.RecordingWSDao;
 import org.jasig.portlet.blackboardvcportlet.dao.ws.WSDaoUtils;
+import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceOperations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.elluminate.sas.BlackboardBuildRecordingUrl;
@@ -21,7 +23,15 @@ import com.elluminate.sas.ObjectFactory;
 import static org.jasig.portlet.blackboardvcportlet.dao.ws.WSDaoUtils.isSuccessful;
 
 @Service
-public class RecordingWSDaoImpl extends ContentWSDaoImpl implements RecordingWSDao {
+public class RecordingWSDaoImpl implements RecordingWSDao {
+	
+	private SASWebServiceOperations sasWebServiceOperations;
+	
+	@Autowired
+	public void setSasWebServiceOperations(SASWebServiceOperations sasWebServiceOperations)
+	{
+		this.sasWebServiceOperations = sasWebServiceOperations;
+	}
 
 	@Override
 	public List<BlackboardRecordingLongResponse> getRecordingLong(String userId, String groupingId, Long sessionId, String creatorId,

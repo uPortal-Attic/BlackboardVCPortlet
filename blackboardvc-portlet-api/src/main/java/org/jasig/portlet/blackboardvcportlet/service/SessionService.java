@@ -57,11 +57,21 @@ public interface SessionService {
     
     void addSessionChair(long sessionId, String displayName, String email);
     
-    void removeSessionChairs(long sessionId, String... emails);
+    void removeSessionChairs(long sessionId, long... userIds);
     
     void addSessionNonChair(long sessionId, String displayName, String email);
     
-    void removeSessionNonChairs(long sessionId, String... emails);
+    void removeSessionNonChairs(long sessionId, long... userIds);
+    
+    void addPresentation(long sessionId, MultipartFile file);
+    
+    void deletePresentation(long sessionId);
     
     void addMultimedia(long sessionId, MultipartFile file);
+    
+    void deleteMultimedia(long sessionId, long... multimediaIds);
+
+	String getOrCreateSessionUrl(ConferenceUser user, Session session);
+
+	boolean isSessionParticipant(Session session, ConferenceUser user);
 }

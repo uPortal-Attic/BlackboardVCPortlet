@@ -1,0 +1,8 @@
+<ListRepositoryMultimediaResponseCollection xmlns="http://sas.elluminate.com/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+   <MultimediaResponse>
+      <multimediaId xsi:type="xs:long">4377</multimediaId>
+      <description xsi:type="xs:string">aliens</description>
+      <size xsi:type="xs:long">4</size>
+      <creatorId xsi:type="xs:string">my-test@example.com</creatorId>
+   </MultimediaResponse>
+</ListRepositoryMultimediaResponseCollection>

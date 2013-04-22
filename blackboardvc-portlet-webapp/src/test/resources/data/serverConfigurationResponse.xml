@@ -1,0 +1,12 @@
+<GetServerConfigurationResponseCollection xmlns="http://sas.elluminate.com/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+   <ServerConfigurationResponse>
+      <boundaryTime xsi:type="xs:int">30</boundaryTime>
+      <maxAvailableTalkers xsi:type="xs:int">6</maxAvailableTalkers>
+      <maxAvailableCameras xsi:type="xs:int">6</maxAvailableCameras>
+      <raiseHandOnEnter xsi:type="xs:boolean">false</raiseHandOnEnter>
+      <mayUseTelephony xsi:type="xs:boolean">false</mayUseTelephony>
+      <mayUseSecureSignOn xsi:type="xs:boolean">false</mayUseSecureSignOn>
+      <mustReserveSeats xsi:type="xs:boolean">false</mustReserveSeats>
+      <timeZone xsi:type="xs:string">Mountain (North America/Canada, GMT -06:00)</timeZone>
+   </ServerConfigurationResponse>
+</GetServerConfigurationResponseCollection>

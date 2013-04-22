@@ -247,7 +247,7 @@
           <tr class="${loopStatus.index % 2 == 0 ? 'uportal-channel-table-row-odd' : 'uportal-channel-table-row-even'}">
           <td>${user.displayName}</td>
           <td>${user.email}</td>
-          <td><input value="${user.email}" name="deleteChair" type="checkbox" /></td>
+          <td><input value="${user.userId}" name="chairId" type="checkbox" /></td>
           </tr>
         </c:forEach>
         <tr>
@@ -285,7 +285,7 @@
           <tr class="${loopStatus.index % 2 == 0 ? 'uportal-channel-table-row-odd' : 'uportal-channel-table-row-even'}">
           <td>${user.displayName}</td>
           <td>${user.email}</td>
-          <td><input value="${user.email}" name="deleteNonChair" type="checkbox" /></td>
+          <td><input value="${user.userId}" name="nonChairId" type="checkbox" /></td>
           </tr>
         </c:forEach>
         <tr>
@@ -326,13 +326,12 @@
             <tr class="uportal-channel-table-row-odd">
               <td>${presentation.filename}</td>
               <td>
-                <input type="hidden" name="presentationId" value="${presentation.presentationId}" />
                 <input value="Delete Presentation" name="action" class="uportal-button" type="submit">
               </td>
             </tr>
           </c:if>
           <tr>
-            <td><input name="presentationUpload" size="40" type="file"></td>
+            <td><input name="presentationUpload" size="40" type="file" accept=".wbd,.wbp,.elp,.elpx"></td>
             <td><input value="Upload Presentation" name="action" class="uportal-button" type="submit"></td>
           </tr>
           <tr>
@@ -361,7 +360,7 @@
           <c:forEach items="${sessionMultimedia}" var="multimediaItem" varStatus="loopStatus">
             <tr class="${loopStatus.index % 2 == 0 ? 'uportal-channel-table-row-odd' : 'uportal-channel-table-row-even'}">
               <td>${multimediaItem.filename}</td>
-              <td><input type="checkbox" name="deleteMultimediaFiles" value="${multimediaItem.multimediaId}" /></td>
+              <td><input type="checkbox" name="deleteMultimedia" value="${multimediaItem.multimediaId}" /></td>
             </tr>
           </c:forEach>
           <tr>

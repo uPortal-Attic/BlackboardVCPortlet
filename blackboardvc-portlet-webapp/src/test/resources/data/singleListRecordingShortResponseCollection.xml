@@ -1,0 +1,9 @@
+<ListRecordingShortResponseCollection xmlns="http://sas.elluminate.com/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<RecordingShortResponse>
+		<recordingId xsi:type="xs:long">1</recordingId>
+		<creationDate xsi:type="xs:long">1364566500000</creationDate>
+		<recordingSize xsi:type="xs:long">10000</recordingSize>
+		<roomName xsi:type="xs:string">Le Room</roomName>
+		<sessionId xsi:type="xs:long">1</sessionId>	
+	</RecordingShortResponse>
+</ListRecordingShortResponseCollection>

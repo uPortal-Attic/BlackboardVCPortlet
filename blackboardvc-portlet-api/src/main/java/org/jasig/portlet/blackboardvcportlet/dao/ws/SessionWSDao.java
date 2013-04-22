@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.service.SessionForm;
+import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceOperations;
 
 import com.elluminate.sas.BlackboardSessionAttendanceResponse;
 import com.elluminate.sas.BlackboardSessionResponse;
@@ -15,7 +16,8 @@ public interface SessionWSDao {
 	
 	//create
 	public BlackboardSessionResponse createSession(ConferenceUser user, SessionForm sessionForm);
-	public String buildSessionUrl(long sessionId, String displayName);
+	public String buildGuestSessionUrl(long sessionId);
+	public String buildSessionUrl(long sessionId, ConferenceUser user);
 	//TODO : this might just go into create session
 	public boolean createSessionTelephony(long sessionId, BlackboardSetSessionTelephony telephony);
 
@@ -48,6 +50,8 @@ public interface SessionWSDao {
 	public boolean deleteSession(long sessionId);
 	public boolean clearSessionChairList(long sessionId);
 	public boolean clearSessionNonChairList(long sessionId);
+	
+	public void setSasWebServiceOperations(SASWebServiceOperations sasWebServiceOperations);
 
 	
 

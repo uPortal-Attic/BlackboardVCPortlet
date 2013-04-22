@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <parent>
         <groupId>edu.wisc.doit.code</groupId>
@@ -10,7 +9,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>edu.wisc.my.portlet.blackboardcollaborate</groupId>
     <artifactId>blackboardvc-portlet-parent</artifactId>
-    <version>1.2.0.0-SNAPSHOT</version>
+    <version>1.2.0.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>BlackboardVCPortlet</name>
     <url>https://github.com/UW-Madison-DoIT/BlackboardVCPortlet</url>
@@ -79,7 +78,8 @@
         <connection>scm:git:git@github.com:UW-Madison-DoIT/BlackboardVCPortlet.git</connection>
         <developerConnection>scm:git:git@github.com:UW-Madison-DoIT/BlackboardVCPortlet.git</developerConnection>
         <url>https://github.com/UW-Madison-DoIT/BlackboardVCPortlet</url>
-    </scm>
+      <tag>HEAD</tag>
+  </scm>
 
     <properties>
         <aspectjrt.version>1.7.1</aspectjrt.version>
@@ -98,7 +98,7 @@
         <portlet-utils.version>1.1.0</portlet-utils.version>
         <resource-server.version>1.0.29</resource-server.version>
         <slf4j.version>1.7.4</slf4j.version>
-        <spring-portlet-contrib.version>1.2.0-SNAPSHOT</spring-portlet-contrib.version>
+        <spring-portlet-contrib.version>1.2.0</spring-portlet-contrib.version>
 
         <project.build.sourceVersion>1.6</project.build.sourceVersion>
         <project.build.targetVersion>1.6</project.build.targetVersion>

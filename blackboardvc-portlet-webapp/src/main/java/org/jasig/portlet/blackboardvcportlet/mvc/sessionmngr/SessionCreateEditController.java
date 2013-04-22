@@ -18,6 +18,18 @@
  */
 package org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr;
 
+import java.util.Set;
+
+import javax.portlet.ActionResponse;
+import javax.portlet.PortletMode;
+import javax.portlet.PortletModeException;
+
+import org.apache.commons.lang.StringUtils;
+import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
+import org.jasig.portlet.blackboardvcportlet.data.Multimedia;
+import org.jasig.portlet.blackboardvcportlet.data.RecordingMode;
+import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
+import org.jasig.portlet.blackboardvcportlet.data.Session;
 import com.google.common.collect.ImmutableSortedSet;
 import org.jasig.portlet.blackboardvcportlet.data.*;
 import org.jasig.portlet.blackboardvcportlet.security.ConferenceUserService;
@@ -46,6 +58,8 @@ import javax.portlet.PortletMode;
 import javax.portlet.PortletModeException;
 import javax.validation.Valid;
 import java.util.Set;
+
+import com.google.common.collect.Ordering;
 
 /**
  * Controller class for Portlet EDIT related actions and render
@@ -119,15 +133,15 @@ public class SessionCreateEditController
 		}
 
         final Set<ConferenceUser> sessionChairs = this.sessionService.getSessionChairs(session);
-        model.addAttribute("sessionChairs", ImmutableSortedSet.copyOf(ConferenceUserDisplayNameComparator.INSTANCE, sessionChairs));
+        model.addAttribute("sessionChairs", Ordering.from(ConferenceUserDisplayNameComparator.INSTANCE).sortedCopy(sessionChairs));
         
         final Set<ConferenceUser> sessionNonChairs = this.sessionService.getSessionNonChairs(session);
-        model.addAttribute("sessionNonChairs", ImmutableSortedSet.copyOf(ConferenceUserDisplayNameComparator.INSTANCE, sessionNonChairs));
+        model.addAttribute("sessionNonChairs", Ordering.from(ConferenceUserDisplayNameComparator.INSTANCE).sortedCopy(sessionNonChairs));
         
         final Set<Multimedia> sessionMultimedia = this.sessionService.getSessionMultimedia(session);
-        model.addAttribute("sessionMultimedia", ImmutableSortedSet.copyOf(MultimediaNameComparator.INSTANCE, sessionMultimedia));
+        model.addAttribute("sessionMultimedia", Ordering.from(MultimediaNameComparator.INSTANCE).sortedCopy(sessionMultimedia));
         
-        //TODO get session presentation
+        model.addAttribute("presentation", session.getPresentation()); 
         
         return "BlackboardVCPortlet_edit";
     }
@@ -161,6 +175,9 @@ public class SessionCreateEditController
 	//TODO @Valid on name/email
     @ActionMapping(params = "action=Add Moderator")
     public void addSessionChair(ActionResponse response, @RequestParam long sessionId, @RequestParam String displayName, @RequestParam String email) throws PortletModeException {
+        displayName = StringUtils.trimToNull(displayName);
+        email = StringUtils.trimToNull(email);
+        
         this.sessionService.addSessionChair(sessionId, displayName, email);
 
         response.setPortletMode(PortletMode.EDIT);
@@ -169,8 +186,8 @@ public class SessionCreateEditController
 
     //TODO @Valid on deleteChair (must be email)
     @ActionMapping(params = "action=Delete Moderator(s)")
-    public void deleteSessionChairs(ActionResponse response, @RequestParam long sessionId, @RequestParam String[] deleteChair) throws PortletModeException {
-        this.sessionService.removeSessionChairs(sessionId, deleteChair);
+    public void deleteSessionChairs(ActionResponse response, @RequestParam long sessionId, @RequestParam long[] chairId) throws PortletModeException {
+        this.sessionService.removeSessionChairs(sessionId, chairId);
 
         response.setPortletMode(PortletMode.EDIT);
         response.setRenderParameter("sessionId", Long.toString(sessionId));
@@ -179,6 +196,9 @@ public class SessionCreateEditController
     //TODO @Valid on name/email
     @ActionMapping(params = "action=Add Participant")
     public void addSessionNonChair(ActionResponse response, @RequestParam long sessionId, @RequestParam String displayName, @RequestParam String email) throws PortletModeException {
+        displayName = StringUtils.trimToNull(displayName);
+        email = StringUtils.trimToNull(email);
+        
         this.sessionService.addSessionNonChair(sessionId, displayName, email);
 
         response.setPortletMode(PortletMode.EDIT);
@@ -187,8 +207,8 @@ public class SessionCreateEditController
 
     //TODO @Valid on deleteNonChair (must be email)
     @ActionMapping(params = "action=Delete Participant(s)")
-    public void deleteSessionNonChairs(ActionResponse response, @RequestParam long sessionId, @RequestParam String[] deleteNonChair) throws PortletModeException {
-        this.sessionService.removeSessionNonChairs(sessionId, deleteNonChair);
+    public void deleteSessionNonChairs(ActionResponse response, @RequestParam long sessionId, @RequestParam long[] nonChairId) throws PortletModeException {
+        this.sessionService.removeSessionNonChairs(sessionId, nonChairId);
 
         response.setPortletMode(PortletMode.EDIT);
         response.setRenderParameter("sessionId", Long.toString(sessionId));
@@ -198,6 +218,31 @@ public class SessionCreateEditController
     @ActionMapping(params = "action=Upload Multimedia")
     public void uploadMultimedia(ActionResponse response, @RequestParam long sessionId, @RequestParam MultipartFile multimediaUpload) throws PortletModeException {
         this.sessionService.addMultimedia(sessionId, multimediaUpload);
+
+        response.setPortletMode(PortletMode.EDIT);
+        response.setRenderParameter("sessionId", Long.toString(sessionId));
+    }
+
+    @ActionMapping(params = "action=Delete Multimedia Item(s)")
+    public void deleteMultimedia(ActionResponse response, @RequestParam long sessionId, @RequestParam long[] deleteMultimedia) throws PortletModeException {
+        this.sessionService.deleteMultimedia(sessionId, deleteMultimedia);
+
+        response.setPortletMode(PortletMode.EDIT);
+        response.setRenderParameter("sessionId", Long.toString(sessionId));
+    }
+    
+    //TODO @Valid on presentationUpload file types ".wbd, .wbp, .elp, .elpx"
+    @ActionMapping(params = "action=Upload Presentation")
+    public void uploadPresentation(ActionResponse response, @RequestParam long sessionId, @RequestParam MultipartFile presentationUpload) throws PortletModeException {
+        this.sessionService.addPresentation(sessionId, presentationUpload);
+
+        response.setPortletMode(PortletMode.EDIT);
+        response.setRenderParameter("sessionId", Long.toString(sessionId));
+    }
+
+    @ActionMapping(params = "action=Delete Presentation")
+    public void deletePresentation(ActionResponse response, @RequestParam long sessionId) throws PortletModeException {
+        this.sessionService.deletePresentation(sessionId);
 
         response.setPortletMode(PortletMode.EDIT);
         response.setRenderParameter("sessionId", Long.toString(sessionId));

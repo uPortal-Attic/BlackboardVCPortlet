@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.activation.DataHandler;
 
+import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceOperations;
+
 import com.elluminate.sas.BlackboardPresentationResponse;
 
 public interface PresentationWSDao {
@@ -37,6 +39,6 @@ public interface PresentationWSDao {
 	public boolean deletePresentation(long presentationId);
 	public boolean deleteSessionPresenation(long sessionId, long presenationId);
 	
-
+	public void setSasWebServiceOperations(SASWebServiceOperations sasWebServiceOperations);
 	
 }

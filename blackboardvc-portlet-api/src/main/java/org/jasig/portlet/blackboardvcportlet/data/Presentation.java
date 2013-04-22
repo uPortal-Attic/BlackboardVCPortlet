@@ -1,13 +1,15 @@
 package org.jasig.portlet.blackboardvcportlet.data;
 
 public interface Presentation {
-	public String getDescription();
+    long getPresentationId();
+    
+	String getDescription();
 
-	public long getSize();
+	long getSize();
 
-	public String getFilename();
+	String getFilename();
 
-	public ConferenceUser getCreator();
+	ConferenceUser getCreator();
 
-	public long getbbPresentationId();
+	long getBbPresentationId();
 }

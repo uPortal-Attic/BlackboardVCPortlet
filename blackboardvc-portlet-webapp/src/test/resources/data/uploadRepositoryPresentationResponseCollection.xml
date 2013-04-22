@@ -1,0 +1,8 @@
+<UploadRepositoryPresentationResponseCollection xmlns="http://sas.elluminate.com/"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+   <PresentationResponse>
+      <presentationId xsi:type="xs:long">4640</presentationId>
+      <description xsi:type="xs:string"/>
+      <size xsi:type="xs:long">6</size>
+      <creatorId xsi:type="xs:string">levett@wisc.edu</creatorId>
+   </PresentationResponse>
+</UploadRepositoryPresentationResponseCollection>

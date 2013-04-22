@@ -59,9 +59,9 @@ public class PresentationImpl implements Presentation {
 	@Column(name = "BB_PRESENTATION_ID", nullable = false)
 	private final long bbPresentationId;
 	
-	@ManyToOne(targetEntity = ConferenceUserImpl.class, optional = false)
+	@ManyToOne(optional = false)
     @JoinColumn(name = "CREATOR", nullable = false)
-    private final ConferenceUser creator;
+    private final ConferenceUserImpl creator;
 	
 	@Column(name="DESCRIPTION", nullable = false, length = 1000)
     private String description;
@@ -90,7 +90,7 @@ public class PresentationImpl implements Presentation {
         this.size = -1;
     }
     
-	PresentationImpl(long bbPresentationId, ConferenceUser creator) {
+	PresentationImpl(long bbPresentationId, ConferenceUserImpl creator) {
         Validate.notNull(creator, "creator cannot be null");
         this.presentationId = -1;
         this.entityVersion = -1;
@@ -109,7 +109,12 @@ public class PresentationImpl implements Presentation {
     }
     
     @Override
-    public long getbbPresentationId() {
+    public long getPresentationId() {
+        return this.presentationId;
+    }
+
+    @Override
+    public long getBbPresentationId() {
     	return bbPresentationId;
     }
     

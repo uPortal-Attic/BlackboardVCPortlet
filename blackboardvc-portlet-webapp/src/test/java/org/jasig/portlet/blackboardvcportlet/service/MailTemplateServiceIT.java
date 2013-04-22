@@ -65,7 +65,7 @@ public class MailTemplateServiceIT
 		subs.put("sessionName", "Session Name");
 		subs.put("sessionStartTime", "12 PM on 4/1/2013");
 		subs.put("sessionEndTime", "3 PM on 4/1/2013");
-		subs.put("launchURL", "http://www.wisc.edu");
+		subs.put("userURL", "http://www.wisc.edu");
 
 		MailTask mailTask = new MailTask(from, to, null, subs, MailMessages.MODERATOR);
 		assertNotNull(mailTask);

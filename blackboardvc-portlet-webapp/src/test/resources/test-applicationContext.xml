@@ -33,12 +33,16 @@
        default-autowire="byName">
 
     <context:annotation-config />
-    <context:property-placeholder location="classpath:/test-webapp.properties" />
+    <!-- <context:property-placeholder location="classpath:/test-webapp.properties" /> -->
     <context:component-scan base-package="org.jasig.portlet.blackboardvcportlet.test" />
     <context:component-scan base-package="org.jasig.portlet.blackboardvcportlet.dao.ws.impl" />
     <sws:annotation-driven/>
     
     <task:scheduler id="scheduler" pool-size="10" />
+    
+    <bean class="org.jasig.springframework.mockito.MockitoFactoryBean" >
+    	<constructor-arg value="org.jasig.portlet.blackboardvcportlet.security.SecurityExpressionEvaluator" />
+    </bean>
 
     <!--Spring Web Services Client-->
     <bean id="sasWebServicesTemplate" class="org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceTemplate">
