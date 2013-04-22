@@ -95,10 +95,13 @@ public class SessionCreateEditController
 	public String displayNewSessionForm(ModelMap model) throws PortletModeException {
 	    final ServerConfiguration serverConfiguration = this.serverConfigurationService.getServerConfiguration();
         model.put("serverConfiguration", serverConfiguration);
-	    
-        final SessionForm sessionForm = new SessionForm(serverConfiguration);
-        model.put("sessionForm", sessionForm);
-	    
+
+		if (!model.containsKey("sessionForm"))
+		{
+			SessionForm sessionForm = new SessionForm(serverConfiguration);
+			model.addAttribute("sessionForm", sessionForm);
+		}
+
 	    return "BlackboardVCPortlet_edit";
 	}
 
@@ -137,8 +140,11 @@ public class SessionCreateEditController
 	{
 		if (bindingResult.hasErrors())
 		{
+			if (!session.isNewSession())
+			{
+				response.setRenderParameter("sessionId", Long.toString(session.getSessionId()));
+			}
 			response.setPortletMode(PortletMode.EDIT);
-			response.setRenderParameter("sessionId", Long.toString(session.getSessionId()));
 		}
 		else
 		{
