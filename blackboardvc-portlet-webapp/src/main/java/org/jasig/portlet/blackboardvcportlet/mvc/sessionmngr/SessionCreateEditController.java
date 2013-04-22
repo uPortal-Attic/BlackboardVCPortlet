@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -113,24 +112,10 @@ public class SessionCreateEditController
 
 		// Update model to match pattern that jsp is looking for
 		// ie, sessionForm -> session AND BindingResult.sessionForm -> BindingResult.session
-		SessionForm sessionForm = (SessionForm)model.get("sessionForm");
-		if (sessionForm == null)
+		if (!model.containsKey("sessionForm"))
 		{
-			sessionForm = new SessionForm(session);
-		}
-		else
-		{
-			// Do removal in else statement to avoid second iteration through Hashmap
-			model.remove("sessionForm");
-		}
-        model.addAttribute("session", sessionForm);
-
-		// Add BindingResult.session to model (if exists)....
-		BeanPropertyBindingResult bindingResult = (BeanPropertyBindingResult)model.get("org.springframework.validation.BindingResult.sessionForm");
-		if (bindingResult != null)
-		{
-			model.addAttribute("org.springframework.validation.BindingResult.session", bindingResult);
-			model.remove("org.springframework.validation.BindingResult.sessionForm");
+			SessionForm sessionForm = new SessionForm(session);
+			model.addAttribute("sessionForm", sessionForm);
 		}
 
         final Set<ConferenceUser> sessionChairs = this.sessionService.getSessionChairs(session);
@@ -147,7 +132,6 @@ public class SessionCreateEditController
         return "BlackboardVCPortlet_edit";
     }
 	
-    //TODO @Valid on SessionForm
 	@ActionMapping(params = "action=saveSession")
 	public void saveSession(ActionResponse response, @Valid SessionForm session, BindingResult bindingResult) throws PortletModeException
 	{

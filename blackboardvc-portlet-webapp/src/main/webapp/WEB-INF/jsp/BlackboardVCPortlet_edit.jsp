@@ -22,6 +22,7 @@
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 <%@ include file="/WEB-INF/jsp/header.jsp"%>
 
+<div id="${n}" class="blackboardVCRoot">
 <div class="uportal-channel-subtitle">1. Session information</div>
 <hr/>
 <portlet:actionURL portletMode="EDIT" var="saveSessionActionUrl">
@@ -29,7 +30,7 @@
 </portlet:actionURL>
 <form action="${saveSessionActionUrl}" method="post">
   <%-- Using nestedPath as form:form does not work for portlets see: https://jira.springsource.org/browse/SPR-10382 --%>
-  <spring:nestedPath path="session">
+  <spring:nestedPath path="sessionForm">
     <form:hidden path="newSession"/>
   <c:if test="${!session.newSession}">
     <form:hidden path="sessionId"/>
@@ -62,7 +63,7 @@
                   <form:option value="${i}">${i}</form:option>
               </c:forEach>
           </form:select>
-          : 
+          :
           <form:select path="startMinute">
               <c:forEach var="i" begin="0" end="45" step="15">
                   <form:option value="${i}">${i}</form:option>
@@ -74,7 +75,7 @@
       </tr>
       <tr>
         <td><span class="uportal-channel-strong">End Date and Time: </span></td>
-                
+
         <td>
           <form:input id="${n}enddatepicker" path="endDate" style="width: 82px;"/>&nbsp;
             <form:errors path="endDate" cssClass="error"/>&nbsp;
@@ -83,7 +84,7 @@
               <form:option value="${i}">${i}</form:option>
             </c:forEach>
           </form:select>
-          :  
+          :
           <form:select path="endMinute">
             <c:forEach var="i" begin="0" end="45" step="15">
               <form:option value="${i}">${i}</form:option>
@@ -392,3 +393,4 @@
   });
     </rs:compressJs>
 </script>
+</div>
