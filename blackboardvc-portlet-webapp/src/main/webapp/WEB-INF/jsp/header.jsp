@@ -9,3 +9,4 @@
 <c:set var="n">
     <portlet:namespace />
 </c:set>
+<c:set var="prefs" scope="request" value="${renderRequest.preferences.map}" />

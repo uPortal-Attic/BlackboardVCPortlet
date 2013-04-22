@@ -51,6 +51,13 @@
           <role-name>ROLE_FULL_ACCESS</role-name>
           <role-link>Everyone</role-link>
         </security-role-ref>
+        <portlet-preferences>
+        	<preference>
+        		<name>helpUrl</name>
+        		<read-only>false</read-only>
+	        	<value>https://kb.wisc.edu/search.php?q=blackboard%20collaborate</value> <!-- TBD WCP-59 -->
+        	</preference>
+        </portlet-preferences>
     </portlet>
     
     <user-attribute>
