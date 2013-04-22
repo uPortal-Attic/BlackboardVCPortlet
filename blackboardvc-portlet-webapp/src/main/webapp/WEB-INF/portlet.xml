@@ -49,7 +49,7 @@
     
         <security-role-ref>
           <role-name>ROLE_FULL_ACCESS</role-name>
-          <role-link>Portal Administrators</role-link>
+          <role-link>Everyone</role-link>
         </security-role-ref>
     </portlet>
     
