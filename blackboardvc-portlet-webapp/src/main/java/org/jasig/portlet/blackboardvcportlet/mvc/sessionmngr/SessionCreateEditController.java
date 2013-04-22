@@ -18,19 +18,8 @@
  */
 package org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr;
 
-import java.util.Set;
-
-import javax.portlet.ActionResponse;
-import javax.portlet.PortletMode;
-import javax.portlet.PortletModeException;
-
+import com.google.common.collect.Ordering;
 import org.apache.commons.lang.StringUtils;
-import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
-import org.jasig.portlet.blackboardvcportlet.data.Multimedia;
-import org.jasig.portlet.blackboardvcportlet.data.RecordingMode;
-import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
-import org.jasig.portlet.blackboardvcportlet.data.Session;
-import com.google.common.collect.ImmutableSortedSet;
 import org.jasig.portlet.blackboardvcportlet.data.*;
 import org.jasig.portlet.blackboardvcportlet.security.ConferenceUserService;
 import org.jasig.portlet.blackboardvcportlet.service.ServerConfigurationService;
@@ -58,8 +47,6 @@ import javax.portlet.PortletMode;
 import javax.portlet.PortletModeException;
 import javax.validation.Valid;
 import java.util.Set;
-
-import com.google.common.collect.Ordering;
 
 /**
  * Controller class for Portlet EDIT related actions and render
@@ -110,7 +97,7 @@ public class SessionCreateEditController
         model.put("serverConfiguration", serverConfiguration);
 	    
         final SessionForm sessionForm = new SessionForm(serverConfiguration);
-        model.put("session", sessionForm);
+        model.put("sessionForm", sessionForm);
 	    
 	    return "BlackboardVCPortlet_edit";
 	}
@@ -124,8 +111,7 @@ public class SessionCreateEditController
 		final Session session = this.sessionService.getSession(sessionId);
 		//TODO if session is null
 
-		// Update model to match pattern that jsp is looking for
-		// ie, sessionForm -> session AND BindingResult.sessionForm -> BindingResult.session
+		// Don't override sessionForm if it already exists due to Form Validation
 		if (!model.containsKey("sessionForm"))
 		{
 			SessionForm sessionForm = new SessionForm(session);

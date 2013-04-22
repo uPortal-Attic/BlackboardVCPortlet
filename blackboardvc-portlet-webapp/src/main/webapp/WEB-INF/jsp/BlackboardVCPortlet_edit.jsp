@@ -32,7 +32,7 @@
   <%-- Using nestedPath as form:form does not work for portlets see: https://jira.springsource.org/browse/SPR-10382 --%>
   <spring:nestedPath path="sessionForm">
     <form:hidden path="newSession"/>
-  <c:if test="${!session.newSession}">
+  <c:if test="${!sessionForm.newSession}">
     <form:hidden path="sessionId"/>
   </c:if>
   <table>
@@ -40,7 +40,7 @@
       <tr>
         <td><span class="uportal-channel-strong">Session Name: </span></td>
         <c:choose>
-          <c:when test="${session.newSession}">
+          <c:when test="${sessionForm.newSession}">
             <td><form:input path="sessionName" style="width: 50%;" class="uportal-input-text" />&nbsp;&nbsp;<form:errors path="sessionName" cssClass="error"/></td>
           </c:when>
           <c:otherwise>
@@ -227,13 +227,13 @@
     </table>
   </spring:nestedPath>
 </form>
-<c:if test="${!session.newSession}">
+<c:if test="${!sessionForm.newSession}">
   <br/>
   <div class="uportal-channel-subtitle">2. Moderators</div>
   <hr>
   <portlet:actionURL portletMode="EDIT" var="manageModeratorActionUrl" />
   <form action="${manageModeratorActionUrl}" method="post">
-    <input type="hidden" name="sessionId" value="${session.sessionId}" />
+    <input type="hidden" name="sessionId" value="${sessionForm.sessionId}" />
     <table>
       <thead>
         <tr class="uportal-channel-table-header">
@@ -271,7 +271,7 @@
   <hr>
   <portlet:actionURL portletMode="EDIT" var="manageParticipantActionUrl" />
   <form action="${manageParticipantActionUrl}" method="post">
-    <input type="hidden" name="sessionId" value="${session.sessionId}" />
+    <input type="hidden" name="sessionId" value="${sessionForm.sessionId}" />
     <table>
       <thead>
         <tr class="uportal-channel-table-header">
@@ -312,7 +312,7 @@
     </div>
     <portlet:actionURL portletMode="EDIT" var="managePresentationActionUrl" />
     <form action="${managePresentationActionUrl}" method="post" enctype="multipart/form-data">
-      <input type="hidden" name="sessionId" value="${session.sessionId}" />
+      <input type="hidden" name="sessionId" value="${sessionForm.sessionId}" />
       <spring:message var="presentationUploadSubtitle" code="editscreen.presentationuploadsubtitle" text="Presentation upload"/>
       <table summary="${presentationUploadSubtitle}">
         <thead>
@@ -348,7 +348,7 @@
     </div>
     <portlet:actionURL portletMode="EDIT" var="manageMultimediaActionUrl" />
     <form action="${manageMultimediaActionUrl}" method="post" enctype="multipart/form-data">
-      <input type="hidden" name="sessionId" value="${session.sessionId}" />
+      <input type="hidden" name="sessionId" value="${sessionForm.sessionId}" />
       <table summary="Multimedia upload">
         <thead>
           <tr class="uportal-channel-table-header">
