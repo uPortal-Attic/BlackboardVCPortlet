@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.service.SessionForm;
+import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceOperations;
 
 import com.elluminate.sas.BlackboardSessionAttendanceResponse;
 import com.elluminate.sas.BlackboardSessionResponse;
@@ -49,6 +50,8 @@ public interface SessionWSDao {
 	public boolean deleteSession(long sessionId);
 	public boolean clearSessionChairList(long sessionId);
 	public boolean clearSessionNonChairList(long sessionId);
+	
+	public void setSasWebServiceOperations(SASWebServiceOperations sasWebServiceOperations);
 
 	
 

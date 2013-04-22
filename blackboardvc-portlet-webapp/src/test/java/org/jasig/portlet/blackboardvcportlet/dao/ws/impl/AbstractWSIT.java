@@ -81,7 +81,7 @@ public abstract class AbstractWSIT {
 	SessionForm buildSession() {
 		SessionForm newForm = new SessionForm();
 		newForm.setAllowInSessionInvites(false);
-		newForm.setBoundaryTime(0);
+		newForm.setBoundaryTime(30);
 		newForm.setHideParticipantNames(false);
 		newForm.setMaxCameras(1);
 		newForm.setMaxTalkers(1);
@@ -95,13 +95,13 @@ public abstract class AbstractWSIT {
 		newForm.setStartDate(new DateMidnight());
 		newForm.setStartHour(0);
 		newForm.setStartMinute(0);
-		newForm.setStartTime((new DateTime()).plusHours(2).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0));
+		newForm.setStartTime(new DateTime(new Long("1370181600000")));
 		
 		//end date/time
 		newForm.setEndDate(new DateMidnight());
 		newForm.setEndHour(1);
 		newForm.setEndMinute(0);
-		newForm.setEndTime((new DateTime()).plusHours(3).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0));
+		newForm.setEndTime((new DateTime(new Long("1370185200000"))));
 		
 		return newForm;
 	}
