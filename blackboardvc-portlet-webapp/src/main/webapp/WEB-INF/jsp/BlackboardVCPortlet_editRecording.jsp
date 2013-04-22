@@ -24,7 +24,7 @@
 <c:if test="${!empty errorMessage}">
     <div class="uportal-channel-error"><spring:message code="${errorMessage}" text="${errorMessage}"/></div><br/>
 </c:if>
-<div class="uportal-channel-subtitle">1. Recording information</div>
+<div class="uportal-channel-subtitle">1. <spring:message code="recordingInformation" text="recordingInformation"/></div>
 <hr>
 
 <%-- Define the main action and render URLs --%>
@@ -40,24 +40,26 @@
 <table width="100%">
     <tbody>
         <tr>           
-            <td><span class="uportal-channel-strong">Recording name*: </span></td>
+            <td><span class="uportal-channel-strong"><spring:message code="recordingName" text="recordingName"/>*: </span></td>
             <td><input name="roomName" style="width: 50%;" class="uportal-input-text" value="${recording.roomName}"/></td>            
         </tr>
         <tr>
-        	<td><span class="uportal-channel-strong">Start Time: </span></td>
+        	<td><span class="uportal-channel-strong"><spring:message code="startTime" text="startTime"/>: </span></td>
         	<td><fmt:formatDate value="${recording.createdDate}" pattern="dd-MM-yyyy HH:mm" /></td>
         </tr>
         <tr>
-            <td><span class="uportal-channel-strong">Size:</span></td><td>${recording.readableFileSize}</td>
+            <td><span class="uportal-channel-strong"><spring:message code="size" text="size"/>:</span></td><td>${recording.readableFileSize}</td>
         </tr>
     </tbody>
 </table>
 <table width="100%">
     <tbody>
         <tr>
-            <td align="left"><input class="uportal-button" name="action" value="Save Recording" type="submit"></td>
+            <td align="left">
+                <spring:message code="saveRecording" var="saveRecording" text="saveRecording"/>
+                <input class="uportal-button" name="action" value="${saveRecording}" type="submit"></td>
                 <portlet:renderURL var="cancelAction" portletMode="VIEW" windowState="NORMAL"/>
-            <td align="right"><a href="${cancelAction}" class="uportal-button">Cancel</a></td>
+            <td align="right"><a href="${cancelAction}" class="uportal-button"><spring:message code="cancel" text="cancel"/></a></td>
         </tr>
     </tbody>
 

@@ -38,12 +38,14 @@
       <tr>
         <td align="left">
           <portlet:renderURL var="editUrl" portletMode="EDIT" windowState="MAXIMIZED" />
-          <a href="${editUrl}" class="uportal-button">Schedule Session</a>
+          <a href="${editUrl}" class="uportal-button"><spring:message code="scheduleSession" text="scheduleSession"/></a>
         </td>
         <td align="right">
-          <input id="dialog-confirm" value="Delete Session(s)" name="Delete"
+            <spring:message code="deleteSession" var="deleteSession" text="deleteSession"/>
+            <spring:message code="areYouSureYouWantToDeleteSession" var="areYouSureYouWantToDeleteSession" text="areYouSureYouWantToDeleteSession"/>
+          <input id="dialog-confirm" value="${deleteSession}" name="Delete"
             style="text-transform: none;" class="uportal-button"
-            onclick="javascript:return confirm('Are you sure you wish to delete the session(s)?');"
+            onclick="javascript:return confirm('${areYouSureYouWantToDeleteSession}');"
             type="submit" />
         </td>
       </tr>
@@ -55,9 +57,9 @@
         <thead>
           <tr class="uportal-channel-table-header">
             <th width="15"><input id="${n}selectAllSessions" value="selectAllSessions" name="selectAllSessions" type="checkbox" /></th>
-            <th>Session Name</th>
-            <th>Start Date and Time</th>
-            <th>End Date and Time</th>
+            <th><spring:message code="sessionName" text="sessionName"/></th>
+            <th><spring:message code="startDateAndTime" text="startDateAndTime"/></th>
+            <th><spring:message code="endDateAndTime" text="endDateAndTime"/></th>
             <th></th>
           </tr>
         </thead>
@@ -82,7 +84,8 @@
               <td><joda:format value="${session.endTime}" pattern="MM/dd/yyyy HH:mm" /></td>
               <td>
                 <sec:authorize access="hasPermission(#session, 'edit')">
-                  <input value="Edit" name="${session.sessionId}" class="uportal-button" onclick="window.location='${editSessionUrl}'" type="button">
+                    <spring:message code="edit" var="edit" text="edit"/>
+                  <input value="${edit}" name="${session.sessionId}" class="uportal-button" onclick="window.location='${editSessionUrl}'" type="button">
                 </sec:authorize>
               </td>
             </tr>
@@ -113,10 +116,12 @@
           <td align="left">&nbsp;</td>
           <form name="deleteRecordings" action="${deleteRecordingActionUrl}"
             method="POST">
-            <td align="right"><input id="dialog-confirm"
+            <td align="right">
+                <spring:message code="areYouSureYouWantToDeleteRecording" var="areYouSureYouWantToDeleteRecording" text="areYouSureYouWantToDeleteRecording"/>
+            <input id="dialog-confirm"
               value="Delete Recording(s)" name="Delete"
               style="text-transform: none;" class="uportal-button"
-              onclick="javascript:return confirm('Are you sure you wish to delete the recordings(s)?');"
+              onclick="javascript:return confirm('${areYouSureYouWantToDeleteRecording}');"
               type="submit"></td>
         </tr>
       </tbody>
@@ -127,9 +132,9 @@
         <tr class="uportal-channel-table-header">
           <th width="15"><input id="${n}selectAllRecordings"
             value="selectAllRecordings" name="Recordings" type="checkbox" /></th>
-          <th>Previously recorded</th>
-          <th>Start Time</th>
-          <th>Size</th>
+          <th><spring:message code="previouslyRecorded" text="previouslyRecorded"/></th>
+          <th><spring:message code="startTime" text="startTime"/></th>
+          <th><spring:message code="size" text="size"/></th>
           <th></th>
         </tr>
       </thead>
@@ -168,7 +173,7 @@
   </c:when>
   <c:otherwise>
     <br />
-    <b>No recordings available</b>
+    <b><spring:message code="noRecordingsAvailable" text="noRecordingsAvailable"/></b>
     <hr />
   </c:otherwise>
 </c:choose>

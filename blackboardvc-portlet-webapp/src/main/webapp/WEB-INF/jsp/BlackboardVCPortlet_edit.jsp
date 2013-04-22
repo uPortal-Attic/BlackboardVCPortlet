@@ -379,7 +379,9 @@
           </c:forEach>
           <tr>
             <td><input name="multimediaUpload" size="40" type="file" accept=".mpeg,.mpg,.mpe,.mov,.qt,.swf,.m4v,.mp3,.mp4,.mpeg,.wmv"></td>
-            <td><input value="Upload Multimedia" name="action" class="uportal-button" type="submit"></td>
+            <td>
+                <spring:message code="uploadMultimedia" var="uploadMultimedia" text="uploadMultimedia"/>
+                <input value="${uploadMultimedia}" name="action" class="uportal-button" type="submit"></td>
           </tr>
           <tr>
             <td colspan="2" class="uportal-channel-table-caption"><spring:message code="selectOtherMultimediaFilesToUpload" text="selectOtherMultimediaFilesToUpload"/></td>
