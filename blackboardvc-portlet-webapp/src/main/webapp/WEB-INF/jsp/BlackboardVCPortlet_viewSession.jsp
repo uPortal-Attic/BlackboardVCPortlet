@@ -31,11 +31,11 @@
 
 <table>
   <tbody>
-    <tr><td align="left">Session name: </td><td>${session.sessionName}</td></tr>
-    <tr><td align="left">Start time: </td><td><joda:format value="${session.startTime}" pattern="MM/dd/yyyy HH:mm" /></td></tr>
-    <tr><td align="left">End time: </td><td><joda:format value="${session.endTime}" pattern="MM/dd/yyyy HH:mm" /></td></tr>
+    <tr><td align="left"><spring:message code="sessionName" text="sessionName"/>: </td><td>${session.sessionName}</td></tr>
+    <tr><td align="left"><spring:message code="startTime" text="startTime"/>: </td><td><joda:format value="${session.startTime}" pattern="MM/dd/yyyy HH:mm" /></td></tr>
+    <tr><td align="left"><spring:message code="endTime" text="endTime"/>: </td><td><joda:format value="${session.endTime}" pattern="MM/dd/yyyy HH:mm" /></td></tr>
     <sec:authorize access="hasRole('ROLE_ADMIN') || hasPermission(#session, 'edit')">
-      <tr><td>Guest link: </td><td><a href="${session.guestUrl}" target="_blank">${session.guestUrl}</a></td></tr>  
+      <tr><td><spring:message code="guestLink" text="guestLink"/>: </td><td><a href="${session.guestUrl}" target="_blank">${session.guestUrl}</a></td></tr>
     </sec:authorize>
   </tbody>
 </table>   
@@ -49,13 +49,13 @@
     
 <sec:authorize access="hasRole('ROLE_ADMIN') || hasPermission(#session, 'edit')">
   <div>
-    <h4>Moderators</h4>
+    <h4><spring:message code="moderators" text="moderators"/></h4>
     <ul>
       <c:forEach var="user" items="${sessionChairs}">
         <li>${user.displayName}</li>
       </c:forEach>
     </ul>
-    <h4>Participants</h4>
+    <h4><spring:message code="participants" text="participants"/></h4>
     <ul>
       <c:forEach var="user" items="${sessionNonChairs}">
         <li>${user.displayName}</li>
@@ -67,10 +67,10 @@
 
 <c:choose>
     <c:when test="${empty launchUrl}">
-        <div><b>Session is now closed</b></div><br/>
+        <div><b><spring:message code="sessionIsClosed" text="sessionIsClosed"/></b></div><br/>
     </c:when>
     <c:otherwise>
-        <div><a href="${launchUrl}" target="_blank">Launch session (Will open a new window)</a></div><br/>
+        <div><a href="${launchUrl}" target="_blank"><spring:message code="launchSession" text="launchSession"/></a></div><br/>
     </c:otherwise>
 </c:choose>
        
