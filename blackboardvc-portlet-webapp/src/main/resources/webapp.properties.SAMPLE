@@ -22,4 +22,4 @@ mail.intParticipantMailMessage.subject=Collaborate Session Invite
 ## User Attribute Configuration
 emailAttributeName=mail
 displayNameAttributeName=displayName
-uniqueUserAttributeNames=wiscedupvi,eppn,spvi
+uniqueIdAttributeName=wiscedupvi,eppn,spvi
