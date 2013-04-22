@@ -24,6 +24,7 @@ import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import javax.validation.constraints.Future;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -51,17 +52,19 @@ public class SessionForm implements Serializable {
 
 	@Future
 	private DateMidnight startDate;
-	@Min(500)
+	@Min(1)
+	@Max(12)
 	private int startHour;
-	@Min(675)
+	@Max(60)
 	private int startMinute;
 
 	@Future
 	private DateMidnight endDate;
 
-	@NotNull
+	@Min(1)
+	@Max(12)
 	private int endHour;
-    @NotNull
+	@Max(60)
 	private int endMinute;
 
 	public SessionForm() {
