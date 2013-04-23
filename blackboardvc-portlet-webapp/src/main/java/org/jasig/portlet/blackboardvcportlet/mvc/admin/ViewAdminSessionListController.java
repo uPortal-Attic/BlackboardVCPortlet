@@ -54,7 +54,7 @@ public class ViewAdminSessionListController
 		this.sessionService = service;
 	}
 	
-	@RenderMapping
+	@RenderMapping(params = "action=viewAllSessions")
 	public String view(PortletRequest request, ModelMap model) {
 		final Set<Session> sessions = new HashSet<Session>();
 		//TODO : Filter results for initial loading

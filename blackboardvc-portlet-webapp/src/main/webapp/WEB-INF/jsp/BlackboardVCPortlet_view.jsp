@@ -37,8 +37,17 @@
     <tbody>
       <tr>
         <td align="left">
-          <portlet:renderURL var="editUrl" portletMode="EDIT" windowState="MAXIMIZED" />
-          <a href="${editUrl}" class="uportal-button"><spring:message code="scheduleSession" text="scheduleSession"/></a>
+        	<sec:authorize var="adminAccess" access="hasRole('ROLE_ADMIN')" />
+		      <c:choose>
+		        <c:when test="${adminAccess}">
+		        	<portlet:renderURL var="homeURL" portletMode="VIEW" windowState="MAXIMIZED" />
+	          		<a href="${homeURL}" class="uportal-button"><spring:message code="adminHome" text="adminHome"/></a>
+		        </c:when>
+        		<c:otherwise>
+	        		<portlet:renderURL var="editUrl" portletMode="EDIT" windowState="MAXIMIZED" />
+		          	<a href="${editUrl}" class="uportal-button"><spring:message code="scheduleSession" text="scheduleSession"/></a>
+        		</c:otherwise>
+	        </c:choose>
         </td>
         <td align="right">
             <spring:message code="deleteSession" var="deleteSession" text="deleteSession"/>
