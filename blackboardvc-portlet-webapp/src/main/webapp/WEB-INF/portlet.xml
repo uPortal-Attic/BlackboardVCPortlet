@@ -69,6 +69,12 @@
     <user-attribute>
         <name>eppn</name>
     </user-attribute>
+    <user-attribute>
+        <name>spvi</name>
+    </user-attribute>
+    <user-attribute>
+        <name>wiscedupvi</name>
+    </user-attribute>
     
     <filter>
         <filter-name>springSecurityPortletFilterChain</filter-name>
