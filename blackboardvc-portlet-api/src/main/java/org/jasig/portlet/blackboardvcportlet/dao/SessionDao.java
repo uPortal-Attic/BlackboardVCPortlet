@@ -38,4 +38,5 @@ public interface SessionDao {
 	Session addPresentationToSession(Session session, Presentation presentation);
 
 	Session removePresentationFromSession(Session session);
+
 }

@@ -74,4 +74,6 @@ public interface SessionService {
 	String getOrCreateSessionUrl(ConferenceUser user, Session session);
 
 	boolean isSessionParticipant(Session session, ConferenceUser user);
+
+	Set<Session> getAllSessions();
 }

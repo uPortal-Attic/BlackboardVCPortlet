@@ -188,6 +188,12 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
         return this.sessionDao.getSession(sessionId);
     }
     
+    @Override
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public Set<Session> getAllSessions() {
+        return this.sessionDao.getAllSessions();
+    }
+    
 
     /*
      * Not rolling back for WS related exceptions so the work done "so far" is still persisted to the database in

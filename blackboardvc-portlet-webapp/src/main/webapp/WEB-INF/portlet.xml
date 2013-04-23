@@ -60,6 +60,41 @@
         </portlet-preferences>
     </portlet>
     
+    <portlet>
+        <description>Administer the Blackboard Collaborate Portlet</description>
+        <portlet-name>BlackboardVCPortletAdmin</portlet-name>
+        <display-name>Collaborate Administration</display-name>
+        <portlet-class>org.jasig.springframework.web.portlet.context.ContribDispatcherPortlet</portlet-class>
+        <init-param>
+            <name>contextConfigLocation</name>
+            <value>/WEB-INF/context/portlet/BlackboardVCPortletAdmin-portlet.xml</value>
+        </init-param>
+        <expiration-cache>0</expiration-cache>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>VIEW</portlet-mode>
+            <portlet-mode>EDIT</portlet-mode>
+        </supports>
+        <supported-locale>en</supported-locale>
+        <resource-bundle>messages</resource-bundle>
+        <portlet-info>
+            <title>Web Conferencing Administration</title>
+            <short-title>Web Conferencing Administration</short-title>
+        </portlet-info>
+    
+        <security-role-ref>
+          <role-name>ROLE_ADMIN</role-name>
+          <role-link>Everyone</role-link>
+        </security-role-ref>
+        <portlet-preferences>
+        	<preference>
+        		<name>helpUrl</name>
+        		<read-only>false</read-only>
+	        	<value>https://kb.wisc.edu/search.php?q=blackboard%20collaborate</value> <!-- TBD WCP-59 -->
+        	</preference>
+        </portlet-preferences>
+    </portlet>
+    
     <user-attribute>
         <name>displayName</name>
     </user-attribute>
