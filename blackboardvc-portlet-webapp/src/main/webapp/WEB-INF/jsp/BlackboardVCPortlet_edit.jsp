@@ -284,15 +284,18 @@
   <hr>
   <portlet:actionURL portletMode="EDIT" var="manageParticipantActionUrl" />
   <form action="${manageParticipantActionUrl}" method="post">
-    <input type="hidden" name="sessionId" value="${sessionForm.sessionId}" />
     <table>
       <thead>
-        <tr class="uportal-channel-table-header">
+      <spring:nestedPath path="deleteParticipantsForm">
+      <tr class="uportal-channel-table-header">
           <th><spring:message code="name" text="name"/></th>
           <th><spring:message code="emailAddress" text="emailAddress"/></th>
           <th>
+              <input type="hidden" name="deleteParticipantsSessionId" value="${sessionForm.sessionId}" />
               <spring:message code="deleteParticipants" var="deleteParticipants" text="deleteParticipants"/>
-              <input value="${deleteParticipants}" name="action" class="uportal-button" type="submit" /></th>
+              <input value="${deleteParticipants}" name="action" class="uportal-button" type="submit" />&nbsp;
+              <form:errors path="nonChairId" cssClass="error"/>
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -303,18 +306,22 @@
           <td><input value="${user.userId}" name="nonChairId" type="checkbox" /></td>
           </tr>
         </c:forEach>
+        </spring:nestedPath>
+        <spring:nestedPath path="addParticipantForm">
         <tr>
           <td>
-            <input name="displayName" type="text" />
+              <input type="hidden" name="sessionId" value="${sessionForm.sessionId}" />
+              <input name="participantName" type="text" />&nbsp;<form:errors path="participantName" cssClass="error"/>
           </td>
           <td>
-            <input name="email" type="text" />
+            <input name="emailAddress" type="text" />&nbsp;<form:errors path="emailAddress" cssClass="error"/>
           </td>
           <td>
             <spring:message code="addParticipant" var="addParticipant" text="addParticipant"/>
             <input id="${n}addParticipantSubmit" name="action" value="${addParticipant}" class="uportal-button" type="submit"/>
           </td>
         </tr>
+        </spring:nestedPath>
       </tbody>
     </table>
   </form>

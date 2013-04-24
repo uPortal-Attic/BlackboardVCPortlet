@@ -22,7 +22,9 @@ import com.google.common.collect.Ordering;
 import org.apache.commons.lang.StringUtils;
 import org.jasig.portlet.blackboardvcportlet.data.*;
 import org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr.forms.AddModeratorForm;
+import org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr.forms.AddParticipantForm;
 import org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr.forms.DeleteModeratorsForm;
+import org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr.forms.DeleteParticipantsForm;
 import org.jasig.portlet.blackboardvcportlet.security.ConferenceUserService;
 import org.jasig.portlet.blackboardvcportlet.service.ServerConfigurationService;
 import org.jasig.portlet.blackboardvcportlet.service.SessionForm;
@@ -193,25 +195,30 @@ public class SessionCreateEditController
         response.setRenderParameter("sessionId", Long.toString(deleteModeratorsForm.getDeleteModeratorSessionId()));
     }
 
-    //TODO @Valid on name/email
     @ActionMapping(params = "action=Add Participant")
-    public void addSessionNonChair(ActionResponse response, @RequestParam long sessionId, @RequestParam String displayName, @RequestParam String email) throws PortletModeException {
-        displayName = StringUtils.trimToNull(displayName);
-        email = StringUtils.trimToNull(email);
-        
-        this.sessionService.addSessionNonChair(sessionId, displayName, email);
+    public void addSessionNonChair(ActionResponse response, @Valid AddParticipantForm participantForm, BindingResult bindingResult) throws PortletModeException {
+
+		if (!bindingResult.hasErrors())
+		{
+			final String displayName = StringUtils.trimToNull(participantForm.getParticipantName());
+			final String email = StringUtils.trimToNull(participantForm.getEmailAddress());
+			this.sessionService.addSessionNonChair(participantForm.getSessionId(), displayName, email);
+		}
 
         response.setPortletMode(PortletMode.EDIT);
-        response.setRenderParameter("sessionId", Long.toString(sessionId));
+        response.setRenderParameter("sessionId", Long.toString(participantForm.getSessionId()));
     }
 
-    //TODO @Valid on deleteNonChair (must be email)
     @ActionMapping(params = "action=Delete Participant(s)")
-    public void deleteSessionNonChairs(ActionResponse response, @RequestParam long sessionId, @RequestParam long[] nonChairId) throws PortletModeException {
-        this.sessionService.removeSessionNonChairs(sessionId, nonChairId);
+    public void deleteSessionNonChairs(ActionResponse response, @Valid DeleteParticipantsForm deleteParticipantsForm, BindingResult bindingResult) throws PortletModeException {
+
+		if (!bindingResult.hasErrors())
+		{
+			this.sessionService.removeSessionNonChairs(deleteParticipantsForm.getDeleteParticipantsSessionId(), deleteParticipantsForm.getNonChairId());
+		}
 
         response.setPortletMode(PortletMode.EDIT);
-        response.setRenderParameter("sessionId", Long.toString(sessionId));
+        response.setRenderParameter("sessionId", Long.toString(deleteParticipantsForm.getDeleteParticipantsSessionId()));
     }
     
     //TODO @Valid on multimediaUpload file types ".mpeg, .mpg, .mpe, .mov, .qt, .swf, .m4v, .mp3, .mp4, .mpeg, .wmv"
