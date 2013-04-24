@@ -22,6 +22,7 @@ import com.google.common.collect.Ordering;
 import org.apache.commons.lang.StringUtils;
 import org.jasig.portlet.blackboardvcportlet.data.*;
 import org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr.forms.AddModeratorForm;
+import org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr.forms.DeleteModeratorsForm;
 import org.jasig.portlet.blackboardvcportlet.security.ConferenceUserService;
 import org.jasig.portlet.blackboardvcportlet.service.ServerConfigurationService;
 import org.jasig.portlet.blackboardvcportlet.service.SessionForm;
@@ -180,13 +181,16 @@ public class SessionCreateEditController
         response.setRenderParameter("sessionId", Long.toString(addModeratorForm.getSessionId()));
     }
 
-    //TODO @Valid on deleteChair (must be email)
     @ActionMapping(params = "action=Delete Moderator(s)")
-    public void deleteSessionChairs(ActionResponse response, @RequestParam long sessionId, @RequestParam long[] chairId) throws PortletModeException {
-        this.sessionService.removeSessionChairs(sessionId, chairId);
+    public void deleteSessionChairs(ActionResponse response, @Valid DeleteModeratorsForm deleteModeratorsForm, BindingResult bindingResult) throws PortletModeException {
+
+		if (!bindingResult.hasErrors())
+		{
+			this.sessionService.removeSessionChairs(deleteModeratorsForm.getDeleteModeratorSessionId(), deleteModeratorsForm.getChairId());
+		}
 
         response.setPortletMode(PortletMode.EDIT);
-        response.setRenderParameter("sessionId", Long.toString(sessionId));
+        response.setRenderParameter("sessionId", Long.toString(deleteModeratorsForm.getDeleteModeratorSessionId()));
     }
 
     //TODO @Valid on name/email

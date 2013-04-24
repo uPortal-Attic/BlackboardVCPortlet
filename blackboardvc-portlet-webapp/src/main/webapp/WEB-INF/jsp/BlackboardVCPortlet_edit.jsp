@@ -237,16 +237,18 @@
   <hr>
   <portlet:actionURL portletMode="EDIT" var="manageModeratorActionUrl" />
   <form action="${manageModeratorActionUrl}" method="post">
-      <spring:nestedPath path="addModeratorForm">
-      <input type="hidden" name="sessionId" value="${sessionForm.sessionId}" />
     <table>
       <thead>
+          <spring:nestedPath path="deleteModeratorsForm">
         <tr class="uportal-channel-table-header">
           <th><spring:message code="name" text="name"/></th>
           <th><spring:message code="emailAddress" text="emailAddress"/></th>
           <th>
               <spring:message code="deleteModerators" var="deleteModerators" text="deleteModerators"/>
-              <input value="${deleteModerators}" name="action" class="uportal-button" type="submit" /></th>
+              <input type="hidden" name="deleteModeratorSessionId" value="${sessionForm.sessionId}" />
+              <input value="${deleteModerators}" name="action" class="uportal-button" type="submit" />&nbsp;
+              <form:errors path="chairId" cssClass="error"/>
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -257,8 +259,11 @@
           <td><input value="${user.userId}" name="chairId" type="checkbox" /></td>
           </tr>
         </c:forEach>
+        </spring:nestedPath>
+        <spring:nestedPath path="addModeratorForm">
         <tr>
           <td>
+              <input type="hidden" name="sessionId" value="${sessionForm.sessionId}" />
             <input name="moderatorName" type="text" />&nbsp;<form:errors path="moderatorName" cssClass="error"/>
           </td>
           <td>
@@ -269,9 +274,9 @@
             <input id="${n}addModeratorSubmit" name="action" value="${addModerator}" class="uportal-button" type="submit"/>
           </td>
         </tr>
+        </spring:nestedPath>
       </tbody>
     </table>
-   </spring:nestedPath>
   </form>
 
   <br/>
