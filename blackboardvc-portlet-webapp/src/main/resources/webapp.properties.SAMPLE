@@ -1,7 +1,7 @@
 ## Web Service Configuration
 bbc.username=WISCONSIN-ADMIN
 bbc.password=Wared4aM
-bbc.callbackURL=https://my-qa.wisc.edu/BlackboardVCPortlet/callback/recCallback/
+#bbc.callbackURL=https://my-qa.wisc.edu/BlackboardVCPortlet/callback/recCallback/
 sas.defaultUri=https://sas-int.elluminate.com/site/external/adapter/default/v3/webservice.wsdl
 
 ## Local Database Configuration

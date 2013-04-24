@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.xml.bind.JAXBElement;
 
+import org.apache.commons.lang.StringUtils;
 import org.jasig.portlet.blackboardvcportlet.dao.ws.GlobalSettingsWSDao;
 import org.jasig.portlet.blackboardvcportlet.dao.ws.WSDaoUtils;
 import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceOperations;
@@ -28,15 +29,14 @@ import com.elluminate.sas.ObjectFactory;
 
 @Service
 public class GlobalSettingsWSDaoImpl implements GlobalSettingsWSDao {
-	
-	private static final Logger logger = LoggerFactory.getLogger(GlobalSettingsWSDaoImpl.class);
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	private SASWebServiceOperations sasWebServiceTemplate;
 	private String callbackURL;
 	
-	@Value("${bbc.callbackURL}")
+	@Value("${bbc.callbackURL:}")
 	public void setCallbackURL(String value) {
-		this.callbackURL = value;
+		this.callbackURL = StringUtils.trimToNull(value);
 	}
 	
 	@Autowired
@@ -72,10 +72,14 @@ public class GlobalSettingsWSDaoImpl implements GlobalSettingsWSDao {
 
 	@Override
 	public boolean setApiCallbackUrl(String randomURLToken) {
+	    if (callbackURL == null) {
+	        logger.warn("No bbc.callbackURL property specified. SetApiCallbackUrl will not be called");
+	    }
+	    
 		//create request object
 		final BlackboardSetApiCallbackUrl apiCallbackRequest = new ObjectFactory().createBlackboardSetApiCallbackUrl();
 		//create URL
-		apiCallbackRequest.setApiCallbackUrl(callbackURL + (callbackURL.lastIndexOf('/') == (callbackURL.length() - 1) ? "" : "/") + randomURLToken);
+		apiCallbackRequest.setApiCallbackUrl(callbackURL + (callbackURL.charAt(callbackURL.length() - 1) == '/' ? "" : '/') + randomURLToken);
 		//send new URL to blackboard	
 		if(!WSDaoUtils.isSuccessful(sasWebServiceTemplate.marshalSendAndReceiveToSAS("http://sas.elluminate.com/SetApiCallbackUrl", apiCallbackRequest))) {
 			logger.warn("Issue sending blackboard api callback URL");
