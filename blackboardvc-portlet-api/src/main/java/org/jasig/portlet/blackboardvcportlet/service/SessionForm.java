@@ -52,9 +52,12 @@ public class SessionForm implements Serializable {
 
 	@Future
 	private DateMidnight startDate;
+
 	@Min(1)
 	@Max(12)
 	private int startHour;
+
+	@Min(0)
 	@Max(60)
 	private int startMinute;
 
@@ -64,6 +67,8 @@ public class SessionForm implements Serializable {
 	@Min(1)
 	@Max(12)
 	private int endHour;
+
+	@Min(0)
 	@Max(60)
 	private int endMinute;
 
@@ -117,7 +122,6 @@ public class SessionForm implements Serializable {
         this.sessionId = sessionId;
     }
 
-	@NotNull
     public String getSessionName() {
         return sessionName;
     }
@@ -126,7 +130,6 @@ public class SessionForm implements Serializable {
         this.sessionName = sessionName;
     }
 
-	@Future
     public DateTime getStartTime() {
         return this.startDate.toDateTime().withHourOfDay(this.startHour).withMinuteOfHour(this.startMinute);
     }
@@ -137,7 +140,6 @@ public class SessionForm implements Serializable {
         this.startMinute = startTime.getMinuteOfHour();
     }
 
-	@Future
     public DateTime getEndTime() {
         return this.endDate.toDateTime().withHourOfDay(this.endHour).withMinuteOfHour(this.endMinute);
     }
@@ -148,7 +150,6 @@ public class SessionForm implements Serializable {
         this.endMinute = endTime.getMinuteOfHour();
     }
 
-	@NotNull
 	public int getBoundaryTime() {
         return boundaryTime;
     }
@@ -229,7 +230,6 @@ public class SessionForm implements Serializable {
         this.startDate = startDate;
     }
 
-	@Min(200)
     public int getStartHour() {
         return startHour;
     }
@@ -238,7 +238,6 @@ public class SessionForm implements Serializable {
         this.startHour = startHour;
     }
 
-	@Min(250)
     public int getStartMinute() {
         return startMinute;
     }
@@ -255,7 +254,6 @@ public class SessionForm implements Serializable {
         this.endDate = endDate;
     }
 
-	@Min(500)
     public int getEndHour() {
         return endHour;
     }
@@ -264,7 +262,6 @@ public class SessionForm implements Serializable {
         this.endHour = endHour;
     }
 
-	@Min(700)
     public int getEndMinute() {
         return endMinute;
     }
