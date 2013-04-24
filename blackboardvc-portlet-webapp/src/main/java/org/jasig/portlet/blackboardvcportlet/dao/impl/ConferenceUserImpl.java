@@ -28,9 +28,6 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.NaturalIdCache;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
-import org.jasig.portlet.blackboardvcportlet.data.Multimedia;
-import org.jasig.portlet.blackboardvcportlet.data.Presentation;
-import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.data.UserSessionUrl;
 import org.springframework.util.Assert;
 
@@ -92,23 +89,23 @@ public class ConferenceUserImpl implements ConferenceUser {
     
     @OneToMany(targetEntity = MultimediaImpl.class, fetch = FetchType.LAZY, mappedBy = "creator")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private final Set<Multimedia> multimedias = new HashSet<Multimedia>(0);
+    private final Set<MultimediaImpl> multimedias = new HashSet<MultimediaImpl>(0);
 
     @OneToMany(targetEntity = PresentationImpl.class, fetch = FetchType.LAZY, mappedBy = "creator")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private final Set<Presentation> presentations = new HashSet<Presentation>(0);
+    private final Set<PresentationImpl> presentations = new HashSet<PresentationImpl>(0);
 
     @OneToMany(targetEntity = SessionImpl.class, fetch = FetchType.LAZY, mappedBy = "creator", orphanRemoval = true, cascade = {CascadeType.ALL})
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private final Set<Session> ownedSessions = new HashSet<Session>(0);
+    private final Set<SessionImpl> ownedSessions = new HashSet<SessionImpl>(0);
 
     @ManyToMany(targetEntity = SessionImpl.class, fetch = FetchType.LAZY, mappedBy = "chairs")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private final Set<Session> chairedSessions = new HashSet<Session>(0);
+    private final Set<SessionImpl> chairedSessions = new HashSet<SessionImpl>(0);
     
     @ManyToMany(targetEntity = SessionImpl.class, fetch = FetchType.LAZY, mappedBy = "nonChairs")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private final Set<Session> nonChairedSessions = new HashSet<Session>(0);
+    private final Set<SessionImpl> nonChairedSessions = new HashSet<SessionImpl>(0);
 
     //Exists only to allow cascading deletes, should NEVER be accessed by normal code
     @OneToMany(mappedBy = "user", targetEntity = UserSessionUrlImpl.class, cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, orphanRemoval = true)
@@ -203,23 +200,23 @@ public class ConferenceUserImpl implements ConferenceUser {
         return this.additionalEmails;
     }
 
-    Set<Session> getOwnedSessions() {
+    Set<SessionImpl> getOwnedSessions() {
         return ownedSessions;
     }
 
-    Set<Session> getChairedSessions() {
+    Set<SessionImpl> getChairedSessions() {
         return chairedSessions;
     }
 
-    Set<Session> getNonChairedSessions() {
+    Set<SessionImpl> getNonChairedSessions() {
         return nonChairedSessions;
     }
     
-    Set<Multimedia> getMultimedias() {
+    Set<MultimediaImpl> getMultimedias() {
     	return multimedias;
     }
     
-    Set<Presentation> getPresentations() {
+    Set<PresentationImpl> getPresentations() {
     	return presentations;
     }
 

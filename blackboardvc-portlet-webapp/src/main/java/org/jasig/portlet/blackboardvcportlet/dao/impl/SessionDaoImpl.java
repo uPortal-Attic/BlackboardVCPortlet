@@ -16,8 +16,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.jasig.jpa.BaseJpaDao;
 import org.jasig.jpa.OpenEntityManager;
-import org.jasig.portlet.blackboardvcportlet.dao.MultimediaDao;
-import org.jasig.portlet.blackboardvcportlet.dao.PresentationDao;
 import org.jasig.portlet.blackboardvcportlet.data.AccessType;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.Multimedia;
@@ -41,16 +39,16 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
     private CriteriaQuery<SessionImpl> findAllSessions;
     
     private InternalConferenceUserDao conferenceUserDao;
-    private PresentationDao presentationDao;
-    private MultimediaDao multimediaDao;
+    private InternalPresentationDao presentationDao;
+    private InternalMultimediaDao multimediaDao;
     
     @Autowired
-    public void setPresentationDao(PresentationDao dao) {
+    public void setPresentationDao(InternalPresentationDao dao) {
     	this.presentationDao = dao;
     }
     
     @Autowired
-    public void setMultimediaDao(MultimediaDao dao) {
+    public void setMultimediaDao(InternalMultimediaDao dao) {
     	this.multimediaDao = dao;
     }
 
@@ -107,7 +105,7 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
         }
 
         //Create a copy to trigger loading of the user data
-        return ImmutableSet.copyOf(sessionImpl.getMultimedias());
+        return ImmutableSet.<Multimedia>copyOf(sessionImpl.getMultimedias());
     }
 
     @Override
@@ -200,7 +198,7 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
     		throw new IncorrectResultSizeDataAccessException("No BlackboardSession could be found for sessionId " + session.getSessionId(), 1);
     	}
     	
-    	Presentation bbPresentation = presentationDao.getPresentationByBlackboardId(presentation.getBbPresentationId());
+    	PresentationImpl bbPresentation = presentationDao.getPresentationById(presentation.getPresentationId());
     	
     	if(bbPresentation == null) {
     		throw new IncorrectResultSizeDataAccessException("No presentation could be found for blackboard presentationId " + presentation.getBbPresentationId(), 1);
@@ -234,7 +232,7 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
             throw new IncorrectResultSizeDataAccessException("No BlackboardSession could be found for sessionId " + session.getSessionId(), 1);
         }
     	
-    	Multimedia mm = multimediaDao.getMultimediaByBlackboardId(multimedia.getBbMultimediaId());
+    	MultimediaImpl mm = multimediaDao.getMultimediaById(multimedia.getMultimediaId());
     	if(mm == null) {
     		throw new IncorrectResultSizeDataAccessException("No multimedia could be found for blackboard multimediaId " + multimedia.getBbMultimediaId(), 1);
     	}
@@ -253,7 +251,7 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
             throw new IncorrectResultSizeDataAccessException("No BlackboardSession could be found for sessionId " + session.getSessionId(), 1);
         }
     	
-		Multimedia mm = multimediaDao.getMultimediaByBlackboardId(multimedia.getBbMultimediaId());
+		Multimedia mm = multimediaDao.getMultimediaById(multimedia.getMultimediaId());
     	
     	if(mm == null) {
     		throw new IncorrectResultSizeDataAccessException("No multimedia could be found for blackboard multimediaId " + multimedia.getBbMultimediaId(), 1);

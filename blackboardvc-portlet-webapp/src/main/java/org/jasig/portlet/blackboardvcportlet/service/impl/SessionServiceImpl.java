@@ -349,7 +349,7 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
         
         final Set<Long> bbMultimediaIds = getBlackboardMultimediaIds(session);
         for (final long multimediaId : multimediaIds) {
-            final Multimedia multimedia = this.multimediaDao.getMultimedia(multimediaId);
+            final Multimedia multimedia = this.multimediaDao.getMultimediaById(multimediaId);
             removeMultimediaFromSession(session, bbMultimediaIds, multimedia);
         }
     }

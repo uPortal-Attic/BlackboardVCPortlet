@@ -27,7 +27,6 @@ import org.hibernate.annotations.NaturalIdCache;
 import org.hibernate.annotations.Type;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.Multimedia;
-import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.joda.time.DateTime;
 
 @Entity
@@ -78,8 +77,7 @@ public class MultimediaImpl implements Multimedia {
     private DateTime lastUpdated;
 	
 	@ManyToMany(targetEntity = SessionImpl.class, fetch = FetchType.LAZY, mappedBy = "multimedias")
-	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private final Set<Session> sessions = new HashSet<Session>(0);
+    private final Set<SessionImpl> sessions = new HashSet<SessionImpl>(0);
 	
     @SuppressWarnings("unused")
 	private MultimediaImpl() {
@@ -158,10 +156,6 @@ public class MultimediaImpl implements Multimedia {
 	@Override
 	public ConferenceUser getCreator() {
 		return creator;
-	}
-
-	Set<Session> getSessions() {
-		return sessions;
 	}
 
 	@Override

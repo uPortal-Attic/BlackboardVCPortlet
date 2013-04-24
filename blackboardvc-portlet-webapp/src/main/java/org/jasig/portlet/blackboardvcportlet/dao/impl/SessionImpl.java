@@ -49,7 +49,6 @@ import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.NaturalIdCache;
 import org.hibernate.annotations.Type;
 import org.jasig.portlet.blackboardvcportlet.data.AccessType;
-import org.jasig.portlet.blackboardvcportlet.data.Multimedia;
 import org.jasig.portlet.blackboardvcportlet.data.Presentation;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingMode;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
@@ -93,7 +92,7 @@ public class SessionImpl implements Session {
     
     @ManyToOne(targetEntity = PresentationImpl.class)
     @JoinColumn(name = "PRESENTATION", nullable = true)
-    private Presentation presentation;
+    private PresentationImpl presentation;
     
     @Column(name="SESSION_NAME", nullable = false, length = 1000)
     private String sessionName;
@@ -127,6 +126,7 @@ public class SessionImpl implements Session {
         joinColumns= @JoinColumn(name="SESSION_ID"),
         inverseJoinColumns=@JoinColumn(name="USER_ID")
     )
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private final Set<ConferenceUserImpl> chairs = new HashSet<ConferenceUserImpl>(0);
     
     @ManyToMany(targetEntity = ConferenceUserImpl.class, fetch = FetchType.LAZY)
@@ -134,6 +134,7 @@ public class SessionImpl implements Session {
         joinColumns= @JoinColumn(name="SESSION_ID"),
         inverseJoinColumns=@JoinColumn(name="USER_ID")
     )
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private final Set<ConferenceUserImpl> nonChairs = new HashSet<ConferenceUserImpl>(0);
     
     @ManyToMany(targetEntity = MultimediaImpl.class, fetch = FetchType.LAZY)
@@ -141,7 +142,8 @@ public class SessionImpl implements Session {
         joinColumns= @JoinColumn(name="SESSION_ID"),
         inverseJoinColumns=@JoinColumn(name="MULTIMEDIA_ID")
     )
-    private final Set<Multimedia> multimedias = new HashSet<Multimedia>(0);
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private final Set<MultimediaImpl> multimedias = new HashSet<MultimediaImpl>(0);
     
     @Column(name="OPEN_CHAIR", nullable = false)
     private boolean openChair;
@@ -324,7 +326,7 @@ public class SessionImpl implements Session {
     }
     
     
-    Set<Multimedia> getMultimedias() {
+    Set<MultimediaImpl> getMultimedias() {
 		return multimedias;
 	}
     
@@ -456,7 +458,7 @@ public class SessionImpl implements Session {
     	return presentation;
     }
     
-    public void setPresentation(Presentation value) {
+    void setPresentation(PresentationImpl value) {
     	this.presentation = value;
     }
 

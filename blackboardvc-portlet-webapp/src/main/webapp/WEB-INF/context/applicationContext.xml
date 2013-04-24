@@ -52,7 +52,7 @@
     <task:annotation-driven scheduler="taskScheduler"/>
     <task:scheduler id="taskScheduler" pool-size="10" />
     
-    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+    <bean id="BlackboardCollaborate.cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
         <property name="configLocation" value="classpath:/ehcache.xml" />
     </bean>
 

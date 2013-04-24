@@ -29,4 +29,21 @@
         <property name="locateExistingServerIfPossible" value="true" />
     </bean>
 
+
+    <!-- EhCache management and statistics -->
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetClass" value="net.sf.ehcache.management.ManagementService" />
+        <property name="targetMethod" value="registerMBeans" />
+        <property name="arguments">
+            <list>
+                <ref bean="BlackboardCollaborate.cacheManager" />
+                <ref bean="mbeanServer" />
+                <value>true</value>
+                <value>true</value>
+                <value>true</value>
+                <value>true</value>
+                <value>true</value>
+            </list>
+        </property>
+    </bean>
 </beans>

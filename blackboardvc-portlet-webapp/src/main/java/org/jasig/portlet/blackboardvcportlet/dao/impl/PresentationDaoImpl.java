@@ -12,7 +12,6 @@ import javax.persistence.criteria.Root;
 import org.apache.commons.lang.Validate;
 import org.jasig.jpa.BaseJpaDao;
 import org.jasig.jpa.OpenEntityManager;
-import org.jasig.portlet.blackboardvcportlet.dao.PresentationDao;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.Presentation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,7 @@ import com.elluminate.sas.BlackboardPresentationResponse;
 import com.google.common.base.Function;
 
 @Repository
-public class PresentationDaoImpl extends BaseJpaDao implements PresentationDao {
+public class PresentationDaoImpl extends BaseJpaDao implements InternalPresentationDao {
 	
 	private CriteriaQuery<PresentationImpl> findAllPresentation;
 	
@@ -53,10 +52,15 @@ public class PresentationDaoImpl extends BaseJpaDao implements PresentationDao {
 		final TypedQuery<PresentationImpl> query = this.createQuery(this.findAllPresentation);
         return new LinkedHashSet<Presentation>(query.getResultList());
 	}
-
+	
 	@Override
+    public PresentationImpl getPresentationById(long presentationId) {
+        return this.getEntityManager().find(PresentationImpl.class, presentationId);
+    }
+
+    @Override
 	@OpenEntityManager
-	public Presentation getPresentationByBlackboardId(long bbPresentationId) {
+	public PresentationImpl getPresentationByBlackboardId(long bbPresentationId) {
 		final NaturalIdQuery<PresentationImpl> query = this.createNaturalIdQuery(PresentationImpl.class);
         query.using(PresentationImpl_.bbPresentationId, bbPresentationId);
         

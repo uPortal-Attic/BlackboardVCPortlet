@@ -78,7 +78,7 @@ public class SessionRecordingImpl implements SessionRecording {
 
     @ManyToOne(targetEntity = SessionImpl.class, optional = false)
     @JoinColumn(name = "SESSION_ID", nullable = false)
-    private Session session;
+    private final SessionImpl session;
     
     /**
      * Needed by hibernate
@@ -88,12 +88,14 @@ public class SessionRecordingImpl implements SessionRecording {
         this.recordingId = -1;
         this.entityVersion = -1;
         this.bbRecordingId = -1;
+        this.session = null;
     }
     
-    SessionRecordingImpl(long bbRecordingId) {
+    SessionRecordingImpl(long bbRecordingId, SessionImpl session) {
         this.recordingId = -1;
         this.entityVersion = -1;
         this.bbRecordingId = bbRecordingId;
+        this.session = session;
     }
 
     @Override
@@ -172,10 +174,6 @@ public class SessionRecordingImpl implements SessionRecording {
 
     public void setRoomName(String roomName) {
         this.roomName = roomName;
-    }
-
-    void setSession(Session session) {
-        this.session = session;
     }
 
     @Override

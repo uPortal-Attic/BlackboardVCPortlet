@@ -12,7 +12,6 @@ import javax.persistence.criteria.Root;
 import org.apache.commons.lang.Validate;
 import org.jasig.jpa.BaseJpaDao;
 import org.jasig.jpa.OpenEntityManager;
-import org.jasig.portlet.blackboardvcportlet.dao.MultimediaDao;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.Multimedia;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,7 @@ import com.elluminate.sas.BlackboardMultimediaResponse;
 import com.google.common.base.Function;
 
 @Repository
-public class MultimediaDaoImpl extends BaseJpaDao implements MultimediaDao {
+public class MultimediaDaoImpl extends BaseJpaDao implements InternalMultimediaDao {
 	
 	private CriteriaQuery<MultimediaImpl> findAllMultimedia;
 	
@@ -55,7 +54,7 @@ public class MultimediaDaoImpl extends BaseJpaDao implements MultimediaDao {
     }
     
 	@Override
-    public Multimedia getMultimedia(long multimediaId) {
+    public MultimediaImpl getMultimediaById(long multimediaId) {
         return this.getEntityManager().find(MultimediaImpl.class, multimediaId);
     }
 

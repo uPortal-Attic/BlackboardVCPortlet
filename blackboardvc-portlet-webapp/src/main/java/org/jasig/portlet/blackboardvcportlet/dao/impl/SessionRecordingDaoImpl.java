@@ -86,7 +86,7 @@ public class SessionRecordingDaoImpl extends BaseJpaDao implements SessionRecord
         final long bbRecordingId = recordingLongResponse.getRecordingId();
         SessionRecordingImpl recording = this.getRecordingByBlackboardId(bbRecordingId);
         if (recording == null) {
-            recording = new SessionRecordingImpl(bbRecordingId);
+            recording = new SessionRecordingImpl(bbRecordingId, session);
         }
         
         recording.setCreationDate(DaoUtils.toDateTime(recordingLongResponse.getCreationDate()));
@@ -96,7 +96,6 @@ public class SessionRecordingDaoImpl extends BaseJpaDao implements SessionRecord
         recording.setRoomStart(DaoUtils.toDateTime(recordingLongResponse.getRoomStartDate()));
         recording.setSecureSignOn(recordingLongResponse.isSecureSignOn());
         recording.setRoomName(recordingLongResponse.getRoomName());
-        recording.setSession(session);
         
         this.getEntityManager().persist(recording);
         

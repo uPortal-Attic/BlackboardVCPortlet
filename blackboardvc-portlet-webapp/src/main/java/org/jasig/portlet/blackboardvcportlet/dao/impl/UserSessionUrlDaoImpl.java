@@ -63,7 +63,7 @@ private CriteriaQuery<UserSessionUrlImpl> findAllUserSessionUrl;
 	@OpenEntityManager
     public UserSessionUrlImpl getUserSessionUrlsBySessionAndUser(Session session, ConferenceUser user) {
 		//fetch session
-		SessionImpl sessionByBlackboardId = sessionDao.getSessionByBlackboardId(session.getBbSessionId());
+		SessionImpl sessionByBlackboardId = sessionDao.getSession(session.getSessionId());
 		//fetch user
 		ConferenceUserImpl confUser = blackboardUserDao.getUser(user.getUserId());
 		//assert they are valid
@@ -81,7 +81,7 @@ private CriteriaQuery<UserSessionUrlImpl> findAllUserSessionUrl;
 	@Transactional
 	public UserSessionUrlImpl createUserSessionUrl(Session session, ConferenceUser user, String url) {
 		//fetch session
-		SessionImpl sessionFromDb = sessionDao.getSessionByBlackboardId(session.getBbSessionId());
+		SessionImpl sessionFromDb = sessionDao.getSession(session.getSessionId());
 		//fetch user
 		ConferenceUserImpl userFromDb = blackboardUserDao.getUser(user.getUserId());
 		//assert they are valid

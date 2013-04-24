@@ -8,12 +8,14 @@ import com.elluminate.sas.BlackboardPresentationResponse;
 
 public interface PresentationDao {
 	
-	public abstract Set<Presentation> getAllPresentations();
+	Set<Presentation> getAllPresentations();
+	
+	Presentation getPresentationById(long presentationId);
 
-	public abstract Presentation getPresentationByBlackboardId(long bbPresentationId);
+	Presentation getPresentationByBlackboardId(long bbPresentationId);
 
-	public abstract Presentation createPresentation(BlackboardPresentationResponse presentationResponse, String filename);
+	Presentation createPresentation(BlackboardPresentationResponse presentationResponse, String filename);
 
-	public abstract void deletePresentation(Presentation presentation);
+	void deletePresentation(Presentation presentation);
 
 }

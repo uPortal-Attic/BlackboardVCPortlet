@@ -21,7 +21,8 @@
 -->
 
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd" updateCheck="false" name="BlackboardCollaborate.cacheManager">
+    xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd"
+    updateCheck="false" name="BlackboardCollaborate.cacheManager">
      
     <!--
      | General direct-access portal caches are in the first section
@@ -37,4 +38,110 @@
     
     <defaultCache eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="60" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    
+    
+    
+    <cache name="org.jasig.portlet.blackboardvcportlet.dao.impl.ConferenceUserImpl" 
+        maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <cache name="org.jasig.portlet.blackboardvcportlet.dao.impl.ConferenceUserImpl##NaturalId" 
+        maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="3600" memoryStoreEvictionPolicy="LRU" statistics="true" />   
+
+    <cache name="org.jasig.portlet.blackboardvcportlet.dao.impl.ConferenceUserImpl.additionalEmails" 
+        maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <cache name="org.jasig.portlet.blackboardvcportlet.dao.impl.ConferenceUserImpl.chairedSessions" 
+        maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <cache name="org.jasig.portlet.blackboardvcportlet.dao.impl.ConferenceUserImpl.multimedias" 
+        maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <cache name="org.jasig.portlet.blackboardvcportlet.dao.impl.ConferenceUserImpl.nonChairedSessions" 
+        maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    
+    <cache name="org.jasig.portlet.blackboardvcportlet.dao.impl.ConferenceUserImpl.ownedSessions" 
+        maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    
+    <cache name="org.jasig.portlet.blackboardvcportlet.dao.impl.ConferenceUserImpl.presentations" 
+        maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+
+
+    <cache name="org.jasig.portlet.blackboardvcportlet.dao.impl.MultimediaImpl" 
+        maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portlet.blackboardvcportlet.dao.impl.MultimediaImpl##NaturalId" 
+        maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="3600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+
+
+    <cache name="org.jasig.portlet.blackboardvcportlet.dao.impl.PresentationImpl" 
+        maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portlet.blackboardvcportlet.dao.impl.PresentationImpl##NaturalId" 
+        maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="3600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+
+
+    <cache name="org.jasig.portlet.blackboardvcportlet.dao.impl.ServerConfigurationImpl" 
+        maxElementsInMemory="1" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="60" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    
+    
+    <cache name="org.jasig.portlet.blackboardvcportlet.dao.impl.ServerQuotaImpl" 
+        maxElementsInMemory="1" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="60" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    
+    
+    
+    <cache name="org.jasig.portlet.blackboardvcportlet.dao.impl.SessionImpl" 
+        maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    
+    <cache name="org.jasig.portlet.blackboardvcportlet.dao.impl.SessionImpl##NaturalId" 
+        maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="3600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    
+    <cache name="org.jasig.portlet.blackboardvcportlet.dao.impl.SessionImpl.chairs" 
+        maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    
+    <cache name="org.jasig.portlet.blackboardvcportlet.dao.impl.SessionImpl.multimedias" 
+        maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    
+    <cache name="org.jasig.portlet.blackboardvcportlet.dao.impl.SessionImpl.nonChairs" 
+        maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    
+    
+    
+    <cache name="org.jasig.portlet.blackboardvcportlet.dao.impl.SessionRecordingImpl" 
+        maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    
+    <cache name="org.jasig.portlet.blackboardvcportlet.dao.impl.SessionRecordingImpl##NaturalId" 
+        maxElementsInMemory="5000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="3600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    
+    
+    
+    <cache name="org.jasig.portlet.blackboardvcportlet.dao.impl.UserSessionUrlImpl" 
+        maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    
+    <cache name="org.jasig.portlet.blackboardvcportlet.dao.impl.UserSessionUrlImpl##NaturalId" 
+        maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="3600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    
 </ehcache>

@@ -27,7 +27,6 @@ import org.hibernate.annotations.NaturalIdCache;
 import org.hibernate.annotations.Type;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.Presentation;
-import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.joda.time.DateTime;
 
 @Entity
@@ -77,8 +76,7 @@ public class PresentationImpl implements Presentation {
     private DateTime lastUpdated;
 	
 	@OneToMany(targetEntity = SessionImpl.class, fetch = FetchType.LAZY, mappedBy = "presentation")
-	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private final Set<Session> sessions = new HashSet<Session>(0);
+    private final Set<SessionImpl> sessions = new HashSet<SessionImpl>(0);
 	
 	@SuppressWarnings("unused")
 	private PresentationImpl() {
@@ -151,10 +149,6 @@ public class PresentationImpl implements Presentation {
 		return creator;
 	}
 
-	Set<Session> getSessions() {
-		return sessions;
-	}
-	
 	@Override
 	public String toString() {
 		return "PresentationImpl [presentationId=" + presentationId

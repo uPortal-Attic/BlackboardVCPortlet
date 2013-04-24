@@ -8,14 +8,14 @@ import com.elluminate.sas.BlackboardMultimediaResponse;
 
 public interface MultimediaDao {
 
-	public abstract Set<Multimedia> getAllMultimedia();
+	Set<Multimedia> getAllMultimedia();
 	
-	public abstract Multimedia getMultimedia(long multimediaId);
+	Multimedia getMultimediaById(long multimediaId);
 
-	public abstract Multimedia getMultimediaByBlackboardId(long bbMultimediaId);
+	Multimedia getMultimediaByBlackboardId(long bbMultimediaId);
 
-	public abstract Multimedia createMultimedia(BlackboardMultimediaResponse multimediaResponse, String filename);
+	Multimedia createMultimedia(BlackboardMultimediaResponse multimediaResponse, String filename);
 
-	public abstract void deleteMultimedia(Multimedia multimedia);
+	void deleteMultimedia(Multimedia multimedia);
 
 }

@@ -76,7 +76,7 @@ public class ConferenceUserDaoImpl extends BaseJpaDao implements InternalConfere
         }
 
         //Create a copy to trigger loading of the session data
-        return ImmutableSet.copyOf(userImpl.getOwnedSessions());
+        return ImmutableSet.<Session>copyOf(userImpl.getOwnedSessions());
     }
     @Override
     public Set<Session> getChairedSessionsForUser(ConferenceUser user) {
@@ -90,7 +90,7 @@ public class ConferenceUserDaoImpl extends BaseJpaDao implements InternalConfere
         }
 
         //Create a copy to trigger loading of the session data
-        return ImmutableSet.copyOf(userImpl.getChairedSessions());
+        return ImmutableSet.<Session>copyOf(userImpl.getChairedSessions());
     }
 
     @Override
@@ -105,7 +105,7 @@ public class ConferenceUserDaoImpl extends BaseJpaDao implements InternalConfere
         }
 
         //Create a copy to trigger loading of the session data
-        return ImmutableSet.copyOf(userImpl.getNonChairedSessions());
+        return ImmutableSet.<Session>copyOf(userImpl.getNonChairedSessions());
     }
     
     @Override
@@ -143,7 +143,7 @@ public class ConferenceUserDaoImpl extends BaseJpaDao implements InternalConfere
     	}
     	
     	final ConferenceUserImpl userImpl = this.getUser(user.getUserId());
-    	return ImmutableSet.copyOf(userImpl.getMultimedias());
+    	return ImmutableSet.<Multimedia>copyOf(userImpl.getMultimedias());
     }
     
     @Override
@@ -153,7 +153,7 @@ public class ConferenceUserDaoImpl extends BaseJpaDao implements InternalConfere
     	}
     	
     	final ConferenceUserImpl userImpl = this.getUser(user.getUserId());
-    	return ImmutableSet.copyOf(userImpl.getPresentations());
+    	return ImmutableSet.<Presentation>copyOf(userImpl.getPresentations());
     }
     
     @Override

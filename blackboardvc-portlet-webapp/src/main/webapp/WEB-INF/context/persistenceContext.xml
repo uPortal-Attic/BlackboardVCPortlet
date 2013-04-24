@@ -35,7 +35,7 @@
         <property name="connectionProperties" value="oracle.net.CONNECT_TIMEOUT=5000;oracle.net.READ_TIMEOUT=30000;oracle.jdbc.ReadTimeout=30000" />
     </bean>
     
-    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="cacheManager">
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="BlackboardCollaborate.cacheManager">
         <property name="dataSource" ref="dataSource" />
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
         <property name="persistenceUnitName">
