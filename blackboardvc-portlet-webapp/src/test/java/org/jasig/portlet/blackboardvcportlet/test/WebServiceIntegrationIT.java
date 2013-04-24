@@ -26,7 +26,7 @@ import com.elluminate.sas.ObjectFactory;
 @ContextConfiguration(locations = "classpath:/test-applicationContext.xml")
 public class WebServiceIntegrationIT
 {
-	private static final Logger logger = LoggerFactory.getLogger(WebServiceIntegrationIT.class);
+    protected Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	private SASWebServiceOperations sasWebServiceTemplate;

@@ -41,7 +41,7 @@ import static org.junit.Assert.assertNotNull;
 @ContextConfiguration(locations = "/test-emailContext.xml")
 public class MailTemplateServiceIT
 {
-	private static final Logger logger = LoggerFactory.getLogger(MailTemplateService.class);
+    protected Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	private MailTemplateServiceImpl mailTemplateService;

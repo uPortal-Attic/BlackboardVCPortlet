@@ -26,7 +26,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 @Service("jasigMailTemplateService")
 public class MailTemplateServiceImpl implements BeanFactoryAware, MailTemplateService
 {
-	private static final Logger logger = LoggerFactory.getLogger(MailTemplateServiceImpl.class);
+    protected Logger logger = LoggerFactory.getLogger(getClass());
 
 	final private Queue<MailTask> theQueue = new ConcurrentLinkedQueue<MailTask>();
 	private JavaMailSender mailSender;

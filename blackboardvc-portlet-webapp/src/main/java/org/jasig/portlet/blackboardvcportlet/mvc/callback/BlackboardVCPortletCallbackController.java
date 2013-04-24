@@ -38,7 +38,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @Controller
 public class BlackboardVCPortletCallbackController {
-	private static final Logger logger = LoggerFactory.getLogger(BlackboardVCPortletCallbackController.class);
+    protected Logger logger = LoggerFactory.getLogger(getClass());
 
     private RecordingService recordingService;
     private ServerConfigurationService serverConfigurationService;

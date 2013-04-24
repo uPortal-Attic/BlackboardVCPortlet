@@ -27,7 +27,7 @@ import com.elluminate.sas.ObjectFactory;
 @Service
 public class MultimediaWSDaoImpl implements MultimediaWSDao { 
 	
-	private static final Logger logger = LoggerFactory.getLogger(MultimediaWSDaoImpl.class);
+    protected Logger logger = LoggerFactory.getLogger(getClass());
 	
 	private SASWebServiceOperations sasWebServiceOperations;
 	

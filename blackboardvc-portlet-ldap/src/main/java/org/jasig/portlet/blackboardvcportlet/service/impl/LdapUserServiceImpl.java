@@ -41,7 +41,7 @@ import org.springframework.ldap.filter.OrFilter;
 
 public class LdapUserServiceImpl implements UserService
 {
-	private static final Logger logger = LoggerFactory.getLogger(LdapUserServiceImpl.class);
+	protected Logger logger = LoggerFactory.getLogger(getClass());
 
 	private LdapTemplate ldapTemplate;
 

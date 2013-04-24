@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @Service("serverConfigurationService")
 public class ServerConfigurationServiceImpl implements ServerConfigurationService
 {
-	private static final Logger logger = LoggerFactory.getLogger(ServerConfigurationServiceImpl.class);
+    protected Logger logger = LoggerFactory.getLogger(getClass());
 
     private ServerConfigurationDao serverConfigurationDao;
 	private GlobalSettingsWSDao globalSettingsWSDao;

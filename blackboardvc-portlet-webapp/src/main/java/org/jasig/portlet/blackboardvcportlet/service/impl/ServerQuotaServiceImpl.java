@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ServerQuotaServiceImpl implements ServerQuotaService
 {
-	private static final Logger logger = LoggerFactory.getLogger(ServerQuotaServiceImpl.class);
+    protected Logger logger = LoggerFactory.getLogger(getClass());
 
     private ServerQuotaDao serverQuotaDao;
 	private GlobalSettingsWSDao globalSettingsWSDao;

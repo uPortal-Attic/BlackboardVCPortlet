@@ -27,7 +27,7 @@ import com.elluminate.sas.ObjectFactory;
 @Service
 public class PresentationWSDaoImpl implements PresentationWSDao {
 	
-	private static final Logger logger = LoggerFactory.getLogger(PresentationWSDaoImpl.class);
+    protected Logger logger = LoggerFactory.getLogger(getClass());
 	
 	private SASWebServiceOperations sasWebServiceOperations;
 	
