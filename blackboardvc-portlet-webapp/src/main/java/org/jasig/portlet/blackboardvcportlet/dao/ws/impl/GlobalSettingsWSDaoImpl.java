@@ -74,6 +74,7 @@ public class GlobalSettingsWSDaoImpl implements GlobalSettingsWSDao {
 	public boolean setApiCallbackUrl(String randomURLToken) {
 	    if (callbackURL == null) {
 	        logger.warn("No bbc.callbackURL property specified. SetApiCallbackUrl will not be called");
+	        return true;
 	    }
 	    
 		//create request object
