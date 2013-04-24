@@ -53,8 +53,8 @@ public class SessionForm implements Serializable {
 	@Future
 	private DateMidnight startDate;
 
-	@Min(1)
-	@Max(12)
+	@Min(0)
+	@Max(23)
 	private int startHour;
 
 	@Min(0)
@@ -64,8 +64,8 @@ public class SessionForm implements Serializable {
 	@Future
 	private DateMidnight endDate;
 
-	@Min(1)
-	@Max(12)
+	@Min(0)
+	@Max(23)
 	private int endHour;
 
 	@Min(0)
