@@ -237,7 +237,8 @@
   <hr>
   <portlet:actionURL portletMode="EDIT" var="manageModeratorActionUrl" />
   <form action="${manageModeratorActionUrl}" method="post">
-    <input type="hidden" name="sessionId" value="${sessionForm.sessionId}" />
+      <spring:nestedPath path="addModeratorForm">
+      <input type="hidden" name="sessionId" value="${sessionForm.sessionId}" />
     <table>
       <thead>
         <tr class="uportal-channel-table-header">
@@ -258,10 +259,10 @@
         </c:forEach>
         <tr>
           <td>
-            <input name="displayName" type="text" />
+            <input name="moderatorName" type="text" />&nbsp;<form:errors path="moderatorName" cssClass="error"/>
           </td>
           <td>
-            <input name="email" type="text" />
+            <input name="emailAddress" type="text" />&nbsp;<form:errors path="emailAddress" cssClass="error"/>
           </td>
           <td>
               <spring:message code="addModerator" var="addModerator" text="addModerator"/>
@@ -270,8 +271,8 @@
         </tr>
       </tbody>
     </table>
+   </spring:nestedPath>
   </form>
-
 
   <br/>
   <div class="uportal-channel-subtitle">3. <spring:message code="participants" text="participants"/></div>

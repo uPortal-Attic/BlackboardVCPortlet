@@ -21,6 +21,7 @@ package org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr;
 import com.google.common.collect.Ordering;
 import org.apache.commons.lang.StringUtils;
 import org.jasig.portlet.blackboardvcportlet.data.*;
+import org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr.forms.AddModeratorForm;
 import org.jasig.portlet.blackboardvcportlet.security.ConferenceUserService;
 import org.jasig.portlet.blackboardvcportlet.service.ServerConfigurationService;
 import org.jasig.portlet.blackboardvcportlet.service.SessionForm;
@@ -166,14 +167,18 @@ public class SessionCreateEditController
 
 	//TODO @Valid on name/email
     @ActionMapping(params = "action=Add Moderator")
-    public void addSessionChair(ActionResponse response, @RequestParam long sessionId, @RequestParam String displayName, @RequestParam String email) throws PortletModeException {
-        displayName = StringUtils.trimToNull(displayName);
-        email = StringUtils.trimToNull(email);
-        
-        this.sessionService.addSessionChair(sessionId, displayName, email);
+    public void addSessionChair(ActionResponse response, @Valid AddModeratorForm addModeratorForm, BindingResult bindingResult) throws PortletModeException {
+
+		if (!bindingResult.hasErrors())
+		{
+			String displayName = StringUtils.trimToNull(addModeratorForm.getModeratorName());
+			String email = StringUtils.trimToNull(addModeratorForm.getEmailAddress());
+
+			this.sessionService.addSessionChair(addModeratorForm.getSessionId(), displayName, email);
+		}
 
         response.setPortletMode(PortletMode.EDIT);
-        response.setRenderParameter("sessionId", Long.toString(sessionId));
+        response.setRenderParameter("sessionId", Long.toString(addModeratorForm.getSessionId()));
     }
 
     //TODO @Valid on deleteChair (must be email)
