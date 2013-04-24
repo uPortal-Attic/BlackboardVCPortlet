@@ -24,11 +24,11 @@
 
     <css>css/portlet.css</css>
 
-    <js included="plain" resource="true">/rs/jquery/1.9.1/jquery-1.9.1.js</js>
-    <js included="aggregated" resource="true">/rs/jquery/1.9.1/jquery-1.9.1.min.js</js>
+    <js included="plain" resource="true">js-lib/jquery-1.9.1.js</js>
+    <js included="aggregated" resource="true">js-lib/jquery-1.9.1.min.js</js>
 
-    <js included="plain" resource="true">/rs/jqueryui/1.8.13/jquery-ui-1.8.13.js</js>
-    <js included="aggregated" resource="true">/rs/jqueryui/1.8.13/jquery-ui-1.8.13.min.js</js>
+    <js included="plain" resource="true">js-lib/jquery-ui-1.8.13.js</js>
+    <js included="aggregated" resource="true">js-lib/jquery-ui-1.8.13.min.js</js>
 
     <!-- Order is important here, the log script needs to be the first thing followed by the debug toggle -->
     <js>js-lib/jquery.log.js</js>
