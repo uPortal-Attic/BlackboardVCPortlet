@@ -74,7 +74,8 @@ public class BlackboardVCPortletCallbackController {
     	
         final ServerConfiguration serverConfiguration = serverConfigurationService.getServerConfiguration();
         if(serverConfiguration.getRandomCallbackUrl().equalsIgnoreCase(securityToken)) {
-        	recordingService.updateSessionRecordings(sessionId);
+        	if(recPlaybackLink != null && recPlaybackLink.length() > 0)
+        		recordingService.updateSessionRecordings(sessionId, roomOpenedMillis, roomClosedMillis);
         } else {
         	logger.error("Invalid callback URL provided. Expected :" + serverConfiguration.getRandomCallbackUrl() + "; Received : " + securityToken);
         	throw new ResourceNotFoundException();

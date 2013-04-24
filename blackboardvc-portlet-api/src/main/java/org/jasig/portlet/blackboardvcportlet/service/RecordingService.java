@@ -24,5 +24,5 @@ package org.jasig.portlet.blackboardvcportlet.service;
  * @author Richard Good
  */
 public interface RecordingService {
-    void updateSessionRecordings(long sessionId);
+	void updateSessionRecordings(long sessionId, long startTime, long endTime);
 }
