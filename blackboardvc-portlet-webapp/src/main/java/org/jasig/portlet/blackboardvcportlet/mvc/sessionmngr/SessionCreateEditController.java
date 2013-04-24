@@ -165,7 +165,6 @@ public class SessionCreateEditController
         response.setPortletMode(PortletMode.VIEW);
     }
 
-	//TODO @Valid on name/email
     @ActionMapping(params = "action=Add Moderator")
     public void addSessionChair(ActionResponse response, @Valid AddModeratorForm addModeratorForm, BindingResult bindingResult) throws PortletModeException {
 
