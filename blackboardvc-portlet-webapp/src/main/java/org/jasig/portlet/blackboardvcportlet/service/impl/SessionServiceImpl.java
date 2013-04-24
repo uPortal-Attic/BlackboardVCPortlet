@@ -34,7 +34,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.oxm.XmlMappingException;
-import org.springframework.remoting.soap.SoapFaultException;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -228,7 +227,7 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
         try {
             this.multimediaWSDao.removeRepositoryMultimedia(multimedia.getBbMultimediaId());
         }
-        catch (SoapFaultException e) {
+        catch (WebServiceClientException e) {
             //See if the multimedia file actually exists
             final List<BlackboardMultimediaResponse> userMultimedias = this.multimediaWSDao.getRepositoryMultimedias(null, multimedia.getBbMultimediaId(), null);
             
@@ -388,7 +387,7 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
         try {
             this.presentationWSDao.deleteSessionPresenation(session.getBbSessionId(), presentation.getBbPresentationId());
         }
-        catch (SoapFaultException e) {
+        catch (WebServiceClientException e) {
             //See if the presentation association actually exists
             final List<BlackboardPresentationResponse> sessionPresentations = this.presentationWSDao.getSessionPresentations(session.getBbSessionId());
             
@@ -405,9 +404,10 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
         try {
             this.presentationWSDao.deletePresentation(presentation.getBbPresentationId());
         }
-        catch (SoapFaultException e) {
+        catch (WebServiceClientException e) {
             //See if the presentation actually exists
-            final List<BlackboardPresentationResponse> repositoryPresentations = this.presentationWSDao.getRepositoryPresentations(null, presentation.getBbPresentationId(), null);
+            final ConferenceUser creator = session.getCreator();
+            final List<BlackboardPresentationResponse> repositoryPresentations = this.presentationWSDao.getRepositoryPresentations(creator.getUniqueId(), presentation.getBbPresentationId(), null);
             
             //Presentation exists but failed to remove it, throw the exception
             if (!repositoryPresentations.isEmpty()) {
