@@ -4,7 +4,6 @@
  */
 package org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr.forms;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
@@ -17,7 +16,6 @@ public class DeleteParticipantsForm implements Serializable
 	private long deleteParticipantsSessionId;
 
 	@NotNull
-	@Valid
 	@Size(min = 1)
 	private long[] nonChairId;
 
