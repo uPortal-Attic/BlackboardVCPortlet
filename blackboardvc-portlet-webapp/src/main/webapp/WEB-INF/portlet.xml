@@ -82,6 +82,7 @@
             <short-title>Web Conferencing Administration</short-title>
         </portlet-info>
     
+    <!-- TODO is this going to affect BlackboardVCPortlet? -->
         <security-role-ref>
           <role-name>ROLE_ADMIN</role-name>
           <role-link>Everyone</role-link>

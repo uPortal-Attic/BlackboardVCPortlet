@@ -103,6 +103,7 @@
         <property name="unmarshaller" ref="elluminateMarshaller"/>
         <property name="messageSender" ref="webServiceMessageSender"/>
         <property name="destinationProvider" ref="sasDestinationProvider" />
+        <property name="checkConnectionForFault" value="false"></property>
     </bean>
     <bean id="sasDestinationProvider" class="org.jasig.springframework.ws.client.support.destination.FailSafeWsdl11DestinationProvider">
         <property name="wsdl" value="${sas.defaultUri}" />
