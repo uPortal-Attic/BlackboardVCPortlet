@@ -73,6 +73,11 @@ public abstract class AbstractWSIT {
                 // TODO Auto-generated method stub
                 return false;
             }
+
+			@Override
+			public String getBlackboardUniqueId() {
+				 return getUniqueId();
+			}
 		};
 		return user;
 		

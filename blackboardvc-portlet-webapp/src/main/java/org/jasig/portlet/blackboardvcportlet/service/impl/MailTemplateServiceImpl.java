@@ -46,16 +46,16 @@ public class MailTemplateServiceImpl implements BeanFactoryAware, MailTemplateSe
 
 	private String defaultFromAddress;
 	
-	@Value("mail.sendMail")
+	@Value("${mail.sendMail}")
 	private String sendMail;
 
-	@Value("mail.extParticipantMailMessage.subject")
+	@Value("${mail.extParticipantMailMessage.subject}")
 	private String externalParticipantSubject;
-	@Value("mail.intParticipantMailMessage.subject")
+	@Value("${mail.intParticipantMailMessage.subject}")
 	private String internalParticipantSubject;
-	@Value("mail.moderatorMailMessage.subject")
+	@Value("${mail.moderatorMailMessage.subject}")
 	private String moderatorSubject;
-	@Value("mail.sessionDeletionMessage.subject")
+	@Value("${mail.sessionDeletionMessage.subject}")
 	private String sessionDeletionSubject;
 
 	/**
@@ -66,7 +66,7 @@ public class MailTemplateServiceImpl implements BeanFactoryAware, MailTemplateSe
 		super();
 	}
 	
-	@Value("mail.from")
+	@Value("${mail.from}")
 	public void setFrom(String from) {
 		this.defaultFromAddress = from;
 	}
