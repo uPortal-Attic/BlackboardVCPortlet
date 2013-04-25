@@ -20,7 +20,6 @@ import org.jasig.portlet.blackboardvcportlet.dao.SessionDao;
 import org.jasig.portlet.blackboardvcportlet.dao.UserSessionUrlDao;
 import org.jasig.portlet.blackboardvcportlet.dao.ws.MultimediaWSDao;
 import org.jasig.portlet.blackboardvcportlet.dao.ws.PresentationWSDao;
-import org.jasig.portlet.blackboardvcportlet.dao.ws.RecordingWSDao;
 import org.jasig.portlet.blackboardvcportlet.dao.ws.SessionWSDao;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.Multimedia;
@@ -63,7 +62,6 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
 	private SessionWSDao sessionWSDao;
 	private MultimediaWSDao multimediaWSDao;
 	private PresentationWSDao presentationWSDao;
-	private RecordingWSDao recordingWSDao;
 	private MailTemplateService mailService;
 	private File tempDir;
 
@@ -118,11 +116,6 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
     @Autowired
     public void setPresentationWSDao(PresentationWSDao presentationWSDao) {
         this.presentationWSDao = presentationWSDao;
-    }
-
-    @Autowired
-    public void setRecordingWSDao(RecordingWSDao recordingWSDao) {
-        this.recordingWSDao = recordingWSDao;
     }
     
     @Override

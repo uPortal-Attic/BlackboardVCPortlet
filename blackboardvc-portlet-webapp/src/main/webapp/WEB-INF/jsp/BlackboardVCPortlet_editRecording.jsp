@@ -19,50 +19,62 @@
 
 --%>
 
+<%@ include file="/WEB-INF/jsp/include.jsp"%>
 <%@ include file="/WEB-INF/jsp/header.jsp"%>
 
-<c:if test="${!empty errorMessage}">
-    <div class="uportal-channel-error"><spring:message code="${errorMessage}" text="${errorMessage}"/></div><br/>
-</c:if>
 <div class="uportal-channel-subtitle">1. <spring:message code="recordingInformation" text="recordingInformation"/></div>
 <hr>
 
 <%-- Define the main action and render URLs --%>
-<portlet:actionURL portletMode="EDIT" var="formActionUrl">
-    <portlet:param name="action" value="saveRecording"/>
+<portlet:actionURL portletMode="EDIT" var="saveRecordingActionUrl">
+  <portlet:param name="action" value="saveRecording" />
 </portlet:actionURL>
-
-<form:form name="editRecording" action="${formActionUrl}" method="post">
-     <c:if test="${!empty recording.recordingId}">
-        <input type="hidden" name="recordingId" value="${recording.recordingId}"/>
-    </c:if>
-  
-<table width="100%">
-    <tbody>
+<form action="${saveRecordingActionUrl}" method="post">
+  <%-- Using nestedPath as form:form does not work for portlets see: https://jira.springsource.org/browse/SPR-10382 --%>
+  <spring:nestedPath path="recording">
+    <form:hidden path="recordingId"/>
+    
+    <table width="100%">
+      <tbody>
         <tr>           
-            <td><span class="uportal-channel-strong"><spring:message code="recordingName" text="recordingName"/>*: </span></td>
-            <td><input name="roomName" style="width: 50%;" class="uportal-input-text" value="${recording.roomName}"/></td>            
+          <td>
+            <span class="uportal-channel-strong"><spring:message code="recordingName" text="recordingName"/>: </span>
+          </td>
+          <td>
+            <form:input path="roomName" style="width: 50%;" class="uportal-input-text"/>
+          </td>            
         </tr>
         <tr>
-        	<td><span class="uportal-channel-strong"><spring:message code="startTime" text="startTime"/>: </span></td>
-        	<td><fmt:formatDate value="${recording.createdDate}" pattern="dd-MM-yyyy HH:mm" /></td>
+          <td>
+            <span class="uportal-channel-strong"><spring:message code="startTime" text="startTime"/>: </span>
+          </td>
+          <td>
+            <joda:format value="${recording.creationDate}" pattern="MM/dd/yyyy HH:mm" />
+          </td>
         </tr>
         <tr>
-            <td><span class="uportal-channel-strong"><spring:message code="size" text="size"/>:</span></td><td>${recording.readableFileSize}</td>
+          <td>
+            <span class="uportal-channel-strong"><spring:message code="size" text="size"/>:</span>
+          </td>
+          <td>${recording.displayRecordingSize}</td>
         </tr>
-    </tbody>
-</table>
-<table width="100%">
-    <tbody>
+      </tbody>
+    </table>
+    
+    <table>
+      <tbody>
         <tr>
-            <td align="left">
-                <spring:message code="saveRecording" var="saveRecording" text="saveRecording"/>
-                <input class="uportal-button" name="action" value="${saveRecording}" type="submit"></td>
-                <portlet:renderURL var="cancelAction" portletMode="VIEW" windowState="NORMAL"/>
-            <td align="right"><a href="${cancelAction}" class="uportal-button"><spring:message code="cancel" text="cancel"/></a></td>
+          <td>
+            <spring:message code="saveRecording" var="saveRecording" text="saveRecording"/>
+            <input class="uportal-button" value="${saveRecording}" type="submit">
+          </td>
+          <td>
+            <portlet:renderURL var="cancelAction" portletMode="VIEW" windowState="NORMAL" />
+            <a href="${cancelAction}" class="uportal-button"><spring:message code="cancel" text="cancel"/></a>
+          </td>
         </tr>
-    </tbody>
-
-</table>
-</form:form>
+      </tbody>
+    </table>
+  </spring:nestedPath>
+</form>
 

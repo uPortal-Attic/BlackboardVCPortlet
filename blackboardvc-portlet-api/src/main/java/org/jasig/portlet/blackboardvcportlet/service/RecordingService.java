@@ -18,6 +18,8 @@
  */
 package org.jasig.portlet.blackboardvcportlet.service;
 
+import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
+
 
 
 /**
@@ -26,4 +28,8 @@ package org.jasig.portlet.blackboardvcportlet.service;
  */
 public interface RecordingService {
 	void updateSessionRecordings(long sessionId, long startTime, long endTime);
+	
+	SessionRecording getSessionRecording(long recordingId);
+	
+	void updateSessionRecordingName(long recordingId, String roomName);
 }

@@ -101,6 +101,12 @@ public class SessionRecordingDaoImpl extends BaseJpaDao implements SessionRecord
         
         return recording;
     }
+    
+    @Override
+    @Transactional
+    public void updateSessionRecording(SessionRecording recording) {
+        this.getEntityManager().persist(recording);
+    }
 
     @OpenEntityManager
     public SessionRecordingImpl getRecordingByBlackboardId(long bbRecordingId) {

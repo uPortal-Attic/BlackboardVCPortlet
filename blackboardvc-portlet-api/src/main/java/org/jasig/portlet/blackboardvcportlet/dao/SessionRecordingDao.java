@@ -36,6 +36,8 @@ public interface SessionRecordingDao {
     
     SessionRecording getSessionRecording(long recordingId);
     
+    void updateSessionRecording(SessionRecording recording);
+    
     int deleteRecordings(long... recordingIds);
     
 }

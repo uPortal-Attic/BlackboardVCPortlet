@@ -14,6 +14,8 @@ public interface SessionRecording extends Serializable {
     Session getSession();
 
     String getRoomName();
+    
+    void setRoomName(String roomName);
 
     long getRecordingSize();
     

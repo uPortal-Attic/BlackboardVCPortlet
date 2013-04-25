@@ -109,7 +109,7 @@ public class SessionCreateEditController
 	    return "BlackboardVCPortlet_edit";
 	}
 
-    @RenderMapping(params="sessionId")
+    @RenderMapping(params="action=editSession")
     public String displayEditSessionForm(ModelMap model, @RequestParam long sessionId) throws PortletModeException
 	{
         final ServerConfiguration serverConfiguration = this.serverConfigurationService.getServerConfiguration();
