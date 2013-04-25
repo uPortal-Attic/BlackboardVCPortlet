@@ -50,4 +50,34 @@ public class CustomValidationsTest
 		assertEquals("endMinute", constraintViolations.iterator().next().getPropertyPath().toString());
 		logger.info("testQuarterHourCheck() finished.");
 	}
+
+	/**
+	 * Tests theq SessionEndTimeRangeCheck
+	 * The first attempt should pass all constraint checks, while the second attempt
+	 * should trigger an out of range violation.
+	 * @throws Exception
+	 */
+	@Test
+	public void testSessionEndTimeRangeCheck() throws Exception
+	{
+		logger.info("testSessionEndTimeRangeCheck() started....");
+		SessionForm sessionForm = new SessionForm();
+		sessionForm.setSessionName("Test Session");
+		sessionForm.setBoundaryTime(15);
+		sessionForm.setStartDate(DateMidnight.now());
+		sessionForm.setStartHour(20);
+		sessionForm.setStartMinute(15);
+		sessionForm.setEndDate(DateMidnight.now());
+		sessionForm.setEndHour(21);
+		sessionForm.setEndMinute(45);
+
+		Set<ConstraintViolation<SessionForm>> constraintViolations = validator.validate(sessionForm);
+		assertEquals(0, constraintViolations.size());
+
+		sessionForm.setEndDate(DateMidnight.now().plusDays(2));
+		constraintViolations = validator.validate(sessionForm);
+		assertEquals(1, constraintViolations.size());
+
+		logger.info("testSessionEndTimeRangeCheck() finished.");
+	}
 }
