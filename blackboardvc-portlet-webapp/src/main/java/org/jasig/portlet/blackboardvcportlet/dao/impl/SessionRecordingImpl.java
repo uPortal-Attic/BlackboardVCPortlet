@@ -18,7 +18,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.NaturalIdCache;
 import org.hibernate.annotations.Type;
-import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
 import org.joda.time.DateTime;
 
@@ -149,7 +148,7 @@ public class SessionRecordingImpl implements SessionRecording {
     }
 
     @Override
-    public Session getSession() {
+    public SessionImpl getSession() {
         return session;
     }
     

@@ -32,4 +32,6 @@ public interface RecordingService {
 	SessionRecording getSessionRecording(long recordingId);
 	
 	void updateSessionRecordingName(long recordingId, String roomName);
+	
+	void removeRecording(long recordingId);
 }

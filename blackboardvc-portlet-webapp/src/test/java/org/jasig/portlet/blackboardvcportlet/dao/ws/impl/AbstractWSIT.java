@@ -1,6 +1,5 @@
 package org.jasig.portlet.blackboardvcportlet.dao.ws.impl;
 
-import java.util.Map;
 import java.util.Set;
 
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;

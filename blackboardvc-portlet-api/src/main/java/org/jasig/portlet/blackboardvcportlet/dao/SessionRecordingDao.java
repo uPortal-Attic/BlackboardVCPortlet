@@ -38,6 +38,6 @@ public interface SessionRecordingDao {
     
     void updateSessionRecording(SessionRecording recording);
     
-    int deleteRecordings(long... recordingIds);
+    void deleteRecording(SessionRecording recording);
     
 }

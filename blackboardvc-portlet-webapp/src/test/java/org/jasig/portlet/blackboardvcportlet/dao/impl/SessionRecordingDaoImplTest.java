@@ -223,9 +223,11 @@ public class SessionRecordingDaoImplTest extends BaseJpaDaoTest {
             @Override
             public Object call() {
                 
-                final int count = sessionRecordingDao.deleteRecordings(1, 3);
+                SessionRecording rec = sessionRecordingDao.getSessionRecording(1);
+                sessionRecordingDao.deleteRecording(rec);
                 
-                assertEquals(2, count);
+                rec = sessionRecordingDao.getSessionRecording(3);
+                sessionRecordingDao.deleteRecording(rec);
                 
                 return null;
             }

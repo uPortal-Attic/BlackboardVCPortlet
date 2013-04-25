@@ -68,4 +68,14 @@ public class SessionRecordingEditController
         
         response.setPortletMode(PortletMode.VIEW);
     }
+    
+    @ActionMapping(params = "action=deleteRecordings")
+    public void deleteSession(ActionResponse response, @RequestParam long[] deleteRecording) throws PortletModeException {
+        //TODO do in try/catch?
+        for (final long recordingId : deleteRecording) {
+            this.recordingService.removeRecording(recordingId);
+        }
+        
+        response.setPortletMode(PortletMode.VIEW);
+    }
 }

@@ -4,11 +4,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.Query;
+import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
 import org.jasig.jpa.BaseJpaDao;
@@ -21,18 +20,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.elluminate.sas.BlackboardRecordingLongResponse;
 import com.google.common.base.Function;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
 
 @Repository
 public class SessionRecordingDaoImpl extends BaseJpaDao implements SessionRecordingDao {
     
 	private InternalSessionDao sessionDao;
-    
 
-    private ParameterExpression<Long> recordingIdParameter;
-    
-    private String deleteRecordingsByIdQueryString;
     private CriteriaQuery<SessionRecordingImpl> findAllSessionRecordings;
 
     @Autowired
@@ -42,13 +35,6 @@ public class SessionRecordingDaoImpl extends BaseJpaDao implements SessionRecord
     
     @Override
     public void afterPropertiesSet() throws Exception {
-        this.recordingIdParameter = this.createParameterExpression(Long.class, "id");
-        
-        this.deleteRecordingsByIdQueryString = 
-                "DELETE FROM " + SessionRecordingImpl.class.getName() + " e " +
-                "WHERE e." + SessionRecordingImpl_.recordingId.getName() + " in :" + this.recordingIdParameter.getName();
-        
-        
         this.findAllSessionRecordings = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<SessionRecordingImpl>>() {
             @Override
             public CriteriaQuery<SessionRecordingImpl> apply(CriteriaBuilder cb) {
@@ -70,7 +56,7 @@ public class SessionRecordingDaoImpl extends BaseJpaDao implements SessionRecord
     }
     
     @Override
-    public SessionRecording getSessionRecording(long recordingId) {
+    public SessionRecordingImpl getSessionRecording(long recordingId) {
         return this.getEntityManager().find(SessionRecordingImpl.class, recordingId);
     }
 
@@ -118,20 +104,15 @@ public class SessionRecordingDaoImpl extends BaseJpaDao implements SessionRecord
 
     @Override
     @Transactional
-    public int deleteRecordings(long... recordingIds) {
-        final Query deleteRecordingsQuery = this.getEntityManager().createQuery(this.deleteRecordingsByIdQueryString);
+    public void deleteRecording(SessionRecording recording) {
+        final SessionRecordingImpl sessionRecording = this.getSessionRecording(recording.getRecordingId());
         
-        final Builder<Long> idSetBuilder = ImmutableSet.builder();
-        for (final long recordingId : recordingIds) {
-            idSetBuilder.add(recordingId);
-        }
+        //Remove the reference from the session to the recording
+        final SessionImpl session = sessionRecording.getSession();
+        session.getSessionRecordings().remove(sessionRecording);
         
-        final ImmutableSet<Long> idSet = idSetBuilder.build();
-        deleteRecordingsQuery.setParameter(this.recordingIdParameter.getName(), idSet);
-        final int deletedRecordings = deleteRecordingsQuery.executeUpdate();
-        
-        logger.debug("Deleted {} recordings for ids: {}", deletedRecordings, idSet);
-        
-        return deletedRecordings;
+        final EntityManager entityManager = this.getEntityManager();
+        entityManager.remove(sessionRecording);
+        entityManager.remove(session);
     }
 }

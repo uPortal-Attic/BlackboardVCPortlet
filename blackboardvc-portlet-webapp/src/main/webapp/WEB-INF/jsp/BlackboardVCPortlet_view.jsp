@@ -110,8 +110,10 @@
 
 <hr />
 
-
-<form name="deleteRecordings" action="${deleteSessionActionUrl}" method="post">
+<portlet:actionURL portletMode="EDIT" var="deleteRecordingActionUrl">
+  <portlet:param name="action" value="deleteRecordings" />
+</portlet:actionURL>
+<form name="deleteRecordings" action="${deleteRecordingActionUrl}" method="post">
   <table width="100%">
     <tbody>
       <tr>
