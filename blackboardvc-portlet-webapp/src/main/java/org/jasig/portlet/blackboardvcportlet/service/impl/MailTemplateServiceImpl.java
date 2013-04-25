@@ -117,22 +117,14 @@ public class MailTemplateServiceImpl implements BeanFactoryAware, MailTemplateSe
 				public void prepare(MimeMessage mimeMessage) throws Exception
 				{
 					MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
-
-					if (mt.getFrom() != null)
-					{
-						message.setFrom(mt.getFrom());
-					}
-					else
-					{
-						message.setFrom(defaultFromAddress);
-					}
-					if (mt.getTo() != null)
-					{
+					
+					message.setFrom(mt.getFrom() != null ? mt.getFrom() : defaultFromAddress);
+					
+					if (mt.getTo() != null) {
 						String[] toArray = mt.getTo().toArray(new String[mt.getTo().size()]);
 						message.setTo(toArray);
 					}
-					if (mt.getSubject() != null)
-					{
+					if (mt.getSubject() != null) {
 						message.setSubject(mt.getSubject());
 					}
 					else
@@ -156,7 +148,7 @@ public class MailTemplateServiceImpl implements BeanFactoryAware, MailTemplateSe
 						}
 					}
 
-					message.setText(buildEmailMessage(mt), true);
+					message.setText(buildEmailMessage(mt), false);
 				}
 			};
 			mailSender.send(messagePreparator);
