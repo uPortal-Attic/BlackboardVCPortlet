@@ -113,6 +113,6 @@ public class SessionRecordingDaoImpl extends BaseJpaDao implements SessionRecord
         
         final EntityManager entityManager = this.getEntityManager();
         entityManager.remove(sessionRecording);
-        entityManager.remove(session);
+        entityManager.persist(session);
     }
 }
