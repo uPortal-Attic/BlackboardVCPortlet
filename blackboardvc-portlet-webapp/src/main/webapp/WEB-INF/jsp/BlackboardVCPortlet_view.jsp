@@ -189,8 +189,9 @@
  --%>
 <script type="text/javascript">
 <rs:compressJs>
-up.jQuery(function() {
-  var $ = up.jQuery;
+(function($) {
+blackboardPortlet.jQuery(function() {
+  var $ = blackboardPortlet.jQuery;
 
   $(document).ready(function() {
 	$('#${n}blackboardCollaboratePortlet .${n}deleteSession').click(function() {
@@ -207,6 +208,7 @@ up.jQuery(function() {
     });
   });
 });
+})(blackboardPortlet.jQuery);
 </rs:compressJs>
 </script>
 </div>

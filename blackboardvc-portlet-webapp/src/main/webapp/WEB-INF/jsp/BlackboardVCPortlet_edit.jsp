@@ -407,18 +407,20 @@
 
 <script type="text/javascript">
     <rs:compressJs>
-  up.jQuery(function() {
-    var $ = up.jQuery;
-    $(document).ready(
-        function() {
-          $("#${n}startdatepicker").datepicker({
-            showButtonPanel : true
-          });
-          $("#${n}enddatepicker").datepicker({
-            showButtonPanel : true
-          });
-        });
-  });
+    (function($) {
+    	blackboardPortlet.jQuery(function() {
+		    var $ = blackboardPortlet.jQuery;
+		    $(document).ready(
+		        function() {
+		          $("#${n}startdatepicker").datepicker({
+		            showButtonPanel : true
+		          });
+		          $("#${n}enddatepicker").datepicker({
+		            showButtonPanel : true
+		          });
+		        });
+		  });
+    })(blackboardPortlet.jQuery);
     </rs:compressJs>
 </script>
 </div>
