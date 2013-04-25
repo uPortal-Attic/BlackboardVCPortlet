@@ -1,0 +1,12 @@
+${displayName}:
+
+The following Blackboard Collaborate session has been cancelled:
+ 
+Name:   ${sessionName}
+Type:   ${sessionType}
+Starts: ${sessionStartTime}
+Ends:   ${sessionEndTime}
+
+${creatorName} 
+
+Email: ${creatorEmail}

@@ -7,7 +7,7 @@ package org.jasig.portlet.blackboardvcportlet.service.util;
 public enum MailMessages
 {
 	MODERATOR("moderatorMailMessage"),
-	SESSION_DELETION("sessionDeletionMessage"),
+	SESSION_DELETION("sessionDeletionMailMessage"),
 	INTERNAL_PARTICIPANT("intParticipantMailMessage"),
 	EXTERNAL_PARTICIPANT("extParticipantMailMessage");
 

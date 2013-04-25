@@ -28,6 +28,7 @@ import org.jasig.portlet.blackboardvcportlet.data.Presentation;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.data.UserSessionUrl;
 import org.jasig.portlet.blackboardvcportlet.security.ConferenceUserService;
+import org.jasig.portlet.blackboardvcportlet.service.MailTemplateService;
 import org.jasig.portlet.blackboardvcportlet.service.SessionForm;
 import org.jasig.portlet.blackboardvcportlet.service.SessionService;
 import org.slf4j.Logger;
@@ -63,9 +64,15 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
 	private MultimediaWSDao multimediaWSDao;
 	private PresentationWSDao presentationWSDao;
 	private RecordingWSDao recordingWSDao;
+	private MailTemplateService mailService;
 	private File tempDir;
 
 	private UserSessionUrlDao userSessionUrlDao;
+	
+	@Autowired
+	public void setMailTemplateService(MailTemplateService mailService) {
+		this.mailService = mailService;
+	}
 	
 	@Autowired
 	public void setUserSessionUrlDao (UserSessionUrlDao dao) {
@@ -212,6 +219,9 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
         
         this.deletePresentation(session.getSessionId());
         
+        //This sends cancellation email for creator, chairs, and non-chairs
+        this.mailService.buildAndSendCancelationMeetingEmail(session);
+        
         this.sessionWSDao.deleteSession(session.getBbSessionId());
         this.sessionDao.deleteSession(session);
     }
@@ -250,7 +260,8 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
             final String guestUrl = sessionWSDao.buildGuestSessionUrl(sessionResponse.getSessionId());
         	
         	//Remove guest username so that guest user's are prompted when they use the URL
-            sessionDao.createSession(sessionResponse, guestUrl);
+            Session session = sessionDao.createSession(sessionResponse, guestUrl);
+            mailService.buildAndSendNewSessionEmails(session);
         }
         else {
             final Session session = sessionDao.getSession(sessionForm.getSessionId());
@@ -271,6 +282,7 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
         
         final BlackboardSessionResponse sessionResponse = this.sessionWSDao.setSessionChairs(session.getBbSessionId(), sessionChairs);
         sessionDao.updateSession(sessionResponse);
+        mailService.sendEmail(mailService.buildModeratorMailTask(newSessionChair, session));
     }
 
     @Override
@@ -283,6 +295,7 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
         for (final long userId : userIds) {
             final ConferenceUser user = conferenceUserDao.getUser(userId);
             if (user != null) {
+            	mailService.sendEmail(mailService.buildCancellationNoticeMailTask(user, session));
                 sessionChairs.remove(user);
             }
         }
@@ -303,6 +316,7 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
         
         final BlackboardSessionResponse sessionResponse = this.sessionWSDao.setSessionNonChairs(session.getBbSessionId(), sessionNonChairs);
         sessionDao.updateSession(sessionResponse);
+        mailService.sendEmail(mailService.buildParticipantMailTask(newSessionNonChair, session));
         
     }
 
@@ -316,6 +330,7 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
         for (final long userId : userIds) {
             final ConferenceUser user = conferenceUserDao.getUser(userId);
             if (user != null) {
+            	mailService.sendEmail(mailService.buildCancellationNoticeMailTask(user, session));
                 sessionNonChairs.remove(user);
             }
         }
