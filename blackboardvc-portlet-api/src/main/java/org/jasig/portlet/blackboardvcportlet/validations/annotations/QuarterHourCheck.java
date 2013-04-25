@@ -2,8 +2,9 @@
  * @author Brad Leege <leege@doit.wisc.edu>
  * Created on 4/25/13 at 12:29 PM
  */
-package org.jasig.portlet.blackboardvcportlet.validations;
+package org.jasig.portlet.blackboardvcportlet.validations.annotations;
 
+import org.jasig.portlet.blackboardvcportlet.validations.validators.QuarterHourCheckValidator;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.Documented;

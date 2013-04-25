@@ -21,7 +21,7 @@ package org.jasig.portlet.blackboardvcportlet.service;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingMode;
 import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
-import org.jasig.portlet.blackboardvcportlet.validations.QuarterHourCheck;
+import org.jasig.portlet.blackboardvcportlet.validations.annotations.QuarterHourCheck;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import javax.validation.constraints.Future;
