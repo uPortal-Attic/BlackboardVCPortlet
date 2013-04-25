@@ -19,6 +19,7 @@
 package org.jasig.portlet.blackboardvcportlet.service;
 
 
+
 /**
  * Service Class for handling Recording interactions
  * @author Richard Good

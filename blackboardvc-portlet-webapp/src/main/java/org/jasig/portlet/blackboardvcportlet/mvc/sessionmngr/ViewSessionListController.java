@@ -24,8 +24,10 @@ import java.util.Set;
 import javax.portlet.PortletRequest;
 
 import org.jasig.portlet.blackboardvcportlet.dao.ConferenceUserDao;
+import org.jasig.portlet.blackboardvcportlet.dao.SessionDao;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
+import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
 import org.jasig.portlet.blackboardvcportlet.security.ConferenceUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +36,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
+
+import com.google.common.collect.Ordering;
 
 /**
  * Controller for handling Portlet view mode
@@ -47,6 +51,7 @@ public class ViewSessionListController
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	private ConferenceUserService conferenceUserService;
+	private SessionDao sessionDao;
 	private ConferenceUserDao conferenceUserDao;
 	
 	@Autowired
@@ -55,6 +60,11 @@ public class ViewSessionListController
     }
 
 	@Autowired
+    public void setSessionDao(SessionDao sessionDao) {
+        this.sessionDao = sessionDao;
+    }
+
+    @Autowired
     public void setConferenceUserDao(ConferenceUserDao conferenceUserDao) {
         this.conferenceUserDao = conferenceUserDao;
     }
@@ -63,9 +73,8 @@ public class ViewSessionListController
 	public String view(PortletRequest request, ModelMap model)
 	{
 		final ConferenceUser conferenceUser = this.conferenceUserService.getCurrentConferenceUser();
-		//TODO need logic like this to find "alias" users, perhaps we deal with this more at the data model level by merging users together
-		//this.conferenceUserDao.findAllMatchingUsers(blackboardUser.getEmail(), blackboardUser.getAttributes());
 		
+		//Get all the sessions for the user
 		final Set<Session> sessions = new HashSet<Session>();
 		
 		final Set<Session> ownedSessionsForUser = this.conferenceUserDao.getOwnedSessionsForUser(conferenceUser);
@@ -77,9 +86,18 @@ public class ViewSessionListController
         final Set<Session> nonChairedSessionsForUser = this.conferenceUserDao.getNonChairedSessionsForUser(conferenceUser);
         sessions.addAll(nonChairedSessionsForUser);
 
-		model.addAttribute("sessions", sessions);
+		model.addAttribute("sessions", Ordering.from(SessionDisplayComparator.INSTANCE).sortedCopy(sessions));
 		
-		//TODO get & add recordings, presentations & multimediate files
+		
+		//Get the recordings for all sessions
+		final Set<SessionRecording> recordings = new HashSet<SessionRecording>();
+		for (final Session session : sessions) {
+		    final Set<SessionRecording> sessionRecordings = this.sessionDao.getSessionRecordings(session);
+		    recordings.addAll(sessionRecordings);
+		}
+		model.addAttribute("recordings", Ordering.from(SessionRecordingDisplayComparator.INSTANCE).sortedCopy(recordings));
+		
+		
 		return "BlackboardVCPortlet_view";
 	}
 }

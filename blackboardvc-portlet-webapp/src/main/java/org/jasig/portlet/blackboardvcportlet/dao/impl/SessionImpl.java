@@ -189,8 +189,8 @@ public class SessionImpl implements Session {
     @Type(type = "dateTime")
     private DateTime lastUpdated;
     
-    //Exists only to allow cascading deletes, should NEVER be accessed by normal code
     @OneToMany(mappedBy = "session", targetEntity = SessionRecordingImpl.class, cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, orphanRemoval = true)
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private final Set<SessionRecordingImpl> sessionRecordings = new HashSet<SessionRecordingImpl>(0);
     
     //Exists only to allow cascading deletes, should NEVER be accessed by normal code
@@ -325,11 +325,14 @@ public class SessionImpl implements Session {
         return nonChairs;
     }
     
-    
     Set<MultimediaImpl> getMultimedias() {
 		return multimedias;
 	}
     
+    Set<SessionRecordingImpl> getSessionRecordings() {
+        return sessionRecordings;
+    }
+
     @Override
     public DateTime getLastUpdated() {
         return lastUpdated;

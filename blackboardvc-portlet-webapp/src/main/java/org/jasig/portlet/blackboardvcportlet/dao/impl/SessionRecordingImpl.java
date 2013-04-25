@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Version;
 
+import org.apache.commons.io.FileUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NaturalId;
@@ -136,6 +137,10 @@ public class SessionRecordingImpl implements SessionRecording {
     @Override
     public long getRecordingSize() {
         return recordingSize;
+    }
+    
+    public String getDisplayRecordingSize() {
+        return FileUtils.byteCountToDisplaySize(this.recordingSize);
     }
 
     @Override

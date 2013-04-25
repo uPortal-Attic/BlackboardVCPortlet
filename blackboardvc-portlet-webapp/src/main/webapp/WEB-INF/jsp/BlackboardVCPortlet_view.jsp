@@ -22,7 +22,7 @@
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 <%@ include file="/WEB-INF/jsp/header.jsp"%>
 
-<div id="${n}" class="blackboardVCRoot">
+<div id="${n}blackboardCollaboratePortlet" class="blackboardVCRoot">
 <c:if test="${!empty prefs['helpUrl'][0]}">
 <div class="help-link">
   <a href="${prefs['helpUrl'][0]}" target="_blank">Help</a>
@@ -93,100 +93,84 @@
               <td><joda:format value="${session.endTime}" pattern="MM/dd/yyyy HH:mm" /></td>
               <td>
                 <sec:authorize access="hasPermission(#session, 'edit')">
-                    <spring:message code="edit" var="edit" text="edit"/>
-                  <input value="${edit}" name="${session.sessionId}" class="uportal-button" onclick="window.location='${editSessionUrl}'" type="button">
+                  <spring:message code="edit" var="edit" text="edit"/>
+                  <a href="${editSessionUrl}" class="uportal-button">${edit}</a>
                 </sec:authorize>
               </td>
             </tr>
           </c:forEach>
         </tbody>
       </table>
-      <hr />
     </c:when>
     <c:otherwise>
       <b>No sessions available</b>
-      <hr />
     </c:otherwise>
   </c:choose>
 </form>
 
-<%--
-<c:choose>
-  <c:when test="${fn:length(recordings) gt 0}">
-    <table width="100%">
-      <tbody>
-        <tr>
+<hr />
 
-          <portlet:actionURL portletMode="EDIT"
-            var="deleteRecordingActionUrl">
-            <portlet:param name="action" value="deleteRecordings" />
-          </portlet:actionURL>
 
-          <td align="left">&nbsp;</td>
-          <form name="deleteRecordings" action="${deleteRecordingActionUrl}"
-            method="POST">
-            <td align="right">
-                <spring:message code="areYouSureYouWantToDeleteRecording" var="areYouSureYouWantToDeleteRecording" text="areYouSureYouWantToDeleteRecording"/>
-            <input id="dialog-confirm"
-              value="Delete Recording(s)" name="Delete"
-              style="text-transform: none;" class="uportal-button"
-              onclick="javascript:return confirm('${areYouSureYouWantToDeleteRecording}');"
-              type="submit"></td>
-        </tr>
-      </tbody>
-    </table>
-
-    <table width="100%">
-      <thead>
-        <tr class="uportal-channel-table-header">
-          <th width="15"><input id="${n}selectAllRecordings"
-            value="selectAllRecordings" name="Recordings" type="checkbox" /></th>
-          <th><spring:message code="previouslyRecorded" text="previouslyRecorded"/></th>
-          <th><spring:message code="startTime" text="startTime"/></th>
-          <th><spring:message code="size" text="size"/></th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <c:forEach var="recording" items="${recordings}"
-          varStatus="loopStatus">
-          <portlet:renderURL var="editRecordingUrl" portletMode="EDIT"
-            windowState="MAXIMIZED">
-            <portlet:param name="recordingId" value="${recording.recordingId}" />
-            <portlet:param name="action" value="editRecording" />
-          </portlet:renderURL>
-          <tr align="center"
-            class="${loopStatus.index % 2 == 0 ? 'uportal-channel-table-row-odd' : 'uportal-channel-table-row-even'}">
-            <td><c:if test="${recording.currUserCanDelete}">
-                <input value="${recording.recordingId}"
-                  class="${n}deleteRecording" name="deleteRecording"
-                  type="checkbox" />
-              </c:if></td>
-            <td><a target="_blank" href="${recording.recordingUrl}"><c:out
-                  value="${recording.roomName}" /></a></td>
-            <td><joda:format value="${recording.createdDate}"
-                pattern="MM/dd/yyyy HH:mm" /></td>
-            <td><c:out value="${recording.readableFileSize}" /></td>
-            <td><c:if test="${recording.currUserCanDelete}">
-                <input value="Edit" name="${recording.recordingId}"
-                  class="uportal-button"
-                  onclick="window.location='${editRecordingUrl}'" type="button">
-              </c:if>
+<form name="deleteRecordings" action="${deleteSessionActionUrl}" method="post">
+  <table width="100%">
+    <tbody>
+      <tr>
+        <td align="left">
+        </td>
+        <td align="right">
+          <spring:message code="deleteRecording" var="deleteRecording" text="deleteRecording"/>
+          <spring:message code="areYouSureYouWantToDeleteRecording" var="areYouSureYouWantToDeleteRecording" text="areYouSureYouWantToDeleteRecording"/>
+          <input id="dialog-confirm" value="${deleteRecording}" name="Delete"
+            style="text-transform: none;" class="uportal-button"
+            onclick="javascript:return confirm('${areYouSureYouWantToDeleteRecording}');"
+            type="submit" />
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <c:choose>
+    <c:when test="${fn:length(recordings) gt 0}">
+      <table width="100%">
+        <thead>
+          <tr class="uportal-channel-table-header">
+            <th width="15"><input id="${n}selectAllRecordings" value="selectAllRecordings" name="Recordings" type="checkbox" /></th>
+            <th><spring:message code="previouslyRecorded" text="previouslyRecorded"/></th>
+            <th><spring:message code="startTime" text="startTime"/></th>
+            <th><spring:message code="size" text="size"/></th>
+            <th></th>
           </tr>
-        </c:forEach>
-      </tbody>
-    </table>
-    </form>
-    <hr />
-
-  </c:when>
-  <c:otherwise>
-    <br />
-    <b><spring:message code="noRecordingsAvailable" text="noRecordingsAvailable"/></b>
-    <hr />
-  </c:otherwise>
-</c:choose>
- --%>
+        </thead>
+        <tbody>
+          <c:forEach var="recording" items="${recordings}" varStatus="loopStatus">
+            <portlet:renderURL var="editRecordingUrl" portletMode="EDIT" windowState="MAXIMIZED">
+              <portlet:param name="recordingId" value="${recording.recordingId}" />
+              <portlet:param name="action" value="editRecording" />
+            </portlet:renderURL>
+            <tr align="center" class="${loopStatus.index % 2 == 0 ? 'uportal-channel-table-row-odd' : 'uportal-channel-table-row-even'}">
+              <td>
+                <sec:authorize access="hasPermission(#recording, 'delete')">
+                  <input value="${recording.recordingId}" class="${n}deleteRecording" name="deleteRecording" type="checkbox" />
+                </sec:authorize>
+              </td>
+              <td><a href="${recording.recordingUrl}">${recording.roomName}</a></td>
+              <td><joda:format value="${recording.creationDate}" pattern="MM/dd/yyyy HH:mm" /></td>
+              <td>${recording.displayRecordingSize}</td>
+              <td>
+                <sec:authorize access="hasPermission(#recording, 'edit')">
+                  <spring:message code="edit" var="edit" text="edit"/>
+                  <a href="${editRecordingUrl}" class="uportal-button">${edit}</a>
+                </sec:authorize>
+              </td>
+            </tr>
+          </c:forEach>
+        </tbody>
+      </table>
+    </c:when>
+    <c:otherwise>
+      <b>No recordings available</b>
+    </c:otherwise>
+  </c:choose>
+</form>
 <script type="text/javascript">
 <rs:compressJs>
 (function($) {
@@ -205,6 +189,21 @@ blackboardPortlet.jQuery(function() {
        
     $('#${n}blackboardCollaboratePortlet #${n}selectAllSessions').click(function() {
       $('#${n}blackboardCollaboratePortlet .${n}deleteSession').attr('checked', $(this).is(':checked'));
+    });
+    
+    
+
+    $('#${n}blackboardCollaboratePortlet .${n}deleteRecording').click(function() {
+      if (!$(this).is(':checked')) {
+        $('#${n}blackboardCollaboratePortlet #${n}selectAllRecordings').attr('checked', false);
+      }
+      else if ($('#${n}blackboardCollaboratePortlet .${n}deleteRecording').not(':checked').length == 0) {
+        $('#${n}blackboardCollaboratePortlet #${n}selectAllRecordings').attr('checked', true);
+      }
+    });
+       
+    $('#${n}blackboardCollaboratePortlet #${n}selectAllRecordings').click(function() {
+      $('#${n}blackboardCollaboratePortlet .${n}deleteRecording').attr('checked', $(this).is(':checked'));
     });
   });
 });

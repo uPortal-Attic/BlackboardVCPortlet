@@ -124,6 +124,11 @@
         maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
+    <cache name="org.jasig.portlet.blackboardvcportlet.dao.impl.SessionImpl.sessionRecordings" 
+        maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        
+    
     
     
     <cache name="org.jasig.portlet.blackboardvcportlet.dao.impl.SessionRecordingImpl" 

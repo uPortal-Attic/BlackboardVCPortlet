@@ -126,13 +126,13 @@ public class SessionCreateEditController
 		}
 
         final Set<ConferenceUser> sessionChairs = this.sessionService.getSessionChairs(session);
-        model.addAttribute("sessionChairs", Ordering.from(ConferenceUserDisplayNameComparator.INSTANCE).sortedCopy(sessionChairs));
+        model.addAttribute("sessionChairs", Ordering.from(ConferenceUserDisplayComparator.INSTANCE).sortedCopy(sessionChairs));
         
         final Set<ConferenceUser> sessionNonChairs = this.sessionService.getSessionNonChairs(session);
-        model.addAttribute("sessionNonChairs", Ordering.from(ConferenceUserDisplayNameComparator.INSTANCE).sortedCopy(sessionNonChairs));
+        model.addAttribute("sessionNonChairs", Ordering.from(ConferenceUserDisplayComparator.INSTANCE).sortedCopy(sessionNonChairs));
         
         final Set<Multimedia> sessionMultimedia = this.sessionService.getSessionMultimedia(session);
-        model.addAttribute("sessionMultimedia", Ordering.from(MultimediaNameComparator.INSTANCE).sortedCopy(sessionMultimedia));
+        model.addAttribute("sessionMultimedia", Ordering.from(MultimediaDisplayComparator.INSTANCE).sortedCopy(sessionMultimedia));
         
         model.addAttribute("presentation", session.getPresentation()); 
         
