@@ -166,7 +166,16 @@ public class ConferenceUserImpl implements ConferenceUser {
         return this.uniqueId;
     }
     
-    public boolean isExternal() {
+    @Override
+	public String getBlackboardUniqueId() {
+    	
+    	if (this.isExternal()) {
+    		return ConferenceUser.EXTERNAL_USERID_PREFIX + getUniqueId();
+        }
+        return getUniqueId();
+	}
+
+	public boolean isExternal() {
         return external;
     }
 

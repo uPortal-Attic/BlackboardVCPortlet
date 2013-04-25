@@ -3,11 +3,14 @@
  * Created on 4/1/13 at 2:01 PM
  */
 
-package org.jasig.portlet.blackboardvcportlet.service.util;
+package org.jasig.portlet.blackboardvcportlet.service;
 
 import java.util.List;
 import java.util.Map;
 
+import org.jasig.portlet.blackboardvcportlet.service.util.MailMessages;
+
+@SuppressWarnings("rawtypes")
 public class MailTask
 {
 	private String from;
@@ -29,6 +32,12 @@ public class MailTask
 		this.setFrom(from);
 		this.setTo(to);
 		this.setSubject(subject);
+		this.setSubstitutions(substitutions);
+		this.setTemplate(template);
+	}
+	
+	public MailTask(List<String> to, Map substitutions, MailMessages template) {
+		this.setTo(to);
 		this.setSubstitutions(substitutions);
 		this.setTemplate(template);
 	}

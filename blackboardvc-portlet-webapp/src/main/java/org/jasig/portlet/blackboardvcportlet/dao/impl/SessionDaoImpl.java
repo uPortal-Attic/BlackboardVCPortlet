@@ -125,8 +125,17 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
     
     @Override
     public Set<SessionRecording> getSessionRecordings(Session session) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException();
+        if (session == null) {
+            return null;
+        }
+        
+        final SessionImpl sessionImpl = this.getSession(session.getSessionId());
+        if (sessionImpl == null) {
+            return null;
+        }
+
+        //Create a copy to trigger loading of the user data
+        return ImmutableSet.<SessionRecording>copyOf(sessionImpl.getSessionRecordings());
     }
 
     @Override

@@ -18,12 +18,11 @@
  */
 package org.jasig.portlet.blackboardvcportlet.service;
 
-import org.jasig.portlet.blackboardvcportlet.service.util.MailMessages;
+import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
+import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.stereotype.Service;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Class which allows the sending of email from a template
@@ -34,15 +33,14 @@ import java.util.Map;
 public interface MailTemplateService
 {
 	public void setBeanFactory(BeanFactory bf) throws BeansException;
-
-	/**
-	 * Public method to execute an asynchronous email send
-	 *
-	 * @param from          From Email Address
-	 * @param to            To Email Address
-	 * @param subject       Subject
-	 * @param substitutions Map of Data objects
-	 * @param template      File Name of template
-	 */
-	public void sendEmailUsingTemplate(String from, List<String> to, String subject, Map substitutions, MailMessages template);
+	
+	public void sendEmail(MailTask mailTask);
+	
+	public void buildAndSendNewSessionEmails(Session session);
+	public void buildAndSendCancelationMeetingEmail(Session session);
+	
+	public MailTask buildCancellationNoticeMailTask(ConferenceUser user, Session session);
+	public MailTask buildParticipantMailTask(ConferenceUser participant, Session session);
+	public MailTask buildModeratorMailTask(ConferenceUser moderator, Session session);
+	
 }

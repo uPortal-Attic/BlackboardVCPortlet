@@ -9,7 +9,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>edu.wisc.my.portlet.blackboardcollaborate</groupId>
     <artifactId>blackboardvc-portlet-parent</artifactId>
-    <version>1.2.0.2-SNAPSHOT</version>
+    <version>1.2.0.3-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>BlackboardVCPortlet</name>
     <url>https://github.com/UW-Madison-DoIT/BlackboardVCPortlet</url>

@@ -69,10 +69,10 @@ public class ViewSessionController
         model.addAttribute("session", session);
         
         final Set<ConferenceUser> sessionChairs = this.sessionService.getSessionChairs(session);
-        model.addAttribute("sessionChairs", ImmutableSortedSet.copyOf(ConferenceUserDisplayNameComparator.INSTANCE, sessionChairs));
+        model.addAttribute("sessionChairs", ImmutableSortedSet.copyOf(ConferenceUserDisplayComparator.INSTANCE, sessionChairs));
         
         final Set<ConferenceUser> sessionNonChairs = this.sessionService.getSessionNonChairs(session);
-        model.addAttribute("sessionNonChairs", ImmutableSortedSet.copyOf(ConferenceUserDisplayNameComparator.INSTANCE, sessionNonChairs));
+        model.addAttribute("sessionNonChairs", ImmutableSortedSet.copyOf(ConferenceUserDisplayComparator.INSTANCE, sessionNonChairs));
         
         //Session hasn't completed yet, show session launch URL
         //TODO should we check if we are within the "boundary time"?

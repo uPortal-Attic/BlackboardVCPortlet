@@ -18,6 +18,7 @@ mail.extParticipantMailMessage.subject=Collaborate Session Invite
 mail.moderatorMailMessage.subject=Collaborate Session Invite
 mail.sessionDeletionMessage.subject=Collaborate Session Cancellation
 mail.intParticipantMailMessage.subject=Collaborate Session Invite
+mail.sendMail=false
 
 ## User Attribute Configuration
 emailAttributeName=mail

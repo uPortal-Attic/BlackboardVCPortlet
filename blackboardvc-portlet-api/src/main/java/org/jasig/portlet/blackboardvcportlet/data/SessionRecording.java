@@ -16,6 +16,8 @@ public interface SessionRecording extends Serializable {
     String getRoomName();
 
     long getRecordingSize();
+    
+    String getDisplayRecordingSize();
 
     DateTime getCreationDate();
 

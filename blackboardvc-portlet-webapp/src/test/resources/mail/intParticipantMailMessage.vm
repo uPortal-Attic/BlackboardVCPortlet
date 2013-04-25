@@ -1,0 +1,20 @@
+${displayName}:
+
+You are invited to attend the following Blackboard Collaborate session:
+
+Name: ${sessionName}
+Type: ${sessionType}
+Starts: ${sessionStartTime}
+Ends: ${sessionEndTime}
+
+To join the session, please click on the link below within ${boundaryTime} minutes of the specified time.
+
+${userURL}
+
+To invite others to join the session, e-mail the following link:
+
+${guestURL}
+
+${creatorName}
+
+Email: ${creatorEmail}

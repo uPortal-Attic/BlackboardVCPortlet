@@ -19,23 +19,31 @@
 
 package org.jasig.portlet.blackboardvcportlet.service;
 
-import org.jasig.portlet.blackboardvcportlet.service.impl.MailTemplateServiceImpl;
-import org.jasig.portlet.blackboardvcportlet.service.util.MailMessages;
-import org.jasig.portlet.blackboardvcportlet.service.util.MailTask;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.when;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import static org.junit.Assert.assertNotNull;
+
+import org.jasig.portlet.blackboardvcportlet.data.AccessType;
+import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
+import org.jasig.portlet.blackboardvcportlet.data.Session;
+import org.jasig.portlet.blackboardvcportlet.service.impl.MailTemplateServiceImpl;
+import org.jasig.portlet.blackboardvcportlet.service.util.MailMessages;
+import org.jasig.springframework.mockito.MockitoFactoryBean;
+import org.joda.time.DateTime;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/test-emailContext.xml")
@@ -46,8 +54,16 @@ public class MailTemplateServiceIT
 	@Autowired
 	private MailTemplateServiceImpl mailTemplateService;
 	
-	@Mock
-	private JavaMailSenderImpl mailSender;
+	@Mock ConferenceUser user;
+	@Mock Session session;
+	@Mock SessionService sessionService;
+	
+	@Before
+	public void before() {
+		MockitoAnnotations.initMocks(this);
+		MockitoFactoryBean.resetAllMocks();
+		mailTemplateService.setSessionService(sessionService);
+	}
 	
 	@Test
 	public void testBuildEmailMessage() throws Exception
@@ -74,5 +90,19 @@ public class MailTemplateServiceIT
 		assertNotNull(message);
 		logger.info("Email Message: {}", message);
 		logger.info("testBuildEmailMessage() ends.");
+	}
+	
+	@Test
+	public void testSendingMail() throws Exception {
+		when(user.getDisplayName()).thenReturn("Tim Test");
+		when(user.getEmail()).thenReturn("levett@wisc.edu");
+		when(session.getAccessType()).thenReturn(AccessType.PRIVATE);
+		when(session.getSessionName()).thenReturn("Session Name");
+		when(session.getEndTime()).thenReturn(new DateTime());
+		when(session.getStartTime()).thenReturn(new DateTime());
+		when(session.getCreator()).thenReturn(user);
+		mailTemplateService.setFrom("dalquist@wisc.edu");
+		mailTemplateService.sendMail(mailTemplateService.buildCancellationNoticeMailTask(user, session));
+		
 	}
 }

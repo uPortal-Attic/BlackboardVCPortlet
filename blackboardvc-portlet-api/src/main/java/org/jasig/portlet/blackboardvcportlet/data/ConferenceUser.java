@@ -14,6 +14,8 @@ public interface ConferenceUser extends Serializable {
      */
     String getUniqueId();
     
+    String getBlackboardUniqueId();
+    
     /**
      * If the user is an external user, if true {@link #getInvitationKey()} will return a value
      */

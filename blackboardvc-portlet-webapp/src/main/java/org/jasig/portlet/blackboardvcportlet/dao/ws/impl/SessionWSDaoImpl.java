@@ -90,7 +90,7 @@ public class SessionWSDaoImpl implements SessionWSDao {
 		BlackboardBuildSessionUrl buildSessionUrlRequest = new BlackboardBuildSessionUrl();
 		buildSessionUrlRequest.setSessionId(sessionId);
 		buildSessionUrlRequest.setDisplayName(user.getDisplayName());
-		buildSessionUrlRequest.setUserId(user.getUniqueId());
+		buildSessionUrlRequest.setUserId(user.getBlackboardUniqueId());
         final Object urlResponseObject = sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/BuildSessionUrl", buildSessionUrlRequest);
         @SuppressWarnings("unchecked")
         JAXBElement<BlackboardUrlResponse> jaxbResponse = (JAXBElement<BlackboardUrlResponse>) urlResponseObject;
@@ -254,10 +254,7 @@ public class SessionWSDaoImpl implements SessionWSDao {
         final StringBuilder uidBuilder = new StringBuilder();
         for (final Iterator<ConferenceUser> userItr = users.iterator(); userItr.hasNext();) {
             final ConferenceUser user = userItr.next();
-            if (user.isExternal()) {
-                uidBuilder.append(ConferenceUser.EXTERNAL_USERID_PREFIX);
-            }
-            uidBuilder.append(user.getUniqueId());
+            uidBuilder.append(user.getBlackboardUniqueId());
             if (userItr.hasNext()) {
                 uidBuilder.append(',');
             }
