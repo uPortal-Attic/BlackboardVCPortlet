@@ -43,7 +43,12 @@
   <table>
     <tbody>
       <tr>
-        <td><span class="uportal-channel-strong"><spring:message code="sessionName" text="sessionName"/>: </span></td>
+          <td colspan="2"><form:errors cssClass="error"/></td>
+      </tr>
+      <tr>
+        <td>
+            <span class="uportal-channel-strong"><spring:message code="sessionName" text="sessionName"/>: </span>
+        </td>
         <c:choose>
           <c:when test="${sessionForm.newSession}">
             <td><form:input path="sessionName" style="width: 50%;" class="uportal-input-text" />&nbsp;&nbsp;<form:errors path="sessionName" cssClass="error"/></td>
@@ -52,7 +57,6 @@
             <td><form:hidden path="sessionName" />${session.sessionName}</td>
           </c:otherwise>
         </c:choose>
-
       </tr>
       <tr>
         <td>&nbsp;</td>

@@ -22,6 +22,7 @@ import org.jasig.portlet.blackboardvcportlet.data.RecordingMode;
 import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.validations.annotations.QuarterHourCheck;
+import org.jasig.portlet.blackboardvcportlet.validations.annotations.SessionEndTimeRangeCheck;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import javax.validation.constraints.Future;
@@ -33,6 +34,7 @@ import java.io.Serializable;
 /**
  * form backing object for creating/editing sessions
  */
+@SessionEndTimeRangeCheck()
 public class SessionForm implements Serializable {
     private static final long serialVersionUID = 1L;
     
@@ -129,24 +131,24 @@ public class SessionForm implements Serializable {
 
 	@Future
     public DateTime getStartTime() {
-        return this.startDate.toDateTime().withHourOfDay(this.startHour).withMinuteOfHour(this.startMinute);
+        return startDate.toDateTime().withHourOfDay(this.startHour).withMinuteOfHour(this.startMinute);
     }
 
     public void setStartTime(DateTime startTime) {
-        this.startDate = startTime.toDateMidnight();
-        this.startHour = startTime.getHourOfDay();
-        this.startMinute = startTime.getMinuteOfHour();
+        startDate = startTime.toDateMidnight();
+        startHour = startTime.getHourOfDay();
+        startMinute = startTime.getMinuteOfHour();
     }
 
 	@Future
     public DateTime getEndTime() {
-        return this.endDate.toDateTime().withHourOfDay(this.endHour).withMinuteOfHour(this.endMinute);
+        return endDate.toDateTime().withHourOfDay(this.endHour).withMinuteOfHour(this.endMinute);
     }
 
     public void setEndTime(DateTime endTime) {
-        this.endDate = endTime.toDateMidnight();
-        this.endHour = endTime.getHourOfDay();
-        this.endMinute = endTime.getMinuteOfHour();
+        endDate = endTime.toDateMidnight();
+        endHour = endTime.getHourOfDay();
+        endMinute = endTime.getMinuteOfHour();
     }
 
 	public int getBoundaryTime() {
