@@ -24,3 +24,6 @@ mail.sendMail=false
 emailAttributeName=mail
 displayNameAttributeName=displayName
 uniqueIdAttributeName=wiscedupvi,eppn,spvi
+
+## Misc
+maxuploadsize=10000000
