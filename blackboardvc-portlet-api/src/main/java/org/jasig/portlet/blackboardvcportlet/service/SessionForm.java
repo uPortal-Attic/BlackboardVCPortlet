@@ -21,6 +21,7 @@ package org.jasig.portlet.blackboardvcportlet.service;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingMode;
 import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
+import org.jasig.portlet.blackboardvcportlet.validations.QuarterHourCheck;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import javax.validation.constraints.Future;
@@ -50,26 +51,22 @@ public class SessionForm implements Serializable {
 	private boolean hideParticipantNames;
 	private boolean allowInSessionInvites;
 
-	@Future
 	private DateMidnight startDate;
 
 	@Min(0)
 	@Max(23)
 	private int startHour;
 
-	@Min(0)
-	@Max(60)
+	@QuarterHourCheck
 	private int startMinute;
 
-	@Future
 	private DateMidnight endDate;
 
 	@Min(0)
 	@Max(23)
 	private int endHour;
 
-	@Min(0)
-	@Max(60)
+	@QuarterHourCheck
 	private int endMinute;
 
 	public SessionForm() {
@@ -130,6 +127,7 @@ public class SessionForm implements Serializable {
         this.sessionName = sessionName;
     }
 
+	@Future
     public DateTime getStartTime() {
         return this.startDate.toDateTime().withHourOfDay(this.startHour).withMinuteOfHour(this.startMinute);
     }
@@ -140,6 +138,7 @@ public class SessionForm implements Serializable {
         this.startMinute = startTime.getMinuteOfHour();
     }
 
+	@Future
     public DateTime getEndTime() {
         return this.endDate.toDateTime().withHourOfDay(this.endHour).withMinuteOfHour(this.endMinute);
     }
