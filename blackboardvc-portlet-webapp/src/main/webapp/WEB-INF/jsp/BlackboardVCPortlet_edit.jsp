@@ -43,9 +43,6 @@
   <table>
     <tbody>
       <tr>
-          <td colspan="2"><form:errors cssClass="error"/></td>
-      </tr>
-      <tr>
         <td>
             <span class="uportal-channel-strong"><spring:message code="sessionName" text="sessionName"/>: </span>
         </td>
@@ -79,7 +76,8 @@
               </c:forEach>
           </form:select>
             <form:errors path="startHour" cssClass="error"/>&nbsp;
-            <form:errors path="startMinute" cssClass="error"/>
+            <form:errors path="startMinute" cssClass="error"/>&nbsp;
+            <form:errors path="startTime" cssClass="error"/>
         </td>
       </tr>
       <tr>
@@ -101,6 +99,7 @@
           </form:select>
             <form:errors path="endHour" cssClass="error"/>&nbsp;
             <form:errors path="endMinute" cssClass="error"/>&nbsp;
+            <form:errors path="endTime" cssClass="error"/>
         </td>
       </tr>
       <tr>
