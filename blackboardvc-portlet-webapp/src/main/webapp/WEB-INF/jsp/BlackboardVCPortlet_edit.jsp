@@ -416,18 +416,10 @@
 <script type="text/javascript">
     <rs:compressJs>
     (function($) {
-    	blackboardPortlet.jQuery(function() {
-		    var $ = blackboardPortlet.jQuery;
-		    $(document).ready(
-		        function() {
-		          $("#${n}startdatepicker").datepicker({
-		            showButtonPanel : true
-		          });
-		          $("#${n}enddatepicker").datepicker({
-		            showButtonPanel : true
-		          });
-		        });
-		  });
+    	$(document).ready(function() {
+    		$("#${n}startdatepicker").datepicker();
+    		$("#${n}enddatepicker").datepicker();
+    	});
     })(blackboardPortlet.jQuery);
     </rs:compressJs>
 </script>
