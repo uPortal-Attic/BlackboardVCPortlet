@@ -35,6 +35,8 @@ import org.joda.time.format.DateTimeFormatterBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -50,6 +52,7 @@ import javax.portlet.ActionResponse;
 import javax.portlet.PortletMode;
 import javax.portlet.PortletModeException;
 import javax.validation.Valid;
+import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -66,6 +69,15 @@ public class SessionCreateEditController
 	private ConferenceUserService conferenceUserService;
 	private ServerConfigurationService serverConfigurationService;
 	private SessionService sessionService;
+
+	@Autowired
+	private MessageSource messageSource;
+
+	@Value("${maxuploadsize}")
+	private Integer maxFileUploadSize;
+
+	@Value("${presentationFileTypes}")
+	private String presentationFileTypes;
 
 	@Autowired
 	public void setConferenceUserService(ConferenceUserService conferenceUserService) {
@@ -110,7 +122,7 @@ public class SessionCreateEditController
 	}
 
     @RenderMapping(params="action=editSession")
-    public String displayEditSessionForm(ModelMap model, @RequestParam long sessionId) throws PortletModeException
+    public String displayEditSessionForm(ModelMap model, @RequestParam long sessionId, @RequestParam(required = false) String presentationUploadError) throws PortletModeException
 	{
         final ServerConfiguration serverConfiguration = this.serverConfigurationService.getServerConfiguration();
         model.put("serverConfiguration", serverConfiguration);
@@ -134,8 +146,14 @@ public class SessionCreateEditController
         final Set<Multimedia> sessionMultimedia = this.sessionService.getSessionMultimedia(session);
         model.addAttribute("sessionMultimedia", Ordering.from(MultimediaDisplayComparator.INSTANCE).sortedCopy(sessionMultimedia));
         
-        model.addAttribute("presentation", session.getPresentation()); 
-        
+        model.addAttribute("presentationFileTypes", presentationFileTypes);
+		model.addAttribute("presentation", session.getPresentation());
+
+		if (presentationUploadError != null)
+		{
+			model.addAttribute("presentationUploadError", presentationUploadError);
+		}
+
         return "BlackboardVCPortlet_edit";
     }
 	
@@ -239,14 +257,33 @@ public class SessionCreateEditController
         response.setRenderParameter("sessionId", Long.toString(sessionId));
     }
     
-    //TODO @Valid on presentationUpload file types ".wbd, .wbp, .elp, .elpx"
     @ActionMapping(params = "action=Upload Presentation")
-    public void uploadPresentation(ActionResponse response, @RequestParam long sessionId, @RequestParam MultipartFile presentationUpload) throws PortletModeException {
-        this.sessionService.addPresentation(sessionId, presentationUpload);
+    public void uploadPresentation(ActionResponse response, Locale locale, @RequestParam long sessionId, @RequestParam MultipartFile presentationUpload) throws PortletModeException
+	{
+		String fileExtension = StringUtils.substringAfter(presentationUpload.getOriginalFilename(), ".").toLowerCase();
+
+		// Validate
+		if (presentationUpload.getSize() < 1)
+		{
+			response.setRenderParameter("presentationUploadError", messageSource.getMessage("error.uploadfilenotselected", null, locale));
+		}
+		else if (presentationUpload.getSize() > maxFileUploadSize)
+		{
+			response.setRenderParameter("presentationUploadError", messageSource.getMessage("error.uploadfilesizetoobig", null, locale));
+		}
+		else if (fileExtension.length() == 0 || !presentationFileTypes.contains(fileExtension))
+		{
+			response.setRenderParameter("presentationUploadError", messageSource.getMessage("error.uploadfileextensionswrong", null, locale));
+		}
+		else
+		{
+			this.sessionService.addPresentation(sessionId, presentationUpload);
+		}
 
         response.setPortletMode(PortletMode.EDIT);
         response.setRenderParameter("sessionId", Long.toString(sessionId));
-    }
+		response.setRenderParameter("action", "editSession");
+	}
 
     @ActionMapping(params = "action=Delete Presentation")
     public void deletePresentation(ActionResponse response, @RequestParam long sessionId) throws PortletModeException {

@@ -358,7 +358,12 @@
             </tr>
           </c:if>
           <tr>
-            <td><input name="presentationUpload" size="40" type="file" accept=".wbd,.wbp,.elp,.elpx"></td>
+            <td>
+                <input name="presentationUpload" size="40" type="file" accept="${presentationFileTypes}">
+                <c:if test="${!empty presentationUploadError}">
+                    <span class="error">${presentationUploadError}</span>
+                </c:if>
+            </td>
             <td>
                 <spring:message code="uploadPresentation" var="uploadPresentation" text="uploadPresentation"/>
                 <input value="${uploadPresentation}" name="action" class="uportal-button" type="submit">
