@@ -54,6 +54,11 @@ import org.jasig.portlet.blackboardvcportlet.data.RecordingMode;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.data.UserSessionUrl;
 import org.joda.time.DateTime;
+import org.joda.time.Duration;
+import org.joda.time.Period;
+import org.joda.time.PeriodType;
+import org.joda.time.format.PeriodFormatter;
+import org.joda.time.format.PeriodFormatterBuilder;
 
 @Entity
 @Table(name = "VC2_SESSION")
@@ -120,6 +125,8 @@ public class SessionImpl implements Session {
     
     @Column(name="NON_CHAIR_NOTES", length = 4000)
     private String nonChairNotes;
+    
+    private String launchUrl;
     
     @ManyToMany(targetEntity = ConferenceUserImpl.class, fetch = FetchType.LAZY)
     @JoinTable(name="VC2_SESSION_CHAIRS",
@@ -258,6 +265,10 @@ public class SessionImpl implements Session {
     @Override
     public DateTime getStartTime() {
         return startTime;
+    }
+    
+    public DateTime getStartTimeWithDoundaryTime () {
+    	return startTime.minusMinutes(boundaryTime);
     }
 
     public void setStartTime(DateTime startTime) {
@@ -466,6 +477,54 @@ public class SessionImpl implements Session {
     }
 
     @Override
+	public void setLaunchUrl(String launchUrl) {
+		this.launchUrl = launchUrl;
+	}
+
+	@Override
+	public String getLaunchUrl() {
+		return launchUrl;
+	}
+	
+	@Override
+	public String getTimeFancyText(DateTime from, DateTime to) {
+		if(to != null) {
+			Duration d = new Duration(to, from);
+			Period timeUntil = new Period(to.toInstant(),from.toInstant(), PeriodType.dayTime());
+			
+			long standardDays = d.getStandardDays();
+			
+			if(standardDays > 0) {
+				PeriodFormatter daysHours = new PeriodFormatterBuilder()
+			    .appendDays()
+			    .appendSuffix(" day", " days")
+			    .appendSeparator(", and ")
+			    .appendHours()
+			    .appendSuffix(" hour", " hours")
+			    .toFormatter();
+				return daysHours.print(timeUntil.normalizedStandard(PeriodType.dayTime()));
+			} else {
+				PeriodFormatter dafaultFormatter = new PeriodFormatterBuilder()
+			    .appendHours()
+			    .appendSuffix(" hour", " hours")
+			    .appendSeparator(", and ")
+			    .appendMinutes()
+			    .appendSuffix(" minute", " minutes")
+			    .toFormatter();
+				return dafaultFormatter.print(timeUntil.normalizedStandard(PeriodType.dayTime()));
+			}
+			
+		} else {
+			return null;
+		}
+	}
+	
+	@Override
+	public String getTimeUntilJoin() {
+		return getTimeFancyText(startTime, DateTime.now());
+	}
+
+	@Override
     public String toString() {
         return "BlackboardSessionImpl [sessionId=" + sessionId + ", sessionName=" + sessionName + ", startTime=" + startTime + ", endTime=" + endTime + "]";
     }

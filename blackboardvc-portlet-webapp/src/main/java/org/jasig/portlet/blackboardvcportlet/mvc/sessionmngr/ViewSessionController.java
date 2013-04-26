@@ -89,14 +89,8 @@ public class ViewSessionController
         //TODO should we check if we are within the "boundary time"?
         if (session.getEndTime().isAfterNow()) {
             final ConferenceUser conferenceUser = this.conferenceUserService.getCurrentConferenceUser();
-            
-            if (sessionService.isSessionParticipant(session, conferenceUser)) {
-                model.addAttribute("launchUrl", this.sessionService.getOrCreateSessionUrl(conferenceUser, session));
-            }
-            else {
-                //Fall back to guest URL
-                model.addAttribute("launchUrl", session.getGuestUrl());
-            }
+            sessionService.populateLaunchUrl(conferenceUser, session);
+            model.addAttribute("launchUrl",session.getLaunchUrl());
         }
 
         return "BlackboardVCPortlet_viewSession";

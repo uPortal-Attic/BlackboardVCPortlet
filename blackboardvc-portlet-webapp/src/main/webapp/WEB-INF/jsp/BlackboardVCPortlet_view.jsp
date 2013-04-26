@@ -69,12 +69,13 @@
             <th><spring:message code="sessionName" text="sessionName"/></th>
             <th><spring:message code="startDateAndTime" text="startDateAndTime"/></th>
             <th><spring:message code="endDateAndTime" text="endDateAndTime"/></th>
+            <th><spring:message code="join" text="join"/></th>
             <th></th>
           </tr>
         </thead>
         <tbody>
           <c:forEach var="session" items="${sessions}" varStatus="loopStatus">
-            <portlet:renderURL var="launchSessionUrl">
+            <portlet:renderURL var="viewSessionUrl">
               <portlet:param name="sessionId" value="${session.sessionId}" />
               <portlet:param name="action" value="viewSession" />
             </portlet:renderURL>
@@ -88,9 +89,26 @@
                   <input value="${session.sessionId}" class="${n}deleteSession" name="deleteSession" type="checkbox" />
                 </sec:authorize>
               </td>
-              <td><a href="${launchSessionUrl}">${session.sessionName}</a></td>
+              <td><a href="${viewSessionUrl}">${session.sessionName}</a></td>
               <td><joda:format value="${session.startTime}" pattern="MM/dd/yyyy HH:mm" /></td>
               <td><joda:format value="${session.endTime}" pattern="MM/dd/yyyy HH:mm" /></td>
+              <td>
+              	<c:choose>
+				    <c:when test="${session.endTime.beforeNow}">
+				        <spring:message code="sessionIsClosed" text="sessionIsClosed"/>
+				    </c:when>
+				    <c:otherwise>
+				    	<c:choose>
+					    	<c:when test="${session.startTimeWithDoundaryTime.beforeNow}">
+					        	<a href="${session.launchUrl}" target="_blank"><spring:message code="joinNow" text="joinNow"/></a>
+					        </c:when>
+					        <c:otherwise>
+					        	${session.timeUntilJoin}
+					        </c:otherwise>
+				        </c:choose>
+				    </c:otherwise>
+				</c:choose>
+              </td>
               <td>
                 <sec:authorize access="hasPermission(#session, 'edit')">
                   <spring:message code="edit" var="edit" text="edit"/>

@@ -76,4 +76,6 @@ public interface SessionService {
 	boolean isSessionParticipant(Session session, ConferenceUser user);
 
 	Set<Session> getAllSessions();
+
+	void populateLaunchUrl(ConferenceUser user, Session session);
 }
