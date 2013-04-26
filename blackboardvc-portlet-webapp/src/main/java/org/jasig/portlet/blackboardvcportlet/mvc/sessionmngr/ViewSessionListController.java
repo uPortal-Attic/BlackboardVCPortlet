@@ -29,6 +29,7 @@ import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
 import org.jasig.portlet.blackboardvcportlet.security.ConferenceUserService;
+import org.jasig.portlet.blackboardvcportlet.service.SessionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,12 +53,18 @@ public class ViewSessionListController
 
 	private ConferenceUserService conferenceUserService;
 	private SessionDao sessionDao;
+	private SessionService sessionService;
 	private ConferenceUserDao conferenceUserDao;
 	
 	@Autowired
     public void setConferenceUserService(ConferenceUserService conferenceUserService) {
         this.conferenceUserService = conferenceUserService;
     }
+	
+	@Autowired
+	public void setSessionService(SessionService service) {
+		this.sessionService = service;
+	}
 
 	@Autowired
     public void setSessionDao(SessionDao sessionDao) {
@@ -89,11 +96,15 @@ public class ViewSessionListController
 		model.addAttribute("sessions", Ordering.from(SessionDisplayComparator.INSTANCE).sortedCopy(sessions));
 		
 		
-		//Get the recordings for all sessions
+		
 		final Set<SessionRecording> recordings = new HashSet<SessionRecording>();
 		for (final Session session : sessions) {
+			//Get information for all sessions
 		    final Set<SessionRecording> sessionRecordings = this.sessionDao.getSessionRecordings(session);
 		    recordings.addAll(sessionRecordings);
+		    
+		    //get launch URL
+		    sessionService.populateLaunchUrl(conferenceUser, session);
 		}
 		model.addAttribute("recordings", Ordering.from(SessionRecordingDisplayComparator.INSTANCE).sortedCopy(recordings));
 		

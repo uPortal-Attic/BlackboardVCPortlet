@@ -67,4 +67,13 @@ public interface Session extends Serializable {
     boolean isAllowInSessionInvites();
 
     boolean isHideParticipantNames();
+    
+    void setLaunchUrl(String launchUrl);
+    
+    String getLaunchUrl();
+
+	String getTimeUntilJoin();
+	DateTime getStartTimeWithDoundaryTime ();
+
+	String getTimeFancyText(DateTime from, DateTime to);
 }

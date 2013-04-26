@@ -157,6 +157,19 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
 		}
 		return url.getUrl();
 	}
+	
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#session, 'view')")
+	@Transactional
+	public void populateLaunchUrl(ConferenceUser user, Session session) {
+		
+		if(isSessionParticipant(session, user)) {
+			session.setLaunchUrl(getOrCreateSessionUrl(user, session));
+		} else {
+			session.setLaunchUrl(session.getGuestUrl());
+		}
+	}
+	
     /**
      * A user needs "edit" to view the set of session non chairs but we don't want the call to fail
      * if they only have "view" permission. So we pre-auth them with view and then filter all

@@ -18,6 +18,7 @@ import org.jasig.portlet.blackboardvcportlet.data.Multimedia;
 import org.jasig.portlet.blackboardvcportlet.data.Presentation;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.data.UserSessionUrl;
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -262,6 +263,33 @@ public class SessionDaoImplTest extends BaseJpaDaoTest {
             }
         });
     }
+    
+    @Test 
+	public void testSessionDateStuff() {
+		//create a session with id sessionId
+    	this.execute(new Callable<Object>() {
+            @Override
+            public Object call() {
+            	BlackboardSessionResponse sessionResponse = generateSessionResponse();
+                
+                final Session session = sessionDao.createSession(sessionResponse, "http://www.example.com/session");
+                
+                assertNotNull(session);
+
+                verifyCreatedSession();
+                verifyCreatedUsers();
+                
+                String timeUntilJoin = session.getTimeUntilJoin();
+            	assertNotNull(timeUntilJoin);
+            	
+            	String month = session.getTimeFancyText(DateTime.now().plusMonths(3).plusDays(2),DateTime.now());
+            	assertNotNull(month);
+            	String years = session.getTimeFancyText(DateTime.now().plusMonths(12), DateTime.now());
+            	assertNotNull(years);
+                return null;
+            }
+        });
+    }
 	
 	@Test 
 	public void testPresentationIntegration() {
@@ -494,8 +522,8 @@ public class SessionDaoImplTest extends BaseJpaDaoTest {
     	final BlackboardSessionResponse sessionResponse = new BlackboardSessionResponse();
         sessionResponse.setSessionId(SESSION_ID);
         sessionResponse.setSessionName("Test Session");
-        sessionResponse.setStartTime(1364566500000l);
-        sessionResponse.setEndTime(1364567400000l);
+        sessionResponse.setStartTime(DateTime.now().plusHours(10).getMillis());
+        sessionResponse.setEndTime(DateTime.now().plusHours(11).getMillis());
         sessionResponse.setCreatorId("admin@example.com");
         sessionResponse.setBoundaryTime(30);
         sessionResponse.setAccessType(2);
