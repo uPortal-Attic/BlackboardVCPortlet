@@ -22,7 +22,7 @@
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 <%@ include file="/WEB-INF/jsp/header.jsp"%>
 
-<div id="${n}" class="blackboardVCRoot">
+<div id="${n}blackboardCollaboratePortlet" class="blackboardVCRoot">
 <c:if test="${!empty prefs['helpUrl'][0]}">
 	<div class="help-link">
 	  <a href="${prefs['helpUrl'][0]}" target="_blank">Help</a>
@@ -73,7 +73,10 @@
         <div><a href="${launchUrl}" target="_blank"><spring:message code="launchSession" text="launchSession"/></a></div><br/>
     </c:otherwise>
 </c:choose>
-       
+<hr />
+
+<%@ include file="/WEB-INF/jsp/recordingsList.jsp"%>
+
 <portlet:renderURL var="backUrl" portletMode="VIEW" />
 <a href="${backUrl}" class="uportal-button">Back</a>
 

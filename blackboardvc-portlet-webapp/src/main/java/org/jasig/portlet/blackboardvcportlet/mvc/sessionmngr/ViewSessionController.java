@@ -22,8 +22,10 @@ import java.util.Set;
 
 import javax.portlet.PortletRequest;
 
+import org.jasig.portlet.blackboardvcportlet.dao.SessionDao;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
+import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
 import org.jasig.portlet.blackboardvcportlet.security.ConferenceUserService;
 import org.jasig.portlet.blackboardvcportlet.service.SessionService;
 import org.slf4j.Logger;
@@ -50,6 +52,7 @@ public class ViewSessionController
 
 	private ConferenceUserService conferenceUserService;
 	private SessionService sessionService;
+	private SessionDao sessionDao;
 	
 	
 	@Autowired
@@ -62,7 +65,12 @@ public class ViewSessionController
         this.conferenceUserService = conferenceUserService;
     }
 
-	@RenderMapping(params = "action=viewSession")
+	@Autowired
+	public void setSessionDao(SessionDao sessionDao) {
+        this.sessionDao = sessionDao;
+    }
+
+    @RenderMapping(params = "action=viewSession")
 	public String viewSession(PortletRequest request, @RequestParam long sessionId, ModelMap model)	{
         final Session session = this.sessionService.getSession(sessionId);
         //TODO what if session is null?
@@ -73,6 +81,9 @@ public class ViewSessionController
         
         final Set<ConferenceUser> sessionNonChairs = this.sessionService.getSessionNonChairs(session);
         model.addAttribute("sessionNonChairs", ImmutableSortedSet.copyOf(ConferenceUserDisplayComparator.INSTANCE, sessionNonChairs));
+        
+        final Set<SessionRecording> sessionRecordings = this.sessionDao.getSessionRecordings(session);
+        model.addAttribute("recordings", ImmutableSortedSet.copyOf(SessionRecordingDisplayComparator.INSTANCE, sessionRecordings));
         
         //Session hasn't completed yet, show session launch URL
         //TODO should we check if we are within the "boundary time"?
