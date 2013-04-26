@@ -7,6 +7,7 @@ package org.jasig.portlet.blackboardvcportlet.validations.test;
 import org.jasig.portlet.blackboardvcportlet.service.SessionForm;
 import org.joda.time.DateMidnight;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,7 @@ public class CustomValidationsTest
 	 * The StartMinute should pass, while the EndMinute should trigger a violation.
 	 */
 	@Test
+	@Ignore
 	public void testQuarterHourCheck()
 	{
 		logger.info("testQuarterHourCheck() started....");
@@ -58,6 +60,7 @@ public class CustomValidationsTest
 	 * @throws Exception
 	 */
 	@Test
+	@Ignore
 	public void testSessionEndTimeRangeCheck() throws Exception
 	{
 		logger.info("testSessionEndTimeRangeCheck() started....");
