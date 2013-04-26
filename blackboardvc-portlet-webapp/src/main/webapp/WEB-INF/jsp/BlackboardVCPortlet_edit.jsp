@@ -54,7 +54,7 @@
             <td><form:input path="sessionName" style="width: 50%;" class="uportal-input-text" />&nbsp;&nbsp;<form:errors path="sessionName" cssClass="error"/></td>
           </c:when>
           <c:otherwise>
-            <td><form:input path="sessionName" disabled="true"/></td>
+            <td><form:input path="sessionName" readonly="true"/></td>
           </c:otherwise>
         </c:choose>
       </tr>
