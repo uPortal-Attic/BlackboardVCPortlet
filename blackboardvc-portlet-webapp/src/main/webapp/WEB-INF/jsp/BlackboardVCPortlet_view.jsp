@@ -56,6 +56,9 @@
             style="text-transform: none;" class="uportal-button"
             onclick="javascript:return confirm('${areYouSureYouWantToDeleteSession}');"
             type="submit" />
+            <c:if test="${!empty deleteSessionError}">
+                <span class="error">${deleteSessionError}</span>
+            </c:if>
         </td>
       </tr>
     </tbody>

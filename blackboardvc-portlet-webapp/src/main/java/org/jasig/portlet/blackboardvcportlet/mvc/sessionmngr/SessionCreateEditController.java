@@ -193,12 +193,20 @@ public class SessionCreateEditController
 	}
     
     @ActionMapping(params = "action=deleteSessions")
-    public void deleteSession(ActionResponse response, @RequestParam long[] deleteSession) throws PortletModeException {
-        //TODO do in try/catch?
-        for (final long sessionId : deleteSession) {
-            this.sessionService.removeSession(sessionId);
-        }
-        
+    public void deleteSession(ActionResponse response, Locale locale, @RequestParam(required = false) long[] deleteSession) throws PortletModeException {
+
+		if (deleteSession == null)
+		{
+			response.setRenderParameter("deleteSessionError", messageSource.getMessage("error.nothingselected", null, locale));
+		}
+		else
+		{
+			//TODO do in try/catch?
+			for (final long sessionId : deleteSession) {
+				this.sessionService.removeSession(sessionId);
+			}
+		}
+
         response.setPortletMode(PortletMode.VIEW);
     }
 

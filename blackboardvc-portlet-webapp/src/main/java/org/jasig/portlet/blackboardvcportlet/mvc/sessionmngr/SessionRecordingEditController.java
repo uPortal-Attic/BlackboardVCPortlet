@@ -18,21 +18,22 @@
  */
 package org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr;
 
-import javax.portlet.ActionResponse;
-import javax.portlet.PortletMode;
-import javax.portlet.PortletModeException;
-
 import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
 import org.jasig.portlet.blackboardvcportlet.service.RecordingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
+import javax.portlet.ActionResponse;
+import javax.portlet.PortletMode;
+import javax.portlet.PortletModeException;
+import java.util.Locale;
 
 /**
  * Controller class for Portlet EDIT related actions and render
@@ -48,6 +49,9 @@ public class SessionRecordingEditController
 	private RecordingService recordingService;
 
 	@Autowired
+	private MessageSource messageSource;
+
+	@Autowired
 	public void setRecordingService(RecordingService recordingService) {
         this.recordingService = recordingService;
     }
@@ -57,8 +61,8 @@ public class SessionRecordingEditController
 	{
         final SessionRecording sessionRecording = this.recordingService.getSessionRecording(recordingId);
         
-        model.put("recording", sessionRecording); 
-        
+        model.put("recording", sessionRecording);
+
         return "BlackboardVCPortlet_editRecording";
     }
     
@@ -70,12 +74,20 @@ public class SessionRecordingEditController
     }
     
     @ActionMapping(params = "action=deleteRecordings")
-    public void deleteSession(ActionResponse response, @RequestParam long[] deleteRecording) throws PortletModeException {
-        //TODO do in try/catch?
-        for (final long recordingId : deleteRecording) {
-            this.recordingService.removeRecording(recordingId);
-        }
-        
+    public void deleteSession(ActionResponse response, Locale locale, @RequestParam(required = false) long[] deleteRecording) throws PortletModeException {
+
+		if (deleteRecording == null)
+		{
+			response.setRenderParameter("deleteRecordingError", messageSource.getMessage("error.nothingselected", null, locale));
+		}
+		else
+		{
+			//TODO do in try/catch?
+			for (final long recordingId : deleteRecording) {
+				this.recordingService.removeRecording(recordingId);
+			}
+		}
+
         response.setPortletMode(PortletMode.VIEW);
     }
 }

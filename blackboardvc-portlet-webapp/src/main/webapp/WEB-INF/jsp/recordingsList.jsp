@@ -25,26 +25,26 @@
 <portlet:actionURL portletMode="EDIT" var="deleteRecordingActionUrl">
   <portlet:param name="action" value="deleteRecordings" />
 </portlet:actionURL>
-<form name="deleteRecordings" action="${deleteRecordingActionUrl}" method="post">
-  <table width="100%">
-    <tbody>
-      <tr>
-        <td align="left">
-        </td>
-        <td align="right">
-          <spring:message code="deleteRecording" var="deleteRecording" text="deleteRecording"/>
-          <spring:message code="areYouSureYouWantToDeleteRecording" var="areYouSureYouWantToDeleteRecording" text="areYouSureYouWantToDeleteRecording"/>
-          <input id="dialog-confirm" value="${deleteRecording}" name="Delete"
-            style="text-transform: none;" class="uportal-button"
-            onclick="javascript:return confirm('${areYouSureYouWantToDeleteRecording}');"
-            type="submit" />
-        </td>
-      </tr>
-    </tbody>
-  </table>
   <c:choose>
     <c:when test="${fn:length(recordings) gt 0}">
-      <table width="100%">
+        <form name="deleteRecordings" action="${deleteRecordingActionUrl}" method="post">
+        <table width="100%">
+            <tbody>
+            <tr>
+                <td align="left">
+                </td>
+                <td align="right">
+                    <spring:message code="deleteRecording" var="deleteRecording" text="deleteRecording"/>
+                    <spring:message code="areYouSureYouWantToDeleteRecording" var="areYouSureYouWantToDeleteRecording" text="areYouSureYouWantToDeleteRecording"/>
+                    <input id="dialog-confirm" value="${deleteRecording}" name="Delete"
+                           style="text-transform: none;" class="uportal-button"
+                           onclick="javascript:return confirm('${areYouSureYouWantToDeleteRecording}');"
+                           type="submit" />
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <table width="100%">
         <thead>
           <tr class="uportal-channel-table-header">
             <th width="15"><input id="${n}selectAllRecordings" value="selectAllRecordings" name="Recordings" type="checkbox" /></th>
@@ -79,12 +79,12 @@
           </c:forEach>
         </tbody>
       </table>
+     </form>
     </c:when>
     <c:otherwise>
       <b>No recordings available</b>
     </c:otherwise>
   </c:choose>
-</form>
 
 <script type="text/javascript">
 <rs:compressJs>

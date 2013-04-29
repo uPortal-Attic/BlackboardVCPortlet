@@ -18,11 +18,7 @@
  */
 package org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.portlet.PortletRequest;
-
+import com.google.common.collect.Ordering;
 import org.jasig.portlet.blackboardvcportlet.dao.ConferenceUserDao;
 import org.jasig.portlet.blackboardvcportlet.dao.SessionDao;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
@@ -36,9 +32,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
-
-import com.google.common.collect.Ordering;
+import javax.portlet.PortletRequest;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Controller for handling Portlet view mode
@@ -77,7 +75,7 @@ public class ViewSessionListController
     }
 
 	@RenderMapping
-	public String view(PortletRequest request, ModelMap model)
+	public String view(PortletRequest request, ModelMap model, @RequestParam(required = false) String deleteSessionError, @RequestParam(required = false) String deleteRecordingError)
 	{
 		final ConferenceUser conferenceUser = this.conferenceUserService.getCurrentConferenceUser();
 		
@@ -94,9 +92,17 @@ public class ViewSessionListController
         sessions.addAll(nonChairedSessionsForUser);
 
 		model.addAttribute("sessions", Ordering.from(SessionDisplayComparator.INSTANCE).sortedCopy(sessions));
-		
-		
-		
+
+		if (deleteSessionError != null)
+		{
+			model.addAttribute("deleteSessionError", deleteSessionError);
+		}
+
+		if (deleteRecordingError != null)
+		{
+			model.addAttribute("deleteRecordingError", deleteRecordingError);
+		}
+
 		final Set<SessionRecording> recordings = new HashSet<SessionRecording>();
 		for (final Session session : sessions) {
 			//Get information for all sessions
