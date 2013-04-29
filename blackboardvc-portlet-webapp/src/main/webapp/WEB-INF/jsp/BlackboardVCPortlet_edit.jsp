@@ -388,7 +388,12 @@
         <thead>
           <tr class="uportal-channel-table-header">
             <th><spring:message code="fileName" text="fileName"/></th>
-            <th><input value="Delete Multimedia Item(s)" name="action" class="uportal-button" type="submit" /></th>
+            <th>
+                <input value="Delete Multimedia Item(s)" name="action" class="uportal-button" type="submit" />
+                <c:if test="${!empty deleteMultimediaError}">
+                    <span class="error">${deleteMultimediaError}</span>
+                </c:if>
+            </th>
           </tr>
         </thead>
         <tbody>

@@ -125,7 +125,7 @@ public class SessionCreateEditController
 	}
 
     @RenderMapping(params="action=editSession")
-    public String displayEditSessionForm(ModelMap model, @RequestParam long sessionId, @RequestParam(required = false) String presentationUploadError, @RequestParam(required = false) String multimediaUploadError) throws PortletModeException
+    public String displayEditSessionForm(ModelMap model, @RequestParam long sessionId, @RequestParam(required = false) String presentationUploadError, @RequestParam(required = false) String multimediaUploadError, @RequestParam(required = false) String deleteMultimediaError) throws PortletModeException
 	{
         final ServerConfiguration serverConfiguration = this.serverConfigurationService.getServerConfiguration();
         model.put("serverConfiguration", serverConfiguration);
@@ -162,6 +162,11 @@ public class SessionCreateEditController
 		if (multimediaUploadError != null)
 		{
 			model.addAttribute("multimediaUploadError", multimediaUploadError);
+		}
+
+		if (deleteMultimediaError != null)
+		{
+			model.addAttribute("deleteMultimediaError", deleteMultimediaError);
 		}
 
         return "BlackboardVCPortlet_edit";
@@ -279,12 +284,21 @@ public class SessionCreateEditController
 	}
 
     @ActionMapping(params = "action=Delete Multimedia Item(s)")
-    public void deleteMultimedia(ActionResponse response, @RequestParam long sessionId, @RequestParam long[] deleteMultimedia) throws PortletModeException {
-        this.sessionService.deleteMultimedia(sessionId, deleteMultimedia);
+    public void deleteMultimedia(ActionResponse response, Locale locale, @RequestParam long sessionId, @RequestParam(required = false) long[] deleteMultimedia) throws PortletModeException
+	{
+		if (deleteMultimedia == null)
+		{
+			response.setRenderParameter("deleteMultimediaError", messageSource.getMessage("error.nothingselected", null, locale));
+		}
+		else
+		{
+			this.sessionService.deleteMultimedia(sessionId, deleteMultimedia);
+		}
 
-        response.setPortletMode(PortletMode.EDIT);
-        response.setRenderParameter("sessionId", Long.toString(sessionId));
-    }
+		response.setPortletMode(PortletMode.EDIT);
+		response.setRenderParameter("sessionId", Long.toString(sessionId));
+		response.setRenderParameter("action", "editSession");
+	}
     
     @ActionMapping(params = "action=Upload Presentation")
     public void uploadPresentation(ActionResponse response, Locale locale, @RequestParam long sessionId, @RequestParam MultipartFile presentationUpload) throws PortletModeException
@@ -315,10 +329,12 @@ public class SessionCreateEditController
 	}
 
     @ActionMapping(params = "action=Delete Presentation")
-    public void deletePresentation(ActionResponse response, @RequestParam long sessionId) throws PortletModeException {
+    public void deletePresentation(ActionResponse response, @RequestParam long sessionId) throws PortletModeException
+	{
         this.sessionService.deletePresentation(sessionId);
 
         response.setPortletMode(PortletMode.EDIT);
         response.setRenderParameter("sessionId", Long.toString(sessionId));
+		response.setRenderParameter("action", "editSession");
     }
 }
