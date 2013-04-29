@@ -28,3 +28,4 @@ uniqueIdAttributeName=wiscedupvi,eppn,spvi
 ## Misc
 maxuploadsize=10000000
 presentationFileTypes=.wbd,.wbp,.elp,.elpx
+multimediaFileTypes=.mpeg,.mpg,.mpe,.mov,.qt,.swf,.m4v,.mp3,.mp4,.mpeg,.wmv

@@ -79,6 +79,9 @@ public class SessionCreateEditController
 	@Value("${presentationFileTypes}")
 	private String presentationFileTypes;
 
+	@Value("${multimediaFileTypes}")
+	private String multimediaFileTypes;
+
 	@Autowired
 	public void setConferenceUserService(ConferenceUserService conferenceUserService) {
         this.conferenceUserService = conferenceUserService;
@@ -122,7 +125,7 @@ public class SessionCreateEditController
 	}
 
     @RenderMapping(params="action=editSession")
-    public String displayEditSessionForm(ModelMap model, @RequestParam long sessionId, @RequestParam(required = false) String presentationUploadError) throws PortletModeException
+    public String displayEditSessionForm(ModelMap model, @RequestParam long sessionId, @RequestParam(required = false) String presentationUploadError, @RequestParam(required = false) String multimediaUploadError) throws PortletModeException
 	{
         final ServerConfiguration serverConfiguration = this.serverConfigurationService.getServerConfiguration();
         model.put("serverConfiguration", serverConfiguration);
@@ -149,9 +152,16 @@ public class SessionCreateEditController
         model.addAttribute("presentationFileTypes", presentationFileTypes);
 		model.addAttribute("presentation", session.getPresentation());
 
+		model.addAttribute("multimediaFileTypes", multimediaFileTypes);
+
 		if (presentationUploadError != null)
 		{
 			model.addAttribute("presentationUploadError", presentationUploadError);
+		}
+
+		if (multimediaUploadError != null)
+		{
+			model.addAttribute("multimediaUploadError", multimediaUploadError);
 		}
 
         return "BlackboardVCPortlet_edit";
@@ -240,14 +250,33 @@ public class SessionCreateEditController
         response.setRenderParameter("sessionId", Long.toString(deleteParticipantsForm.getDeleteParticipantsSessionId()));
     }
     
-    //TODO @Valid on multimediaUpload file types ".mpeg, .mpg, .mpe, .mov, .qt, .swf, .m4v, .mp3, .mp4, .mpeg, .wmv"
     @ActionMapping(params = "action=Upload Multimedia")
-    public void uploadMultimedia(ActionResponse response, @RequestParam long sessionId, @RequestParam MultipartFile multimediaUpload) throws PortletModeException {
-        this.sessionService.addMultimedia(sessionId, multimediaUpload);
+    public void uploadMultimedia(ActionResponse response, Locale locale, @RequestParam long sessionId, @RequestParam MultipartFile multimediaUpload) throws PortletModeException
+	{
+		String fileExtension = StringUtils.substringAfter(multimediaUpload.getOriginalFilename(), ".").toLowerCase();
+
+		// Validate
+		if (multimediaUpload.getSize() < 1)
+		{
+			response.setRenderParameter("multimediaUploadError", messageSource.getMessage("error.uploadfilenotselected", null, locale));
+		}
+		else if (multimediaUpload.getSize() > maxFileUploadSize)
+		{
+			response.setRenderParameter("multimediaUploadError", messageSource.getMessage("error.uploadfilesizetoobig", null, locale));
+		}
+		else if (fileExtension.length() == 0 || !multimediaFileTypes.contains(fileExtension))
+		{
+			response.setRenderParameter("multimediaUploadError", messageSource.getMessage("error.uploadfileextensionswrong", null, locale));
+		}
+		else
+		{
+			this.sessionService.addMultimedia(sessionId, multimediaUpload);
+		}
 
         response.setPortletMode(PortletMode.EDIT);
         response.setRenderParameter("sessionId", Long.toString(sessionId));
-    }
+		response.setRenderParameter("action", "editSession");
+	}
 
     @ActionMapping(params = "action=Delete Multimedia Item(s)")
     public void deleteMultimedia(ActionResponse response, @RequestParam long sessionId, @RequestParam long[] deleteMultimedia) throws PortletModeException {
