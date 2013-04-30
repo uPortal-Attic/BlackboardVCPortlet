@@ -11,6 +11,7 @@ public enum MailSubstitutions {
 	SESSION_NAME("sessionName"),
 	SESSION_START_TIME("sessionStartTime"),
 	SESSION_TYPE("sessionType"),
+	SESSION_UPDATE_TEXT("sessionUpdateText"),
 	SESSION_USER_URL("userURL");
 	
 	

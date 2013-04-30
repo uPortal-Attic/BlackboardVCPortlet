@@ -36,11 +36,11 @@ public interface MailTemplateService
 	
 	public void sendEmail(MailTask mailTask);
 	
-	public void buildAndSendNewSessionEmails(Session session);
+	public void buildAndSendSessionEmails(Session session, boolean isUpdate);
 	public void buildAndSendCancelationMeetingEmail(Session session);
 	
 	public MailTask buildCancellationNoticeMailTask(ConferenceUser user, Session session);
-	public MailTask buildParticipantMailTask(ConferenceUser participant, Session session);
-	public MailTask buildModeratorMailTask(ConferenceUser moderator, Session session);
+	public MailTask buildParticipantMailTask(ConferenceUser participant, Session session, boolean isUpdate);
+	public MailTask buildModeratorMailTask(ConferenceUser moderator, Session session, boolean isUpdate);
 	
 }

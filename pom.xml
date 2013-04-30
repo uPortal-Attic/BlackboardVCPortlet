@@ -99,6 +99,7 @@
         <resource-server.version>1.0.29</resource-server.version>
         <slf4j.version>1.7.4</slf4j.version>
         <spring-portlet-contrib.version>1.2.0</spring-portlet-contrib.version>
+        <ical4j.version>1.0.4</ical4j.version>
 
         <project.build.sourceVersion>1.6</project.build.sourceVersion>
         <project.build.targetVersion>1.6</project.build.targetVersion>
@@ -178,6 +179,17 @@
                 <groupId>org.jadira.usertype</groupId>
                 <artifactId>usertype.core</artifactId>
                 <version>3.0.0.GA</version>
+            </dependency>
+            <dependency>
+            	<groupId>org.mnode.ical4j</groupId>
+            	<artifactId>ical4j</artifactId>
+            	<version>${ical4j.version}</version>
+            	<exclusions>
+            		<exclusion>
+            			<groupId>commons-logging</groupId>
+            			<artifactId>commons-logging</artifactId>
+            		</exclusion>
+          		</exclusions>
             </dependency>
             <dependency>
                 <groupId>javax.servlet</groupId>

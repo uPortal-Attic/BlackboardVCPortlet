@@ -1,12 +1,9 @@
-/**
- * @author Brad Leege <leege@doit.wisc.edu>
- * Created on 4/1/13 at 2:01 PM
- */
-
 package org.jasig.portlet.blackboardvcportlet.service;
 
 import java.util.List;
 import java.util.Map;
+
+import net.fortuna.ical4j.model.Calendar;
 
 import org.jasig.portlet.blackboardvcportlet.service.util.MailMessages;
 
@@ -18,6 +15,7 @@ public class MailTask
 	private String subject;
 	private Map substitutions;
 	private MailMessages template;
+	private Calendar meetingInvite;
 
 	/**
 	 * Constructor
@@ -90,5 +88,13 @@ public class MailTask
 	public void setTemplate(MailMessages template)
 	{
 		this.template = template;
+	}
+
+	public Calendar getMeetingInvite() {
+		return meetingInvite;
+	}
+
+	public void setMeetingInvite(Calendar meetingInvite) {
+		this.meetingInvite = meetingInvite;
 	}
 }

@@ -20,6 +20,7 @@
 package org.jasig.portlet.blackboardvcportlet.service;
 
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -94,15 +95,47 @@ public class MailTemplateServiceIT
 	
 	@Test
 	public void testSendingMail() throws Exception {
-		when(user.getDisplayName()).thenReturn("Tim Test");
-		when(user.getEmail()).thenReturn("levett@wisc.edu");
-		when(session.getAccessType()).thenReturn(AccessType.PRIVATE);
-		when(session.getSessionName()).thenReturn("Session Name");
-		when(session.getEndTime()).thenReturn(new DateTime());
-		when(session.getStartTime()).thenReturn(new DateTime());
-		when(session.getCreator()).thenReturn(user);
+		setupWhenClausesForEmail();
 		mailTemplateService.setFrom("dalquist@wisc.edu");
 		mailTemplateService.sendMail(mailTemplateService.buildCancellationNoticeMailTask(user, session));
 		
+	}
+	
+	@Test
+	public void testSendingEmailWithAttachment() throws Exception {
+		setupWhenClausesForEmail();
+		mailTemplateService.setFrom("dalquist@wisc.edu");
+		mailTemplateService.sendMail(mailTemplateService.buildModeratorMailTask(user, session, false));
+	}
+	
+	@Test
+	public void testSendingInviteUpdateAndCancellation() throws Exception {
+		setupWhenClausesForEmail();
+		mailTemplateService.setFrom("dalquist@wisc.edu");
+		//send initial email invite
+		mailTemplateService.sendMail(mailTemplateService.buildModeratorMailTask(user, session, false));
+		
+		Thread.sleep(10000); //wait 10 seconds
+		//send update email with later end time (yah long meetings)
+		when(session.getEndTime()).thenReturn(new DateTime().plusHours(3));
+		mailTemplateService.sendMail(mailTemplateService.buildModeratorMailTask(user, session, true));
+		
+		Thread.sleep(10000);//wait 10 seconds
+		//send cancellation notice
+		mailTemplateService.sendMail(mailTemplateService.buildCancellationNoticeMailTask(user, session));
+		
+	}
+	
+	private void setupWhenClausesForEmail() {
+		when(user.getDisplayName()).thenReturn("Tim Levett");
+		when(user.getEmail()).thenReturn("levett@wisc.edu");
+		when(session.getAccessType()).thenReturn(AccessType.PRIVATE);
+		when(session.getSessionName()).thenReturn("Session Name");
+		when(session.getEndTime()).thenReturn(new DateTime().plusHours(2));
+		when(session.getStartTime()).thenReturn(new DateTime().plusHours(1));
+		when(session.getCreator()).thenReturn(user);
+		when(session.getGuestUrl()).thenReturn("http://www.example.com/invite/guestURL");
+		when(session.getBoundaryTime()).thenReturn(30);
+		when(sessionService.getOrCreateSessionUrl(any(ConferenceUser.class), any(Session.class))).thenReturn("http://www.example.com/inviteurlforuser");
 	}
 }

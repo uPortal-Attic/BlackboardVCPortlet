@@ -102,7 +102,7 @@
 				    </c:when>
 				    <c:otherwise>
 				    	<c:choose>
-					    	<c:when test="${session.startTimeWithDoundaryTime.beforeNow}">
+					    	<c:when test="${session.startTimeWithBoundaryTime.beforeNow}">
 					        	<a href="${session.launchUrl}" target="_blank"><spring:message code="joinNow" text="joinNow"/></a>
 					        </c:when>
 					        <c:otherwise>

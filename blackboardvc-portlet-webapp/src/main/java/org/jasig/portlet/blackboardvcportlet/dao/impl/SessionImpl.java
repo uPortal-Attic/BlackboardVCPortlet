@@ -267,7 +267,7 @@ public class SessionImpl implements Session {
         return startTime;
     }
     
-    public DateTime getStartTimeWithDoundaryTime () {
+    public DateTime getStartTimeWithBoundaryTime () {
     	return startTime.minusMinutes(boundaryTime);
     }
 

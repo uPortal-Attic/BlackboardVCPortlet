@@ -73,7 +73,7 @@ public interface Session extends Serializable {
     String getLaunchUrl();
 
 	String getTimeUntilJoin();
-	DateTime getStartTimeWithDoundaryTime ();
+	DateTime getStartTimeWithBoundaryTime ();
 
 	String getTimeFancyText(DateTime from, DateTime to);
 }

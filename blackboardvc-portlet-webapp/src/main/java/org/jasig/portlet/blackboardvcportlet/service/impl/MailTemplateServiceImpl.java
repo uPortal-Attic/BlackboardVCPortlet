@@ -1,5 +1,14 @@
 package org.jasig.portlet.blackboardvcportlet.service.impl;
 
+import net.fortuna.ical4j.data.CalendarOutputter;
+import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.DateTime;
+import net.fortuna.ical4j.model.component.VEvent;
+import net.fortuna.ical4j.model.property.Description;
+import net.fortuna.ical4j.model.property.Location;
+import net.fortuna.ical4j.model.property.Status;
+import net.fortuna.ical4j.model.property.Uid;
+
 import org.apache.velocity.app.VelocityEngine;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
@@ -15,6 +24,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
@@ -23,6 +33,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.velocity.VelocityEngineUtils;
 import javax.mail.internet.MimeMessage;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -116,7 +127,16 @@ public class MailTemplateServiceImpl implements BeanFactoryAware, MailTemplateSe
 			{
 				public void prepare(MimeMessage mimeMessage) throws Exception
 				{
-					MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
+					MimeMessageHelper message = new MimeMessageHelper(mimeMessage,true);
+					
+					if(mt.getMeetingInvite() != null) {
+						CalendarOutputter outputter = new CalendarOutputter();
+						ByteArrayOutputStream os = new ByteArrayOutputStream();
+						outputter.setValidating(false);
+						outputter.output(mt.getMeetingInvite(), os);
+						
+						message.addAttachment("invite.ics", new ByteArrayResource(os.toByteArray()));
+					}
 					
 					message.setFrom(mt.getFrom() != null ? mt.getFrom() : defaultFromAddress);
 					
@@ -171,21 +191,22 @@ public class MailTemplateServiceImpl implements BeanFactoryAware, MailTemplateSe
 			theQueue.add(mailTask);
 	}
 	
-	public void buildAndSendNewSessionEmails(Session session) {
+	public void buildAndSendSessionEmails(Session session, boolean isUpdate) {
 		
 		for(ConferenceUser moderator : sessionService.getSessionChairs(session)) {
-			this.sendEmail(buildModeratorMailTask(moderator, session));
+			this.sendEmail(buildModeratorMailTask(moderator, session, isUpdate));
 		}
 		
 		for(ConferenceUser user : sessionService.getSessionNonChairs(session)) {
-			this.sendEmail(buildParticipantMailTask(user, session));
+			this.sendEmail(buildParticipantMailTask(user, session, isUpdate));
 		}
 	}
 	
 	//build substitutions for moderator
-	public MailTask buildModeratorMailTask(ConferenceUser moderator, Session session) {
+	public MailTask buildModeratorMailTask(ConferenceUser moderator, Session session, boolean isUpdate) {
 		List<String> emailList = new ArrayList<String>();
 		emailList.add(moderator.getEmail());
+		String userSessionUrl = sessionService.getOrCreateSessionUrl(moderator, session);
 		
 		//substitutions
 		Map<String, String> substitutions = new HashMap<String, String>();
@@ -195,15 +216,18 @@ public class MailTemplateServiceImpl implements BeanFactoryAware, MailTemplateSe
 		substitutions.put(MailSubstitutions.SESSION_TYPE.toString(), session.getAccessType().getName());
 		substitutions.put(MailSubstitutions.SESSION_START_TIME.toString(), session.getStartTime().toString(DATE_FORMAT));
 		substitutions.put(MailSubstitutions.SESSION_END_TIME.toString(), session.getEndTime().toString(DATE_FORMAT));
-		substitutions.put(MailSubstitutions.SESSION_USER_URL.toString(), sessionService.getOrCreateSessionUrl(moderator, session));
+		substitutions.put(MailSubstitutions.SESSION_USER_URL.toString(), userSessionUrl);
 		substitutions.put(MailSubstitutions.SESSION_GUEST_URL.toString(), session.getGuestUrl());
+		substitutions.put(MailSubstitutions.SESSION_UPDATE_TEXT.toString(), isUpdate ? "**Time update for existing session.**" : "");
+			
 		
 		MailTask mt = new MailTask(emailList,substitutions,MailMessages.MODERATOR);
+		mt.setMeetingInvite(buildIcsFile(session, moderator));
 		return mt;
 	}
 		
 	//build substitutions for participant
-	public MailTask buildParticipantMailTask(ConferenceUser participant, Session session) {
+	public MailTask buildParticipantMailTask(ConferenceUser participant, Session session, boolean isUpdate) {
 		List<String> emailList = new ArrayList<String>();
 		emailList.add(participant.getEmail());
 		
@@ -221,6 +245,7 @@ public class MailTemplateServiceImpl implements BeanFactoryAware, MailTemplateSe
 		substitutions.put(MailSubstitutions.SESSION_CREATOR_NAME.toString(), session.getCreator().getDisplayName());
 		
 		MailTask mt = new MailTask(emailList,substitutions,MailMessages.EXTERNAL_PARTICIPANT);
+		mt.setMeetingInvite(buildIcsFile(session, participant));
 		return mt;
 	}
 	
@@ -229,7 +254,6 @@ public class MailTemplateServiceImpl implements BeanFactoryAware, MailTemplateSe
 		
 		users.addAll(sessionService.getSessionChairs(session));
 		users.addAll(sessionService.getSessionNonChairs(session));
-		users.add(session.getCreator());
 		
 		for(ConferenceUser user : users) {
 			this.sendEmail(buildCancellationNoticeMailTask(user, session));
@@ -253,6 +277,28 @@ public class MailTemplateServiceImpl implements BeanFactoryAware, MailTemplateSe
 		substitutions.put(MailSubstitutions.SESSION_CREATOR_NAME.toString(), session.getCreator().getDisplayName());
 		
 		MailTask mt = new MailTask(emailList,substitutions,MailMessages.SESSION_DELETION);
+		mt.setMeetingInvite(buildIcsFile(session, user, true));
 		return mt;
+	}
+	
+	private Calendar buildIcsFile(Session session, ConferenceUser user) {
+		return buildIcsFile(session, user, false);
+	}
+	
+	private Calendar buildIcsFile(Session session, ConferenceUser user, boolean isCancellation) {
+		//create meeting Invite .ics file
+		String userSessionUrl = sessionService.getOrCreateSessionUrl(user, session);
+		VEvent event = new VEvent(new DateTime(session.getStartTime().toDate()),new DateTime(session.getEndTime().toDate()),session.getSessionName());
+		Calendar cal = new Calendar();
+		event.getProperties().add(new Uid(String.valueOf(session.getSessionId()) + "-BlackboardCollaborate"));
+		if(isCancellation) {
+			event.getProperties().add(Status.VEVENT_CANCELLED);
+		} else {
+			event.getProperties().add(new Location(userSessionUrl));
+			Description desc = new Description("Your join URL: " + userSessionUrl + "\n\nGuest join URL: " + session.getGuestUrl() + "\n\nCreator: " + session.getCreator().getDisplayName() + " (" + session.getCreator().getEmail() + ")");
+			event.getProperties().add(desc);
+		}
+		cal.getComponents().add(event);
+		return cal;
 	}
 }

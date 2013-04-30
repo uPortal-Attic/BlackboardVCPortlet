@@ -18,6 +18,7 @@ import org.jasig.portlet.blackboardvcportlet.dao.MultimediaDao;
 import org.jasig.portlet.blackboardvcportlet.dao.PresentationDao;
 import org.jasig.portlet.blackboardvcportlet.dao.SessionDao;
 import org.jasig.portlet.blackboardvcportlet.dao.UserSessionUrlDao;
+import org.jasig.portlet.blackboardvcportlet.dao.impl.DaoUtils;
 import org.jasig.portlet.blackboardvcportlet.dao.ws.MultimediaWSDao;
 import org.jasig.portlet.blackboardvcportlet.dao.ws.PresentationWSDao;
 import org.jasig.portlet.blackboardvcportlet.dao.ws.SessionWSDao;
@@ -267,12 +268,17 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
         	
         	//Remove guest username so that guest user's are prompted when they use the URL
             Session session = sessionDao.createSession(sessionResponse, guestUrl);
-            mailService.buildAndSendNewSessionEmails(session);
+            mailService.buildAndSendSessionEmails(session, false);
         }
         else {
             final Session session = sessionDao.getSession(sessionForm.getSessionId());
             final BlackboardSessionResponse sessionResponse = sessionWSDao.updateSession(session.getBbSessionId(), sessionForm);
+            boolean isTimeChange = !session.getStartTime().equals(DaoUtils.toDateTime(sessionResponse.getStartTime()))
+            		|| !session.getEndTime().equals(DaoUtils.toDateTime(sessionResponse.getEndTime()));
             sessionDao.updateSession(sessionResponse);
+            if(isTimeChange) {
+            	mailService.buildAndSendSessionEmails(session, true);
+            }
         }
     }
 
@@ -288,7 +294,7 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
         
         final BlackboardSessionResponse sessionResponse = this.sessionWSDao.setSessionChairs(session.getBbSessionId(), sessionChairs);
         sessionDao.updateSession(sessionResponse);
-        mailService.sendEmail(mailService.buildModeratorMailTask(newSessionChair, session));
+        mailService.sendEmail(mailService.buildModeratorMailTask(newSessionChair, session, false));
     }
 
     @Override
@@ -322,7 +328,7 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
         
         final BlackboardSessionResponse sessionResponse = this.sessionWSDao.setSessionNonChairs(session.getBbSessionId(), sessionNonChairs);
         sessionDao.updateSession(sessionResponse);
-        mailService.sendEmail(mailService.buildParticipantMailTask(newSessionNonChair, session));
+        mailService.sendEmail(mailService.buildParticipantMailTask(newSessionNonChair, session, false));
         
     }
 

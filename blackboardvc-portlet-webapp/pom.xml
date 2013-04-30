@@ -201,6 +201,10 @@
             <artifactId>spring-webmvc</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.mnode.ical4j</groupId>
+            <artifactId>ical4j</artifactId>
+        </dependency>
+        <dependency>
             <groupId>javax.sql</groupId>
             <artifactId>jdbc-stdext</artifactId>
         </dependency>
