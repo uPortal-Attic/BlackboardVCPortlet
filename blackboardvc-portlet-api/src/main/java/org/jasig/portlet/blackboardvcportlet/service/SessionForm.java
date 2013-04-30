@@ -21,6 +21,7 @@ package org.jasig.portlet.blackboardvcportlet.service;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingMode;
 import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
+import org.jasig.portlet.blackboardvcportlet.validations.annotations.FutureWithYearLimit;
 import org.jasig.portlet.blackboardvcportlet.validations.annotations.QuarterHourCheck;
 import org.jasig.portlet.blackboardvcportlet.validations.annotations.SessionEndTimeRangeCheck;
 import org.joda.time.DateMidnight;
@@ -130,6 +131,7 @@ public class SessionForm implements Serializable {
     }
 
 	@Future
+	@FutureWithYearLimit()
     public DateTime getStartTime() {
         return startDate.toDateTime().withHourOfDay(this.startHour).withMinuteOfHour(this.startMinute);
     }
