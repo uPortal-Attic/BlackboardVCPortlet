@@ -21,10 +21,7 @@ package org.jasig.portlet.blackboardvcportlet.service;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingMode;
 import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
-import org.jasig.portlet.blackboardvcportlet.validations.annotations.FutureWithYearLimit;
-import org.jasig.portlet.blackboardvcportlet.validations.annotations.QuarterHourCheck;
-import org.jasig.portlet.blackboardvcportlet.validations.annotations.SessionEndTimeRangeCheck;
-import org.jasig.portlet.blackboardvcportlet.validations.annotations.SessionNameCheck;
+import org.jasig.portlet.blackboardvcportlet.validations.annotations.*;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import javax.validation.constraints.Future;
@@ -36,6 +33,7 @@ import java.io.Serializable;
 /**
  * form backing object for creating/editing sessions
  */
+@SessionBeginTimeRangeCheck()
 @SessionEndTimeRangeCheck()
 public class SessionForm implements Serializable {
     private static final long serialVersionUID = 1L;
