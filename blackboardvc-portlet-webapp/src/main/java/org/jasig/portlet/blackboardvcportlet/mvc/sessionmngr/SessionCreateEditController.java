@@ -222,6 +222,7 @@ public class SessionCreateEditController
 		}
 
         response.setPortletMode(PortletMode.EDIT);
+        response.setRenderParameter("action", "editSession");
         response.setRenderParameter("sessionId", Long.toString(addModeratorForm.getSessionId()));
     }
 
@@ -234,6 +235,7 @@ public class SessionCreateEditController
 		}
 
         response.setPortletMode(PortletMode.EDIT);
+        response.setRenderParameter("action", "editSession");
         response.setRenderParameter("sessionId", Long.toString(deleteModeratorsForm.getDeleteModeratorSessionId()));
     }
 
@@ -248,6 +250,7 @@ public class SessionCreateEditController
 		}
 
         response.setPortletMode(PortletMode.EDIT);
+        response.setRenderParameter("action", "editSession");
         response.setRenderParameter("sessionId", Long.toString(participantForm.getSessionId()));
     }
 
@@ -260,6 +263,7 @@ public class SessionCreateEditController
 		}
 
         response.setPortletMode(PortletMode.EDIT);
+        response.setRenderParameter("action", "editSession");
         response.setRenderParameter("sessionId", Long.toString(deleteParticipantsForm.getDeleteParticipantsSessionId()));
     }
     

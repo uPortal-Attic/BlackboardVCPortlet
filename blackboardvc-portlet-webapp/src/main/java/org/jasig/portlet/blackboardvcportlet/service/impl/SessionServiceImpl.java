@@ -273,8 +273,9 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
         else {
             final Session session = sessionDao.getSession(sessionForm.getSessionId());
             final BlackboardSessionResponse sessionResponse = sessionWSDao.updateSession(session.getBbSessionId(), sessionForm);
-            boolean isTimeChange = !session.getStartTime().equals(DaoUtils.toDateTime(sessionResponse.getStartTime()))
-            		|| !session.getEndTime().equals(DaoUtils.toDateTime(sessionResponse.getEndTime()));
+            
+            boolean isTimeChange = !(session.getStartTime().getMillis() == sessionResponse.getStartTime())
+            		|| !(session.getEndTime().getMillis() == sessionResponse.getEndTime());
             sessionDao.updateSession(sessionResponse);
             if(isTimeChange) {
             	mailService.buildAndSendSessionEmails(session, true);
