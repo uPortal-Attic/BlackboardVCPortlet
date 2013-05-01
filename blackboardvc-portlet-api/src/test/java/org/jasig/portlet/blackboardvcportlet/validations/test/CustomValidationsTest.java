@@ -80,4 +80,37 @@ public class CustomValidationsTest
 
 		logger.info("testSessionEndTimeRangeCheck() finished.");
 	}
+
+	@Test
+	public void testSessionNameCheck() throws Exception
+	{
+		logger.info("testSessionNameCheck() started....");
+		SessionForm sessionForm = new SessionForm();
+		sessionForm.setBoundaryTime(15);
+		sessionForm.setStartDate(DateMidnight.now().plusDays(7));
+		sessionForm.setStartHour(20);
+		sessionForm.setStartMinute(15);
+		sessionForm.setEndDate(sessionForm.getStartDate());
+		sessionForm.setEndHour(21);
+		sessionForm.setEndMinute(45);
+
+		// Test The Length Flag
+		sessionForm.setSessionName("Test Session Name That Will Be Longer Than Two Hundred And Fifty Five Characters So That It'll Trigger The Validation Error.  Test Session Name That Will Be Longer Than Two Hundred And Fifty Five Characters So That It'll Trigger The Validation Error.  Test Session Name That Will Be Longer Than Two Hundred And Fifty Five Characters So That It'll Trigger The Validation Error.  Test Session Name That Will Be Longer Than Two Hundred And Fifty Five Characters So That It'll Trigger The Validation Error.  Test Session Name That Will Be Longer Than Two Hundred And Fifty Five Characters So That It'll Trigger The Validation Error.  Test Session Name That Will Be Longer Than Two Hundred And Fifty Five Characters So That It'll Trigger The Validation Error.  Test Session Name That Will Be Longer Than Two Hundred And Fifty Five Characters So That It'll Trigger The Validation Error.  Test Session Name That Will Be Longer Than Two Hundred And Fifty Five Characters So That It'll Trigger The Validation Error.");
+		Set<ConstraintViolation<SessionForm>> constraintViolations = validator.validate(sessionForm);
+		assertEquals(1, constraintViolations.size());
+		assertEquals("sessionName", constraintViolations.iterator().next().getPropertyPath().toString());
+
+		// Test the illegal charachters
+		sessionForm.setSessionName("Dortmund < Bayern");
+		constraintViolations = validator.validate(sessionForm);
+		assertEquals(1, constraintViolations.size());
+		assertEquals("sessionName", constraintViolations.iterator().next().getPropertyPath().toString());
+
+		// Acceptable Name
+		sessionForm.setSessionName("Mia San Mia");
+		constraintViolations = validator.validate(sessionForm);
+		assertEquals(0, constraintViolations.size());
+
+		logger.info("testSessionNameCheck() finished.");
+	}
 }

@@ -24,6 +24,7 @@ import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.validations.annotations.FutureWithYearLimit;
 import org.jasig.portlet.blackboardvcportlet.validations.annotations.QuarterHourCheck;
 import org.jasig.portlet.blackboardvcportlet.validations.annotations.SessionEndTimeRangeCheck;
+import org.jasig.portlet.blackboardvcportlet.validations.annotations.SessionNameCheck;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import javax.validation.constraints.Future;
@@ -41,7 +42,7 @@ public class SessionForm implements Serializable {
     
     private boolean newSession;
     private long sessionId;
-	@NotNull
+	@SessionNameCheck()
     private String sessionName;
 	@NotNull
     private int boundaryTime;
