@@ -49,7 +49,7 @@
     
         <security-role-ref>
           <role-name>ROLE_FULL_ACCESS</role-name>
-          <role-link>Everyone</role-link>
+          <role-link>Web Conferencing Full Access</role-link>
         </security-role-ref>
         <portlet-preferences>
         	<preference>
@@ -84,7 +84,7 @@
     
         <security-role-ref>
           <role-name>ROLE_ADMIN</role-name>
-          <role-link>Everyone</role-link>
+          <role-link>Administrators - Web Conferencing</role-link>
         </security-role-ref>
         <portlet-preferences>
         	<preference>
