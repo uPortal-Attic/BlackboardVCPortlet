@@ -123,6 +123,23 @@ public class SessionCreateEditController
 
 	    return "BlackboardVCPortlet_edit";
 	}
+	
+	@RenderMapping(params="action=createAndEditSession")
+	public String createAndEditSession(ModelMap model, @RequestParam("name") String sessionName) throws PortletModeException {
+	    final ServerConfiguration serverConfiguration = this.serverConfigurationService.getServerConfiguration();
+        model.put("serverConfiguration", serverConfiguration);
+
+		if (!model.containsKey("sessionForm"))
+		{
+			SessionForm sessionForm = new SessionForm(serverConfiguration);
+			sessionForm.setSessionName(sessionName);
+			final ConferenceUser conferenceUser = this.conferenceUserService.getCurrentConferenceUser();
+			Session session = sessionService.createOrUpdateSession(conferenceUser, sessionForm);
+			return displayEditSessionForm(model, session.getSessionId(), null, null, null);
+		}
+
+	    return "BlackboardVCPortlet_edit";
+	}
 
     @RenderMapping(params="action=editSession")
     public String displayEditSessionForm(ModelMap model, @RequestParam long sessionId, @RequestParam(required = false) String presentationUploadError, @RequestParam(required = false) String multimediaUploadError, @RequestParam(required = false) String deleteMultimediaError) throws PortletModeException

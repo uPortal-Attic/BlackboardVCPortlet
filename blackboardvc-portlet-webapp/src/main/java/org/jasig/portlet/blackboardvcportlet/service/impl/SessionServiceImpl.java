@@ -261,17 +261,18 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
     @Override
     @Transactional
     @PreAuthorize("#sessionForm.newSession || hasRole('ROLE_ADMIN') || hasPermission(#sessionForm.sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'edit')")
-    public void createOrUpdateSession(ConferenceUser user, SessionForm sessionForm) {
+    public Session createOrUpdateSession(ConferenceUser user, SessionForm sessionForm) {
+    	final Session session;
         if (sessionForm.isNewSession()) {
             final BlackboardSessionResponse sessionResponse = sessionWSDao.createSession(user, sessionForm);
             final String guestUrl = sessionWSDao.buildGuestSessionUrl(sessionResponse.getSessionId());
         	
         	//Remove guest username so that guest user's are prompted when they use the URL
-            Session session = sessionDao.createSession(sessionResponse, guestUrl);
-            mailService.buildAndSendSessionEmails(session, false);
+            session = sessionDao.createSession(sessionResponse, guestUrl);
+            //mailService.buildAndSendSessionEmails(session, false);
         }
         else {
-            final Session session = sessionDao.getSession(sessionForm.getSessionId());
+            session = sessionDao.getSession(sessionForm.getSessionId());
             final BlackboardSessionResponse sessionResponse = sessionWSDao.updateSession(session.getBbSessionId(), sessionForm);
             
             boolean isTimeChange = !(session.getStartTime().getMillis() == sessionResponse.getStartTime())
@@ -281,6 +282,7 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
             	mailService.buildAndSendSessionEmails(session, true);
             }
         }
+        return session;
     }
 
     @Override

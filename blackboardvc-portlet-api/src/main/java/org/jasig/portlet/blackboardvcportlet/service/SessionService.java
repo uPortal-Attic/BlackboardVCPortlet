@@ -45,7 +45,7 @@ public interface SessionService {
      * Creates or Updates a session for the user, form and access flag. This method throws an exception
      * if the specified user doesn't have access to edit the specified session
      */
-    void createOrUpdateSession(ConferenceUser creator, SessionForm sessionForm);
+    Session createOrUpdateSession(ConferenceUser creator, SessionForm sessionForm);
     
     void removeSession(long sessionId);
     

@@ -28,6 +28,19 @@
   <a href="${prefs['helpUrl'][0]}" target="_blank">Help</a>
 </div>
 </c:if>
+<portlet:renderURL var="createAndEditSessionUrl" portletMode="EDIT" windowState="MAXIMIZED">
+  <portlet:param name="action" value="createAndEditSession" />
+</portlet:renderURL>
+<div id="dialog-form" title="Create New Session">
+  <p class="validateTips">All fields are required.</p>
+  
+  <form name="createSession" id="createSession" action="${createAndEditSessionUrl}" method="post">
+  <fieldset style="margin-top: 1em;">
+    <label style="font-weight: bold;" for="name">Session Name</label>
+    <input type="text" name="name" id="name" class="text ui-widget-content ui-corner-all" />
+  </fieldset>
+  </form>
+</div>
 
 <portlet:actionURL portletMode="EDIT" var="deleteSessionActionUrl">
   <portlet:param name="action" value="deleteSessions" />
@@ -44,8 +57,7 @@
 	          		<a href="${homeURL}" class="uportal-button"><spring:message code="adminHome" text="adminHome"/></a>
 		        </c:when>
         		<c:otherwise>
-	        		<portlet:renderURL var="editUrl" portletMode="EDIT" windowState="MAXIMIZED" />
-		          	<a href="${editUrl}" class="uportal-button"><spring:message code="scheduleSession" text="scheduleSession"/></a>
+	        		<a href="#" id="create-user" class="uportal-button"><spring:message code="scheduleSession" text="scheduleSession"/></a>
         		</c:otherwise>
 	        </c:choose>
         </td>
@@ -140,6 +152,7 @@ blackboardPortlet.jQuery(function() {
   var $ = blackboardPortlet.jQuery;
 
   $(document).ready(function() {
+	  
 	$('#${n}blackboardCollaboratePortlet .${n}deleteSession').click(function() {
 	  if (!$(this).is(':checked')) {
 		$('#${n}blackboardCollaboratePortlet #${n}selectAllSessions').attr('checked', false);
@@ -151,6 +164,66 @@ blackboardPortlet.jQuery(function() {
        
     $('#${n}blackboardCollaboratePortlet #${n}selectAllSessions').click(function() {
       $('#${n}blackboardCollaboratePortlet .${n}deleteSession').attr('checked', $(this).is(':checked'));
+    });
+    
+    var name = $( "#name" ),
+    allFields = $( [] ).add( name ),
+    tips = $( ".validateTips" );
+    $( 'span .ui-icon-closethick').css('margin','0');
+    
+    function updateTips( t ) {
+      tips
+        .text( t )
+        .addClass( "ui-state-highlight" )
+        .css('color','red');
+      setTimeout(function() {
+        tips.removeClass( "ui-state-highlight", 1500 );
+      }, 500 );
+    }
+    
+    function checkLength( o, n, min, max ) {
+      if ( o.val().length > max || o.val().length < min ) {
+        o.addClass( "ui-state-error" );
+        updateTips( "Length of " + n + " must be between " +
+          min + " and " + max + "." );
+        return false;
+      } else {
+        return true;
+      }
+    }
+    
+    $( "#${n}blackboardCollaboratePortlet #dialog-form" ).dialog({
+        autoOpen: false,
+        height: 200,
+        width: 220,
+        modal: true,
+        buttons: {
+          "Setup Session": function() {
+            var bValid = true;
+            allFields.removeClass( "ui-state-error" );
+            bValid = bValid && checkLength( name, "name", 1, 256 );
+            if ( bValid ) {
+            	//submit form
+            	$( "#createSession" ).submit();
+            }
+       },
+       Cancel: function() {
+            $( this ).dialog( "close" );
+          }
+       },closeOnEscape: false,
+       open: function(event, ui) 
+       { 
+    	  $(".ui-dialog-titlebar-close").hide(); 
+       },
+       close: function()
+       {
+    	   allFields.val( "" ).removeClass( "ui-state-error" );
+       }
+      });
+    $( "#${n}blackboardCollaboratePortlet #create-user" )
+    .button()
+    .click(function() {
+      $( "#dialog-form" ).dialog( "open" );
     });
   });
 });
