@@ -29,7 +29,7 @@ public class SessionEndTimeRangeCheckValidator implements ConstraintValidator<Se
 		DateTime startTime = value.getStartTime();
 		DateTime endTime = value.getEndTime();
 		long min = startTime.plusMinutes(15).getMillis();
-		long max = startTime.plusHours(24).getMillis();
+		long max = startTime.plusYears(1).getMillis();
 
 		if (endTime.isAfter(min) && endTime.isBefore(max))
 		{
