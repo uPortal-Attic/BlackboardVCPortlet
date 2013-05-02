@@ -39,6 +39,7 @@ public class SessionForm implements Serializable {
     private static final long serialVersionUID = 1L;
     
     private boolean newSession;
+    private boolean needToSendInitialEmail;
     private long sessionId;
 	@SessionNameCheck()
     private String sessionName;
@@ -76,6 +77,7 @@ public class SessionForm implements Serializable {
 	
 	public SessionForm(ServerConfiguration serverConfiguration) {
         this.newSession = true;
+        this.needToSendInitialEmail = false;
         
         final DateTime startTime = DateTime.now().plusDays(1).hourOfDay().roundFloorCopy();
         this.setStartTime(startTime);
@@ -89,6 +91,7 @@ public class SessionForm implements Serializable {
 	
 	public SessionForm(Session session) {
         this.newSession = false;
+        this.needToSendInitialEmail = false;
         
         this.sessionId = session.getSessionId();
         this.sessionName = session.getSessionName();
@@ -105,7 +108,15 @@ public class SessionForm implements Serializable {
 	    this.allowInSessionInvites = session.isAllowInSessionInvites();
 	}
 	
-    public boolean isNewSession() {
+	public boolean isNeedToSendInitialEmail() {
+		return needToSendInitialEmail;
+	}
+
+	public void setNeedToSendInitialEmail(boolean needToSendInitialEmail) {
+		this.needToSendInitialEmail = needToSendInitialEmail;
+	}
+
+	public boolean isNewSession() {
         return newSession;
     }
 

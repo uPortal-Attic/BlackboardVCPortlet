@@ -18,12 +18,22 @@ public class DeleteModeratorsForm implements Serializable
 	@NotNull
 	@Size(min = 1)
 	private long[] chairId;
+	
+	private boolean needToSendInitialEmail;
 
 	/**
 	 * Constructor
 	 */
 	public DeleteModeratorsForm()
 	{
+	}
+	
+	public boolean isNeedToSendInitialEmail() {
+		return needToSendInitialEmail;
+	}
+
+	public void setNeedToSendInitialEmail(boolean needToSendInitialEmail) {
+		this.needToSendInitialEmail = needToSendInitialEmail;
 	}
 
 	public long getDeleteModeratorSessionId()

@@ -55,13 +55,13 @@ public interface SessionService {
     
     Set<Multimedia> getSessionMultimedia(Session session);
     
-    void addSessionChair(long sessionId, String displayName, String email);
+    void addSessionChair(long sessionId, String displayName, String email, boolean isBlockEmailForInitial);
     
-    void removeSessionChairs(long sessionId, long... userIds);
+    void removeSessionChairs(long sessionId, boolean ignoreEmail, long... userIds);
     
-    void addSessionNonChair(long sessionId, String displayName, String email);
+    void addSessionNonChair(long sessionId, String displayName, String email, boolean isBlockEmailForInitial);
     
-    void removeSessionNonChairs(long sessionId, long... userIds);
+    void removeSessionNonChairs(long sessionId, boolean ignoreEmail, long... userIds);
     
     void addPresentation(long sessionId, MultipartFile file);
     

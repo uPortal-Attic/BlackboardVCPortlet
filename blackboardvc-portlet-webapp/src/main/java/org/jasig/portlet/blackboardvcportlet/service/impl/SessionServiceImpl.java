@@ -18,7 +18,6 @@ import org.jasig.portlet.blackboardvcportlet.dao.MultimediaDao;
 import org.jasig.portlet.blackboardvcportlet.dao.PresentationDao;
 import org.jasig.portlet.blackboardvcportlet.dao.SessionDao;
 import org.jasig.portlet.blackboardvcportlet.dao.UserSessionUrlDao;
-import org.jasig.portlet.blackboardvcportlet.dao.impl.DaoUtils;
 import org.jasig.portlet.blackboardvcportlet.dao.ws.MultimediaWSDao;
 import org.jasig.portlet.blackboardvcportlet.dao.ws.PresentationWSDao;
 import org.jasig.portlet.blackboardvcportlet.dao.ws.SessionWSDao;
@@ -267,9 +266,7 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
             final BlackboardSessionResponse sessionResponse = sessionWSDao.createSession(user, sessionForm);
             final String guestUrl = sessionWSDao.buildGuestSessionUrl(sessionResponse.getSessionId());
         	
-        	//Remove guest username so that guest user's are prompted when they use the URL
             session = sessionDao.createSession(sessionResponse, guestUrl);
-            //mailService.buildAndSendSessionEmails(session, false);
         }
         else {
             session = sessionDao.getSession(sessionForm.getSessionId());
@@ -278,8 +275,8 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
             boolean isTimeChange = !(session.getStartTime().getMillis() == sessionResponse.getStartTime())
             		|| !(session.getEndTime().getMillis() == sessionResponse.getEndTime());
             sessionDao.updateSession(sessionResponse);
-            if(isTimeChange) {
-            	mailService.buildAndSendSessionEmails(session, true);
+            if(isTimeChange || sessionForm.isNeedToSendInitialEmail()) {
+            	mailService.buildAndSendSessionEmails(session, true, sessionForm.isNeedToSendInitialEmail());
             }
         }
         return session;
@@ -288,7 +285,7 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
     @Override
     @Transactional
     @PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'edit')")
-    public void addSessionChair(long sessionId, String displayName, String email) {
+    public void addSessionChair(long sessionId, String displayName, String email, boolean isBlockEmailForInitial) {
         final ConferenceUser newSessionChair = this.conferenceUserService.getOrCreateConferenceUser(displayName, email);
         
         final Session session = this.sessionDao.getSession(sessionId);
@@ -297,20 +294,22 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
         
         final BlackboardSessionResponse sessionResponse = this.sessionWSDao.setSessionChairs(session.getBbSessionId(), sessionChairs);
         sessionDao.updateSession(sessionResponse);
-        mailService.sendEmail(mailService.buildModeratorMailTask(newSessionChair, session, false));
+        if(!isBlockEmailForInitial)
+        	mailService.sendEmail(mailService.buildModeratorMailTask(newSessionChair, session, false));
     }
 
     @Override
     @Transactional
     @PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'edit')")
-    public void removeSessionChairs(long sessionId, long... userIds) {
+    public void removeSessionChairs(long sessionId, boolean ignoreEmail, long... userIds) {
         final Session session = this.sessionDao.getSession(sessionId);
         final Set<ConferenceUser> sessionChairs = new LinkedHashSet<ConferenceUser>(this.getSessionChairs(session));
         
         for (final long userId : userIds) {
             final ConferenceUser user = conferenceUserDao.getUser(userId);
             if (user != null) {
-            	mailService.sendEmail(mailService.buildCancellationNoticeMailTask(user, session));
+            	if(!ignoreEmail)
+            		mailService.sendEmail(mailService.buildCancellationNoticeMailTask(user, session));
                 sessionChairs.remove(user);
             }
         }
@@ -322,7 +321,7 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
     @Override
     @Transactional
     @PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'edit')")
-    public void addSessionNonChair(long sessionId, String displayName, String email) {
+    public void addSessionNonChair(long sessionId, String displayName, String email, boolean isBlockEmailForInitial) {
         final ConferenceUser newSessionNonChair = this.conferenceUserService.getOrCreateConferenceUser(displayName, email);
         
         final Session session = this.sessionDao.getSession(sessionId);
@@ -331,21 +330,23 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
         
         final BlackboardSessionResponse sessionResponse = this.sessionWSDao.setSessionNonChairs(session.getBbSessionId(), sessionNonChairs);
         sessionDao.updateSession(sessionResponse);
-        mailService.sendEmail(mailService.buildParticipantMailTask(newSessionNonChair, session, false));
+        if(!isBlockEmailForInitial)
+        	mailService.sendEmail(mailService.buildParticipantMailTask(newSessionNonChair, session, false));
         
     }
 
     @Override
     @Transactional
     @PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'edit')")
-    public void removeSessionNonChairs(long sessionId, long... userIds) {
+    public void removeSessionNonChairs(long sessionId, boolean ignoreEmail, long... userIds) {
         final Session session = this.sessionDao.getSession(sessionId);
         final Set<ConferenceUser> sessionNonChairs = new LinkedHashSet<ConferenceUser>(this.getSessionNonChairs(session));
         
         for (final long userId : userIds) {
             final ConferenceUser user = conferenceUserDao.getUser(userId);
             if (user != null) {
-            	mailService.sendEmail(mailService.buildCancellationNoticeMailTask(user, session));
+            	if(!ignoreEmail)
+            		mailService.sendEmail(mailService.buildCancellationNoticeMailTask(user, session));
                 sessionNonChairs.remove(user);
             }
         }

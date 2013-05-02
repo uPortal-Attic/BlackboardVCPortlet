@@ -191,14 +191,14 @@ public class MailTemplateServiceImpl implements BeanFactoryAware, MailTemplateSe
 			theQueue.add(mailTask);
 	}
 	
-	public void buildAndSendSessionEmails(Session session, boolean isUpdate) {
+	public void buildAndSendSessionEmails(Session session, boolean isUpdate, boolean isFirstTime) {
 		
 		for(ConferenceUser moderator : sessionService.getSessionChairs(session)) {
-			this.sendEmail(buildModeratorMailTask(moderator, session, isUpdate));
+			this.sendEmail(buildModeratorMailTask(moderator, session, isUpdate && !isFirstTime));
 		}
 		
 		for(ConferenceUser user : sessionService.getSessionNonChairs(session)) {
-			this.sendEmail(buildParticipantMailTask(user, session, isUpdate));
+			this.sendEmail(buildParticipantMailTask(user, session, isUpdate && !isFirstTime));
 		}
 	}
 	

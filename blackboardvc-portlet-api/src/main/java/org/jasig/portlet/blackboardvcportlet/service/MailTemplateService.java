@@ -36,7 +36,7 @@ public interface MailTemplateService
 	
 	public void sendEmail(MailTask mailTask);
 	
-	public void buildAndSendSessionEmails(Session session, boolean isUpdate);
+	public void buildAndSendSessionEmails(Session session, boolean isUpdate, boolean isFirstTime);
 	public void buildAndSendCancelationMeetingEmail(Session session);
 	
 	public MailTask buildCancellationNoticeMailTask(ConferenceUser user, Session session);

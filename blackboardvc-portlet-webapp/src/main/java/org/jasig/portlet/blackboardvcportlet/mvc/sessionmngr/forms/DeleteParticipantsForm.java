@@ -18,12 +18,22 @@ public class DeleteParticipantsForm implements Serializable
 	@NotNull
 	@Size(min = 1)
 	private long[] nonChairId;
+	
+	private boolean needToSendInitialEmail;
 
 	/**
 	 * Constructor
 	 */
 	public DeleteParticipantsForm()
 	{
+	}
+	
+	public boolean isNeedToSendInitialEmail() {
+		return needToSendInitialEmail;
+	}
+
+	public void setNeedToSendInitialEmail(boolean needToSendInitialEmail) {
+		this.needToSendInitialEmail = needToSendInitialEmail;
 	}
 
 	public long getDeleteParticipantsSessionId()

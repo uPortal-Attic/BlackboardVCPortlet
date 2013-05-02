@@ -20,12 +20,22 @@ public class AddParticipantForm implements Serializable
 	@Length(min = 1)
 	@Email
 	private String emailAddress;
+	
+	private boolean needToSendInitialEmail;
 
 	/**
 	 * Constructor
 	 */
 	public AddParticipantForm()
 	{
+	}
+	
+	public boolean isNeedToSendInitialEmail() {
+		return needToSendInitialEmail;
+	}
+
+	public void setNeedToSendInitialEmail(boolean needToSendInitialEmail) {
+		this.needToSendInitialEmail = needToSendInitialEmail;
 	}
 
 	public String getParticipantName()

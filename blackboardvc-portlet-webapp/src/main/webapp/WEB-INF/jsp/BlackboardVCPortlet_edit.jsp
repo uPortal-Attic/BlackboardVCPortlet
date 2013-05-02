@@ -36,24 +36,16 @@
 <form action="${saveSessionActionUrl}" method="post">
   <%-- Using nestedPath as form:form does not work for portlets see: https://jira.springsource.org/browse/SPR-10382 --%>
   <spring:nestedPath path="sessionForm">
-    <form:hidden path="newSession"/>
-  <c:if test="${!sessionForm.newSession}">
-    <form:hidden path="sessionId"/>
-  </c:if>
+  <form:hidden path="sessionId"/>
+  <form:hidden path="newSession" />
+  <form:hidden path="needToSendInitialEmail" />
   <table>
     <tbody>
       <tr>
         <td>
             <span class="uportal-channel-strong"><spring:message code="sessionName" text="sessionName"/>: </span>
         </td>
-        <c:choose>
-          <c:when test="${sessionForm.newSession}">
-            <td><form:input path="sessionName" style="width: 50%;" class="uportal-input-text" />&nbsp;&nbsp;<form:errors path="sessionName" cssClass="error"/></td>
-          </c:when>
-          <c:otherwise>
             <td><form:input path="sessionName" readonly="true"/></td>
-          </c:otherwise>
-        </c:choose>
       </tr>
       <tr>
         <td>&nbsp;</td>
@@ -234,15 +226,16 @@
     </table>
   </spring:nestedPath>
 </form>
-<c:if test="${!sessionForm.newSession}">
   <br/>
   <div class="uportal-channel-subtitle">2. <spring:message code="moderators" text="moderators"/></div>
   <hr>
   <portlet:actionURL portletMode="EDIT" var="manageModeratorActionUrl" />
   <form action="${manageModeratorActionUrl}" method="post">
+  	<input type="hidden" name="needToSendInitialEmail" value="${sessionForm.needToSendInitialEmail}" />
     <table>
       <thead>
-          <spring:nestedPath path="deleteModeratorsForm">
+        <spring:nestedPath path="deleteModeratorsForm">
+        
         <tr class="uportal-channel-table-header">
           <th><spring:message code="name" text="name"/></th>
           <th><spring:message code="emailAddress" text="emailAddress"/></th>
@@ -287,6 +280,7 @@
   <hr>
   <portlet:actionURL portletMode="EDIT" var="manageParticipantActionUrl" />
   <form action="${manageParticipantActionUrl}" method="post">
+  	<input type="hidden" name="needToSendInitialEmail" value="${sessionForm.needToSendInitialEmail}" />
     <table>
       <thead>
       <spring:nestedPath path="deleteParticipantsForm">
@@ -339,6 +333,7 @@
     <portlet:actionURL portletMode="EDIT" var="managePresentationActionUrl" />
     <form action="${managePresentationActionUrl}" method="post" enctype="multipart/form-data">
       <input type="hidden" name="sessionId" value="${sessionForm.sessionId}" />
+      <input type="hidden" name="needToSendInitialEmail" value="${sessionForm.needToSendInitialEmail}" />
       <spring:message var="presentationUploadSubtitle" code="editscreen.presentationuploadsubtitle" text="Presentation upload"/>
       <table summary="${presentationUploadSubtitle}">
         <thead>
@@ -384,6 +379,7 @@
     <portlet:actionURL portletMode="EDIT" var="manageMultimediaActionUrl" />
     <form action="${manageMultimediaActionUrl}" method="post" enctype="multipart/form-data">
       <input type="hidden" name="sessionId" value="${sessionForm.sessionId}" />
+      <input type="hidden" name="needToSendInitialEmail" value="${sessionForm.needToSendInitialEmail}" />
       <table summary="Multimedia upload">
         <thead>
           <tr class="uportal-channel-table-header">
@@ -421,7 +417,6 @@
       </table>
     </form>
   </sec:authorize>
-</c:if>
 
 <script type="text/javascript">
     <rs:compressJs>

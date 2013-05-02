@@ -110,20 +110,6 @@ public class SessionCreateEditController
 	    return RecordingMode.values();
 	}
 
-	@RenderMapping
-	public String displayNewSessionForm(ModelMap model) throws PortletModeException {
-	    final ServerConfiguration serverConfiguration = this.serverConfigurationService.getServerConfiguration();
-        model.put("serverConfiguration", serverConfiguration);
-
-		if (!model.containsKey("sessionForm"))
-		{
-			SessionForm sessionForm = new SessionForm(serverConfiguration);
-			model.addAttribute("sessionForm", sessionForm);
-		}
-
-	    return "BlackboardVCPortlet_edit";
-	}
-	
 	@RenderMapping(params="action=createAndEditSession")
 	public String createAndEditSession(ModelMap model, @RequestParam("name") String sessionName) throws PortletModeException {
 	    final ServerConfiguration serverConfiguration = this.serverConfigurationService.getServerConfiguration();
@@ -135,14 +121,15 @@ public class SessionCreateEditController
 			sessionForm.setSessionName(sessionName);
 			final ConferenceUser conferenceUser = this.conferenceUserService.getCurrentConferenceUser();
 			Session session = sessionService.createOrUpdateSession(conferenceUser, sessionForm);
-			return displayEditSessionForm(model, session.getSessionId(), null, null, null);
+			String returnView = displayEditSessionForm(model, session.getSessionId(), null, null, null, true);
+			return returnView;
 		}
 
 	    return "BlackboardVCPortlet_edit";
 	}
 
     @RenderMapping(params="action=editSession")
-    public String displayEditSessionForm(ModelMap model, @RequestParam long sessionId, @RequestParam(required = false) String presentationUploadError, @RequestParam(required = false) String multimediaUploadError, @RequestParam(required = false) String deleteMultimediaError) throws PortletModeException
+    public String displayEditSessionForm(ModelMap model, @RequestParam long sessionId, @RequestParam(required = false) String presentationUploadError, @RequestParam(required = false) String multimediaUploadError, @RequestParam(required = false) String deleteMultimediaError, @RequestParam(value = "needToSendInitialEmail", defaultValue = "false", required = false) boolean needToSendInitialEmail) throws PortletModeException
 	{
         final ServerConfiguration serverConfiguration = this.serverConfigurationService.getServerConfiguration();
         model.put("serverConfiguration", serverConfiguration);
@@ -154,6 +141,7 @@ public class SessionCreateEditController
 		if (!model.containsKey("sessionForm"))
 		{
 			SessionForm sessionForm = new SessionForm(session);
+			sessionForm.setNeedToSendInitialEmail(needToSendInitialEmail);
 			model.addAttribute("sessionForm", sessionForm);
 		}
 
@@ -194,11 +182,8 @@ public class SessionCreateEditController
 	{
 		if (bindingResult.hasErrors())
 		{
-			if (!session.isNewSession())
-			{
-				response.setRenderParameter("sessionId", Long.toString(session.getSessionId()));
-				response.setRenderParameter("action", "editSession");
-			}
+			response.setRenderParameter("sessionId", Long.toString(session.getSessionId()));
+			response.setRenderParameter("action", "editSession");
 			response.setPortletMode(PortletMode.EDIT);
 		}
 		else
@@ -235,12 +220,13 @@ public class SessionCreateEditController
 			String displayName = StringUtils.trimToNull(addModeratorForm.getModeratorName());
 			String email = StringUtils.trimToNull(addModeratorForm.getEmailAddress());
 
-			this.sessionService.addSessionChair(addModeratorForm.getSessionId(), displayName, email);
+			this.sessionService.addSessionChair(addModeratorForm.getSessionId(), displayName, email, addModeratorForm.isNeedToSendInitialEmail());
 		}
 
         response.setPortletMode(PortletMode.EDIT);
         response.setRenderParameter("action", "editSession");
         response.setRenderParameter("sessionId", Long.toString(addModeratorForm.getSessionId()));
+        response.setRenderParameter("needToSendInitialEmail", Boolean.toString(addModeratorForm.isNeedToSendInitialEmail()));
     }
 
     @ActionMapping(params = "action=Delete Moderator(s)")
@@ -248,12 +234,13 @@ public class SessionCreateEditController
 
 		if (!bindingResult.hasErrors())
 		{
-			this.sessionService.removeSessionChairs(deleteModeratorsForm.getDeleteModeratorSessionId(), deleteModeratorsForm.getChairId());
+			this.sessionService.removeSessionChairs(deleteModeratorsForm.getDeleteModeratorSessionId(), deleteModeratorsForm.isNeedToSendInitialEmail(), deleteModeratorsForm.getChairId());
 		}
 
         response.setPortletMode(PortletMode.EDIT);
         response.setRenderParameter("action", "editSession");
         response.setRenderParameter("sessionId", Long.toString(deleteModeratorsForm.getDeleteModeratorSessionId()));
+        response.setRenderParameter("needToSendInitialEmail", Boolean.toString(deleteModeratorsForm.isNeedToSendInitialEmail()));
     }
 
     @ActionMapping(params = "action=Add Participant")
@@ -263,12 +250,13 @@ public class SessionCreateEditController
 		{
 			final String displayName = StringUtils.trimToNull(participantForm.getParticipantName());
 			final String email = StringUtils.trimToNull(participantForm.getEmailAddress());
-			this.sessionService.addSessionNonChair(participantForm.getSessionId(), displayName, email);
+			this.sessionService.addSessionNonChair(participantForm.getSessionId(), displayName, email, participantForm.isNeedToSendInitialEmail());
 		}
 
         response.setPortletMode(PortletMode.EDIT);
         response.setRenderParameter("action", "editSession");
         response.setRenderParameter("sessionId", Long.toString(participantForm.getSessionId()));
+        response.setRenderParameter("needToSendInitialEmail", Boolean.toString(participantForm.isNeedToSendInitialEmail()));
     }
 
     @ActionMapping(params = "action=Delete Participant(s)")
@@ -276,16 +264,17 @@ public class SessionCreateEditController
 
 		if (!bindingResult.hasErrors())
 		{
-			this.sessionService.removeSessionNonChairs(deleteParticipantsForm.getDeleteParticipantsSessionId(), deleteParticipantsForm.getNonChairId());
+			this.sessionService.removeSessionNonChairs(deleteParticipantsForm.getDeleteParticipantsSessionId(), deleteParticipantsForm.isNeedToSendInitialEmail(), deleteParticipantsForm.getNonChairId());
 		}
 
         response.setPortletMode(PortletMode.EDIT);
         response.setRenderParameter("action", "editSession");
         response.setRenderParameter("sessionId", Long.toString(deleteParticipantsForm.getDeleteParticipantsSessionId()));
+        response.setRenderParameter("needToSendInitialEmail", Boolean.toString(deleteParticipantsForm.isNeedToSendInitialEmail()));
     }
     
     @ActionMapping(params = "action=Upload Multimedia")
-    public void uploadMultimedia(ActionResponse response, Locale locale, @RequestParam long sessionId, @RequestParam MultipartFile multimediaUpload) throws PortletModeException
+    public void uploadMultimedia(ActionResponse response, Locale locale, @RequestParam long sessionId, @RequestParam MultipartFile multimediaUpload, @RequestParam boolean needToSendInitialEmail) throws PortletModeException
 	{
 		String fileExtension = StringUtils.substringAfter(multimediaUpload.getOriginalFilename(), ".").toLowerCase();
 
@@ -310,10 +299,11 @@ public class SessionCreateEditController
         response.setPortletMode(PortletMode.EDIT);
         response.setRenderParameter("sessionId", Long.toString(sessionId));
 		response.setRenderParameter("action", "editSession");
+		response.setRenderParameter("needToSendInitialEmail", Boolean.toString(needToSendInitialEmail));
 	}
 
     @ActionMapping(params = "action=Delete Multimedia Item(s)")
-    public void deleteMultimedia(ActionResponse response, Locale locale, @RequestParam long sessionId, @RequestParam(required = false) long[] deleteMultimedia) throws PortletModeException
+    public void deleteMultimedia(ActionResponse response, Locale locale, @RequestParam long sessionId, @RequestParam(required = false) long[] deleteMultimedia, @RequestParam boolean needToSendInitialEmail) throws PortletModeException
 	{
 		if (deleteMultimedia == null)
 		{
@@ -327,10 +317,11 @@ public class SessionCreateEditController
 		response.setPortletMode(PortletMode.EDIT);
 		response.setRenderParameter("sessionId", Long.toString(sessionId));
 		response.setRenderParameter("action", "editSession");
+		response.setRenderParameter("needToSendInitialEmail", Boolean.toString(needToSendInitialEmail));
 	}
     
     @ActionMapping(params = "action=Upload Presentation")
-    public void uploadPresentation(ActionResponse response, Locale locale, @RequestParam long sessionId, @RequestParam MultipartFile presentationUpload) throws PortletModeException
+    public void uploadPresentation(ActionResponse response, Locale locale, @RequestParam long sessionId, @RequestParam MultipartFile presentationUpload, @RequestParam boolean needToSendInitialEmail) throws PortletModeException
 	{
 		String fileExtension = StringUtils.substringAfter(presentationUpload.getOriginalFilename(), ".").toLowerCase();
 
@@ -355,15 +346,17 @@ public class SessionCreateEditController
         response.setPortletMode(PortletMode.EDIT);
         response.setRenderParameter("sessionId", Long.toString(sessionId));
 		response.setRenderParameter("action", "editSession");
+		response.setRenderParameter("needToSendInitialEmail", Boolean.toString(needToSendInitialEmail));
 	}
 
     @ActionMapping(params = "action=Delete Presentation")
-    public void deletePresentation(ActionResponse response, @RequestParam long sessionId) throws PortletModeException
+    public void deletePresentation(ActionResponse response, @RequestParam long sessionId, @RequestParam boolean needToSendInitialEmail) throws PortletModeException
 	{
         this.sessionService.deletePresentation(sessionId);
 
         response.setPortletMode(PortletMode.EDIT);
         response.setRenderParameter("sessionId", Long.toString(sessionId));
 		response.setRenderParameter("action", "editSession");
+		response.setRenderParameter("needToSendInitialEmail", Boolean.toString(needToSendInitialEmail));
     }
 }
