@@ -32,8 +32,8 @@
 <table>
   <tbody>
     <tr><td align="left"><spring:message code="sessionName" text="sessionName"/>: </td><td>${session.sessionName}</td></tr>
-    <tr><td align="left"><spring:message code="startTime" text="startTime"/>: </td><td><joda:format value="${session.startTime}" pattern="MM/dd/yyyy HH:mm" /></td></tr>
-    <tr><td align="left"><spring:message code="endTime" text="endTime"/>: </td><td><joda:format value="${session.endTime}" pattern="MM/dd/yyyy HH:mm" /></td></tr>
+    <tr><td align="left"><spring:message code="startTime" text="startTime"/>: </td><td><joda:format value="${session.startTime}" pattern="MM/dd/yyyy HH:mm z" /></td></tr>
+    <tr><td align="left"><spring:message code="endTime" text="endTime"/>: </td><td><joda:format value="${session.endTime}" pattern="MM/dd/yyyy HH:mm z" /></td></tr>
     <sec:authorize access="hasRole('ROLE_ADMIN') || hasPermission(#session, 'edit')">
       <tr><td><spring:message code="guestLink" text="guestLink"/>: </td><td><a href="${session.guestUrl}" target="_blank">${session.guestUrl}</a></td></tr>
     </sec:authorize>

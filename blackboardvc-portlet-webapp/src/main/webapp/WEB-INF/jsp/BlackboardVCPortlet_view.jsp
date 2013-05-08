@@ -130,10 +130,10 @@ blackboardPortlet.jQuery(function() {
 	  	  <a href='${viewSessionUrl}'>${session.sessionName}</a>
 	    </json:property>
 	    <json:property name="startTime">
-	      <joda:format value="${session.startTime}" pattern="MM/dd/yyyy HH:mm" />
+	      <joda:format value="${session.startTime}" pattern="MM/dd/yyyy HH:mm z" />
 	    </json:property>
 	    <json:property name="endTime">
-	      <joda:format value="${session.endTime}" pattern="MM/dd/yyyy HH:mm" />
+	      <joda:format value="${session.endTime}" pattern="MM/dd/yyyy HH:mm z" />
 	    </json:property>
 	    <json:property name="join">
 	     <c:choose>

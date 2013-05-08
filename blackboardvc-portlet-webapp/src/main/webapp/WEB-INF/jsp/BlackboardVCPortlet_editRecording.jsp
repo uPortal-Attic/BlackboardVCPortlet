@@ -49,7 +49,7 @@
             <span class="uportal-channel-strong"><spring:message code="startTime" text="startTime"/>: </span>
           </td>
           <td>
-            <joda:format value="${recording.creationDate}" pattern="MM/dd/yyyy HH:mm" />
+            <joda:format value="${recording.creationDate}" pattern="MM/dd/yyyy HH:mm z" />
           </td>
         </tr>
         <tr>

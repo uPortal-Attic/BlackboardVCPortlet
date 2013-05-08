@@ -86,7 +86,7 @@ blackboardPortlet.jQuery(function() {
           <a href="${recording.recordingUrl}" target="_blank">${recording.roomName}</a>
           </json:property>
         <json:property name="creationDate">
-          <joda:format value="${recording.creationDate}" pattern="MM/dd/yyyy HH:mm" />
+          <joda:format value="${recording.creationDate}" pattern="MM/dd/yyyy HH:mm z" />
         </json:property>
         <json:property name="recordingSize">
           ${recording.displayRecordingSize}

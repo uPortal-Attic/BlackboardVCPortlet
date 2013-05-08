@@ -57,7 +57,7 @@
 	 <tbody>
 	 	<tr align="center" class="uportal-channel-table-row-even">
 	 		<td>
-	 			<joda:format value="${serverConfiguration.lastUpdated}" pattern="MM/dd/yyyy HH:mm" />
+	 			<joda:format value="${serverConfiguration.lastUpdated}" pattern="MM/dd/yyyy HH:mm z" />
 	 		</td>
 	 		<td>
 	 			${serverConfiguration.entityVersion}
@@ -138,7 +138,7 @@
 	 <tbody>
 	 	<tr align="center" class="uportal-channel-table-row-even">
 	 		<td>
-	 			<joda:format value="${serverQuota.lastUpdated}" pattern="MM/dd/yyyy HH:mm" />
+	 			<joda:format value="${serverQuota.lastUpdated}" pattern="MM/dd/yyyy HH:mm z" />
 	 		</td>
 	 		<td>
 	 			${serverQuota.diskQuota}
