@@ -103,7 +103,7 @@
 <%@ include file="/WEB-INF/jsp/recordingsList.jsp"%>
 
 <script type="text/javascript">
-
+<rs:compressJs>
 //begin javascript
 (function($) {
 blackboardPortlet.jQuery(function() {
@@ -240,6 +240,7 @@ blackboardPortlet.jQuery(function() {
     		"aaData": sessions,
     		"aaSorting": [[3, "desc"]],
     		"bAutoWidth" : false,
+    		"bDeferRender": true,
     		"aoColumns": [{ "bSortable": false },
     		              null,
     		              null,
@@ -252,5 +253,6 @@ blackboardPortlet.jQuery(function() {
   });
 });
 })(blackboardPortlet.jQuery);
+</rs:compressJs>
 </script>
 </div>
