@@ -77,61 +77,18 @@
   </table>
   <c:choose>
     <c:when test="${fn:length(sessions) gt 0}">
-      <table width="100%">
+      <table width="100%" id="sessionList">
         <thead>
           <tr class="uportal-channel-table-header">
-            <th width="15"><input id="${n}selectAllSessions" value="selectAllSessions" name="selectAllSessions" type="checkbox" /></th>
+            <th style="width: 1em;"><input id="${n}selectAllSessions" value="selectAllSessions" name="selectAllSessions" type="checkbox" /></th>
             <th><spring:message code="sessionName" text="sessionName"/></th>
             <th><spring:message code="startDateAndTime" text="startDateAndTime"/></th>
             <th><spring:message code="endDateAndTime" text="endDateAndTime"/></th>
-            <th><spring:message code="join" text="join"/></th>
-            <th></th>
+            <th style="width: 20em;"><spring:message code="join" text="join"/></th>
+            <th>&nbsp;</th>
           </tr>
         </thead>
         <tbody>
-          <c:forEach var="session" items="${sessions}" varStatus="loopStatus">
-            <portlet:renderURL var="viewSessionUrl">
-              <portlet:param name="sessionId" value="${session.sessionId}" />
-              <portlet:param name="action" value="viewSession" />
-            </portlet:renderURL>
-            <portlet:renderURL var="editSessionUrl" portletMode="EDIT" windowState="MAXIMIZED">
-              <portlet:param name="sessionId" value="${session.sessionId}" />
-              <portlet:param name="action" value="editSession" />
-            </portlet:renderURL>
-            <tr align="center" class="${loopStatus.index % 2 == 0 ? 'uportal-channel-table-row-odd' : 'uportal-channel-table-row-even'}">
-              <td>
-                <sec:authorize access="hasPermission(#session, 'delete')">
-                  <input value="${session.sessionId}" class="${n}deleteSession" name="deleteSession" type="checkbox" />
-                </sec:authorize>
-              </td>
-              <td><a href="${viewSessionUrl}">${session.sessionName}</a></td>
-              <td><joda:format value="${session.startTime}" pattern="MM/dd/yyyy HH:mm" /></td>
-              <td><joda:format value="${session.endTime}" pattern="MM/dd/yyyy HH:mm" /></td>
-              <td>
-              	<c:choose>
-				    <c:when test="${session.endTime.beforeNow}">
-				        <spring:message code="sessionIsClosed" text="sessionIsClosed"/>
-				    </c:when>
-				    <c:otherwise>
-				    	<c:choose>
-					    	<c:when test="${session.startTimeWithBoundaryTime.beforeNow}">
-					        	<a href="${session.launchUrl}" target="_blank"><spring:message code="joinNow" text="joinNow"/></a>
-					        </c:when>
-					        <c:otherwise>
-					        	${session.timeUntilJoin}
-					        </c:otherwise>
-				        </c:choose>
-				    </c:otherwise>
-				</c:choose>
-              </td>
-              <td>
-                <sec:authorize access="hasPermission(#session, 'edit')">
-                  <spring:message code="edit" var="edit" text="edit"/>
-                  <a href="${editSessionUrl}" class="uportal-button">${edit}</a>
-                </sec:authorize>
-              </td>
-            </tr>
-          </c:forEach>
         </tbody>
       </table>
     </c:when>
@@ -146,10 +103,62 @@
 <%@ include file="/WEB-INF/jsp/recordingsList.jsp"%>
 
 <script type="text/javascript">
-<rs:compressJs>
+
+//begin javascript
 (function($) {
 blackboardPortlet.jQuery(function() {
   var $ = blackboardPortlet.jQuery;
+  
+  var sessions = 
+	  <json:array var="session" items="${sessions}" prettyPrint="true" escapeXml="false">
+	    <json:array>
+	    <portlet:renderURL var="viewSessionUrl">
+	     <portlet:param name="sessionId" value="${session.sessionId}" />
+	     <portlet:param name="action" value="viewSession" />
+	    </portlet:renderURL>
+	    <portlet:renderURL var="editSessionUrl" portletMode="EDIT" windowState="MAXIMIZED">
+	     <portlet:param name="sessionId" value="${session.sessionId}" />
+	     <portlet:param name="action" value="editSession" />
+	    </portlet:renderURL>
+	    
+	    <json:property name="deleteCheckbox">
+	    <sec:authorize access="hasPermission(#session, 'delete')">
+	        <input value='${session.sessionId}' class='${n}deleteSession' name='deleteSession' type='checkbox' />
+	    </sec:authorize>
+	    </json:property>
+	    <json:property name="sessionName">
+	  	  <a href='${viewSessionUrl}'>${session.sessionName}</a>
+	    </json:property>
+	    <json:property name="startTime">
+	      <joda:format value="${session.startTime}" pattern="MM/dd/yyyy HH:mm" />
+	    </json:property>
+	    <json:property name="endTime">
+	      <joda:format value="${session.endTime}" pattern="MM/dd/yyyy HH:mm" />
+	    </json:property>
+	    <json:property name="join">
+	     <c:choose>
+	       <c:when test="${session.endTime.beforeNow}">
+	         <spring:message code="sessionIsClosed" text="sessionIsClosed"/>
+	       </c:when>
+	       <c:otherwise>
+	     	<c:choose>
+	  	   <c:when test="${session.startTimeWithBoundaryTime.beforeNow}">
+	  	      	<a href='${session.launchUrl}' target="_blank"><spring:message code="joinNow" text="joinNow"/></a>
+	  	   </c:when>
+	  	   <c:otherwise>
+	  	    	${session.timeUntilJoin}
+	  	   </c:otherwise>
+	         </c:choose>
+	       </c:otherwise>
+	     </c:choose>
+	    </json:property>
+	    <json:property name="edit">
+	     <sec:authorize access="hasPermission(#session, 'edit')">
+	       <a href='${editSessionUrl}' class='uportal-button'><spring:message code="edit" text="edit"/></a>
+	     </sec:authorize>
+	    </json:property>
+	    </json:array>
+	  </json:array>
 
   $(document).ready(function() {
 	  
@@ -205,6 +214,7 @@ blackboardPortlet.jQuery(function() {
             if ( bValid ) {
             	//submit form
             	$( "#createSession" ).submit();
+            	$( this ).dialog( "close" );
             }
        },
        Cancel: function() {
@@ -225,9 +235,22 @@ blackboardPortlet.jQuery(function() {
     .click(function() {
       $( "#dialog-form" ).dialog( "open" );
     });
+    
+    $('#sessionList').dataTable( {
+    		"aaData": sessions,
+    		"aaSorting": [[3, "desc"]],
+    		"bAutoWidth" : false,
+    		"aoColumns": [{ "bSortable": false },
+    		              null,
+    		              null,
+    		              null,
+    		              null,
+    		              { "bSortable": false }
+    		              ]
+    		} );
+    
   });
 });
 })(blackboardPortlet.jQuery);
-</rs:compressJs>
 </script>
 </div>

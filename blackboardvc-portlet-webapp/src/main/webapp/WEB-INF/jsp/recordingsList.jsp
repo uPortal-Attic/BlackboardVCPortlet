@@ -44,39 +44,17 @@
             </tr>
             </tbody>
         </table>
-        <table width="100%">
+        <table width="100%" id="recordingList">
         <thead>
           <tr class="uportal-channel-table-header">
             <th width="15"><input id="${n}selectAllRecordings" value="selectAllRecordings" name="Recordings" type="checkbox" /></th>
             <th><spring:message code="previouslyRecorded" text="previouslyRecorded"/></th>
             <th><spring:message code="startTime" text="startTime"/></th>
             <th><spring:message code="size" text="size"/></th>
-            <th></th>
+            <th>&nbsp;</th>
           </tr>
         </thead>
         <tbody>
-          <c:forEach var="recording" items="${recordings}" varStatus="loopStatus">
-            <portlet:renderURL var="editRecordingUrl" portletMode="EDIT" windowState="MAXIMIZED">
-              <portlet:param name="recordingId" value="${recording.recordingId}" />
-              <portlet:param name="action" value="editRecording" />
-            </portlet:renderURL>
-            <tr align="center" class="${loopStatus.index % 2 == 0 ? 'uportal-channel-table-row-odd' : 'uportal-channel-table-row-even'}">
-              <td>
-                <sec:authorize access="hasPermission(#recording, 'delete')">
-                  <input value="${recording.recordingId}" class="${n}deleteRecording" name="deleteRecording" type="checkbox" />
-                </sec:authorize>
-              </td>
-              <td><a href="${recording.recordingUrl}" target="_blank">${recording.roomName}</a></td>
-              <td><joda:format value="${recording.creationDate}" pattern="MM/dd/yyyy HH:mm" /></td>
-              <td>${recording.displayRecordingSize}</td>
-              <td>
-                <sec:authorize access="hasPermission(#recording, 'edit')">
-                  <spring:message code="edit" var="edit" text="edit"/>
-                  <a href="${editRecordingUrl}" class="uportal-button">${edit}</a>
-                </sec:authorize>
-              </td>
-            </tr>
-          </c:forEach>
         </tbody>
       </table>
      </form>
@@ -91,6 +69,36 @@
 (function($) {
 blackboardPortlet.jQuery(function() {
   var $ = blackboardPortlet.jQuery;
+  
+  var recordings = 
+	  <json:array var="recording" items="${recordings}" prettyPrint="true" escapeXml="false">
+	    <json:array>
+	    <portlet:renderURL var="editRecordingUrl" portletMode="EDIT" windowState="MAXIMIZED">
+	      <portlet:param name="recordingId" value="${recording.recordingId}" />
+	      <portlet:param name="action" value="editRecording" />
+        </portlet:renderURL>
+        <json:property name="deleteCheckbox">
+          <sec:authorize access="hasPermission(#recording, 'delete')">
+            <input value="${recording.recordingId}" class="${n}deleteRecording" name="deleteRecording" type="checkbox" />
+          </sec:authorize>
+        </json:property>
+        <json:property name="recordingName">
+          <a href="${recording.recordingUrl}" target="_blank">${recording.roomName}</a>
+          </json:property>
+        <json:property name="creationDate">
+          <joda:format value="${recording.creationDate}" pattern="MM/dd/yyyy HH:mm" />
+        </json:property>
+        <json:property name="recordingSize">
+          ${recording.displayRecordingSize}
+        </json:property>
+        <json:property name="editLink">
+          <sec:authorize access="hasPermission(#recording, 'edit')">
+            <spring:message code="edit" var="edit" text="edit"/>
+            <a href="${editRecordingUrl}" class="uportal-button">${edit}</a>
+          </sec:authorize>
+        </json:property>
+	    </json:array>
+	  </json:array>
 
   $(document).ready(function() {
     $('.${n}deleteRecording').click(function() {
@@ -105,6 +113,19 @@ blackboardPortlet.jQuery(function() {
     $('#${n}selectAllRecordings').click(function() {
       $('.${n}deleteRecording').attr('checked', $(this).is(':checked'));
     });
+    
+    $('#recordingList').dataTable( {
+		"aaData": recordings,
+		"aaSorting": [[2, "desc"]],
+		"bAutoWidth" : false,
+		"aoColumns": [{ "bSortable": false },
+		              null,
+		              null,
+		              null,
+		              { "bSortable": false }
+		              ]
+		} );
+    
   });
 });
 })(blackboardPortlet.jQuery);

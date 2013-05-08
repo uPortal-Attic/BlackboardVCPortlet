@@ -26,6 +26,8 @@
 
     <js included="plain" resource="true">/rs/jquery/1.9.1/jquery-1.9.1.js</js>
     <js included="aggregated" resource="true">/rs/jquery/1.9.1/jquery-1.9.1.min.js</js>
+    <js included="plain">js-lib/jquery.dataTables.js</js>
+    <js included="aggregated">js-lib/jquery.dataTables.min.js</js>
 
     <!-- <js included="plain" resource="true">/rs/jqueryui/1.8.13/jquery-ui-1.8.13.js</js> -->
     <!-- <js included="aggregated" resource="true">/rs/jqueryui/1.8.13/jquery-ui-1.8.13.min.js</js> -->

@@ -13,7 +13,7 @@ public class SessionDisplayComparator implements Comparator<Session> {
     @Override
     public int compare(Session o1, Session o2) {
         return ComparisonChain.start()
-                .compare(o1.getStartTime(), o2.getStartTime(), Ordering.natural().nullsLast())
+                .compare(o2.getStartTime(), o1.getStartTime(), Ordering.natural().nullsLast())
                 .compare(o1.getSessionName(), o2.getSessionName(), Ordering.natural().nullsLast())
                 .result();
     }
