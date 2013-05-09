@@ -25,7 +25,7 @@
 <div id="${n}blackboardCollaboratePortlet" class="blackboardVCRoot">
 <c:if test="${!empty prefs['helpUrl'][0]}">
 <div class="help-link">
-  <a href="${prefs['helpUrl'][0]}" target="_blank">Help</a>
+  <a href="${prefs['helpUrl'][0]}" target="_blank"><spring:message code="help" text="help"/></a>
 </div>
 </c:if>
 <portlet:renderURL var="createAndEditSessionUrl" portletMode="EDIT" windowState="MAXIMIZED">
