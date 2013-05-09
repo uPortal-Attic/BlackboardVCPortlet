@@ -297,6 +297,29 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
         
         entityManager.remove(sessionImpl);
     }
+    
+    @Override
+    @Transactional
+	public void clearSessionUserList(long sessionId, boolean isChairList) {
+    	final SessionImpl sessionImpl = this.getSession(sessionId);
+        final EntityManager entityManager = this.getEntityManager();
+		
+        if(isChairList) {//clear chair list
+        	for (final ConferenceUserImpl user : sessionImpl.getChairs()) {
+                user.getChairedSessions().remove(sessionImpl);
+                entityManager.persist(user);
+            }
+        	sessionImpl.getChairs().clear();
+        	entityManager.persist(sessionImpl);
+        } else { //clear non chair list
+        	for (final ConferenceUserImpl user : sessionImpl.getNonChairs()) {
+                user.getNonChairedSessions().remove(sessionImpl);
+                entityManager.persist(user);
+            }
+        	sessionImpl.getNonChairs().clear();
+        	entityManager.persist(sessionImpl);
+        }
+	}
 
     /**
      * Sync all data from the {@link BlackboardSessionResponse} to the {@link SessionImpl}

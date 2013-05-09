@@ -39,4 +39,6 @@ public interface SessionDao {
 
 	Session removePresentationFromSession(Session session);
 
+	void clearSessionUserList(long sessionId, boolean isChairList);
+
 }

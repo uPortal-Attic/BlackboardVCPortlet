@@ -314,8 +314,17 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
             }
         }
         
-        final BlackboardSessionResponse sessionResponse = this.sessionWSDao.setSessionChairs(session.getBbSessionId(), sessionChairs);
-        sessionDao.updateSession(sessionResponse);
+        final BlackboardSessionResponse sessionResponse;
+        
+        if(sessionChairs.isEmpty()) {
+        	this.sessionWSDao.clearSessionChairList(session.getBbSessionId());
+        	sessionDao.clearSessionUserList(session.getSessionId(), true);
+        } else {
+        	sessionResponse = this.sessionWSDao.setSessionChairs(session.getBbSessionId(), sessionChairs);
+        	sessionDao.updateSession(sessionResponse);
+        }
+        
+        
     }
 
     @Override
@@ -351,8 +360,13 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
             }
         }
         
-        final BlackboardSessionResponse sessionResponse = this.sessionWSDao.setSessionNonChairs(session.getBbSessionId(), sessionNonChairs);
-        sessionDao.updateSession(sessionResponse);
+        if(sessionNonChairs.isEmpty()) {
+        	this.sessionWSDao.clearSessionNonChairList(session.getBbSessionId());
+        	sessionDao.clearSessionUserList(session.getSessionId(), false);
+        } else {
+            final BlackboardSessionResponse sessionResponse = this.sessionWSDao.setSessionNonChairs(session.getBbSessionId(), sessionNonChairs);
+	        sessionDao.updateSession(sessionResponse);
+        }
     }
 
     @Override

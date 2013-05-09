@@ -60,6 +60,7 @@ public class SessionWSDaoImpl implements SessionWSDao {
         setSession.setEndTime(sessionForm.getEndTime().getMillis());
         setSession.setBoundaryTime(sessionForm.getBoundaryTime());
         setSession.setChairList(user.getUniqueId());
+        setSession.setNonChairList("externalperson@example.com");
         
         if (securityExpressionEvaluator.authorize("hasRole('ROLE_FULL_ACCESS')")) {
             setSession.setMaxTalkers(sessionForm.getMaxTalkers());
@@ -265,6 +266,12 @@ public class SessionWSDaoImpl implements SessionWSDao {
 	private boolean clearSessionUserList(Long sessionId, boolean isChairList) {
 		BlackboardClearSessionUserList vo = new ObjectFactory().createBlackboardClearSessionUserList();
 		vo.setSessionId(sessionId);
-		return WSDaoUtils.isSuccessful(sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/ClearSession"+ (isChairList ? "" : "Non"+"ChairList") , new ObjectFactory().createClearSessionChairList(vo)));
+		Object request;
+		if(isChairList) {
+			request = new ObjectFactory().createClearSessionChairList(vo);
+		} else {
+			request = new ObjectFactory().createClearSessionNonChairList(vo);
+		}
+		return WSDaoUtils.isSuccessful(sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/ClearSession"+ (isChairList ? "" : "Non") +"ChairList" , request));
 	}
 }

@@ -1,5 +1,6 @@
 package org.jasig.portlet.blackboardvcportlet.dao.ws.impl;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -112,6 +113,7 @@ public class SessionWSDaoTestBase  extends AbstractWSIT {
 		List<BlackboardSessionResponse> sessions = dao.getSessions(null, null, session.getSessionId(), null, null, null, null);
 		BlackboardSessionResponse singleSession = DataAccessUtils.singleResult(sessions);
 		assertTrue(singleSession.getChairList().isEmpty());
+		assertFalse(singleSession.getNonChairList().isEmpty());
 	}
 	
 	@Test
@@ -119,6 +121,7 @@ public class SessionWSDaoTestBase  extends AbstractWSIT {
 		assertTrue(dao.clearSessionNonChairList(session.getSessionId()));
 		List<BlackboardSessionResponse> sessions = dao.getSessions(null, null, session.getSessionId(), null, null, null, null);
 		BlackboardSessionResponse singleSession = DataAccessUtils.singleResult(sessions);
-		assertTrue(singleSession.getNonChairList().isEmpty());
+		assertEquals(0,singleSession.getNonChairList().length());
+		assertFalse(singleSession.getChairList().isEmpty());
 	}
 }

@@ -4,17 +4,13 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.contains;
 import static org.mockito.Mockito.when;
 
-import java.util.Map;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import org.jasig.portlet.blackboardvcportlet.dao.ws.MultimediaWSDao;
 import org.jasig.portlet.blackboardvcportlet.dao.ws.SessionWSDao;
 import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceOperations;
-import org.jasig.springframework.mockito.MockitoFactoryBean;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,11 +21,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.elluminate.sas.BlackboardMultimediaResponseCollection;
 import com.elluminate.sas.BlackboardSessionResponseCollection;
 import com.elluminate.sas.BlackboardSuccessResponse;
 import com.elluminate.sas.BlackboardUrlResponse;
-import com.elluminate.sas.ObjectFactory;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/test-applicationContext.xml")
@@ -45,7 +39,7 @@ public class SessionWSDaoTest extends SessionWSDaoTestBase {
 	@Before
 	public void before() throws Exception {
 		MockitoAnnotations.initMocks(this);
-		when(sasWebServiceOperations.marshalSendAndReceiveToSAS(contains("http://sas.elluminate.com/SetSession"), any(Object.class))).thenReturn(mockSession(false));
+		when(sasWebServiceOperations.marshalSendAndReceiveToSAS(contains("http://sas.elluminate.com/SetSession"), any(Object.class))).thenReturn(mockSession(false,false));
 		super.dao.setSasWebServiceOperations(sasWebServiceOperations);
 		super.before();	
 	}
@@ -65,7 +59,7 @@ public class SessionWSDaoTest extends SessionWSDaoTestBase {
 	@Override
 	@Test
 	public void updateSessionTest() throws Exception {
-		when(sasWebServiceOperations.marshalSendAndReceiveToSAS(contains("http://sas.elluminate.com/UpdateSession"), any(Object.class))).thenReturn(mockSession(false));
+		when(sasWebServiceOperations.marshalSendAndReceiveToSAS(contains("http://sas.elluminate.com/UpdateSession"), any(Object.class))).thenReturn(mockSession(false,false));
 		super.updateSessionTest();
 	}
 	
@@ -92,14 +86,14 @@ public class SessionWSDaoTest extends SessionWSDaoTestBase {
 	@Override
 	@Test
 	public void getSessionsByEmailAddressTest() throws Exception {
-		when(sasWebServiceOperations.marshalSendAndReceiveToSAS(contains("http://sas.elluminate.com/ListSession"), any(Object.class))).thenReturn(mockSession(false));
+		when(sasWebServiceOperations.marshalSendAndReceiveToSAS(contains("http://sas.elluminate.com/ListSession"), any(Object.class))).thenReturn(mockSession(false,false));
 		super.getSessionsByEmailAddressTest();
 	}
 	
 	@Override
 	@Test
 	public void getSessionsBySessionIdTest() throws Exception {
-		when(sasWebServiceOperations.marshalSendAndReceiveToSAS(contains("http://sas.elluminate.com/ListSession"), any(Object.class))).thenReturn(mockSession(false));
+		when(sasWebServiceOperations.marshalSendAndReceiveToSAS(contains("http://sas.elluminate.com/ListSession"), any(Object.class))).thenReturn(mockSession(false,false));
 		super.getSessionsBySessionIdTest();
 	}
 	
@@ -107,7 +101,7 @@ public class SessionWSDaoTest extends SessionWSDaoTestBase {
 	@Test
 	public void clearSessionChairList() throws Exception {
 		when(sasWebServiceOperations.marshalSendAndReceiveToSAS(contains("http://sas.elluminate.com/ClearSession") , any(Object.class))).thenReturn(mockTrue());
-		when(sasWebServiceOperations.marshalSendAndReceiveToSAS(contains("http://sas.elluminate.com/ListSession"), any(Object.class))).thenReturn(mockSession(true));
+		when(sasWebServiceOperations.marshalSendAndReceiveToSAS(contains("http://sas.elluminate.com/ListSession"), any(Object.class))).thenReturn(mockSession(true,false));
 		super.clearSessionChairList();
 	}
 	
@@ -115,7 +109,7 @@ public class SessionWSDaoTest extends SessionWSDaoTestBase {
 	@Test
 	public void clearSessionNonChairList() throws Exception {
 		when(sasWebServiceOperations.marshalSendAndReceiveToSAS(contains("http://sas.elluminate.com/ClearSession") , any(Object.class))).thenReturn(mockTrue());
-		when(sasWebServiceOperations.marshalSendAndReceiveToSAS(contains("http://sas.elluminate.com/ListSession"), any(Object.class))).thenReturn(mockSession(true));
+		when(sasWebServiceOperations.marshalSendAndReceiveToSAS(contains("http://sas.elluminate.com/ListSession"), any(Object.class))).thenReturn(mockSession(false,true));
 		super.clearSessionNonChairList();
 	}
 	
@@ -129,13 +123,17 @@ public class SessionWSDaoTest extends SessionWSDaoTestBase {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private JAXBElement<BlackboardSessionResponseCollection> mockSession(boolean isEmptyLists) throws JAXBException {
+	private JAXBElement<BlackboardSessionResponseCollection> mockSession(boolean isEmptyChair, boolean isEmptyNonChair) throws JAXBException {
 		final JAXBContext context = JAXBContext.newInstance("com.elluminate.sas");
         final Unmarshaller unmarshaller = context.createUnmarshaller();
         
         JAXBElement<BlackboardSessionResponseCollection> response;
-		if(isEmptyLists) {
-			response = (JAXBElement<BlackboardSessionResponseCollection>)unmarshaller.unmarshal(this.getClass().getResourceAsStream("/data/mockSessionEmptyLists.xml"));
+        if (isEmptyChair && isEmptyNonChair) {
+        	response = (JAXBElement<BlackboardSessionResponseCollection>)unmarshaller.unmarshal(this.getClass().getResourceAsStream("/data/mockSessionEmptyLists.xml"));
+        } else if(isEmptyChair) {
+			response = (JAXBElement<BlackboardSessionResponseCollection>)unmarshaller.unmarshal(this.getClass().getResourceAsStream("/data/mockSessionEmptyChair.xml"));
+		} else if (isEmptyNonChair) {
+			response = (JAXBElement<BlackboardSessionResponseCollection>)unmarshaller.unmarshal(this.getClass().getResourceAsStream("/data/mockSessionEmptyNonChair.xml"));
 		} else {
 			response = (JAXBElement<BlackboardSessionResponseCollection>)unmarshaller.unmarshal(this.getClass().getResourceAsStream("/data/mockSessionResponse.xml"));
 		}

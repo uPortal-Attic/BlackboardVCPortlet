@@ -10,8 +10,8 @@
       <recordings xsi:type="xs:boolean">false</recordings>
       <chairNotes xsi:type="xs:string"/>
       <nonChairNotes xsi:type="xs:string"/>
-      <chairList xsi:type="xs:string">notempty@example.com</chairList>
-      <nonChairList xsi:type="xs:string"></nonChairList>
+      <chairList xsi:type="xs:string"></chairList>
+      <nonChairList xsi:type="xs:string">notEmpty@example.com</nonChairList>
       <groupingList xsi:type="xs:string"/>
       <openChair xsi:type="xs:boolean">false</openChair>
       <permissionsOn xsi:type="xs:boolean">true</permissionsOn>
