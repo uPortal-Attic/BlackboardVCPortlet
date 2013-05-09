@@ -38,7 +38,11 @@
     
     <!-- Configure the multipart resolver -->
     <bean id="portletMultipartResolver" class="org.springframework.web.portlet.multipart.CommonsPortletMultipartResolver">  
+
+    <!-- Comment Out So That Validation Messages Can Be Handled / Displayed By Spring MVC -->
+<!--
         <property name="maxUploadSize" value="${maxuploadsize}"/>
+-->
     </bean>
      
     <!-- TODO need to get user attributes here -->
