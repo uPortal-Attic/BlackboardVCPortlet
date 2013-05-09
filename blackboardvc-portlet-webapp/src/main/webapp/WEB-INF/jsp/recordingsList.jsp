@@ -118,6 +118,7 @@ blackboardPortlet.jQuery(function() {
 		"aaData": recordings,
 		"aaSorting": [[2, "desc"]],
 		"bAutoWidth" : false,
+		"bDeferRender": true,
 		"aoColumns": [{ "bSortable": false },
 		              null,
 		              null,
