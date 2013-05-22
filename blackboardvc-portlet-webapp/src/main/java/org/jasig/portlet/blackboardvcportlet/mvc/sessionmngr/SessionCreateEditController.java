@@ -48,9 +48,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
+
+import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletMode;
 import javax.portlet.PortletModeException;
+import javax.portlet.RenderRequest;
+import javax.portlet.RenderResponse;
+import javax.portlet.WindowState;
 import javax.validation.Valid;
 import java.util.Locale;
 import java.util.Set;
@@ -72,6 +77,9 @@ public class SessionCreateEditController
 
 	@Autowired
 	private MessageSource messageSource;
+	
+	@Autowired
+	private ViewSessionListController viewController;
 
 	@Value("${maxuploadsize}")
 	private Integer maxFileUploadSize;
@@ -111,7 +119,7 @@ public class SessionCreateEditController
 	}
 
 	@RenderMapping(params="action=createAndEditSession")
-	public String createAndEditSession(ModelMap model, @RequestParam("name") String sessionName) throws PortletModeException {
+	public String createAndEditSession(RenderRequest request, ModelMap model, @RequestParam("name") String sessionName) throws PortletModeException {
 	    final ServerConfiguration serverConfiguration = this.serverConfigurationService.getServerConfiguration();
         model.put("serverConfiguration", serverConfiguration);
 
@@ -121,17 +129,21 @@ public class SessionCreateEditController
 			sessionForm.setSessionName(sessionName);
 			final ConferenceUser conferenceUser = this.conferenceUserService.getCurrentConferenceUser();
 			Session session = sessionService.createOrUpdateSession(conferenceUser, sessionForm);
-			String returnView = displayEditSessionForm(model, session.getSessionId(), null, null, null, true);
+			String returnView = displayEditSessionForm(request, model, session.getSessionId(), null, null, null, true);
 			return returnView;
 		}
 
 	    return "BlackboardVCPortlet_edit";
 	}
-
+	
     @RenderMapping(params="action=editSession")
-    public String displayEditSessionForm(ModelMap model, @RequestParam long sessionId, @RequestParam(required = false) String presentationUploadError, @RequestParam(required = false) String multimediaUploadError, @RequestParam(required = false) String deleteMultimediaError, @RequestParam(value = "needToSendInitialEmail", defaultValue = "false", required = false) boolean needToSendInitialEmail) throws PortletModeException
+    public String displayEditSessionForm(RenderRequest request, ModelMap model, @RequestParam long sessionId, @RequestParam(required = false) String presentationUploadError, @RequestParam(required = false) String multimediaUploadError, @RequestParam(required = false) String deleteMultimediaError, @RequestParam(value = "needToSendInitialEmail", defaultValue = "false", required = false) boolean needToSendInitialEmail) throws PortletModeException
 	{
-        final ServerConfiguration serverConfiguration = this.serverConfigurationService.getServerConfiguration();
+    	if(WindowState.NORMAL.equals(request.getWindowState())) {
+	    	return viewController.view(request, model, null, null);
+	    }
+    	
+    	final ServerConfiguration serverConfiguration = this.serverConfigurationService.getServerConfiguration();
         model.put("serverConfiguration", serverConfiguration);
 
 		final Session session = this.sessionService.getSession(sessionId);
