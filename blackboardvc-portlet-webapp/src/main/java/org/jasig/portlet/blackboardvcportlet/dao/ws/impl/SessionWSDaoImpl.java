@@ -60,7 +60,6 @@ public class SessionWSDaoImpl implements SessionWSDao {
         setSession.setEndTime(sessionForm.getEndTime().getMillis());
         setSession.setBoundaryTime(sessionForm.getBoundaryTime());
         setSession.setChairList(user.getUniqueId());
-        setSession.setNonChairList("externalperson@example.com");
         
         if (securityExpressionEvaluator.authorize("hasRole('ROLE_FULL_ACCESS')")) {
             setSession.setMaxTalkers(sessionForm.getMaxTalkers());
