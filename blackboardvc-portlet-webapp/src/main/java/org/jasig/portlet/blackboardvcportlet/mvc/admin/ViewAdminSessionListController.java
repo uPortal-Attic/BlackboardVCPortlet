@@ -62,7 +62,7 @@ public class ViewAdminSessionListController
 		
 		model.addAttribute("sessions", sessions);
 		
-		return "BlackboardVCPortlet_view";
+		return "viewSessionsMax";
 	}
 
 	@RenderMapping("searchSessions")
@@ -74,6 +74,6 @@ public class ViewAdminSessionListController
 		
 		model.addAttribute("sessions", sessions);
 		
-		return "BlackboardVCPortlet_view";
+		return "viewSessionsMax";
 	}
 }

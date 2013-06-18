@@ -43,6 +43,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 import javax.portlet.PortletRequest;
+import javax.portlet.WindowState;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -157,7 +159,10 @@ public class ViewSessionListController
 		}
 		model.addAttribute("recordings", Ordering.from(SessionRecordingDisplayComparator.INSTANCE).sortedCopy(recordings));
 		
-		
-		return "BlackboardVCPortlet_view";
+		if(WindowState.MAXIMIZED.equals(request.getWindowState())) {
+			return "viewSessionsMax";
+		} else {
+			return "viewSessionsNormal";
+		}
 	}
 }

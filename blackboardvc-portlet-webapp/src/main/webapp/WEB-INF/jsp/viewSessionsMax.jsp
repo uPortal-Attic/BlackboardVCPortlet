@@ -228,7 +228,7 @@ blackboardPortlet.jQuery(function() {
 		    </sec:authorize>
 		    </json:property>
 		    <json:property name="sessionName">
-		  	  <a href='${viewSessionUrl}'>${session.sessionName}</a>
+		  	  <a href='${viewSessionUrl}'>${completedSessions.sessionName}</a>
 		    </json:property>
 		    <json:property name="startTime">
 		      <joda:format value="${completedSessions.startTime}" pattern="MM/dd/yyyy HH:mm z" />
