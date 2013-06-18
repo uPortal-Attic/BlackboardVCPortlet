@@ -41,15 +41,10 @@
   </fieldset>
   </form>
 </div>
-
-<portlet:actionURL portletMode="EDIT" var="deleteSessionActionUrl">
-  <portlet:param name="action" value="deleteSessions" />
-</portlet:actionURL>
-<form name="deleteSessions" action="${deleteSessionActionUrl}" method="post">
-  <table width="100%">
+<table width="100%">
     <tbody>
       <tr>
-        <td align="left">
+        <td align="right">
         	<sec:authorize var="adminAccess" access="hasRole('ROLE_ADMIN')" />
 		      <c:choose>
 		        <c:when test="${adminAccess}">
@@ -61,22 +56,21 @@
         		</c:otherwise>
 	        </c:choose>
         </td>
-        <td align="right">
-            <spring:message code="deleteSession" var="deleteSession" text="deleteSession"/>
-            <spring:message code="areYouSureYouWantToDeleteSession" var="areYouSureYouWantToDeleteSession" text="areYouSureYouWantToDeleteSession"/>
-          <input id="dialog-confirm" value="${deleteSession}" name="Delete"
-            style="text-transform: none;" class="uportal-button"
-            onclick="javascript:return confirm('${areYouSureYouWantToDeleteSession}');"
-            type="submit" />
-            <c:if test="${!empty deleteSessionError}">
-                <span class="error">${deleteSessionError}</span>
-            </c:if>
-        </td>
       </tr>
     </tbody>
   </table>
-  <c:choose>
-    <c:when test="${fn:length(sessions) gt 0}">
+<div id="${n}tabs">
+  <ul>
+    <li><a href="#${n}tabs-1">Upcoming Sessions</a></li>
+    <li><a href="#${n}tabs-2">Completed Sessions</a></li>
+  </ul>
+<div id="${n}tabs-1">
+<portlet:actionURL portletMode="EDIT" var="deleteSessionActionUrl">
+  <portlet:param name="action" value="deleteSessions" />
+</portlet:actionURL>
+<form name="deleteSessions" action="${deleteSessionActionUrl}" method="post">
+	<c:choose>
+    <c:when test="${fn:length(upcomingSessions) gt 0}">
       <table width="100%" id="sessionList">
         <thead>
           <tr class="uportal-channel-table-header">
@@ -91,17 +85,70 @@
         <tbody>
         </tbody>
       </table>
+      <table>
+	      <tr  width="100%" >
+		      <td align="left">
+		            <spring:message code="deleteSession" var="deleteSession" text="deleteSession"/>
+		            <spring:message code="areYouSureYouWantToDeleteSession" var="areYouSureYouWantToDeleteSession" text="areYouSureYouWantToDeleteSession"/>
+		          <input id="dialog-confirm" value="${deleteSession}" name="Delete"
+		            style="text-transform: none;" class="uportal-button"
+		            onclick="javascript:return confirm('${areYouSureYouWantToDeleteSession}');"
+		            type="submit" />
+		            <c:if test="${!empty deleteSessionError}">
+		                <span class="error">${deleteSessionError}</span>
+		            </c:if>
+		        </td>
+	      </tr>
+      </table>
     </c:when>
     <c:otherwise>
       <b>No sessions available</b>
     </c:otherwise>
   </c:choose>
 </form>
-
-<hr />
-
-<%@ include file="/WEB-INF/jsp/recordingsList.jsp"%>
-
+</div>
+<div id="${n}tabs-2">
+<!-- completedSessionList -->
+<form name="deleteSessions" action="${deleteSessionActionUrl}" method="post">
+	<c:choose>
+    <c:when test="${fn:length(completedSessions) gt 0}">
+      <table width="100%" id="completedSessionList">
+        <thead>
+          <tr class="uportal-channel-table-header">
+            <th style="width: 1em;"><input id="${n}selectAllSessions" value="selectAllSessions" name="selectAllSessions" type="checkbox" /></th>
+            <th><spring:message code="sessionName" text="sessionName"/></th>
+            <th><spring:message code="startDateAndTime" text="startDateAndTime"/></th>
+            <th><spring:message code="endDateAndTime" text="endDateAndTime"/></th>
+            <th style="width: 20em;"><spring:message code="join" text="join"/></th>
+            <th>&nbsp;</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+      <table>
+	      <tr  width="100%" >
+		      <td align="left">
+		            <spring:message code="deleteSession" var="deleteSession" text="deleteSession"/>
+		            <spring:message code="areYouSureYouWantToDeleteSession" var="areYouSureYouWantToDeleteSession" text="areYouSureYouWantToDeleteSession"/>
+		          <input id="dialog-confirm" value="${deleteSession}" name="Delete"
+		            style="text-transform: none;" class="uportal-button"
+		            onclick="javascript:return confirm('${areYouSureYouWantToDeleteSession}');"
+		            type="submit" />
+		            <c:if test="${!empty deleteSessionError}">
+		                <span class="error">${deleteSessionError}</span>
+		            </c:if>
+		        </td>
+	      </tr>
+      </table>
+    </c:when>
+    <c:otherwise>
+      <b>No sessions available</b>
+    </c:otherwise>
+  </c:choose>
+</form>
+</div>
+</div>
 <script type="text/javascript">
 <rs:compressJs>
 //begin javascript
@@ -109,8 +156,10 @@
 blackboardPortlet.jQuery(function() {
   var $ = blackboardPortlet.jQuery;
   
-  var sessions = 
-	  <json:array var="session" items="${sessions}" prettyPrint="true" escapeXml="false">
+  $("#${n}tabs").tabs();
+  
+  var upcomingSessions = 
+	  <json:array var="session" items="${upcomingSessions}" prettyPrint="true" escapeXml="false">
 	    <json:array>
 	    <portlet:renderURL var="viewSessionUrl">
 	     <portlet:param name="sessionId" value="${session.sessionId}" />
@@ -159,6 +208,57 @@ blackboardPortlet.jQuery(function() {
 	    </json:property>
 	    </json:array>
 	  </json:array>
+	  
+	  var completedSessions = 
+		  <json:array var="completedSessions" items="${completedSessions}" prettyPrint="true" escapeXml="false">
+		    <json:array>
+		    <portlet:renderURL var="viewSessionUrl">
+		     <portlet:param name="sessionId" value="${completedSessions.sessionId}" />
+		     <portlet:param name="action" value="viewSession" />
+		    </portlet:renderURL>
+		    <portlet:renderURL var="editSessionUrl" portletMode="EDIT" windowState="MAXIMIZED">
+		     <portlet:param name="sessionId" value="${completedSessions.sessionId}" />
+		     <portlet:param name="action" value="editSession" />
+		    </portlet:renderURL>
+		    
+		    <json:property name="deleteCheckbox">
+		    <sec:authorize access="hasPermission(#completedSessions, 'delete')">
+		        <input value='${completedSessions.sessionId}' class='${n}deleteSession' name='deleteSession' type='checkbox' />
+		    </sec:authorize>
+		    </json:property>
+		    <json:property name="sessionName">
+		  	  <a href='${viewSessionUrl}'>${session.sessionName}</a>
+		    </json:property>
+		    <json:property name="startTime">
+		      <joda:format value="${completedSessions.startTime}" pattern="MM/dd/yyyy HH:mm z" />
+		    </json:property>
+		    <json:property name="endTime">
+		      <joda:format value="${completedSessions.endTime}" pattern="MM/dd/yyyy HH:mm z" />
+		    </json:property>
+		    <json:property name="join">
+		     <c:choose>
+		       <c:when test="${completedSessions.endTime.beforeNow}">
+		         <spring:message code="sessionIsClosed" text="sessionIsClosed"/>
+		       </c:when>
+		       <c:otherwise>
+		     	<c:choose>
+		  	   <c:when test="${completedSessions.startTimeWithBoundaryTime.beforeNow}">
+		  	      	<a href='${completedSessions.launchUrl}' target="_blank"><spring:message code="joinNow" text="joinNow"/></a>
+		  	   </c:when>
+		  	   <c:otherwise>
+		  	    	${session.timeUntilJoin}
+		  	   </c:otherwise>
+		         </c:choose>
+		       </c:otherwise>
+		     </c:choose>
+		    </json:property>
+		    <json:property name="edit">
+		     <sec:authorize access="hasPermission(#completedSessions, 'edit')">
+		       <a href='${editSessionUrl}' class='uportal-button'><spring:message code="edit" text="edit"/></a>
+		     </sec:authorize>
+		    </json:property>
+		    </json:array>
+		  </json:array>
 
   $(document).ready(function() {
 	  
@@ -237,7 +337,7 @@ blackboardPortlet.jQuery(function() {
     });
     
     $('#sessionList').dataTable( {
-    		"aaData": sessions,
+    		"aaData": upcomingSessions,
     		"aaSorting": [[3, "desc"]],
     		"bAutoWidth" : false,
     		"bDeferRender": true,
@@ -251,6 +351,20 @@ blackboardPortlet.jQuery(function() {
     		} );
     
   });
+  
+  $('#completedSessionList').dataTable( {
+		"aaData": completedSessions,
+		"aaSorting": [[3, "desc"]],
+		"bAutoWidth" : false,
+		"bDeferRender": true,
+		"aoColumns": [{ "bSortable": false },
+		              null,
+		              null,
+		              null,
+		              null,
+		              { "bSortable": false }
+		              ]
+	});
 });
 })(blackboardPortlet.jQuery);
 </rs:compressJs>

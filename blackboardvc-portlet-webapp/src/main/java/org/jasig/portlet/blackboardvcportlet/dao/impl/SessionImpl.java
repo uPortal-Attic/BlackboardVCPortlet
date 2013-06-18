@@ -488,6 +488,7 @@ public class SessionImpl implements Session {
 	
 	@Override
 	public String getTimeFancyText(DateTime from, DateTime to) {
+		final String prefix = "Join in ";
 		if(to != null) {
 			Duration d = new Duration(to, from);
 			Period timeUntil = new Period(to.toInstant(),from.toInstant(), PeriodType.dayTime());
@@ -502,7 +503,7 @@ public class SessionImpl implements Session {
 			    .appendHours()
 			    .appendSuffix(" hour", " hours")
 			    .toFormatter();
-				return daysHours.print(timeUntil.normalizedStandard(PeriodType.dayTime()));
+				return prefix + daysHours.print(timeUntil.normalizedStandard(PeriodType.dayTime()));
 			} else {
 				PeriodFormatter dafaultFormatter = new PeriodFormatterBuilder()
 			    .appendHours()
@@ -511,7 +512,7 @@ public class SessionImpl implements Session {
 			    .appendMinutes()
 			    .appendSuffix(" minute", " minutes")
 			    .toFormatter();
-				return dafaultFormatter.print(timeUntil.normalizedStandard(PeriodType.dayTime()));
+				return prefix + dafaultFormatter.print(timeUntil.normalizedStandard(PeriodType.dayTime()));
 			}
 			
 		} else {

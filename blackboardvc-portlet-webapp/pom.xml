@@ -222,6 +222,10 @@
             <artifactId>ojdbc6</artifactId>
         </dependency>
         <dependency>
+		    <groupId>com.googlecode.lambdaj</groupId>
+		    <artifactId>lambdaj</artifactId>
+		</dependency>
+        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>

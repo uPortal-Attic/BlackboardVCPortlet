@@ -19,6 +19,13 @@
 package org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr;
 
 import com.google.common.collect.Ordering;
+import static ch.lambdaj.Lambda.*;
+
+import net.sf.ehcache.search.expression.GreaterThan;
+
+import org.apache.commons.collections.ListUtils;
+import org.apache.commons.collections.SetUtils;
+import org.hamcrest.*;
 import org.jasig.portlet.blackboardvcportlet.dao.ConferenceUserDao;
 import org.jasig.portlet.blackboardvcportlet.dao.SessionDao;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
@@ -26,6 +33,7 @@ import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
 import org.jasig.portlet.blackboardvcportlet.security.ConferenceUserService;
 import org.jasig.portlet.blackboardvcportlet.service.SessionService;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +44,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 import javax.portlet.PortletRequest;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -90,8 +99,42 @@ public class ViewSessionListController
         
         final Set<Session> nonChairedSessionsForUser = this.conferenceUserDao.getNonChairedSessionsForUser(conferenceUser);
         sessions.addAll(nonChairedSessionsForUser);
+        
+        Matcher<DateTime> afterNow = new BaseMatcher<DateTime>() {
+			@Override
+			public void describeTo(Description arg0) {
+				//don't care
+			}
+			
+			@Override
+			public boolean matches(Object arg0) {
+				DateTime now = DateTime.now();
+				DateTime arg = (DateTime)arg0;
+				return arg.isAfter(now);
+			}
+		};
+		
+		Matcher<DateTime> beforeOrIsNow = new BaseMatcher<DateTime>() {
+			@Override
+			public void describeTo(Description arg0) {
+				//don't care
+			}
+			
+			@Override
+			public boolean matches(Object arg0) {
+				DateTime now = DateTime.now();
+				DateTime arg = (DateTime)arg0;
+				return arg.isBefore(now) || arg.isEqualNow();
+			}
+		};
 
-		model.addAttribute("sessions", Ordering.from(SessionDisplayComparator.INSTANCE).sortedCopy(sessions));
+        
+        //this.is.awesome!
+        List<Session> upcomingSessions = filter(having(on(Session.class).getEndTime(),afterNow),sessions);
+        List<Session> completedSessions = filter(having(on(Session.class).getEndTime(),beforeOrIsNow),sessions);
+
+		model.addAttribute("completedSessions", Ordering.from(SessionDisplayComparator.INSTANCE).sortedCopy(completedSessions));
+		model.addAttribute("upcomingSessions", Ordering.from(SessionDisplayComparator.INSTANCE).sortedCopy(upcomingSessions));
 
 		if (deleteSessionError != null)
 		{
