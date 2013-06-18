@@ -23,11 +23,7 @@
 <%@ include file="/WEB-INF/jsp/header.jsp"%>
 
 <div id="${n}blackboardCollaboratePortlet" class="blackboardVCRoot">
-<c:if test="${!empty prefs['helpUrl'][0]}">
-<div class="help-link">
-  <a href="${prefs['helpUrl'][0]}" target="_blank"><spring:message code="help" text="help"/></a>
-</div>
-</c:if>
+
 <portlet:renderURL var="createAndEditSessionUrl" portletMode="EDIT" windowState="MAXIMIZED">
   <portlet:param name="action" value="createAndEditSession" />
 </portlet:renderURL>
@@ -56,6 +52,11 @@
         		</c:otherwise>
 	        </c:choose>
         </td>
+        <c:if test="${!empty prefs['helpUrl'][0]}">
+	        <td align="right" width="2em">
+	        	<a href="${prefs['helpUrl'][0]}" target="_blank" class="uportal-button"><spring:message code="help" text="help"/></a>
+	        </td>
+        </c:if>
       </tr>
     </tbody>
   </table>
