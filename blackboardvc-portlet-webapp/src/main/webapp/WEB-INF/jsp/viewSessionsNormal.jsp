@@ -27,6 +27,7 @@
 <portlet:renderURL var="createAndEditSessionUrl" portletMode="EDIT" windowState="MAXIMIZED">
   <portlet:param name="action" value="createAndEditSession" />
 </portlet:renderURL>
+<portlet:renderURL var="maxViewURL" portletMode="VIEW" windowState="MAXIMIZED"/>
 <table width="100%">
     <tbody>
       <tr>
@@ -103,7 +104,7 @@
 	       </c:when>
 	       <c:otherwise>${fn:length(upcomingSessions)}</c:otherwise>
 		</c:choose>
-		of ${fn:length(upcomingSessions)}&nbsp;<a href="#">Show All Sessions</a>
+		of ${fn:length(upcomingSessions)}&nbsp;<a href="${maxViewURL}">Show All Sessions</a>
       </div>
     </c:when>
     <c:otherwise>
@@ -165,6 +166,7 @@
         </tbody>
       </table>
       <div style="float: right;">
+      
       <br/>
       	Showing 
       	<c:choose>
@@ -173,7 +175,7 @@
 	       </c:when>
 	       <c:otherwise>${fn:length(completedSessions)}</c:otherwise>
 		</c:choose>
-		of ${fn:length(completedSessions)}&nbsp;<a href="#">Show All Sessions</a>
+		of ${fn:length(completedSessions)}&nbsp;<a href="${maxViewURL}">Show All Sessions</a>
       </div>
     </c:when>
     <c:otherwise>
