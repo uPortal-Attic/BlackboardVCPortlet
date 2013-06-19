@@ -40,7 +40,7 @@
 <table width="100%">
     <tbody>
       <tr>
-        <td align="right">
+        <td align="right" colspan="3">
         	<sec:authorize var="adminAccess" access="hasRole('ROLE_ADMIN')" />
 		      <c:choose>
 		        <c:when test="${adminAccess}">
@@ -52,11 +52,38 @@
         		</c:otherwise>
 	        </c:choose>
         </td>
+        <td align="right" width="2em" colspan="1">
         <c:if test="${!empty prefs['helpUrl'][0]}">
-	        <td align="right" width="2em">
-	        	<a href="${prefs['helpUrl'][0]}" target="_blank" class="uportal-button"><spring:message code="help" text="help"/></a>
-	        </td>
+        	<a href="${prefs['helpUrl'][0]}" target="_blank" class="uportal-button"><spring:message code="help" text="help"/></a>
         </c:if>
+        </td>
+      </tr>
+      <tr>
+      	<portlet:actionURL portletMode="VIEW" var="filterSessionsUrl">
+		  <portlet:param name="action" value="filterSessions" />
+		</portlet:actionURL>
+		<form name="filterSessions" action="${filterSessionsUrl}" method="post">
+      	<td style="font-weight:bold; text-align: right; width:20em;">
+      		<spring:message code="find" text="find" htmlEscape="false"/>
+      	</td>
+      	<td style="width:10em;">
+      	<select>
+      			<option value="ALL">All Sessions</option>
+      			<option value="30">All Sessions Next 30 Days</option>
+      			<option value="60">All Sessions Next 60 Days</option>
+      			<option value="90">All Sessions Next 90 Days</option>
+      			<option value="CUR">All Sessions in Current Year</option>
+      			<option value="LAST">All Sessions Last Year</option>
+      		</select>
+      		<input value="Find Sessions" style="text-transform: none;" class="uportal-button" type="submit" />
+      	</td>
+      	<td style="font-weight:bold; text-align: right; width:20em;">
+      	Search by <br/>Keyword
+      	</td>
+      	<td>
+      	<input type="text" name="keyword" /><input value="Search Sessions" style="text-transform: none;" class="uportal-button" type="submit" />
+      	</td>
+      	</form>
       </tr>
     </tbody>
   </table>
@@ -79,8 +106,7 @@
             <th><spring:message code="sessionName" text="sessionName"/></th>
             <th><spring:message code="startDateAndTime" text="startDateAndTime"/></th>
             <th><spring:message code="endDateAndTime" text="endDateAndTime"/></th>
-            <th style="width: 20em;"><spring:message code="join" text="join"/></th>
-            <th>&nbsp;</th>
+            <th style="width: 20em;"><spring:message code="status" text="status"/></th>
           </tr>
         </thead>
         <tbody>
@@ -120,8 +146,7 @@
             <th><spring:message code="sessionName" text="sessionName"/></th>
             <th><spring:message code="startDateAndTime" text="startDateAndTime"/></th>
             <th><spring:message code="endDateAndTime" text="endDateAndTime"/></th>
-            <th style="width: 20em;"><spring:message code="join" text="join"/></th>
-            <th>&nbsp;</th>
+            <th style="width: 20em;"><spring:message code="status" text="status"/></th>
           </tr>
         </thead>
         <tbody>
@@ -166,10 +191,6 @@ blackboardPortlet.jQuery(function() {
 	     <portlet:param name="sessionId" value="${session.sessionId}" />
 	     <portlet:param name="action" value="viewSession" />
 	    </portlet:renderURL>
-	    <portlet:renderURL var="editSessionUrl" portletMode="EDIT" windowState="MAXIMIZED">
-	     <portlet:param name="sessionId" value="${session.sessionId}" />
-	     <portlet:param name="action" value="editSession" />
-	    </portlet:renderURL>
 	    
 	    <json:property name="deleteCheckbox">
 	    <sec:authorize access="hasPermission(#session, 'delete')">
@@ -202,11 +223,6 @@ blackboardPortlet.jQuery(function() {
 	       </c:otherwise>
 	     </c:choose>
 	    </json:property>
-	    <json:property name="edit">
-	     <sec:authorize access="hasPermission(#session, 'edit')">
-	       <a href='${editSessionUrl}' class='uportal-button'><spring:message code="edit" text="edit"/></a>
-	     </sec:authorize>
-	    </json:property>
 	    </json:array>
 	  </json:array>
 	  
@@ -216,10 +232,6 @@ blackboardPortlet.jQuery(function() {
 		    <portlet:renderURL var="viewSessionUrl">
 		     <portlet:param name="sessionId" value="${completedSessions.sessionId}" />
 		     <portlet:param name="action" value="viewSession" />
-		    </portlet:renderURL>
-		    <portlet:renderURL var="editSessionUrl" portletMode="EDIT" windowState="MAXIMIZED">
-		     <portlet:param name="sessionId" value="${completedSessions.sessionId}" />
-		     <portlet:param name="action" value="editSession" />
 		    </portlet:renderURL>
 		    
 		    <json:property name="deleteCheckbox">
@@ -252,11 +264,6 @@ blackboardPortlet.jQuery(function() {
 		         </c:choose>
 		       </c:otherwise>
 		     </c:choose>
-		    </json:property>
-		    <json:property name="edit">
-		     <sec:authorize access="hasPermission(#completedSessions, 'edit')">
-		       <a href='${editSessionUrl}' class='uportal-button'><spring:message code="edit" text="edit"/></a>
-		     </sec:authorize>
 		    </json:property>
 		    </json:array>
 		  </json:array>
@@ -337,35 +344,38 @@ blackboardPortlet.jQuery(function() {
       $( "#dialog-form" ).dialog( "open" );
     });
     
-    $('#sessionList').dataTable( {
+    var futureTable = $('#sessionList').dataTable( {
     		"aaData": upcomingSessions,
     		"aaSorting": [[3, "desc"]],
     		"bAutoWidth" : false,
     		"bDeferRender": true,
+    		"sPaginationType": "full_numbers",
     		"aoColumns": [{ "bSortable": false },
     		              null,
     		              null,
     		              null,
-    		              null,
-    		              { "bSortable": false }
+    		              null
     		              ]
     		} );
     
   });
   
-  $('#completedSessionList').dataTable( {
+  var pastTable = $('#completedSessionList').dataTable( {
 		"aaData": completedSessions,
 		"aaSorting": [[3, "desc"]],
 		"bAutoWidth" : false,
 		"bDeferRender": true,
+		"sPaginationType": "full_numbers",
 		"aoColumns": [{ "bSortable": false },
 		              null,
 		              null,
 		              null,
-		              null,
-		              { "bSortable": false }
+		              null
 		              ]
 	});
+  
+  
+  
 });
 })(blackboardPortlet.jQuery);
 </rs:compressJs>
