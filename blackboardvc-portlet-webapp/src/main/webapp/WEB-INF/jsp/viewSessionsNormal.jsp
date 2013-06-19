@@ -50,12 +50,13 @@
             <th><spring:message code="sessionName" text="sessionName"/></th>
             <th><spring:message code="startDateAndTime" text="startDateAndTime"/></th>
             <th><spring:message code="endDateAndTime" text="endDateAndTime"/></th>
-            <th style="width: 20em;"><spring:message code="join" text="join"/></th>
+            <spring:message code="statusText" text="statusText" var="statusText" htmlEscape="true" />
+            <th id="${n}statusToolTip"><spring:message code="status" text="status"/>&nbsp;<a href="#" title="${ statusText}"><img alt="?" src="/images/questionmark.jpg"></a></th>
 
           </tr>
          </thead>
           <tbody>
-          <c:forEach var="session" items="${upcomingSessions}"  begin="0" end="4">
+          <c:forEach var="session" items="${upcomingSessions}"  begin="0" end="4" varStatus="loopStatus">
 	          <portlet:renderURL var="viewSessionUrl">
 			     <portlet:param name="sessionId" value="${session.sessionId}" />
 			     <portlet:param name="action" value="viewSession" />
@@ -64,7 +65,7 @@
 		     	<portlet:param name="sessionId" value="${session.sessionId}" />
 		     	<portlet:param name="action" value="editSession" />
 		      </portlet:renderURL>
-          	  <tr>
+          	  <tr class="${loopStatus.index % 2 == 0 ? 'uportal-channel-table-row-odd' : 'uportal-channel-table-row-even'}">
 				<td><a href='${viewSessionUrl}'>${session.sessionName}</a></td>
 				<td>
 	      			<joda:format value="${session.startTime}" pattern="MM/dd/yyyy HH:mm z" />
@@ -94,6 +95,7 @@
         </tbody>
       </table>
       <div style="float: right;">
+      <br/>
       	Showing 
       	<c:choose>
 	       <c:when test="${fn:length(upcomingSessions) gt 4}">
@@ -119,11 +121,12 @@
             <th><spring:message code="sessionName" text="sessionName"/></th>
             <th><spring:message code="startDateAndTime" text="startDateAndTime"/></th>
             <th><spring:message code="endDateAndTime" text="endDateAndTime"/></th>
-            <th style="width: 20em;"><spring:message code="join" text="join"/></th>
+            <spring:message code="statusText" text="statusText" var="statusText" htmlEscape="true" />
+            <th id="${n}statusToolTip"><spring:message code="status" text="status"/>&nbsp;<a href="#" title="${ statusText}"><img alt="?" src="/images/questionmark.jpg"></a></th>
           </tr>
         </thead>
         <tbody>
-        <c:forEach var="completedSessions" items="${completedSessions}" begin="0" end="4">
+        <c:forEach var="completedSessions" items="${completedSessions}" begin="0" end="4" varStatus="loopStatus2">
 	          <portlet:renderURL var="viewSessionUrl">
 			     <portlet:param name="sessionId" value="${completedSessions.sessionId}" />
 			     <portlet:param name="action" value="viewSession" />
@@ -132,7 +135,7 @@
 		     	<portlet:param name="sessionId" value="${completedSessions.sessionId}" />
 		     	<portlet:param name="action" value="editSession" />
 		      </portlet:renderURL>
-          	  <tr>
+          	  <tr class="${loopStatus2.index % 2 == 0 ? 'uportal-channel-table-row-odd' : 'uportal-channel-table-row-even'}">
 				<td><a href='${viewSessionUrl}'>${completedSessions.sessionName}</a></td>
 				<td>
 	      			<joda:format value="${completedSessions.startTime}" pattern="MM/dd/yyyy HH:mm z" />
@@ -162,6 +165,7 @@
         </tbody>
       </table>
       <div style="float: right;">
+      <br/>
       	Showing 
       	<c:choose>
 	       <c:when test="${fn:length(completedSessions) gt 4}">
@@ -189,7 +193,9 @@
   								var tabs = $("#${n}tabs");
   								tabs.tabs();
   							});
+  					
 					});
+			
 		})(blackboardPortlet.jQuery);
 
 </script>
