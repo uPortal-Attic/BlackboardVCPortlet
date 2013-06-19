@@ -122,7 +122,7 @@
             <th><spring:message code="startDateAndTime" text="startDateAndTime"/></th>
             <th><spring:message code="endDateAndTime" text="endDateAndTime"/></th>
             <spring:message code="statusText" text="statusText" var="statusText" htmlEscape="true" />
-            <th id="${n}statusToolTip"><spring:message code="status" text="status"/>&nbsp;<a href="#" title="${ statusText}"><img alt="?" src="/images/questionmark.jpg"></a></th>
+            <th id="${n}statusToolTip"><spring:message code="status" text="status"/>&nbsp;<a href="#" title="${ statusText}"><img alt="?" src="../images/questionmark.jpg"></a></th>
           </tr>
         </thead>
         <tbody>
