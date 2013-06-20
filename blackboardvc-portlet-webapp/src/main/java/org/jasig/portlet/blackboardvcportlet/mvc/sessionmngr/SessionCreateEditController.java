@@ -118,22 +118,16 @@ public class SessionCreateEditController
 	    return RecordingMode.values();
 	}
 
-	@RenderMapping(params="action=createAndEditSession")
-	public String createAndEditSession(RenderRequest request, ModelMap model, @RequestParam("name") String sessionName) throws PortletModeException {
+	@RenderMapping
+	public String displayNewSessionForm(ModelMap model) throws PortletModeException {
 	    final ServerConfiguration serverConfiguration = this.serverConfigurationService.getServerConfiguration();
-        model.put("serverConfiguration", serverConfiguration);
-
-		if (!model.containsKey("sessionForm"))
+	       model.put("serverConfiguration", serverConfiguration);
+			if (!model.containsKey("sessionForm"))
 		{
 			SessionForm sessionForm = new SessionForm(serverConfiguration);
-			sessionForm.setSessionName(sessionName);
-			final ConferenceUser conferenceUser = this.conferenceUserService.getCurrentConferenceUser();
-			Session session = sessionService.createOrUpdateSession(conferenceUser, sessionForm);
-			String returnView = displayEditSessionForm(request, model, session.getSessionId(), null, null, null, true);
-			return returnView;
+			model.addAttribute("sessionForm", sessionForm);
 		}
-
-	    return "BlackboardVCPortlet_edit";
+		    return "BlackboardVCPortlet_edit";
 	}
 	
     @RenderMapping(params="action=editSession")

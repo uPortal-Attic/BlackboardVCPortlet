@@ -24,15 +24,13 @@
 
 <div id="${n}blackboardCollaboratePortlet" class="blackboardVCRoot">
 
-<portlet:renderURL var="createAndEditSessionUrl" portletMode="EDIT" windowState="MAXIMIZED">
-  <portlet:param name="action" value="createAndEditSession" />
-</portlet:renderURL>
+<portlet:renderURL var="createSessionUrl" portletMode="EDIT" windowState="MAXIMIZED" />
 <portlet:renderURL var="maxViewURL" portletMode="VIEW" windowState="MAXIMIZED"/>
 <table width="100%">
     <tbody>
       <tr>
         <td align="right">
-	    	<a href="${createAndEditSessionUrl}" id="create-user" class="uportal-button"><spring:message code="scheduleSession" text="scheduleSession"/></a>
+	    	<a href="${createSessionUrl}" id="create-user" class="uportal-button"><spring:message code="scheduleSession" text="scheduleSession"/></a>
         </td>
       </tr>
     </tbody>

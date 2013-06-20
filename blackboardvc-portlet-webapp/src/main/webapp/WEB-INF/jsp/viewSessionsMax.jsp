@@ -23,20 +23,7 @@
 <%@ include file="/WEB-INF/jsp/header.jsp"%>
 
 <div id="${n}blackboardCollaboratePortlet" class="blackboardVCRoot">
-
-<portlet:renderURL var="createAndEditSessionUrl" portletMode="EDIT" windowState="MAXIMIZED">
-  <portlet:param name="action" value="createAndEditSession" />
-</portlet:renderURL>
-<div id="dialog-form" title="Create New Session">
-  <p class="validateTips">All fields are required.</p>
-  
-  <form name="createSession" id="createSession" action="${createAndEditSessionUrl}" method="post">
-  <fieldset style="margin-top: 1em;">
-    <label style="font-weight: bold;" for="name">Session Name</label>
-    <input type="text" name="name" id="name" class="text ui-widget-content ui-corner-all" />
-  </fieldset>
-  </form>
-</div>
+<portlet:renderURL var="createSessionUrl" portletMode="EDIT" windowState="MAXIMIZED" />
 <table width="100%">
     <tbody>
       <tr>
@@ -48,7 +35,7 @@
 	          		<a href="${homeURL}" class="uportal-button"><spring:message code="adminHome" text="adminHome"/></a>
 		        </c:when>
         		<c:otherwise>
-	        		<a href="#" id="create-user" class="uportal-button"><spring:message code="scheduleSession" text="scheduleSession"/></a>
+	        		<a href="${createSessionUrl }" id="create-user" class="uportal-button"><spring:message code="scheduleSession" text="scheduleSession"/></a>
         		</c:otherwise>
 	        </c:choose>
         </td>
@@ -63,26 +50,26 @@
 		  <portlet:param name="action" value="filterSessions" />
 		</portlet:actionURL>
 		<form name="filterSessions" action="${filterSessionsUrl}" method="post">
-      	<td style="font-weight:bold; text-align: right; width:20em;">
-      		<spring:message code="find" text="find" htmlEscape="false"/>
-      	</td>
-      	<td style="width:10em;">
-      	<select>
-      			<option value="ALL">All Sessions</option>
-      			<option value="30">All Sessions Next 30 Days</option>
-      			<option value="60">All Sessions Next 60 Days</option>
-      			<option value="90">All Sessions Next 90 Days</option>
-      			<option value="CUR">All Sessions in Current Year</option>
-      			<option value="LAST">All Sessions Last Year</option>
-      		</select>
-      		<input value="Find Sessions" style="text-transform: none;" class="uportal-button" type="submit" />
-      	</td>
-      	<td style="font-weight:bold; text-align: right; width:20em;">
-      	Search by <br/>Keyword
-      	</td>
-      	<td>
-      	<input type="text" name="keyword" /><input value="Search Sessions" style="text-transform: none;" class="uportal-button" type="submit" />
-      	</td>
+	      	<td style="font-weight:bold; text-align: right; width:20em;">
+	      		<spring:message code="find" text="find" htmlEscape="false"/>
+	      	</td>
+	      	<td style="width:10em;">
+	      		<select>
+	      			<option value="ALL">All Sessions</option>
+	      			<option value="30">All Sessions Next 30 Days</option>
+	      			<option value="60">All Sessions Next 60 Days</option>
+	      			<option value="90">All Sessions Next 90 Days</option>
+	      			<option value="CUR">All Sessions in Current Year</option>
+	      			<option value="LAST">All Sessions Last Year</option>
+	      		</select>
+	      		<input value="Find Sessions" style="text-transform: none;" class="uportal-button" type="submit" />
+	      	</td>
+	      	<td style="font-weight:bold; text-align: right; width:20em;">
+	      		Search by <br/>Keyword
+	      	</td>
+	      	<td>
+	      		<input type="text" name="keyword" /><input value="Search Sessions" style="text-transform: none;" class="uportal-button" type="submit" />
+	      	</td>
       	</form>
       </tr>
     </tbody>
@@ -281,67 +268,6 @@ blackboardPortlet.jQuery(function() {
        
     $('#${n}blackboardCollaboratePortlet #${n}selectAllSessions').click(function() {
       $('#${n}blackboardCollaboratePortlet .${n}deleteSession').attr('checked', $(this).is(':checked'));
-    });
-    
-    var name = $( "#name" ),
-    allFields = $( [] ).add( name ),
-    tips = $( ".validateTips" );
-    $( 'span .ui-icon-closethick').css('margin','0');
-    
-    function updateTips( t ) {
-      tips
-        .text( t )
-        .addClass( "ui-state-highlight" )
-        .css('color','red');
-      setTimeout(function() {
-        tips.removeClass( "ui-state-highlight", 1500 );
-      }, 500 );
-    }
-    
-    function checkLength( o, n, min, max ) {
-      if ( o.val().length > max || o.val().length < min ) {
-        o.addClass( "ui-state-error" );
-        updateTips( "Length of " + n + " must be between " +
-          min + " and " + max + "." );
-        return false;
-      } else {
-        return true;
-      }
-    }
-    
-    $( "#${n}blackboardCollaboratePortlet #dialog-form" ).dialog({
-        autoOpen: false,
-        height: 200,
-        width: 220,
-        modal: true,
-        buttons: {
-          "Setup Session": function() {
-            var bValid = true;
-            allFields.removeClass( "ui-state-error" );
-            bValid = bValid && checkLength( name, "name", 1, 256 );
-            if ( bValid ) {
-            	//submit form
-            	$( "#createSession" ).submit();
-            	$( this ).dialog( "close" );
-            }
-       },
-       Cancel: function() {
-            $( this ).dialog( "close" );
-          }
-       },closeOnEscape: false,
-       open: function(event, ui) 
-       { 
-    	  $(".ui-dialog-titlebar-close").hide(); 
-       },
-       close: function()
-       {
-    	   allFields.val( "" ).removeClass( "ui-state-error" );
-       }
-      });
-    $( "#${n}blackboardCollaboratePortlet #create-user" )
-    .button()
-    .click(function() {
-      $( "#dialog-form" ).dialog( "open" );
     });
     
     var futureTable = $('#sessionList').dataTable( {
