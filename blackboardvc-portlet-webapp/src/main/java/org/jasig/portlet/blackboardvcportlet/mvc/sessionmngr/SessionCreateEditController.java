@@ -127,7 +127,7 @@ public class SessionCreateEditController
 			SessionForm sessionForm = new SessionForm(serverConfiguration);
 			model.addAttribute("sessionForm", sessionForm);
 		}
-		    return "BlackboardVCPortlet_edit";
+		    return "createEditSession";
 	}
 	
     @RenderMapping(params="action=editSession")
@@ -180,7 +180,7 @@ public class SessionCreateEditController
 			model.addAttribute("deleteMultimediaError", deleteMultimediaError);
 		}
 
-        return "BlackboardVCPortlet_edit";
+        return "createEditSession";
     }
 	
 	@ActionMapping(params = "action=saveSession")

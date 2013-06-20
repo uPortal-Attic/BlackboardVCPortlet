@@ -28,8 +28,7 @@
 	  <a href="${prefs['helpUrl'][0]}" target="_blank"><spring:message code="help" text="help"/></a>
 	</div>
 </c:if>
-<div class="uportal-channel-subtitle">1. <spring:message code="sessionInformation" text="sessionInformation"/></div>
-<hr/>
+<div class="uportal-channel-subtitle"><spring:message code="scheduleSession" text="scheduleSession"/></div>
 <portlet:actionURL portletMode="EDIT" var="saveSessionActionUrl">
   <portlet:param name="action" value="saveSession" />
 </portlet:actionURL>
@@ -42,17 +41,25 @@
   <table>
     <tbody>
       <tr>
+      	<th colspan="2"><spring:message code="enterInfo" text="enterInfo"/></th>
+      </tr>
+      <tr>
         <td>
-            <span class="uportal-channel-strong"><spring:message code="sessionName" text="sessionName"/>: </span>
+            <span class="uportal-channel-strong"><spring:message code="sessionName" text="sessionName"/></span>
         </td>
-            <td><form:input path="sessionName" readonly="true"/></td>
+        <td>
+	        <c:choose>
+	          <c:when test="${sessionForm.newSession}">
+	            <form:input path="sessionName" style="width: 50%;" class="uportal-input-text" />&nbsp;&nbsp;<form:errors path="sessionName" cssClass="error"/>
+	          </c:when>
+	          <c:otherwise>
+	            <form:input path="sessionName" readonly="true"/>
+	          </c:otherwise>
+	        </c:choose>
+        </td>
       </tr>
       <tr>
-        <td>&nbsp;</td>
-        <td class="uportal-channel-table-caption"><spring:message code="sessionNameCanNotBeChanged" text="sessionNameCanNotBeChanged"/></td>
-      </tr>
-      <tr>
-        <td><span class="uportal-channel-strong"><spring:message code="startDateAndTime" text="startDateAndTime"/>: </span></td>
+        <td><span class="uportal-channel-strong"><spring:message code="startDateAndTime" text="startDateAndTime"/></span></td>
         <td>
           <form:input id="${n}startdatepicker" path="startDate" style="width: 82px;"/>&nbsp;
           <form:errors path="startDate" cssClass="error"/>&nbsp;
@@ -67,13 +74,16 @@
                   <form:option value="${i}">${i}</form:option>
               </c:forEach>
           </form:select>
+          &nbsp;<spring:message code="centralTime" text="centralTime"/>
+          <br/>
+          <span class="uportal-channel-table-caption">mm/dd/yyyy</span>
             <form:errors path="startHour" cssClass="error"/>&nbsp;
             <form:errors path="startMinute" cssClass="error"/>&nbsp;
             <form:errors path="startTime" cssClass="error"/>
         </td>
       </tr>
       <tr>
-        <td><span class="uportal-channel-strong"><spring:message code="endDateAndTime" text="endDateAndTime"/>: </span></td>
+        <td><span class="uportal-channel-strong"><spring:message code="endDateAndTime" text="endDateAndTime"/></span></td>
 
         <td>
           <form:input id="${n}enddatepicker" path="endDate" style="width: 82px;"/>&nbsp;
@@ -89,15 +99,19 @@
               <form:option value="${i}">${i}</form:option>
             </c:forEach>
           </form:select>
+          &nbsp;<spring:message code="centralTime" text="centralTime"/>
+          <br/>
+          <span class="uportal-channel-table-caption">mm/dd/yyyy</span>
             <form:errors path="endHour" cssClass="error"/>&nbsp;
             <form:errors path="endMinute" cssClass="error"/>&nbsp;
             <form:errors path="endTime" cssClass="error"/>
         </td>
       </tr>
-      <tr>
-        <td>&nbsp;</td>
-        <td class="uportal-channel-table-caption"><spring:message code="enterDatesInFormat" text="enterDatesInFormat"/></td>
-      </tr>
+      <tr><td colspan="2">
+      <div id="${n}accordion">
+      <h3><span class="uportal-channel-strong">&nbsp;&nbsp;<spring:message code="additionalSettings" text="additionalSettings" /></span></h3>
+      <table>
+      <tr><td colspan="2"><span class="uportal-channel-table-caption"><spring:message code="additionalSettingDesc" text="additionalSettingDesc"/></span></td></tr>
       <tr>
         <td><span class="uportal-channel-strong"><spring:message code="earlySessionEntry" text="earlySessionEntry"/>: </span></td>
         <td>
@@ -196,6 +210,9 @@
             <td></td>
             <td class="uportal-channel-table-caption"><spring:message code="moderatorsMaySendInvitationsWhileInSession" text="moderatorsMaySendInvitationsWhileInSession"/></td>
           </tr>
+          </table>
+          </div>
+          </td></tr>
         </c:when>
         <c:otherwise>
           <form:hidden path="maxTalkers"/>
@@ -424,6 +441,9 @@
     	$(document).ready(function() {
     		$("#${n}startdatepicker").datepicker();
     		$("#${n}enddatepicker").datepicker();
+    		$( "#${n}accordion" ).accordion({
+    		      collapsible: true
+    		    });
     	});
     })(blackboardPortlet.jQuery);
     </rs:compressJs>

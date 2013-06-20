@@ -35,7 +35,7 @@
 	          		<a href="${homeURL}" class="uportal-button"><spring:message code="adminHome" text="adminHome"/></a>
 		        </c:when>
         		<c:otherwise>
-	        		<a href="${createSessionUrl }" id="create-user" class="uportal-button"><spring:message code="scheduleSession" text="scheduleSession"/></a>
+	        		<a href="${createSessionUrl }" id="create-user" class="uportal-button"><spring:message code="scheduleWebConferencingSession" text="scheduleWebConferencingSession"/></a>
         		</c:otherwise>
 	        </c:choose>
         </td>

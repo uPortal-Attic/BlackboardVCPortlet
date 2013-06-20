@@ -30,7 +30,7 @@
     <tbody>
       <tr>
         <td align="right">
-	    	<a href="${createSessionUrl}" id="create-user" class="uportal-button"><spring:message code="scheduleSession" text="scheduleSession"/></a>
+	    	<a href="${createSessionUrl}" id="create-user" class="uportal-button"><spring:message code="scheduleWebConferencingSession" text="scheduleWebConferencingSession"/></a>
         </td>
       </tr>
     </tbody>
