@@ -106,3 +106,13 @@ p.uportal-channel-success {padding:1em 1em 1em 3em; border:2px solid; color:#004
 	padding-left : 1em;
 	padding-right : 1em;
 }
+
+.blackboardVCRoot .viewSession {
+	width: 100%;
+}
+
+.blackboardVCRoot .label {
+	width: 20%;
+	vertical-align: top;
+	text-align: left;
+}

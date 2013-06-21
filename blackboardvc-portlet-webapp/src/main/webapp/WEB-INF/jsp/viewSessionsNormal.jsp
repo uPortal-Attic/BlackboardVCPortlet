@@ -122,7 +122,7 @@
         </thead>
         <tbody>
         <c:forEach var="completedSessions" items="${completedSessions}" begin="0" end="4" varStatus="loopStatus2">
-	          <portlet:renderURL var="viewSessionUrl">
+	          <portlet:renderURL var="viewSessionUrl" windowState="MAXIMIZED">
 			     <portlet:param name="sessionId" value="${completedSessions.sessionId}" />
 			     <portlet:param name="action" value="viewSession" />
 		      </portlet:renderURL>

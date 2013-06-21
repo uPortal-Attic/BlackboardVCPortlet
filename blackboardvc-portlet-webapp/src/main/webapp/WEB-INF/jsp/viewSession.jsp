@@ -28,56 +28,141 @@
 	  <a href="${prefs['helpUrl'][0]}" target="_blank"><spring:message code="help" text="help"/></a>
 	</div>
 </c:if>
-
-<table>
+<portlet:renderURL var="backUrl" portletMode="VIEW" />
+<a href="${backUrl}" class="uportal-button">&lt; Back to Session List</a>
+<br/>
+<table class="viewSession">
   <tbody>
-    <tr><td align="left"><spring:message code="sessionName" text="sessionName"/>: </td><td>${session.sessionName}</td></tr>
-    <tr><td align="left"><spring:message code="startTime" text="startTime"/>: </td><td><joda:format value="${session.startTime}" pattern="MM/dd/yyyy HH:mm z" /></td></tr>
-    <tr><td align="left"><spring:message code="endTime" text="endTime"/>: </td><td><joda:format value="${session.endTime}" pattern="MM/dd/yyyy HH:mm z" /></td></tr>
+  	<tr>
+  		<th style="text-align: left;"><spring:message code="sessionSummary"/></th>
+  		<th style="text-align: right;">
+  		<sec:authorize access="hasRole('ROLE_ADMIN') || hasPermission(#session, 'edit')">
+		  <portlet:renderURL var="editSessionUrl" portletMode="EDIT" windowState="MAXIMIZED" >
+		    <portlet:param name="sessionId" value="${session.sessionId}" />
+		    <portlet:param name="action" value="editSession" />
+		  </portlet:renderURL>
+  		  <a href="${editSessionUrl}" class="uportal-button"><spring:message code="editSession" text="Edit Session"/></a>
+		  </sec:authorize>
+		</th>
+		</tr>
+    <tr><td  class="label"><span class="uportal-channel-strong"><spring:message code="sessionName" text="sessionName"/></span></td><td>${session.sessionName}</td></tr>
+    <tr class="even"><td  class="label" ><span class="uportal-channel-strong"><spring:message code="startTime" text="startTime"/></span></td><td><joda:format value="${session.startTime}" pattern="MM/dd/yyyy HH:mm z" /></td></tr>
+    <tr><td  class="label"><span class="uportal-channel-strong"><spring:message code="endTime" text="endTime"/></span></td><td><joda:format value="${session.endTime}" pattern="MM/dd/yyyy HH:mm z" /></td></tr>
+    <tr class="even">
+    	<td class="label"><span class="uportal-channel-strong"><spring:message code="status" text="Status"/></span></td>
+    	<td>
+    		<c:choose>
+		       <c:when test="${session.endTime.beforeNow}">
+		         <spring:message code="sessionIsClosed" text="sessionIsClosed"/>
+		       </c:when>
+		       <c:otherwise>
+		     	<c:choose>
+		  	   <c:when test="${session.startTimeWithBoundaryTime.beforeNow}">
+		  	      	<a href='${session.launchUrl}' target="_blank"><spring:message code="joinNow" text="joinNow"/></a>
+		  	   </c:when>
+		  	   <c:otherwise>
+		  	    	${session.timeUntilJoin}
+		  	   </c:otherwise>
+		         </c:choose>
+		       </c:otherwise>
+	       </c:choose>
+    	</td>
+    </tr>
     <sec:authorize access="hasRole('ROLE_ADMIN') || hasPermission(#session, 'edit')">
-      <tr><td><spring:message code="guestLink" text="guestLink"/>: </td><td><a href="${session.guestUrl}" target="_blank">${session.guestUrl}</a></td></tr>
+      <tr>
+      	<td class="label">
+      		<span class="uportal-channel-strong">
+      			<spring:message code="moderatorLink" text="moderatorLink"/>
+      		</span>
+      		<br/>
+      		<span class="uportal-channel-table-caption"><spring:message code="moderatorLinkDesc" text="moderatorLinkDesc"/></span>
+     	</td>
+     	<td><a href="${session.guestUrl}" target="_blank">${session.guestUrl}</a></td></tr>
+    </sec:authorize>
+    <sec:authorize access="hasRole('ROLE_ADMIN') || hasPermission(#session, 'edit')">
+      <tr class="even">
+      	<td class="label">
+      		<span class="uportal-channel-strong">
+      			<spring:message code="guestLink" text="guestLink"/>
+      		</span>
+      		<br/>
+      		<span class="uportal-channel-table-caption"><spring:message code="guestLinkDesc" text="guestLinkDesc"/></span>
+      	</td>
+      	<td><a href="${session.guestUrl}" target="_blank">${session.guestUrl}</a></td></tr>
     </sec:authorize>
   </tbody>
+</table>
+<br/>
+<table class="viewSession">
+	<tr>
+		<th colspan="2" style="text-align :left;"><spring:message code="additionalInfo" text="Additional Information"/></th>
+	</tr>
+	<tr>
+		<td class="label">
+			<span class="uportal-channel-strong">
+				<spring:message code="participants" text="participants"/>
+			</span>
+		</td>
+		<td>
+			<ul>
+		      <c:forEach var="user" items="${sessionChairs}">
+		        <li>${user.displayName} ()<spring:message code="moderator" text="moderator"/>)</li>
+		      </c:forEach>
+		      <c:forEach var="user" items="${sessionNonChairs}">
+		        <li>${user.displayName}</li>
+		      </c:forEach>
+		    </ul>
+		    <br/>
+		    <sec:authorize access="hasRole('ROLE_ADMIN') || hasPermission(#session, 'edit')">
+		    	<portlet:renderURL var="addParticipantsUrl" portletMode="EDIT" windowState="MAXIMIZED" >
+				    <portlet:param name="sessionId" value="${session.sessionId}" />
+				    <portlet:param name="action" value="addParticipants" />
+				</portlet:renderURL>
+		    	<a href="${addParticipantsUrl}" class="uportal-button">Invite / Edit Participant(s)</a>
+			</sec:authorize>		
+		</td>
+	</tr>
+	<tr class="even">
+		<td class="label">
+			<span class="uportal-channel-strong">
+				<spring:message code="presentationFiles" text="Presentation Files" />
+			</span>
+			<br/>
+			<span class="uportal-channel-table-caption"><spring:message code="presentationFilesDesc" text="" /></span>
+		</td>
+		<td>
+				<portlet:renderURL var="addPresentationFileUrl" portletMode="EDIT" windowState="MAXIMIZED" >
+				    <portlet:param name="sessionId" value="${session.sessionId}" />
+				    <portlet:param name="action" value="addPresentationFile" />
+				</portlet:renderURL>
+		    	<a href="${addPresentationFileUrl}" class="uportal-button">Upload Presentation File(s)</a>
+		</td>
+	</tr>
+	<tr>
+		<td class="label">
+			<span class="uportal-channel-strong">
+				<spring:message code="mediaFiles" text="Media Files" />
+			</span>
+			<br/>
+			<span class="uportal-channel-table-caption"><spring:message code="mediaFilesDesc" text="" /></span>
+		</td>
+		<td>
+			<portlet:renderURL var="addMediaFileUrl" portletMode="EDIT" windowState="MAXIMIZED" >
+				    <portlet:param name="sessionId" value="${session.sessionId}" />
+				    <portlet:param name="action" value="addMediaFile" />
+				</portlet:renderURL>
+		    	<a href="${addMediaFileUrl}" class="uportal-button">Upload Media File(s)</a>
+		</td>
+	</tr>
+	<tr class="even">
+		<td class="label">
+			<span class="uportal-channel-strong">
+				<spring:message code="recordings" text="Recordings" />
+			</span>
+		</td>
+		<td>
+			<%@ include file="/WEB-INF/jsp/recordingsList.jsp"%>
+		</td>
+	</tr>
 </table>   
-<sec:authorize access="hasRole('ROLE_ADMIN') || hasPermission(#session, 'edit')">
-  <portlet:renderURL var="editSessionUrl" portletMode="EDIT" windowState="MAXIMIZED" >
-    <portlet:param name="sessionId" value="${session.sessionId}" />
-    <portlet:param name="action" value="editSession" />
-  </portlet:renderURL>
-  <div>&nbsp; <a href="${editSessionUrl}" class="uportal-button">Edit Session</a></div><br/>
-</sec:authorize>
-    
-<sec:authorize access="hasRole('ROLE_ADMIN') || hasPermission(#session, 'edit')">
-  <div>
-    <h4><spring:message code="moderators" text="moderators"/></h4>
-    <ul>
-      <c:forEach var="user" items="${sessionChairs}">
-        <li>${user.displayName}</li>
-      </c:forEach>
-    </ul>
-    <h4><spring:message code="participants" text="participants"/></h4>
-    <ul>
-      <c:forEach var="user" items="${sessionNonChairs}">
-        <li>${user.displayName}</li>
-      </c:forEach>
-    </ul>
-  </div>
-  <br/>
-</sec:authorize>    
-
-<c:choose>
-    <c:when test="${empty launchUrl}">
-        <div><b><spring:message code="sessionIsClosed" text="sessionIsClosed"/></b></div><br/>
-    </c:when>
-    <c:otherwise>
-        <div><a href="${launchUrl}" target="_blank"><spring:message code="launchSession" text="launchSession"/></a></div><br/>
-    </c:otherwise>
-</c:choose>
-<hr />
-
-<%@ include file="/WEB-INF/jsp/recordingsList.jsp"%>
-
-<portlet:renderURL var="backUrl" portletMode="VIEW" />
-<a href="${backUrl}" class="uportal-button">Back</a>
-
 </div>

@@ -270,6 +270,7 @@
     		      autoHeight: false,
     		      active: false
     		});
+
     	});
     })(blackboardPortlet.jQuery);
     </rs:compressJs>
