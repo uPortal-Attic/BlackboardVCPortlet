@@ -21,6 +21,7 @@ package org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr;
 import java.util.Set;
 
 import javax.portlet.PortletRequest;
+import javax.portlet.WindowState;
 
 import org.jasig.portlet.blackboardvcportlet.dao.SessionDao;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
@@ -59,6 +60,9 @@ public class ViewSessionController
 	public void setSessionService(SessionService sessionService) {
         this.sessionService = sessionService;
     }
+	
+	@Autowired
+	private ViewSessionListController viewController;
 
 	@Autowired
     public void setConferenceUserService(ConferenceUserService conferenceUserService) {
@@ -72,6 +76,11 @@ public class ViewSessionController
 
     @RenderMapping(params = "action=viewSession")
 	public String viewSession(PortletRequest request, @RequestParam long sessionId, ModelMap model)	{
+    	
+    	if(WindowState.NORMAL.equals(request.getWindowState())) {
+	    	return viewController.view(request, model, null, null);
+	    }
+    	
         final Session session = this.sessionService.getSession(sessionId);
         //TODO what if session is null?
         model.addAttribute("session", session);
@@ -93,6 +102,6 @@ public class ViewSessionController
             model.addAttribute("launchUrl",session.getLaunchUrl());
         }
 
-        return "BlackboardVCPortlet_viewSession";
+        return "viewSession";
 	}
 }

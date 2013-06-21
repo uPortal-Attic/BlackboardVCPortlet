@@ -174,7 +174,7 @@ blackboardPortlet.jQuery(function() {
   var upcomingSessions = 
 	  <json:array var="session" items="${upcomingSessions}" prettyPrint="true" escapeXml="false">
 	    <json:array>
-	    <portlet:renderURL var="viewSessionUrl">
+	    <portlet:renderURL var="viewSessionUrl" windowState="MAXIMIZED">
 	     <portlet:param name="sessionId" value="${session.sessionId}" />
 	     <portlet:param name="action" value="viewSession" />
 	    </portlet:renderURL>
@@ -216,7 +216,7 @@ blackboardPortlet.jQuery(function() {
 	  var completedSessions = 
 		  <json:array var="completedSessions" items="${completedSessions}" prettyPrint="true" escapeXml="false">
 		    <json:array>
-		    <portlet:renderURL var="viewSessionUrl">
+		    <portlet:renderURL var="viewSessionUrl" windowState="MAXIMIZED">
 		     <portlet:param name="sessionId" value="${completedSessions.sessionId}" />
 		     <portlet:param name="action" value="viewSession" />
 		    </portlet:renderURL>

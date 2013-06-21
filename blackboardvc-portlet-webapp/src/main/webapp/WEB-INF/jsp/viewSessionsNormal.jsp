@@ -56,13 +56,9 @@
          </thead>
           <tbody>
           <c:forEach var="session" items="${upcomingSessions}"  begin="0" end="4" varStatus="loopStatus">
-	          <portlet:renderURL var="viewSessionUrl">
+	          <portlet:renderURL var="viewSessionUrl" windowState="MAXIMIZED">
 			     <portlet:param name="sessionId" value="${session.sessionId}" />
 			     <portlet:param name="action" value="viewSession" />
-		      </portlet:renderURL>
-		      <portlet:renderURL var="editSessionUrl" portletMode="EDIT" windowState="MAXIMIZED">
-		     	<portlet:param name="sessionId" value="${session.sessionId}" />
-		     	<portlet:param name="action" value="editSession" />
 		      </portlet:renderURL>
           	  <tr class="${loopStatus.index % 2 == 0 ? 'uportal-channel-table-row-odd' : 'uportal-channel-table-row-even'}">
 				<td><a href='${viewSessionUrl}'>${session.sessionName}</a></td>
