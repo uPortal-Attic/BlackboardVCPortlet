@@ -25,6 +25,7 @@ import javax.portlet.WindowState;
 
 import org.jasig.portlet.blackboardvcportlet.dao.SessionDao;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
+import org.jasig.portlet.blackboardvcportlet.data.Multimedia;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
 import org.jasig.portlet.blackboardvcportlet.security.ConferenceUserService;
@@ -82,25 +83,24 @@ public class ViewSessionController
 	    }
     	
         final Session session = this.sessionService.getSession(sessionId);
-        //TODO what if session is null?
-        model.addAttribute("session", session);
-        
+                
         final Set<ConferenceUser> sessionChairs = this.sessionService.getSessionChairs(session);
         model.addAttribute("sessionChairs", ImmutableSortedSet.copyOf(ConferenceUserDisplayComparator.INSTANCE, sessionChairs));
         
         final Set<ConferenceUser> sessionNonChairs = this.sessionService.getSessionNonChairs(session);
         model.addAttribute("sessionNonChairs", ImmutableSortedSet.copyOf(ConferenceUserDisplayComparator.INSTANCE, sessionNonChairs));
         
+        final Set<Multimedia> sessionMultimedias = this.sessionDao.getSessionMultimedias(session);
+        model.addAttribute("multimedias", ImmutableSortedSet.copyOf(MultimediaDisplayComparator.INSTANCE, sessionMultimedias));
+        
         final Set<SessionRecording> sessionRecordings = this.sessionDao.getSessionRecordings(session);
         model.addAttribute("recordings", ImmutableSortedSet.copyOf(SessionRecordingDisplayComparator.INSTANCE, sessionRecordings));
         
-        //Session hasn't completed yet, show session launch URL
-        //TODO should we check if we are within the "boundary time"?
-        if (session.getEndTime().isAfterNow()) {
-            final ConferenceUser conferenceUser = this.conferenceUserService.getCurrentConferenceUser();
-            sessionService.populateLaunchUrl(conferenceUser, session);
-            model.addAttribute("launchUrl",session.getLaunchUrl());
-        }
+        final ConferenceUser conferenceUser = this.conferenceUserService.getCurrentConferenceUser();
+        sessionService.populateLaunchUrl(conferenceUser, session);
+        
+        
+        model.addAttribute("session", session);
 
         return "viewSession";
 	}

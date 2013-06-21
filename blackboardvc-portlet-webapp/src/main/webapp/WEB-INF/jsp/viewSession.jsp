@@ -77,7 +77,7 @@
       		<br/>
       		<span class="uportal-channel-table-caption"><spring:message code="moderatorLinkDesc" text="moderatorLinkDesc"/></span>
      	</td>
-     	<td><a href="${session.guestUrl}" target="_blank">${session.guestUrl}</a></td></tr>
+     	<td><a href="${session.launchUrl}" target="_blank">${session.launchUrl}</a></td></tr>
     </sec:authorize>
     <sec:authorize access="hasRole('ROLE_ADMIN') || hasPermission(#session, 'edit')">
       <tr class="even">
@@ -106,7 +106,7 @@
 		<td>
 			<ul>
 		      <c:forEach var="user" items="${sessionChairs}">
-		        <li>${user.displayName} ()<spring:message code="moderator" text="moderator"/>)</li>
+		        <li>${user.displayName} (<spring:message code="moderator" text="moderator"/>)</li>
 		      </c:forEach>
 		      <c:forEach var="user" items="${sessionNonChairs}">
 		        <li>${user.displayName}</li>
