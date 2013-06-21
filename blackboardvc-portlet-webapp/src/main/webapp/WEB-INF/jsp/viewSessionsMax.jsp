@@ -89,11 +89,11 @@
       <table width="100%" id="sessionList">
         <thead>
           <tr class="uportal-channel-table-header">
-            <th style="width: 1em;"><input id="${n}selectAllSessions" value="selectAllSessions" name="selectAllSessions" type="checkbox" /></th>
-            <th><spring:message code="sessionName" text="sessionName"/></th>
-            <th><spring:message code="startDateAndTime" text="startDateAndTime"/></th>
-            <th><spring:message code="endDateAndTime" text="endDateAndTime"/></th>
-            <th style="width: 20em;"><spring:message code="status" text="status"/></th>
+            <th class="dt" style="width: 1em;"><input id="${n}selectAllSessions" value="selectAllSessions" name="selectAllSessions" type="checkbox" /></th>
+            <th class="dt" ><spring:message code="sessionName" text="sessionName"/></th>
+            <th class="dt" ><spring:message code="startDateAndTime" text="startDateAndTime"/></th>
+            <th class="dt" ><spring:message code="endDateAndTime" text="endDateAndTime"/></th>
+            <th  class="dt" style="width: 20em;"><spring:message code="status" text="status"/></th>
           </tr>
         </thead>
         <tbody>

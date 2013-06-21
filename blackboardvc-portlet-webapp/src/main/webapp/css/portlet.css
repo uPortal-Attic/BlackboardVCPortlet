@@ -90,7 +90,7 @@ p.uportal-channel-success {padding:1em 1em 1em 3em; border:2px solid; color:#004
 	background: url("../images/sort_desc.png") no-repeat center right;
 }
 
-.blackboardVCRoot table th:HOVER {
+.blackboardVCRoot .dt {
 	cursor: pointer;
 }
 

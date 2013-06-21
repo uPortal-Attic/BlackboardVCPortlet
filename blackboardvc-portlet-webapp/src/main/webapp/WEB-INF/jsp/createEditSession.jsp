@@ -38,10 +38,10 @@
   <form:hidden path="sessionId"/>
   <form:hidden path="newSession" />
   <form:hidden path="needToSendInitialEmail" />
-  <table>
+  <table width="100%">
     <tbody>
       <tr>
-      	<th colspan="2"><spring:message code="enterInfo" text="enterInfo"/></th>
+      	<th colspan="2" style="text-align: left;"><h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-all ui-accordion-icons ui-state-focus"><span class="uportal-channel-strong" style="padding-left:2.4em;"><spring:message code="enterInfo" text="enterInfo"/></span></h3></th>
       </tr>
       <tr>
         <td>
@@ -65,13 +65,18 @@
           <form:errors path="startDate" cssClass="error"/>&nbsp;
           <form:select path="startHour">
               <c:forEach var="i" begin="0" end="23" step="1">
-                  <form:option value="${i}">${i}</form:option>
+              		<form:option value="${i}">${i}</form:option>
               </c:forEach>
           </form:select>
           :
           <form:select path="startMinute">
               <c:forEach var="i" begin="0" end="45" step="15">
-                  <form:option value="${i}">${i}</form:option>
+	              <c:choose>
+	                  <c:when test="${i == 0 }">
+	              			<form:option value="0">00</form:option>
+	              		</c:when>
+	              		<c:otherwise><form:option value="${i}">${i}</form:option></c:otherwise>
+	              </c:choose>
               </c:forEach>
           </form:select>
           &nbsp;<spring:message code="centralTime" text="centralTime"/>
@@ -96,7 +101,12 @@
           :
           <form:select path="endMinute">
             <c:forEach var="i" begin="0" end="45" step="15">
-              <form:option value="${i}">${i}</form:option>
+              		<c:choose>
+	                  <c:when test="${i == 0 }">
+	              			<form:option value="0">00</form:option>
+	              		</c:when>
+	              		<c:otherwise><form:option value="${i}">${i}</form:option></c:otherwise>
+	                </c:choose>
             </c:forEach>
           </form:select>
           &nbsp;<spring:message code="centralTime" text="centralTime"/>
@@ -109,124 +119,129 @@
       </tr>
       <tr><td colspan="2">
       <div id="${n}accordion">
-      <h3><span class="uportal-channel-strong">&nbsp;&nbsp;<spring:message code="additionalSettings" text="additionalSettings" /></span></h3>
-      <table>
-      <tr><td colspan="2"><span class="uportal-channel-table-caption"><spring:message code="additionalSettingDesc" text="additionalSettingDesc"/></span></td></tr>
-      <tr>
-        <td><span class="uportal-channel-strong"><spring:message code="earlySessionEntry" text="earlySessionEntry"/>: </span></td>
-        <td>
-          <form:select path="boundaryTime">
-            <form:option value="15"><spring:message code="boundryTime15Minutes" text="boundryTime15Minutes"/></form:option>
-            <form:option value="30"><spring:message code="boundryTime30Minutes" text="boundryTime30Minutes"/></form:option>
-            <form:option value="45"><spring:message code="boundryTime45Minutes" text="boundryTime45Minutes"/></form:option>
-            <form:option value="60"><spring:message code="boundryTime1Hour" text="boundryTime1Hour"/></form:option>
-            <form:option value="120"><spring:message code="boundryTime2Hours" text="boundryTime2Hours"/></form:option>
-            <form:option value="180"><spring:message code="boundryTime3Hours" text="boundryTime3Hours"/></form:option>
-          </form:select>
-        </td>
-      </tr>
-      <tr>
-        <td></td>
-        <td class="uportal-channel-table-caption"><spring:message code="periodBeforeStartOfSessionUsersCanEnter" text="periodBeforeStartOfSessionUsersCanEnter"/></td>
-      </tr>
-      <sec:authorize var="fullAccess" access="hasRole('ROLE_FULL_ACCESS')" />
-      <c:choose>
-        <c:when test="${fullAccess}">
-          <tr>
-            <td><span class="uportal-channel-strong"><spring:message code="maxSimultaneousTalkers" text="maxSimultaneousTalkers"/>: </span></td>
-            <td>
-              <form:select path="maxTalkers">
-                <c:forEach var="i" begin="1" end="${serverConfiguration.maxAvailableTalkers}" step="1">
-                  <form:option value="${i}">${i}</form:option>
-                </c:forEach>
-              </form:select>
-            </td>
-          </tr>
-          <tr>
-            <td></td>
-            <td class="uportal-channel-table-caption"><spring:message code="maxSimultaneousTalkersToStartSession" text="maxSimultaneousTalkersToStartSession"/></td>
-          </tr>
-          <tr>
-            <td><span class="uportal-channel-strong"><spring:message code="maxCameras" text="maxCameras"/>: </span></td>
-            <td>
-              <form:select path="maxCameras">
-                <c:forEach var="i" begin="1" end="${serverConfiguration.maxAvailableCameras}" step="1">
-                  <form:option value="${i}">${i}</form:option>
-                </c:forEach>
-              </form:select>
-            </td>
-          </tr>
-          <tr>
-            <td>&nbsp;</td>
-            <td class="uportal-channel-table-caption"><spring:message code="maxCamerasToStartSession" text="maxCamerasToStartSession"/></td>
-          </tr>
-          <tr>
-            <td><span class="uportal-channel-strong"><spring:message code="supervised" text="supervised"/>: </span></td>
-            <td><form:checkbox path="mustBeSupervised"/></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td class="uportal-channel-table-caption"><spring:message code="moderatorsMayViewAllPrivateMessagesInSession" text="moderatorsMayViewAllPrivateMessagesInSession"/></td>
-          </tr>
-          <tr>
-            <td><span class="uportal-channel-strong"><spring:message code="allPermissions" text="allPermissions"/>: </span></td>
-            <td><form:checkbox path="permissionsOn"/></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td class="uportal-channel-table-caption"><spring:message code="allParticipantsHaveFullPermissionsToAccessSessionResources" text="allParticipantsHaveFullPermissionsToAccessSessionResources"/></td>
-          </tr>
-          <tr>
-            <td><span class="uportal-channel-strong"><spring:message code="raiseHandOnEntry" text="raiseHandOnEntry"/>: </span></td>
-            <td><form:checkbox path="raiseHandOnEnter"/></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td class="uportal-channel-table-caption"><spring:message code="usersAutomaticallyRaiseHandsOnEntry" text="usersAutomaticallyRaiseHandsOnEntry"/></td>
-          </tr>
-          <tr>
-            <td><span class="uportal-channel-strong"><spring:message code="recordingMode" text="recordingMode"/>: </span></td>
-            <td>
-              <form:select path="recordingMode" items="${recordingModes}" />
-            </td>
-          </tr>
-          <tr>
-            <td></td>
-            <td class="uportal-channel-table-caption"><spring:message code="modeOfRecordingForSession" text="modeOfRecordingForSession"/></td>
-          </tr>
-          <tr>
-            <td><span class="uportal-channel-strong"><spring:message code="hideNamesInRecordings" text="hideNamesInRecordings"/>: </span></td>
-            <td><form:checkbox path="hideParticipantNames"/></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td class="uportal-channel-table-caption"><spring:message code="namesOfSessionParticipantsAreHiddenInRecordings" text="namesOfSessionParticipantsAreHiddenInRecordings"/></td>
-          </tr>
-          <tr>
-            <td><span class="uportal-channel-strong"><spring:message code="allowInSessionInvitations" text="allowInSessionInvitations"/>: </span></td>
-            <td><form:checkbox path="allowInSessionInvites"/></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td class="uportal-channel-table-caption"><spring:message code="moderatorsMaySendInvitationsWhileInSession" text="moderatorsMaySendInvitationsWhileInSession"/></td>
-          </tr>
-          </table>
+	      <h3 id="${n}accordion1"><span class="uportal-channel-strong" style="padding-left:2.4em;"><spring:message code="additionalSettings" text="additionalSettings" /></span>
+	      <br/>
+	      <span class="uportal-channel-table-caption" style="padding-left:3em;"><spring:message code="additionalSettingDesc" text="additionalSettingDesc"/></span>
+	      </h3>
+	      <div style="padding: 2em;">
+	      <table>
+		      <tr>
+		        <td><span class="uportal-channel-strong"><spring:message code="earlySessionEntry" text="earlySessionEntry"/>: </span></td>
+		        <td>
+		          <form:select path="boundaryTime">
+		            <form:option value="15"><spring:message code="boundryTime15Minutes" text="boundryTime15Minutes"/></form:option>
+		            <form:option value="30"><spring:message code="boundryTime30Minutes" text="boundryTime30Minutes"/></form:option>
+		            <form:option value="45"><spring:message code="boundryTime45Minutes" text="boundryTime45Minutes"/></form:option>
+		            <form:option value="60"><spring:message code="boundryTime1Hour" text="boundryTime1Hour"/></form:option>
+		            <form:option value="120"><spring:message code="boundryTime2Hours" text="boundryTime2Hours"/></form:option>
+		            <form:option value="180"><spring:message code="boundryTime3Hours" text="boundryTime3Hours"/></form:option>
+		          </form:select>
+		        </td>
+		      </tr>
+		      <tr>
+		        <td></td>
+		        <td class="uportal-channel-table-caption"><spring:message code="periodBeforeStartOfSessionUsersCanEnter" text="periodBeforeStartOfSessionUsersCanEnter"/></td>
+		      </tr>
+		      <sec:authorize var="fullAccess" access="hasRole('ROLE_FULL_ACCESS')" />
+		      <c:choose>
+		        <c:when test="${fullAccess}">
+		          <tr>
+		            <td><span class="uportal-channel-strong"><spring:message code="maxSimultaneousTalkers" text="maxSimultaneousTalkers"/>: </span></td>
+		            <td>
+		              <form:select path="maxTalkers">
+		                <c:forEach var="i" begin="1" end="${serverConfiguration.maxAvailableTalkers}" step="1">
+		                  <form:option value="${i}">${i}</form:option>
+		                </c:forEach>
+		              </form:select>
+		            </td>
+		          </tr>
+		          <tr>
+		            <td></td>
+		            <td class="uportal-channel-table-caption"><spring:message code="maxSimultaneousTalkersToStartSession" text="maxSimultaneousTalkersToStartSession"/></td>
+		          </tr>
+		          <tr>
+		            <td><span class="uportal-channel-strong"><spring:message code="maxCameras" text="maxCameras"/>: </span></td>
+		            <td>
+		              <form:select path="maxCameras">
+		                <c:forEach var="i" begin="1" end="${serverConfiguration.maxAvailableCameras}" step="1">
+		                  <form:option value="${i}">${i}</form:option>
+		                </c:forEach>
+		              </form:select>
+		            </td>
+		          </tr>
+		          <tr>
+		            <td>&nbsp;</td>
+		            <td class="uportal-channel-table-caption"><spring:message code="maxCamerasToStartSession" text="maxCamerasToStartSession"/></td>
+		          </tr>
+		          <tr>
+		            <td><span class="uportal-channel-strong"><spring:message code="supervised" text="supervised"/>: </span></td>
+		            <td><form:checkbox path="mustBeSupervised"/></td>
+		          </tr>
+		          <tr>
+		            <td></td>
+		            <td class="uportal-channel-table-caption"><spring:message code="moderatorsMayViewAllPrivateMessagesInSession" text="moderatorsMayViewAllPrivateMessagesInSession"/></td>
+		          </tr>
+		          <tr>
+		            <td><span class="uportal-channel-strong"><spring:message code="allPermissions" text="allPermissions"/>: </span></td>
+		            <td><form:checkbox path="permissionsOn"/></td>
+		          </tr>
+		          <tr>
+		            <td></td>
+		            <td class="uportal-channel-table-caption"><spring:message code="allParticipantsHaveFullPermissionsToAccessSessionResources" text="allParticipantsHaveFullPermissionsToAccessSessionResources"/></td>
+		          </tr>
+		          <tr>
+		            <td><span class="uportal-channel-strong"><spring:message code="raiseHandOnEntry" text="raiseHandOnEntry"/>: </span></td>
+		            <td><form:checkbox path="raiseHandOnEnter"/></td>
+		          </tr>
+		          <tr>
+		            <td></td>
+		            <td class="uportal-channel-table-caption"><spring:message code="usersAutomaticallyRaiseHandsOnEntry" text="usersAutomaticallyRaiseHandsOnEntry"/></td>
+		          </tr>
+		          <tr>
+		            <td><span class="uportal-channel-strong"><spring:message code="recordingMode" text="recordingMode"/>: </span></td>
+		            <td>
+		              <form:select path="recordingMode" items="${recordingModes}" />
+		            </td>
+		          </tr>
+		          <tr>
+		            <td></td>
+		            <td class="uportal-channel-table-caption"><spring:message code="modeOfRecordingForSession" text="modeOfRecordingForSession"/></td>
+		          </tr>
+		          <tr>
+		            <td><span class="uportal-channel-strong"><spring:message code="hideNamesInRecordings" text="hideNamesInRecordings"/>: </span></td>
+		            <td><form:checkbox path="hideParticipantNames"/></td>
+		          </tr>
+		          <tr>
+		            <td></td>
+		            <td class="uportal-channel-table-caption"><spring:message code="namesOfSessionParticipantsAreHiddenInRecordings" text="namesOfSessionParticipantsAreHiddenInRecordings"/></td>
+		          </tr>
+		          <tr>
+		            <td><span class="uportal-channel-strong"><spring:message code="allowInSessionInvitations" text="allowInSessionInvitations"/>: </span></td>
+		            <td><form:checkbox path="allowInSessionInvites"/></td>
+		          </tr>
+		          <tr>
+		            <td></td>
+		            <td class="uportal-channel-table-caption"><spring:message code="moderatorsMaySendInvitationsWhileInSession" text="moderatorsMaySendInvitationsWhileInSession"/></td>
+		          </tr>
+		          </c:when>
+		          <c:otherwise>
+			          <form:hidden path="maxTalkers"/>
+			          <form:hidden path="maxCameras"/>
+			          <form:hidden path="mustBeSupervised"/>
+			          <form:hidden path="permissionsOn"/>
+			          <form:hidden path="raiseHandOnEnter"/>
+			          <form:hidden path="recordingMode"/>
+			          <form:hidden path="hideParticipantNames"/>
+			          <form:hidden path="allowInSessionInvites"/>
+			        </c:otherwise>
+			      </c:choose>
+	          </table>
+	          </div>
           </div>
           </td></tr>
-        </c:when>
-        <c:otherwise>
-          <form:hidden path="maxTalkers"/>
-          <form:hidden path="maxCameras"/>
-          <form:hidden path="mustBeSupervised"/>
-          <form:hidden path="permissionsOn"/>
-          <form:hidden path="raiseHandOnEnter"/>
-          <form:hidden path="recordingMode"/>
-          <form:hidden path="hideParticipantNames"/>
-          <form:hidden path="allowInSessionInvites"/>
-        </c:otherwise>
-      </c:choose>
     </tbody>
   </table>
+  
     <table>
         <tbody>
             <tr>
@@ -243,198 +258,6 @@
     </table>
   </spring:nestedPath>
 </form>
-  <br/>
-  <div class="uportal-channel-subtitle">2. <spring:message code="moderators" text="moderators"/></div>
-  <hr>
-  <portlet:actionURL portletMode="EDIT" var="manageModeratorActionUrl" />
-  <form action="${manageModeratorActionUrl}" method="post">
-  	<input type="hidden" name="needToSendInitialEmail" value="${sessionForm.needToSendInitialEmail}" />
-    <table>
-      <thead>
-        <spring:nestedPath path="deleteModeratorsForm">
-        
-        <tr class="uportal-channel-table-header">
-          <th><spring:message code="name" text="name"/></th>
-          <th><spring:message code="emailAddress" text="emailAddress"/></th>
-          <th>
-              <spring:message code="deleteModerators" var="deleteModerators" text="deleteModerators"/>
-              <input type="hidden" name="deleteModeratorSessionId" value="${sessionForm.sessionId}" />
-              <input value="${deleteModerators}" name="action" class="uportal-button" type="submit" />&nbsp;
-              <form:errors path="chairId" cssClass="error"/>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <c:forEach var="user" items="${sessionChairs}" varStatus="loopStatus">
-          <tr class="${loopStatus.index % 2 == 0 ? 'uportal-channel-table-row-odd' : 'uportal-channel-table-row-even'}">
-          <td>${user.displayName}</td>
-          <td>${user.email}</td>
-          <td><input value="${user.userId}" name="chairId" type="checkbox" /></td>
-          </tr>
-        </c:forEach>
-        </spring:nestedPath>
-        <spring:nestedPath path="addModeratorForm">
-        <tr>
-          <td>
-              <input type="hidden" name="sessionId" value="${sessionForm.sessionId}" />
-            <input name="moderatorName" type="text" />&nbsp;<form:errors path="moderatorName" cssClass="error"/>
-          </td>
-          <td>
-            <input name="emailAddress" type="text" />&nbsp;<form:errors path="emailAddress" cssClass="error"/>
-          </td>
-          <td>
-              <spring:message code="addModerator" var="addModerator" text="addModerator"/>
-            <input id="${n}addModeratorSubmit" name="action" value="${addModerator}" class="uportal-button" type="submit"/>
-          </td>
-        </tr>
-        </spring:nestedPath>
-      </tbody>
-    </table>
-  </form>
-
-  <br/>
-  <div class="uportal-channel-subtitle">3. <spring:message code="participants" text="participants"/></div>
-  <hr>
-  <portlet:actionURL portletMode="EDIT" var="manageParticipantActionUrl" />
-  <form action="${manageParticipantActionUrl}" method="post">
-  	<input type="hidden" name="needToSendInitialEmail" value="${sessionForm.needToSendInitialEmail}" />
-    <table>
-      <thead>
-      <spring:nestedPath path="deleteParticipantsForm">
-      <tr class="uportal-channel-table-header">
-          <th><spring:message code="name" text="name"/></th>
-          <th><spring:message code="emailAddress" text="emailAddress"/></th>
-          <th>
-              <input type="hidden" name="deleteParticipantsSessionId" value="${sessionForm.sessionId}" />
-              <spring:message code="deleteParticipants" var="deleteParticipants" text="deleteParticipants"/>
-              <input value="${deleteParticipants}" name="action" class="uportal-button" type="submit" />&nbsp;
-              <form:errors path="nonChairId" cssClass="error"/>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <c:forEach var="user" items="${sessionNonChairs}" varStatus="loopStatus">
-          <tr class="${loopStatus.index % 2 == 0 ? 'uportal-channel-table-row-odd' : 'uportal-channel-table-row-even'}">
-          <td>${user.displayName}</td>
-          <td>${user.email}</td>
-          <td><input value="${user.userId}" name="nonChairId" type="checkbox" /></td>
-          </tr>
-        </c:forEach>
-        </spring:nestedPath>
-        <spring:nestedPath path="addParticipantForm">
-        <tr>
-          <td>
-              <input type="hidden" name="sessionId" value="${sessionForm.sessionId}" />
-              <input name="participantName" type="text" />&nbsp;<form:errors path="participantName" cssClass="error"/>
-          </td>
-          <td>
-            <input name="emailAddress" type="text" />&nbsp;<form:errors path="emailAddress" cssClass="error"/>
-          </td>
-          <td>
-            <spring:message code="addParticipant" var="addParticipant" text="addParticipant"/>
-            <input id="${n}addParticipantSubmit" name="action" value="${addParticipant}" class="uportal-button" type="submit"/>
-          </td>
-        </tr>
-        </spring:nestedPath>
-      </tbody>
-    </table>
-  </form>
-
-  <sec:authorize var="fullAccess" access="hasRole('ROLE_FULL_ACCESS')">
-    <br/>
-    <div class="uportal-channel-subtitle">4. <spring:message code="fileUpload" text="fileUpload"/></div>
-    <hr>
-    <div class="uportal-channel-subtitle">
-      <spring:message code="editscreen.presentationuploadsubtitle" text="Presentation upload" />
-    </div>
-    <portlet:actionURL portletMode="EDIT" var="managePresentationActionUrl" />
-    <form action="${managePresentationActionUrl}" method="post" enctype="multipart/form-data">
-      <input type="hidden" name="sessionId" value="${sessionForm.sessionId}" />
-      <input type="hidden" name="needToSendInitialEmail" value="${sessionForm.needToSendInitialEmail}" />
-      <spring:message var="presentationUploadSubtitle" code="editscreen.presentationuploadsubtitle" text="Presentation upload"/>
-      <table summary="${presentationUploadSubtitle}">
-        <thead>
-          <tr class="uportal-channel-table-header">
-            <th><spring:message code="fileName" text="fileName"/></th>
-            <th style="width: 70px;"></th>
-          </tr>
-        </thead>
-        <tbody>
-          <c:if test="${!empty presentation}">
-            <tr class="uportal-channel-table-row-odd">
-              <td>${presentation.filename}</td>
-              <td>
-                  <spring:message code="deletePresentation" var="deletePresentation" text="deletePresentation"/>
-                  <input value="${deletePresentation}" name="action" class="uportal-button" type="submit">
-              </td>
-            </tr>
-          </c:if>
-          <tr>
-            <td>
-                <input name="presentationUpload" size="40" type="file" accept="${presentationFileTypes}">
-                <c:if test="${!empty presentationUploadError}">
-                    <span class="error">${presentationUploadError}</span>
-                </c:if>
-            </td>
-            <td>
-                <spring:message code="uploadPresentation" var="uploadPresentation" text="uploadPresentation"/>
-                <input value="${uploadPresentation}" name="action" class="uportal-button" type="submit">
-            </td>
-          </tr>
-          <tr>
-            <td colspan="2" class="uportal-channel-table-caption">
-              <spring:message code="editscreen.presentationuploadcaption" text="Select a presentation/plan file to upload. You can only attach one file at a time." />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </form>
-
-    <div class="uportal-channel-subtitle">
-      <spring:message code="editscreen.multimediauploadsubtitle" text="Multimedia upload" />
-    </div>
-    <portlet:actionURL portletMode="EDIT" var="manageMultimediaActionUrl" />
-    <form action="${manageMultimediaActionUrl}" method="post" enctype="multipart/form-data">
-      <input type="hidden" name="sessionId" value="${sessionForm.sessionId}" />
-      <input type="hidden" name="needToSendInitialEmail" value="${sessionForm.needToSendInitialEmail}" />
-      <table summary="Multimedia upload">
-        <thead>
-          <tr class="uportal-channel-table-header">
-            <th><spring:message code="fileName" text="fileName"/></th>
-            <th>
-                <input value="Delete Multimedia Item(s)" name="action" class="uportal-button" type="submit" />
-                <c:if test="${!empty deleteMultimediaError}">
-                    <span class="error">${deleteMultimediaError}</span>
-                </c:if>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <c:forEach items="${sessionMultimedia}" var="multimediaItem" varStatus="loopStatus">
-            <tr class="${loopStatus.index % 2 == 0 ? 'uportal-channel-table-row-odd' : 'uportal-channel-table-row-even'}">
-              <td>${multimediaItem.filename}</td>
-              <td><input type="checkbox" name="deleteMultimedia" value="${multimediaItem.multimediaId}" /></td>
-            </tr>
-          </c:forEach>
-          <tr>
-            <td>
-                <input name="multimediaUpload" size="40" type="file" accept="${multimediaFileTypes}">
-                <c:if test="${!empty multimediaUploadError}">
-                    <span class="error">${multimediaUploadError}</span>
-                </c:if>
-            </td>
-            <td>
-                <spring:message code="uploadMultimedia" var="uploadMultimedia" text="uploadMultimedia"/>
-                <input value="${uploadMultimedia}" name="action" class="uportal-button" type="submit"></td>
-          </tr>
-          <tr>
-            <td colspan="2" class="uportal-channel-table-caption"><spring:message code="selectOtherMultimediaFilesToUpload" text="selectOtherMultimediaFilesToUpload"/></td>
-          </tr>
-        </tbody>
-      </table>
-    </form>
-  </sec:authorize>
-
 <script type="text/javascript">
     <rs:compressJs>
     (function($) {
@@ -442,8 +265,11 @@
     		$("#${n}startdatepicker").datepicker();
     		$("#${n}enddatepicker").datepicker();
     		$( "#${n}accordion" ).accordion({
-    		      collapsible: true
-    		    });
+    		      collapsible: true,
+    		      heightStyle: "content",
+    		      autoHeight: false,
+    		      active: false
+    		});
     	});
     })(blackboardPortlet.jQuery);
     </rs:compressJs>
