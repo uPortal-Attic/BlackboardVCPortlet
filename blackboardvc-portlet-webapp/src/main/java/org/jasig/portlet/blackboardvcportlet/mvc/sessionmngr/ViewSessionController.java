@@ -76,7 +76,7 @@ public class ViewSessionController
     }
 
     @RenderMapping(params = "action=viewSession")
-	public String viewSession(PortletRequest request, @RequestParam long sessionId, ModelMap model)	{
+	public String viewSession(PortletRequest request, @RequestParam long sessionId, ModelMap model, @RequestParam(required = false) String presentationUploadError)	{
     	
     	if(WindowState.NORMAL.equals(request.getWindowState())) {
 	    	return viewController.view(request, model, null, null);
@@ -101,6 +101,11 @@ public class ViewSessionController
         
         
         model.addAttribute("session", session);
+        
+        if (presentationUploadError != null)
+		{
+			model.addAttribute("presentationUploadError", presentationUploadError);
+		}
 
         return "viewSession";
 	}

@@ -349,9 +349,9 @@ public class SessionCreateEditController
 			this.sessionService.addPresentation(sessionId, presentationUpload);
 		}
 
-        response.setPortletMode(PortletMode.EDIT);
+        response.setPortletMode(PortletMode.VIEW);
         response.setRenderParameter("sessionId", Long.toString(sessionId));
-		response.setRenderParameter("action", "editSession");
+		response.setRenderParameter("action", "viewSession");
 		response.setRenderParameter("needToSendInitialEmail", Boolean.toString(needToSendInitialEmail));
 	}
 

@@ -125,17 +125,28 @@
 	<tr class="even">
 		<td class="label">
 			<span class="uportal-channel-strong">
-				<spring:message code="presentationFiles" text="Presentation Files" />
+				<spring:message code="presentationFile" text="Presentation File" />
 			</span>
 			<br/>
-			<span class="uportal-channel-table-caption"><spring:message code="presentationFilesDesc" text="" /></span>
+			<span class="uportal-channel-table-caption"><spring:message code="presentationFileDesc" text="" /></span>
 		</td>
 		<td>
-				<portlet:renderURL var="addPresentationFileUrl" portletMode="EDIT" windowState="MAXIMIZED" >
-				    <portlet:param name="sessionId" value="${session.sessionId}" />
-				    <portlet:param name="action" value="addPresentationFile" />
-				</portlet:renderURL>
-		    	<a href="${addPresentationFileUrl}" class="uportal-button">Upload Presentation File(s)</a>
+			<portlet:actionURL portletMode="EDIT" var="managePresentationActionUrl" />
+		    <form action="${managePresentationActionUrl}" method="post" enctype="multipart/form-data">
+		      <input type="hidden" name="sessionId" value="${session.sessionId}" />
+		      <input type="hidden" name="needToSendInitialEmail" value="false" />
+			
+			  <c:if test="${!empty session.presentation }">
+				  ${session.presentation.filename }
+			  </c:if>
+			  <br/>
+			  <input name="presentationUpload" size="40" type="file" accept="${presentationFileTypes}">
+              <c:if test="${!empty presentationUploadError}">
+                  <span class="error">${presentationUploadError}</span>
+              </c:if>
+              <spring:message code="uploadPresentation" var="uploadPresentation" text="uploadPresentation"/>
+           	  <input value="${uploadPresentation}" name="action" class="uportal-button" type="submit">
+           	</form>
 		</td>
 	</tr>
 	<tr>
@@ -148,10 +159,10 @@
 		</td>
 		<td>
 			<portlet:renderURL var="addMediaFileUrl" portletMode="EDIT" windowState="MAXIMIZED" >
-				    <portlet:param name="sessionId" value="${session.sessionId}" />
-				    <portlet:param name="action" value="addMediaFile" />
-				</portlet:renderURL>
-		    	<a href="${addMediaFileUrl}" class="uportal-button">Upload Media File(s)</a>
+			    <portlet:param name="sessionId" value="${session.sessionId}" />
+			    <portlet:param name="action" value="addMediaFile" />
+			</portlet:renderURL>
+	    	<a href="${addMediaFileUrl}" class="uportal-button">Upload Media File(s)</a>
 		</td>
 	</tr>
 	<tr class="even">
