@@ -136,9 +136,14 @@
 		      <input type="hidden" name="sessionId" value="${session.sessionId}" />
 		      <input type="hidden" name="needToSendInitialEmail" value="false" />
 			
-			  <c:if test="${!empty session.presentation }">
+			  <c:choose>
+			  <c:when test="${!empty session.presentation }">
 				  ${session.presentation.filename }
-			  </c:if>
+			  </c:when>
+			  <c:otherwise>
+			  	No Presentation Uploaded
+			  </c:otherwise>
+			  </c:choose>
 			  <br/>
 			  <input name="presentationUpload" size="40" type="file" accept="${presentationFileTypes}">
               <c:if test="${!empty presentationUploadError}">
@@ -158,6 +163,19 @@
 			<span class="uportal-channel-table-caption"><spring:message code="mediaFilesDesc" text="" /></span>
 		</td>
 		<td>
+			<c:choose>
+				<c:when test="${!empty multimedias }">
+					<ul>
+						<c:forEach items="${multimedias}" var="multimediaItem" varStatus="loopStatus">
+				            <li>${multimediaItem.filename}</li>
+				        </c:forEach>
+			        </ul>
+	        	</c:when>
+	        	<c:otherwise>
+	        		No Media files Uploaded
+	        		<br/>
+	        	</c:otherwise>
+        	</c:choose>
 			<portlet:renderURL var="addMediaFileUrl" portletMode="EDIT" windowState="MAXIMIZED" >
 			    <portlet:param name="sessionId" value="${session.sessionId}" />
 			    <portlet:param name="action" value="addMediaFile" />
@@ -172,7 +190,18 @@
 			</span>
 		</td>
 		<td>
-			<%@ include file="/WEB-INF/jsp/recordingsList.jsp"%>
+			<c:choose>
+				<c:when test="${!empty recordings }">
+			<ul>
+				<c:forEach items="${recordings }" var="recording">
+					<li><a href="${recording.recordingUrl}" target="_blank">${recording.roomName}</a></li>
+				</c:forEach>
+			</ul>
+			</c:when>
+			<c:otherwise>
+				No Recordings available
+			</c:otherwise>
+			</c:choose>
 		</td>
 	</tr>
 </table>   
