@@ -462,8 +462,6 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
             //Presentation doesn't exist but we still need to delete the association no our side.
         }
         this.presentationDao.deletePresentation(presentation);
-        
-        this.sessionDao.removePresentationFromSession(session);
     }
 
     private Set<Long> getBlackboardMultimediaIds(final Session session) {
