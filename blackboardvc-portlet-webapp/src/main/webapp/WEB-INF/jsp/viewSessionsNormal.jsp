@@ -32,6 +32,11 @@
         <td align="right">
 	    	<a href="${createSessionUrl}" id="create-user" class="uportal-button"><spring:message code="scheduleWebConferencingSession" text="scheduleWebConferencingSession"/></a>
         </td>
+        <td align="right" width="2em" colspan="1">
+        <c:if test="${!empty prefs['helpUrl'][0]}">
+        	<a href="${prefs['helpUrl'][0]}" target="_blank" class="uportal-button"><spring:message code="help" text="help"/></a>
+        </c:if>
+        </td>
       </tr>
     </tbody>
 </table>
