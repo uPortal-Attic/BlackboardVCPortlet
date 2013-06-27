@@ -18,112 +18,193 @@
  */
 package org.jasig.portlet.blackboardvcportlet.service.impl;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.regex.Pattern;
 
+import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
+import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 
-import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
+import org.apache.commons.lang.StringUtils;
+import org.jasig.portlet.blackboardvcportlet.data.BasicUser;
+import org.jasig.portlet.blackboardvcportlet.data.BasicUserImpl;
 import org.jasig.portlet.blackboardvcportlet.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.ldap.core.AttributesMapper;
-import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.ldap.core.LdapOperations;
 import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
+import org.springframework.ldap.filter.LikeFilter;
 import org.springframework.ldap.filter.OrFilter;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 
 /**
  * Service Class for retrieving LDAP user lookups
  * @author Richard Good
  */
 
-public class LdapUserServiceImpl implements UserService
-{
-	protected Logger logger = LoggerFactory.getLogger(getClass());
+public class LdapUserServiceImpl implements UserService {
+    private static final Pattern NAME_SPLIT = Pattern.compile("\\s+");
+    
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-	private LdapTemplate ldapTemplate;
-
-	@Autowired
-	public void setLdapTemplate(LdapTemplate ldapTemplate)
-	{
-		this.ldapTemplate = ldapTemplate;
-	}
-
-    public class PersonAttributeMapper implements AttributesMapper{
-
-        /**
-         * TODO
-         * 
-         * Maps the basic user attributes 
-         * @param attributes
-         * @return
-         * @throws NamingException 
-         */
-        @Override
-        public Object mapFromAttributes(Attributes attributes) throws NamingException {
-            ConferenceUser user = null;//new BlackboardUser();
-            
-            // Users may not have an email address
-            if (attributes.get("mail")!=null)
-            {
-                String email = (String)attributes.get("mail").get();
-                if (email!=null)
-                {
-                    logger.debug("Setting email:"+email);
-//                    user.setEmail(email);
-                }
-            
-            }
-                    
-            String uid = (String)attributes.get("uid").get();
-            if (uid!=null)
-            {
-                logger.debug("Setting uid:"+uid);
-//                user.setUid(uid);
-            }
-            
-            String cn = (String)attributes.get("cn").get();
-            if (cn!=null)
-            {
-                logger.debug("Setting cn:"+cn);
-                user.setDisplayName(cn);
-            }
-            
-            return user;
+    private final BasicUserAttributeMapper basicUserAttributeMapper = new BasicUserAttributeMapper();
+    private LdapOperations ldapOperations;
+    private String uniqueIdAttributeName = "uid";
+    private String displayNameAttributeName = "cn";
+    private String firstNameAttributeName = "givenName";
+    private String lastNameAttributeName = "sn";
+    private String mailAttributeName = "mail";
+    
+    public void setUniqueIdAttributeName(String uniqueIdAttributeName) {
+        this.uniqueIdAttributeName = uniqueIdAttributeName;
     }
 
-}
+    public void setDisplayNameAttributeName(String displayNameAttributeName) {
+        this.displayNameAttributeName = displayNameAttributeName;
+    }
+
+    public void setFirstNameAttributeName(String firstNameAttributeName) {
+        this.firstNameAttributeName = firstNameAttributeName;
+    }
+
+    public void setLastNameAttributeName(String lastNameAttributeName) {
+        this.lastNameAttributeName = lastNameAttributeName;
+    }
+
+    public void setMailAttributeName(String mailAttributeName) {
+        this.mailAttributeName = mailAttributeName;
+    }
+
+    @Autowired
+    public void setLdapOperations(LdapOperations ldapOperations) {
+        this.ldapOperations = ldapOperations;
+    }
     
-    /**
-     * Gets a User from a passed in searchTerm. Checks for match on cn or uid
-     * @param searchTerm
-     * @return User
-     */
-    public ConferenceUser getUserDetails(String searchTerm)
-    {       
-        logger.debug("getUserDetails called");
-        AndFilter andFilter = new AndFilter();
-        andFilter.and(new EqualsFilter("objectclass","person"));
-        OrFilter orFilter = new OrFilter();
-        orFilter.or(new EqualsFilter("uid",searchTerm));
-        orFilter.or(new EqualsFilter("cn",searchTerm));
+    @Override
+    public BasicUser findUser(String uniqueId) {
+        final AndFilter andFilter = createBaseFilter();
+        andFilter.and(new EqualsFilter(uniqueIdAttributeName, uniqueId));
+        
+        final String searchFilter = andFilter.encode();
+        @SuppressWarnings("unchecked")
+        final List<BasicUser> results = ldapOperations.search("", searchFilter, basicUserAttributeMapper);
+        return DataAccessUtils.uniqueResult(results);
+    }
+
+    @Override
+    public Set<BasicUser> searchForUserByName(String name) {
+        final List<String> nameParts = getNameParts(name);
+        
+        //Nothing useful to search on return an empty set
+        if (nameParts.isEmpty()) {
+            return Collections.emptySet();
+        }
+        
+        final AndFilter andFilter = createBaseFilter();
+
+        final OrFilter orFilter = new OrFilter();
+        
+        orFilter.or(new LikeFilter(firstNameAttributeName, nameParts.get(0) + "*"));
+        orFilter.or(new LikeFilter(lastNameAttributeName, nameParts.get(nameParts.size() - 1) + "*"));
+        final String displayNameSearch = NAME_SPLIT.matcher(name.trim()).replaceAll("*") + "*";
+        orFilter.or(new LikeFilter(displayNameAttributeName, displayNameSearch));
+        
         andFilter.and(orFilter);
-        logger.debug("Set up the filter for searchTerm:"+searchTerm);
-        List<ConferenceUser> result;
-        result = ldapTemplate.search("",andFilter.encode(),new PersonAttributeMapper());
-        logger.debug("gotten a result");
-        if (result.size()>0)
-        {
-            logger.debug("returning first result");
-            return result.get(0);
+        
+        final String searchFilter = andFilter.encode();
+        @SuppressWarnings("unchecked")
+        final List<BasicUser> results = ldapOperations.search("", searchFilter, basicUserAttributeMapper);
+        
+        return Collections.unmodifiableSet(new LinkedHashSet<BasicUser>(results));
+    }
+
+    @Override
+    public Set<BasicUser> searchForUserByEmail(String email) {
+        email = StringUtils.trimToNull(email);
+        if (email == null) {
+            return Collections.emptySet();
         }
-        else 
-        {
-            logger.debug("no-one found, returning null");
-            return null;
+        
+        final AndFilter andFilter = createBaseFilter();
+        andFilter.and(new LikeFilter(mailAttributeName, email + "*"));
+        
+        final String searchFilter = andFilter.encode();
+        @SuppressWarnings("unchecked")
+        final List<BasicUser> results = ldapOperations.search("", searchFilter, basicUserAttributeMapper);
+        
+        return Collections.unmodifiableSet(new LinkedHashSet<BasicUser>(results));
+    }
+
+    protected AndFilter createBaseFilter() {
+        final AndFilter andFilter = new AndFilter();
+        andFilter.and(new EqualsFilter("objectclass", "person"));
+        return andFilter;
+    }
+
+    protected List<String> getNameParts(String name) {
+        final String[] nameParts = NAME_SPLIT.split(name);
+        final List<String> usefulNameParts = new ArrayList<String>(nameParts.length);
+        for (String namePart : nameParts) {
+            namePart = StringUtils.trimToNull(namePart);
+            if (namePart != null) {
+                usefulNameParts.add(namePart);
+            }
         }
-       
+        return usefulNameParts;
+    }
+    
+    private class BasicUserAttributeMapper implements AttributesMapper {
+        @Override
+        public Object mapFromAttributes(Attributes attributes) throws NamingException {
+            final String uniqueId = getAttribute(uniqueIdAttributeName, attributes);
+            if (uniqueId == null) {
+                throw new IncorrectResultSizeDataAccessException("'" + uniqueIdAttributeName + "' is a required attribute", 1, 0);
+            }
+            
+            String primaryEmail = null;
+            final Builder<String> additionalEmailsBuilder = ImmutableSet.builder();
+            
+            final Attribute emailAddressAttr = attributes.get(mailAttributeName);
+            for (final NamingEnumeration<?> allEmailsEnum = emailAddressAttr.getAll(); allEmailsEnum.hasMore(); ) {
+                final Object email = allEmailsEnum.next();
+                if (email == null) {
+                    continue;
+                }
+                
+                final String emailStr = email.toString();
+                if (primaryEmail == null) {
+                    primaryEmail = emailStr;
+                }
+                else {
+                    additionalEmailsBuilder.add(emailStr);
+                }
+            }
+            
+            final String displayName = getAttribute(displayNameAttributeName, attributes);
+            
+            return new BasicUserImpl(uniqueId, primaryEmail, displayName, additionalEmailsBuilder.build());
+        }
+
+        private String getAttribute(String attributeName, Attributes attributes) throws NamingException {
+            final Attribute attrValue = attributes.get(attributeName);
+            if (attrValue == null) {
+                return null;
+            }
+            
+            final Object value = attrValue.get();
+            return value.toString();
+        }
     }
 }
