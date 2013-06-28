@@ -116,11 +116,21 @@ public class LdapUserServiceImpl implements UserService {
 
         final OrFilter orFilter = new OrFilter();
         
-        orFilter.or(new LikeFilter(firstNameAttributeName, nameParts.get(0) + "*"));
-        orFilter.or(new LikeFilter(lastNameAttributeName, nameParts.get(nameParts.size() - 1) + "*"));
-        final String displayNameSearch = NAME_SPLIT.matcher(name.trim()).replaceAll("*") + "*";
-        orFilter.or(new LikeFilter(displayNameAttributeName, displayNameSearch));
-        
+        final String namePartZero = nameParts.get(0);
+        if (nameParts.size() == 1) {
+            orFilter.or(new LikeFilter(firstNameAttributeName, namePartZero + "*"));
+            orFilter.or(new LikeFilter(lastNameAttributeName, namePartZero + "*"));
+            orFilter.or(new LikeFilter(displayNameAttributeName, namePartZero + "*"));
+        }
+        else {
+            final AndFilter firstLastFilter = new AndFilter();
+            firstLastFilter.and(new LikeFilter(firstNameAttributeName, namePartZero + "*"));
+            firstLastFilter.and(new LikeFilter(lastNameAttributeName, nameParts.get(nameParts.size() - 1) + "*"));
+            orFilter.or(firstLastFilter);
+            
+            final String displayNameSearch = NAME_SPLIT.matcher(name.trim()).replaceAll("*") + "*";
+            orFilter.or(new LikeFilter(displayNameAttributeName, displayNameSearch));
+        }
         andFilter.and(orFilter);
         
         final String searchFilter = andFilter.encode();
@@ -177,18 +187,20 @@ public class LdapUserServiceImpl implements UserService {
             final Builder<String> additionalEmailsBuilder = ImmutableSet.builder();
             
             final Attribute emailAddressAttr = attributes.get(mailAttributeName);
-            for (final NamingEnumeration<?> allEmailsEnum = emailAddressAttr.getAll(); allEmailsEnum.hasMore(); ) {
-                final Object email = allEmailsEnum.next();
-                if (email == null) {
-                    continue;
-                }
-                
-                final String emailStr = email.toString();
-                if (primaryEmail == null) {
-                    primaryEmail = emailStr;
-                }
-                else {
-                    additionalEmailsBuilder.add(emailStr);
+            if (emailAddressAttr != null) {
+                for (final NamingEnumeration<?> allEmailsEnum = emailAddressAttr.getAll(); allEmailsEnum.hasMore(); ) {
+                    final Object email = allEmailsEnum.next();
+                    if (email == null) {
+                        continue;
+                    }
+                    
+                    final String emailStr = email.toString();
+                    if (primaryEmail == null) {
+                        primaryEmail = emailStr;
+                    }
+                    else {
+                        additionalEmailsBuilder.add(emailStr);
+                    }
                 }
             }
             
