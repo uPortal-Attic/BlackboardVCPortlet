@@ -45,7 +45,7 @@
         </c:if>
         </td>
       </tr>
-      <tr>
+      <tr style="display: none;">
       	<portlet:actionURL portletMode="VIEW" var="filterSessionsUrl">
 		  <portlet:param name="action" value="filterSessions" />
 		</portlet:actionURL>
