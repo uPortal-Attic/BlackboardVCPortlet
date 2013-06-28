@@ -77,7 +77,7 @@ public class SessionForm implements Serializable {
 	
 	public SessionForm(ServerConfiguration serverConfiguration) {
         this.newSession = true;
-        this.needToSendInitialEmail = false;
+        this.needToSendInitialEmail = true;
         
         final DateTime startTime = DateTime.now().plusDays(1).hourOfDay().roundFloorCopy();
         this.setStartTime(startTime);

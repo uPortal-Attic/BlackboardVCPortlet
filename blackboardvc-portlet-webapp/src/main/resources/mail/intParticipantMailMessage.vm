@@ -1,7 +1,7 @@
 ${sessionUpdateText}
 ${displayName}:
 
-You are invited to attend the following Blackboard Collaborate session:
+You have been invited to attend the following BlackBoard Collaborate web conferencing session:
 
 Name: ${sessionName}
 Type: ${sessionType}

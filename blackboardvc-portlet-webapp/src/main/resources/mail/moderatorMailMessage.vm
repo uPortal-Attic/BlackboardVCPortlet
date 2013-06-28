@@ -1,7 +1,7 @@
 ${sessionUpdateText}
 ${displayName}:
 
-You have scheduled the following Blackboard Collaborate session:
+You have scheduled the following BlackBoard Collaborate web conferencing session:
 
 Name: ${sessionName}
 Type: ${sessionType}

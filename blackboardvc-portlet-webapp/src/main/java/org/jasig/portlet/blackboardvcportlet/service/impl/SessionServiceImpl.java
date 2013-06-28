@@ -265,8 +265,9 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
         if (sessionForm.isNewSession()) {
             final BlackboardSessionResponse sessionResponse = sessionWSDao.createSession(user, sessionForm);
             final String guestUrl = sessionWSDao.buildGuestSessionUrl(sessionResponse.getSessionId());
-        	
+            
             session = sessionDao.createSession(sessionResponse, guestUrl);
+            mailService.buildAndSendSessionEmails(session, false, true);
         }
         else {
             session = sessionDao.getSession(sessionForm.getSessionId());
@@ -275,7 +276,7 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
             boolean isTimeChange = !(session.getStartTime().getMillis() == sessionResponse.getStartTime())
             		|| !(session.getEndTime().getMillis() == sessionResponse.getEndTime());
             sessionDao.updateSession(sessionResponse);
-            if(isTimeChange || sessionForm.isNeedToSendInitialEmail()) {
+            if(isTimeChange) {
             	mailService.buildAndSendSessionEmails(session, true, sessionForm.isNeedToSendInitialEmail());
             }
         }

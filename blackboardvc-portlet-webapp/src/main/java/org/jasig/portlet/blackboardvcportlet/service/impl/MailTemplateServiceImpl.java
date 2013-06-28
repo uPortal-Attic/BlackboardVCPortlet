@@ -223,6 +223,7 @@ public class MailTemplateServiceImpl implements BeanFactoryAware, MailTemplateSe
 		
 		MailTask mt = new MailTask(emailList,substitutions,MailMessages.MODERATOR);
 		mt.setMeetingInvite(buildIcsFile(session, moderator));
+		mt.setSubject(moderatorSubject + ": " + session.getSessionName());
 		return mt;
 	}
 		
@@ -248,6 +249,7 @@ public class MailTemplateServiceImpl implements BeanFactoryAware, MailTemplateSe
 		
 		MailTask mt = new MailTask(emailList,substitutions,MailMessages.EXTERNAL_PARTICIPANT);
 		mt.setMeetingInvite(buildIcsFile(session, participant));
+		mt.setSubject(internalParticipantSubject + ": " + session.getSessionName());
 		return mt;
 	}
 	
@@ -281,6 +283,7 @@ public class MailTemplateServiceImpl implements BeanFactoryAware, MailTemplateSe
 		
 		MailTask mt = new MailTask(emailList,substitutions,MailMessages.SESSION_DELETION);
 		mt.setMeetingInvite(buildIcsFile(session, user, true));
+		mt.setSubject(sessionDeletionSubject + ": " + session.getSessionName());
 		return mt;
 	}
 	
