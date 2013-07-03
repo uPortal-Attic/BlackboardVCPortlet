@@ -116,3 +116,51 @@ p.uportal-channel-success {padding:1em 1em 1em 3em; border:2px solid; color:#004
 	vertical-align: top;
 	text-align: left;
 }
+
+.ui-tooltip, .arrow:after {
+    background: white;
+    border: 2px solid grey;
+  }
+  .ui-tooltip {
+    padding: 1em 2em;
+    color: black;
+    border-radius: 2em;
+    font: bold;
+    text-transform: uppercase;
+    box-shadow: 0 0 .5em white;
+    width: 20em;
+  }
+  .arrow {
+    width: 70px;
+    height: 16px;
+    overflow: hidden;
+    position: absolute;
+    left: 50%;
+    margin-left: -35px;
+    bottom: -16px;
+  }
+  .arrow.top {
+    top: -16px;
+    bottom: auto;
+  }
+  .arrow.left {
+    left: 20%;
+  }
+  .arrow:after {
+    content: "";
+    position: absolute;
+    left: 20px;
+    top: -20px;
+    width: 25px;
+    height: 25px;
+    box-shadow: 6px 5px 9px -9px black;
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    tranform: rotate(45deg);
+  }
+  .arrow.top:after {
+    bottom: -20px;
+    top: auto;
+  }

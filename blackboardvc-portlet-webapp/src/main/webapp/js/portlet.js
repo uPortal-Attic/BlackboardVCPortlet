@@ -29,3 +29,26 @@ if (!blackboardPortlet.jQuery) {
 else {
     jQuery.noConflict(true);
 }
+
+(function($, dl) {
+
+dl.showTooltip = function (selector) {
+	$(selector).tooltip({
+      position: {
+        my: "center bottom-20",
+        at: "center top",
+        using: function( position, feedback ) {
+          $( this ).css( position );
+          $( "<div>" )
+            .addClass( "arrow" )
+            .addClass( feedback.vertical )
+            .addClass( feedback.horizontal )
+            .appendTo( this );
+        }
+      },
+	  content: function () {
+          return $(this).prop('title');
+      }
+    });
+}
+})(blackboardPortlet.jQuery, blackboardPortlet);

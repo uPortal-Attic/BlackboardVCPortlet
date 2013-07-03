@@ -49,7 +49,8 @@
     <tr class="even"><td  class="label" ><span class="uportal-channel-strong"><spring:message code="startTime" text="startTime"/></span></td><td><joda:format value="${session.startTime}" pattern="MM/dd/yyyy HH:mm z" /></td></tr>
     <tr><td  class="label"><span class="uportal-channel-strong"><spring:message code="endTime" text="endTime"/></span></td><td><joda:format value="${session.endTime}" pattern="MM/dd/yyyy HH:mm z" /></td></tr>
     <tr class="even">
-    	<td class="label"><span class="uportal-channel-strong"><spring:message code="status" text="Status"/></span></td>
+    	<spring:message code="statusText" text="statusText" var="statusText" htmlEscape="false" />
+    	<td class="label"><span class="uportal-channel-strong"><spring:message code="status" text="Status"/></span>&nbsp;<a href="#" title="${ statusText}" class="${n}statusLink"><img src='<c:url value="/images/questionmark.jpg"/>' alt="?"/></a></td>
     	<td>
     		<c:choose>
 		       <c:when test="${session.endTime.beforeNow}">
@@ -205,4 +206,22 @@
 		</td>
 	</tr>
 </table>   
+
+<script type="text/javascript">
+
+(function($) 
+		{
+			blackboardPortlet.jQuery(function($) 
+					{
+  					$(document).ready(function() 
+  							{
+  								blackboardPortlet.showTooltip('.${n}statusLink');
+  							});
+  					
+					});
+			
+		})(blackboardPortlet.jQuery);
+
+</script>
+
 </div>

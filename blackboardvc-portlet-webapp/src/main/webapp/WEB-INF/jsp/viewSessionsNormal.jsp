@@ -54,8 +54,8 @@
             <th><spring:message code="sessionName" text="sessionName"/></th>
             <th><spring:message code="startDateAndTime" text="startDateAndTime"/></th>
             <th><spring:message code="endDateAndTime" text="endDateAndTime"/></th>
-            <spring:message code="statusText" text="statusText" var="statusText" htmlEscape="true" />
-            <th id="${n}statusToolTip"><spring:message code="status" text="status"/>&nbsp;<a href="#" title="${ statusText}"><img alt="?" src="/images/questionmark.jpg"></a></th>
+            <spring:message code="statusText" text="statusText" var="statusText" htmlEscape="false" />
+            <th id="${n}statusToolTip"><spring:message code="status" text="status"/>&nbsp;<a href="#" title="${ statusText}" class="${n}statusLink"><img src='<c:url value="/images/questionmark.jpg"/>' alt="?"/></a></th>
 
           </tr>
          </thead>
@@ -122,7 +122,7 @@
             <th><spring:message code="startDateAndTime" text="startDateAndTime"/></th>
             <th><spring:message code="endDateAndTime" text="endDateAndTime"/></th>
             <spring:message code="statusText" text="statusText" var="statusText" htmlEscape="true" />
-            <th id="${n}statusToolTip"><spring:message code="status" text="status"/>&nbsp;<a href="#" title="${ statusText}"><img alt="?" src="../images/questionmark.jpg"></a></th>
+            <th id="${n}statusToolTip"><spring:message code="status" text="status"/>&nbsp;<a href="#" title="${ statusText}" class="${n}statusLink"><img src='<c:url value="/images/questionmark.jpg"/>' alt="?"/></a></th>
           </tr>
         </thead>
         <tbody>
@@ -193,6 +193,8 @@
   							{
   								var tabs = $("#${n}tabs");
   								tabs.tabs();
+  								
+  								blackboardPortlet.showTooltip('.${n}statusLink');
   							});
   					
 					});
