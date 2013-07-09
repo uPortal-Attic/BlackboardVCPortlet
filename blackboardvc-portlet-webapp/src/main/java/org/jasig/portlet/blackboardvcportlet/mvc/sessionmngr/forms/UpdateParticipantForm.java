@@ -4,12 +4,11 @@
  */
 package org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr.forms;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.Arrays;
 
-public class DeleteParticipantsForm implements Serializable
+import javax.validation.constraints.NotNull;
+
+public class UpdateParticipantForm implements Serializable
 {
 	private static final long serialVersionUID = 1L;
 
@@ -17,8 +16,10 @@ public class DeleteParticipantsForm implements Serializable
     private long sessionId;
 
     @NotNull
-    @Size(min = 1)
-    private long[] id;
+    private long id;
+
+    @NotNull
+    private boolean moderator;
 
     public long getSessionId() {
         return sessionId;
@@ -28,17 +29,25 @@ public class DeleteParticipantsForm implements Serializable
         this.sessionId = sessionId;
     }
 
-    public long[] getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(long[] id) {
+    public void setId(long id) {
         this.id = id;
+    }
+
+    public boolean isModerator() {
+        return moderator;
+    }
+
+    public void setModerator(boolean moderator) {
+        this.moderator = moderator;
     }
 
     @Override
     public String toString() {
-        return "DeleteParticipantsForm [sessionId=" + sessionId + ", id=" + Arrays.toString(id) + "]";
+        return "UpdateParticipantForm [sessionId=" + sessionId + ", id=" + id + ", moderator=" + moderator + "]";
     }
 }
 

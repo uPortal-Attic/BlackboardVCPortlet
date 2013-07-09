@@ -15,67 +15,52 @@ public class AddParticipantForm implements Serializable
 
 	@NotNull
 	private long sessionId;
-	private String participantName;
+	
+    @Length(min = 1)
+    private String name;
 
 	@Length(min = 1)
 	@Email
-	private String emailAddress;
+	private String email;
 	
-	private boolean needToSendInitialEmail;
+	@NotNull
+    private boolean moderator;
 
-	/**
-	 * Constructor
-	 */
-	public AddParticipantForm()
-	{
-	}
-	
-	public boolean isNeedToSendInitialEmail() {
-		return needToSendInitialEmail;
-	}
+    public long getSessionId() {
+        return sessionId;
+    }
 
-	public void setNeedToSendInitialEmail(boolean needToSendInitialEmail) {
-		this.needToSendInitialEmail = needToSendInitialEmail;
-	}
+    public void setSessionId(long sessionId) {
+        this.sessionId = sessionId;
+    }
 
-	public String getParticipantName()
-	{
-		return participantName;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setParticipantName(String participantName)
-	{
-		this.participantName = participantName;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getEmailAddress()
-	{
-		return emailAddress;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public void setEmailAddress(String emailAddress)
-	{
-		this.emailAddress = emailAddress;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public long getSessionId()
-	{
-		return sessionId;
-	}
+    public boolean isModerator() {
+        return moderator;
+    }
 
-	public void setSessionId(long sessionId)
-	{
-		this.sessionId = sessionId;
-	}
+    public void setModerator(boolean moderator) {
+        this.moderator = moderator;
+    }
 
-	@Override
-	public String toString()
-	{
-		StringBuilder sb = new StringBuilder("AddParticipantForm [participantName=");
-		sb.append(participantName);
-		sb.append(", emailAddress=");
-		sb.append(emailAddress);
-		sb.append("];");
-		return sb.toString();
-	}
+    @Override
+    public String toString() {
+        return "AddParticipantForm [sessionId=" + sessionId + ", name=" + name + ", email=" + email + ", moderator="
+                + moderator + "]";
+    }
 }

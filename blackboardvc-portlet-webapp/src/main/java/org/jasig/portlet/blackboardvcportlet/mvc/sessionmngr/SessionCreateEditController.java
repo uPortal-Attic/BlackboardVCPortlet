@@ -18,13 +18,22 @@
  */
 package org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr;
 
-import com.google.common.collect.Ordering;
+import java.util.Locale;
+import java.util.Set;
+
+import javax.portlet.ActionResponse;
+import javax.portlet.PortletMode;
+import javax.portlet.PortletModeException;
+import javax.portlet.RenderRequest;
+import javax.portlet.WindowState;
+import javax.validation.Valid;
+
 import org.apache.commons.lang.StringUtils;
-import org.jasig.portlet.blackboardvcportlet.data.*;
-import org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr.forms.AddModeratorForm;
-import org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr.forms.AddParticipantForm;
-import org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr.forms.DeleteModeratorsForm;
-import org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr.forms.DeleteParticipantsForm;
+import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
+import org.jasig.portlet.blackboardvcportlet.data.Multimedia;
+import org.jasig.portlet.blackboardvcportlet.data.RecordingMode;
+import org.jasig.portlet.blackboardvcportlet.data.ServerConfiguration;
+import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.security.ConferenceUserService;
 import org.jasig.portlet.blackboardvcportlet.service.ServerConfigurationService;
 import org.jasig.portlet.blackboardvcportlet.service.SessionForm;
@@ -49,16 +58,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 
-import javax.portlet.ActionRequest;
-import javax.portlet.ActionResponse;
-import javax.portlet.PortletMode;
-import javax.portlet.PortletModeException;
-import javax.portlet.RenderRequest;
-import javax.portlet.RenderResponse;
-import javax.portlet.WindowState;
-import javax.validation.Valid;
-import java.util.Locale;
-import java.util.Set;
+import com.google.common.collect.Ordering;
 
 /**
  * Controller class for Portlet EDIT related actions and render
@@ -216,67 +216,6 @@ public class SessionCreateEditController
 		}
 
         response.setPortletMode(PortletMode.VIEW);
-    }
-
-    @ActionMapping(params = "action=Add Moderator")
-    public void addSessionChair(ActionResponse response, @Valid AddModeratorForm addModeratorForm, BindingResult bindingResult) throws PortletModeException {
-
-		if (!bindingResult.hasErrors())
-		{
-			String displayName = StringUtils.trimToNull(addModeratorForm.getModeratorName());
-			String email = StringUtils.trimToNull(addModeratorForm.getEmailAddress());
-
-			this.sessionService.addSessionChair(addModeratorForm.getSessionId(), displayName, email, addModeratorForm.isNeedToSendInitialEmail());
-		}
-
-        response.setPortletMode(PortletMode.EDIT);
-        response.setRenderParameter("action", "editSession");
-        response.setRenderParameter("sessionId", Long.toString(addModeratorForm.getSessionId()));
-        response.setRenderParameter("needToSendInitialEmail", Boolean.toString(addModeratorForm.isNeedToSendInitialEmail()));
-    }
-
-    @ActionMapping(params = "action=Delete Moderator(s)")
-    public void deleteSessionChairs(ActionResponse response, @Valid DeleteModeratorsForm deleteModeratorsForm, BindingResult bindingResult) throws PortletModeException {
-
-		if (!bindingResult.hasErrors())
-		{
-			this.sessionService.removeSessionChairs(deleteModeratorsForm.getDeleteModeratorSessionId(), deleteModeratorsForm.isNeedToSendInitialEmail(), deleteModeratorsForm.getChairId());
-		}
-
-        response.setPortletMode(PortletMode.EDIT);
-        response.setRenderParameter("action", "editSession");
-        response.setRenderParameter("sessionId", Long.toString(deleteModeratorsForm.getDeleteModeratorSessionId()));
-        response.setRenderParameter("needToSendInitialEmail", Boolean.toString(deleteModeratorsForm.isNeedToSendInitialEmail()));
-    }
-
-    @ActionMapping(params = "action=Add Participant")
-    public void addSessionNonChair(ActionResponse response, @Valid AddParticipantForm participantForm, BindingResult bindingResult) throws PortletModeException {
-
-		if (!bindingResult.hasErrors())
-		{
-			final String displayName = StringUtils.trimToNull(participantForm.getParticipantName());
-			final String email = StringUtils.trimToNull(participantForm.getEmailAddress());
-			this.sessionService.addSessionNonChair(participantForm.getSessionId(), displayName, email, participantForm.isNeedToSendInitialEmail());
-		}
-
-        response.setPortletMode(PortletMode.EDIT);
-        response.setRenderParameter("action", "editSession");
-        response.setRenderParameter("sessionId", Long.toString(participantForm.getSessionId()));
-        response.setRenderParameter("needToSendInitialEmail", Boolean.toString(participantForm.isNeedToSendInitialEmail()));
-    }
-
-    @ActionMapping(params = "action=Delete Participant(s)")
-    public void deleteSessionNonChairs(ActionResponse response, @Valid DeleteParticipantsForm deleteParticipantsForm, BindingResult bindingResult) throws PortletModeException {
-
-		if (!bindingResult.hasErrors())
-		{
-			this.sessionService.removeSessionNonChairs(deleteParticipantsForm.getDeleteParticipantsSessionId(), deleteParticipantsForm.isNeedToSendInitialEmail(), deleteParticipantsForm.getNonChairId());
-		}
-
-        response.setPortletMode(PortletMode.EDIT);
-        response.setRenderParameter("action", "editSession");
-        response.setRenderParameter("sessionId", Long.toString(deleteParticipantsForm.getDeleteParticipantsSessionId()));
-        response.setRenderParameter("needToSendInitialEmail", Boolean.toString(deleteParticipantsForm.isNeedToSendInitialEmail()));
     }
     
     @ActionMapping(params = "action=Upload Multimedia")

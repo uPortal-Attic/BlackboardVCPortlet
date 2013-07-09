@@ -10,6 +10,12 @@ bbc.db.jdbc=jdbc:hsqldb:hsql://localhost:8887/uPortal
 bbc.db.username=sa
 bbc.db.password=
 
+## IAA Person Lookup Database Configuration 
+uwiaa.db.driverClassName=oracle.jdbc.OracleDriver
+uwiaa.db.jdbc=jdbc:oracle:thin:@iaa.db.doit.wisc.edu:1586:IAA
+uwiaa.db.username=PORTAL_BLACKBOARD_USR
+uwiaa.db.password=
+
 ## Email Notification Configuration
 mail.host=localhost
 mail.from=me@people.com

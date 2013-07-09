@@ -26,14 +26,19 @@
 
     <js included="plain" resource="true">/rs/jquery/1.9.1/jquery-1.9.1.js</js>
     <js included="aggregated" resource="true">/rs/jquery/1.9.1/jquery-1.9.1.min.js</js>
+<!-- 
+    <js included="plain" resource="true">/rs/jqueryui/1.8.24/jquery-ui-1.8.13.js</js>
+    <js included="aggregated" resource="true">/rs/jqueryui/1.8.24/jquery-ui-1.8.13.min.js</js>
+-->
+    <js>//ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js</js>
     <js included="plain">js-lib/jquery.dataTables.js</js>
     <js included="aggregated">js-lib/jquery.dataTables.min.js</js>
-
-    <!-- <js included="plain" resource="true">/rs/jqueryui/1.8.13/jquery-ui-1.8.13.js</js> -->
-    <!-- <js included="aggregated" resource="true">/rs/jqueryui/1.8.13/jquery-ui-1.8.13.min.js</js> -->
+    <js included="plain" resource="true">/rs/underscore/1.4.4/underscore-1.4.4.js</js>
+    <js included="aggregated" resource="true">/rs/underscore/1.4.4/underscore-1.4.4.min.js</js>
+    <js included="plain" resource="true">/rs/backbone/1.0.0/backbone-1.0.0.js</js>
+    <js included="aggregated" resource="true">/rs/backbone/1.0.0/backbone-1.0.0.min.js</js>
 
     <!-- Order is important here, the log script needs to be the first thing followed by the debug toggle -->
-    <js>//ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js</js>
     <js>js-lib/jquery.log.js</js>
     <js included="plain">js/debug.js</js>
 

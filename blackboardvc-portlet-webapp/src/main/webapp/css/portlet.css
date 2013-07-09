@@ -26,6 +26,11 @@ p.uportal-channel-success {padding:1em 1em 1em 3em; border:2px solid; color:#004
     color: #ff0000;
 }
 
+.blackboardVCRoot div.ajaxerror {
+    display: none;
+    color: #ff0000;
+}
+
 .blackboardVCRoot .help-link
 {
 	float: right;

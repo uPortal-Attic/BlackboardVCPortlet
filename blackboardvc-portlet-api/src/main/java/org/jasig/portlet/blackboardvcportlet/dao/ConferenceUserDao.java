@@ -28,6 +28,8 @@ public interface ConferenceUserDao {
 
     void deleteUser(ConferenceUser message);
     
+    Set<ConferenceUser> getUsers(long... userIds);
+    
     ConferenceUser getUser(long userId);
     
     ConferenceUser getUserByUniqueId(String uniqueId);

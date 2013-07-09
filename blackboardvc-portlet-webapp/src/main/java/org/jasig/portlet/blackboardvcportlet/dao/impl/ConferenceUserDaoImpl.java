@@ -1,5 +1,6 @@
 package org.jasig.portlet.blackboardvcportlet.dao.impl;
 
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -182,6 +183,18 @@ public class ConferenceUserDaoImpl extends BaseJpaDao implements InternalConfere
     public ConferenceUserImpl getUser(long userId) {
         final EntityManager entityManager = this.getEntityManager();
         return entityManager.find(ConferenceUserImpl.class, userId);
+    }
+    
+    @Override
+    public Set<ConferenceUser> getUsers(long... userIds) {
+        final Set<ConferenceUser> users = new HashSet<ConferenceUser>();
+        for (final long userId : userIds) {
+            final ConferenceUserImpl user = getUser(userId);
+            if (user != null) {
+                users.add(user);
+            }
+        }
+        return users;
     }
 
     @Override

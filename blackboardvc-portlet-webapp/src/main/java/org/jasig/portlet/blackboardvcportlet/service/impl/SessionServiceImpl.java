@@ -38,6 +38,7 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.WebUtils;
@@ -286,87 +287,129 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
     @Override
     @Transactional
     @PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'edit')")
-    public void addSessionChair(long sessionId, String displayName, String email, boolean isBlockEmailForInitial) {
+    public ConferenceUser addSessionChair(long sessionId, String displayName, String email) {
         final ConferenceUser newSessionChair = this.conferenceUserService.getOrCreateConferenceUser(displayName, email);
+        
+        this.addSessionChair(sessionId, newSessionChair);
+        
+        return newSessionChair;
+    }
+    
+    @Override
+    @Transactional
+    @PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'edit')")
+    public ConferenceUser addSessionChair(long sessionId, long userId) {
+        final ConferenceUser user = this.conferenceUserDao.getUser(userId);
+        if (user != null) {
+            addSessionChair(sessionId, user);
+        }
+        return user;
+    }
+
+    private void addSessionChair(long sessionId, ConferenceUser user) {
+        Assert.notNull(user, "user must not be null");
         
         final Session session = this.sessionDao.getSession(sessionId);
         final Set<ConferenceUser> sessionChairs = new LinkedHashSet<ConferenceUser>(this.getSessionChairs(session));
-        sessionChairs.add(newSessionChair);
+        sessionChairs.add(user);
         
         final BlackboardSessionResponse sessionResponse = this.sessionWSDao.setSessionChairs(session.getBbSessionId(), sessionChairs);
         sessionDao.updateSession(sessionResponse);
-        if(!isBlockEmailForInitial)
-        	mailService.sendEmail(mailService.buildModeratorMailTask(newSessionChair, session, false));
+        mailService.sendEmail(mailService.buildModeratorMailTask(user, session, false));
     }
 
     @Override
     @Transactional
     @PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'edit')")
-    public void removeSessionChairs(long sessionId, boolean ignoreEmail, long... userIds) {
+    public void removeSessionChairs(long sessionId, long... userIds) {
+        final Set<ConferenceUser> users = conferenceUserDao.getUsers(userIds);
+        
+        this.removeSessionChairs(sessionId, users);
+    }
+
+    @Override
+    @Transactional
+    @PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'edit')")
+    public void removeSessionChairs(long sessionId, Iterable<ConferenceUser> users) {
         final Session session = this.sessionDao.getSession(sessionId);
         final Set<ConferenceUser> sessionChairs = new LinkedHashSet<ConferenceUser>(this.getSessionChairs(session));
         
-        for (final long userId : userIds) {
-            final ConferenceUser user = conferenceUserDao.getUser(userId);
-            if (user != null) {
-            	if(!ignoreEmail)
-            		mailService.sendEmail(mailService.buildCancellationNoticeMailTask(user, session));
-                sessionChairs.remove(user);
-            }
+        for (final ConferenceUser user : users) {
+            mailService.sendEmail(mailService.buildCancellationNoticeMailTask(user, session));
+            sessionChairs.remove(user);
         }
         
         final BlackboardSessionResponse sessionResponse;
         
         if(sessionChairs.isEmpty()) {
-        	this.sessionWSDao.clearSessionChairList(session.getBbSessionId());
-        	sessionDao.clearSessionUserList(session.getSessionId(), true);
+            this.sessionWSDao.clearSessionChairList(session.getBbSessionId());
+            sessionDao.clearSessionUserList(session.getSessionId(), true);
         } else {
-        	sessionResponse = this.sessionWSDao.setSessionChairs(session.getBbSessionId(), sessionChairs);
-        	sessionDao.updateSession(sessionResponse);
+            sessionResponse = this.sessionWSDao.setSessionChairs(session.getBbSessionId(), sessionChairs);
+            sessionDao.updateSession(sessionResponse);
         }
-        
-        
     }
 
     @Override
     @Transactional
     @PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'edit')")
-    public void addSessionNonChair(long sessionId, String displayName, String email, boolean isBlockEmailForInitial) {
+    public ConferenceUser addSessionNonChair(long sessionId, String displayName, String email) {
         final ConferenceUser newSessionNonChair = this.conferenceUserService.getOrCreateConferenceUser(displayName, email);
         
+        addSessionNonChair(sessionId, newSessionNonChair);
+        
+        return newSessionNonChair;
+    }
+    
+    @Override
+    @Transactional
+    @PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'edit')")
+    public ConferenceUser addSessionNonChair(long sessionId, long userId) {
+        final ConferenceUser user = this.conferenceUserDao.getUser(userId);
+        if (user != null) {
+            this.addSessionNonChair(sessionId, user);
+        }
+        return user;
+    }
+
+    private void addSessionNonChair(long sessionId, ConferenceUser user) {
+        Assert.notNull(user, "user must not be null");
         final Session session = this.sessionDao.getSession(sessionId);
         final Set<ConferenceUser> sessionNonChairs = new LinkedHashSet<ConferenceUser>(this.getSessionNonChairs(session));
-        sessionNonChairs.add(newSessionNonChair);
+        sessionNonChairs.add(user);
         
         final BlackboardSessionResponse sessionResponse = this.sessionWSDao.setSessionNonChairs(session.getBbSessionId(), sessionNonChairs);
         sessionDao.updateSession(sessionResponse);
-        if(!isBlockEmailForInitial)
-        	mailService.sendEmail(mailService.buildParticipantMailTask(newSessionNonChair, session, false));
-        
+        mailService.sendEmail(mailService.buildParticipantMailTask(user, session, false));
     }
 
     @Override
     @Transactional
     @PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'edit')")
-    public void removeSessionNonChairs(long sessionId, boolean ignoreEmail, long... userIds) {
+    public void removeSessionNonChairs(long sessionId, long... userIds) {
+        final Set<ConferenceUser> users = conferenceUserDao.getUsers(userIds);
+        
+        this.removeSessionNonChairs(sessionId, users);
+    }
+
+    @Override
+    @Transactional
+    @PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'edit')")
+    public void removeSessionNonChairs(long sessionId, Iterable<ConferenceUser> users) {
         final Session session = this.sessionDao.getSession(sessionId);
         final Set<ConferenceUser> sessionNonChairs = new LinkedHashSet<ConferenceUser>(this.getSessionNonChairs(session));
         
-        for (final long userId : userIds) {
-            final ConferenceUser user = conferenceUserDao.getUser(userId);
-            if (user != null) {
-            	if(!ignoreEmail)
-            		mailService.sendEmail(mailService.buildCancellationNoticeMailTask(user, session));
-                sessionNonChairs.remove(user);
-            }
+        for (final ConferenceUser user : users) {
+            mailService.sendEmail(mailService.buildCancellationNoticeMailTask(user, session));
+            sessionNonChairs.remove(user);
         }
         
         if(sessionNonChairs.isEmpty()) {
-        	this.sessionWSDao.clearSessionNonChairList(session.getBbSessionId());
-        	sessionDao.clearSessionUserList(session.getSessionId(), false);
+            this.sessionWSDao.clearSessionNonChairList(session.getBbSessionId());
+            sessionDao.clearSessionUserList(session.getSessionId(), false);
         } else {
             final BlackboardSessionResponse sessionResponse = this.sessionWSDao.setSessionNonChairs(session.getBbSessionId(), sessionNonChairs);
-	        sessionDao.updateSession(sessionResponse);
+            sessionDao.updateSession(sessionResponse);
         }
     }
 

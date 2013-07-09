@@ -49,19 +49,33 @@ public interface SessionService {
     
     void removeSession(long sessionId);
     
-    Set<ConferenceUser> getSessionChairs(Session session);
-
-    Set<ConferenceUser> getSessionNonChairs(Session session);
-    
     Set<Multimedia> getSessionMultimedia(Session session);
     
-    void addSessionChair(long sessionId, String displayName, String email, boolean isBlockEmailForInitial);
+
     
-    void removeSessionChairs(long sessionId, boolean ignoreEmail, long... userIds);
+    Set<ConferenceUser> getSessionChairs(Session session);
+
+    ConferenceUser addSessionChair(long sessionId, String displayName, String email);
     
-    void addSessionNonChair(long sessionId, String displayName, String email, boolean isBlockEmailForInitial);
+    ConferenceUser addSessionChair(long sessionId, long userId);
     
-    void removeSessionNonChairs(long sessionId, boolean ignoreEmail, long... userIds);
+    void removeSessionChairs(long sessionId, Iterable<ConferenceUser> user);
+    
+    void removeSessionChairs(long sessionId, long... userIds);
+    
+    
+    
+    Set<ConferenceUser> getSessionNonChairs(Session session);
+
+    ConferenceUser addSessionNonChair(long sessionId, String displayName, String email);
+    
+    ConferenceUser addSessionNonChair(long sessionId, long userId);
+    
+    void removeSessionNonChairs(long sessionId, Iterable<ConferenceUser> user);
+    
+    void removeSessionNonChairs(long sessionId, long... userIds);
+
+    
     
     void addPresentation(long sessionId, MultipartFile file);
     

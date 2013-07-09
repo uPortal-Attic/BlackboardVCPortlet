@@ -89,10 +89,23 @@
    <!-- only needed if you want to bind via a user to LDAP
    <bean id="springSecurityAuthenticationSource" class="org.springframework.security.ldap.authentication.SpringSecurityAuthenticationSource" />-->
 
+    <!-- 
+     | XML view resolver for JSON view
+     +-->
+    <bean id="xmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver">
+        <property name="order" value="1"/>
+        <property name="location" value="/WEB-INF/mvcViews.xml"/>
+    </bean>
     
-    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" id="viewResolver">
-        <property name="prefix" value="/WEB-INF/jsp/" />
-        <property name="suffix" value=".jsp" />
+    <!-- 
+     | Standard JSP view resolver
+     +-->
+    <bean id="jspViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="cache" value="true"/>
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+        <property name="prefix" value="/WEB-INF/jsp/"/>
+        <property name="suffix" value=".jsp"/>
+        <property name="order" value="2"/>
     </bean>
 
     <!--Spring Web Services Client-->
