@@ -93,7 +93,8 @@
             <th class="dt" ><spring:message code="sessionName" text="sessionName"/></th>
             <th class="dt" ><spring:message code="startDateAndTime" text="startDateAndTime"/></th>
             <th class="dt" ><spring:message code="endDateAndTime" text="endDateAndTime"/></th>
-            <th  class="dt" style="width: 20em;"><spring:message code="status" text="status"/></th>
+                        <spring:message code="statusText" text="statusText" var="statusText" htmlEscape="false" />
+            <th class="dt" style="width: 20em;" id="${n}statusToolTip"><spring:message code="status" text="status"/>&nbsp;<a href="#" title="${ statusText}" class="${n}statusLink"><img src='<c:url value="/images/questionmark.jpg"/>' alt="?"/></a></th>
           </tr>
         </thead>
         <tbody>
@@ -133,7 +134,8 @@
             <th><spring:message code="sessionName" text="sessionName"/></th>
             <th><spring:message code="startDateAndTime" text="startDateAndTime"/></th>
             <th><spring:message code="endDateAndTime" text="endDateAndTime"/></th>
-            <th style="width: 20em;"><spring:message code="status" text="status"/></th>
+            <spring:message code="statusText" text="statusText" var="statusText" htmlEscape="false" />
+            <th style="width: 20em;" id="${n}statusToolTip"><spring:message code="status" text="status"/>&nbsp;<a href="#" title="${ statusText}" class="${n}statusLink"><img src='<c:url value="/images/questionmark.jpg"/>' alt="?"/></a></th>
           </tr>
         </thead>
         <tbody>
@@ -299,6 +301,8 @@ blackboardPortlet.jQuery(function() {
 		              null
 		              ]
 	});
+  
+  blackboardPortlet.showTooltip('.${n}statusLink');
   
   
   

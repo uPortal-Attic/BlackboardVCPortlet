@@ -50,7 +50,7 @@
     <tr><td  class="label"><span class="uportal-channel-strong"><spring:message code="endTime" text="endTime"/></span></td><td><joda:format value="${session.endTime}" pattern="MM/dd/yyyy HH:mm z" /></td></tr>
     <tr class="even">
     	<spring:message code="statusText" text="statusText" var="statusText" htmlEscape="false" />
-    	<td class="label"><span class="uportal-channel-strong"><spring:message code="status" text="Status"/></span>&nbsp;<a href="#" title="${ statusText}" class="${n}statusLink"><img src='<c:url value="/images/questionmark.jpg"/>' alt="?"/></a></td>
+    	<td class="label"><span class="uportal-channel-strong"><spring:message code="status" text="Status"/></span>&nbsp;<a href="#" title="${ statusText}" class="${n}toolTip"><img src='<c:url value="/images/questionmark.jpg"/>' alt="?"/></a></td>
     	<td>
     		<c:choose>
 		       <c:when test="${session.endTime.beforeNow}">
@@ -103,6 +103,8 @@
 			<span class="uportal-channel-strong">
 				<spring:message code="participants" text="participants"/>
 			</span>
+			<spring:message code="tooltip.participants" text="tooltip.participants" var="tooltipParticipants" htmlEscape="false" />
+			&nbsp;<a href="#" title="${ tooltipParticipants}" class="${n}toolTip"><img src='<c:url value="/images/questionmark.jpg"/>' alt="?"/></a>
 		</td>
 		<td>
 			<ul>
@@ -128,6 +130,8 @@
 			<span class="uportal-channel-strong">
 				<spring:message code="presentationFile" text="Presentation File" />
 			</span>
+			<spring:message code="tooltip.presentationFile" text="tooltip.presentationFile" var="tooltipPresentationFile" htmlEscape="false" />
+			&nbsp;<a href="#" title="${ tooltipPresentationFile}" class="${n}toolTip"><img src='<c:url value="/images/questionmark.jpg"/>' alt="?"/></a>
 			<br/>
 			<span class="uportal-channel-table-caption"><spring:message code="presentationFileDesc" text="" /></span>
 		</td>
@@ -160,6 +164,8 @@
 			<span class="uportal-channel-strong">
 				<spring:message code="mediaFiles" text="Media Files" />
 			</span>
+			<spring:message code="tooltip.mediaFiles" text="tooltip.mediaFiles" var="tooltipMediaFiles" htmlEscape="false" />
+			&nbsp;<a href="#" title="${ tooltipMediaFiles}" class="${n}toolTip"><img src='<c:url value="/images/questionmark.jpg"/>' alt="?"/></a>
 			<br/>
 			<span class="uportal-channel-table-caption"><spring:message code="mediaFilesDesc" text="" /></span>
 		</td>
@@ -189,6 +195,8 @@
 			<span class="uportal-channel-strong">
 				<spring:message code="recordings" text="Recordings" />
 			</span>
+			<spring:message code="tooltip.recordings" text="tooltip.recordings" var="tooltipRecordings" htmlEscape="false" />
+			&nbsp;<a href="#" title="${ tooltipRecordings}" class="${n}toolTip"><img src='<c:url value="/images/questionmark.jpg"/>' alt="?"/></a>
 		</td>
 		<td>
 			<c:choose>
@@ -215,7 +223,7 @@
 					{
   					$(document).ready(function() 
   							{
-  								blackboardPortlet.showTooltip('.${n}statusLink');
+  								blackboardPortlet.showTooltip('.${n}toolTip');
   							});
   					
 					});

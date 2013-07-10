@@ -50,7 +50,11 @@
         <th style="text-align: left;">Select</th>
         <th style="text-align: left;">Name</th>
         <th style="text-align: left;">Email Address</th>
-        <th style="text-align: left;">Moderator ?</th>
+        <th style="text-align: left;">
+        	Moderator
+        	<spring:message code="tooltip.whatIsModerator" text="tooltip.whatIsModerator" var="tooltipWhatIsModerator" htmlEscape="false" />
+			&nbsp;<a href="#" title="${ tooltipWhatIsModerator}" class="${n}toolTip"><img src='<c:url value="/images/questionmark.jpg"/>' alt="?"/></a>
+        </th>
     </tr>
   </thead>
   <tbody>
@@ -112,5 +116,14 @@
    });
 
 })(blackboardPortlet.jQuery, blackboardPortlet.Backbone, blackboardPortlet._);
+
+(function($) {
+	blackboardPortlet.jQuery(function($) {
+		$(document).ready(function() {
+			blackboardPortlet.showTooltip('.${n}toolTip');
+		});
+	});
+})(blackboardPortlet.jQuery);
+
 </script>
 </div>

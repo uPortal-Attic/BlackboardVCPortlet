@@ -126,7 +126,11 @@
 	      <div style="padding: 2em;">
 	      <table>
 		      <tr>
-		        <td><span class="uportal-channel-strong"><spring:message code="earlySessionEntry" text="earlySessionEntry"/>: </span></td>
+		        <td>
+		        	<span class="uportal-channel-strong"><spring:message code="earlySessionEntry" text="earlySessionEntry"/></span>
+		        	<spring:message code="tooltip.earlySessionEntry" text="tooltip.earlySessionEntry" var="tooltipEarlySessionEntry" htmlEscape="false" />
+					&nbsp;<a href="#" title="${ tooltipEarlySessionEntry}" class="${n}toolTip"><img src='<c:url value="/images/questionmark.jpg"/>' alt="?"/></a>
+		        </td>
 		        <td>
 		          <form:select path="boundaryTime">
 		            <form:option value="15"><spring:message code="boundryTime15Minutes" text="boundryTime15Minutes"/></form:option>
@@ -138,15 +142,16 @@
 		          </form:select>
 		        </td>
 		      </tr>
-		      <tr>
-		        <td></td>
-		        <td class="uportal-channel-table-caption"><spring:message code="periodBeforeStartOfSessionUsersCanEnter" text="periodBeforeStartOfSessionUsersCanEnter"/></td>
-		      </tr>
 		      <sec:authorize var="fullAccess" access="hasRole('ROLE_FULL_ACCESS')" />
+		      <%-- <c:set value="true" var="fullAccess"/> --%>
 		      <c:choose>
 		        <c:when test="${fullAccess}">
 		          <tr>
-		            <td><span class="uportal-channel-strong"><spring:message code="maxSimultaneousTalkers" text="maxSimultaneousTalkers"/>: </span></td>
+		            <td>
+		            	<span class="uportal-channel-strong"><spring:message code="maxSimultaneousTalkers" text="maxSimultaneousTalkers"/></span>
+		            	<spring:message code="tooltip.maxSimultaneousTalkers" text="tooltip.maxSimultaneousTalkers" var="tooltipMaxSimultaneousTalkers" htmlEscape="false" />
+						&nbsp;<a href="#" title="${ tooltipMaxSimultaneousTalkers}" class="${n}toolTip"><img src='<c:url value="/images/questionmark.jpg"/>' alt="?"/></a>
+		            </td>
 		            <td>
 		              <form:select path="maxTalkers">
 		                <c:forEach var="i" begin="1" end="${serverConfiguration.maxAvailableTalkers}" step="1">
@@ -156,11 +161,11 @@
 		            </td>
 		          </tr>
 		          <tr>
-		            <td></td>
-		            <td class="uportal-channel-table-caption"><spring:message code="maxSimultaneousTalkersToStartSession" text="maxSimultaneousTalkersToStartSession"/></td>
-		          </tr>
-		          <tr>
-		            <td><span class="uportal-channel-strong"><spring:message code="maxCameras" text="maxCameras"/>: </span></td>
+		            <td>
+		            	<span class="uportal-channel-strong"><spring:message code="maxCameras" text="maxCameras"/></span>
+		            	<spring:message code="tooltip.maxCamera" text="tooltip.maxCamera" var="tooltipMaxCamera" htmlEscape="false" />
+						&nbsp;<a href="#" title="${ tooltipMaxCamera}" class="${n}toolTip"><img src='<c:url value="/images/questionmark.jpg"/>' alt="?"/></a>
+		            </td>
 		            <td>
 		              <form:select path="maxCameras">
 		                <c:forEach var="i" begin="1" end="${serverConfiguration.maxAvailableCameras}" step="1">
@@ -170,58 +175,54 @@
 		            </td>
 		          </tr>
 		          <tr>
-		            <td>&nbsp;</td>
-		            <td class="uportal-channel-table-caption"><spring:message code="maxCamerasToStartSession" text="maxCamerasToStartSession"/></td>
-		          </tr>
-		          <tr>
-		            <td><span class="uportal-channel-strong"><spring:message code="supervised" text="supervised"/>: </span></td>
+		            <td>
+		            	<span class="uportal-channel-strong"><spring:message code="supervised" text="supervised"/></span>
+		            	<spring:message code="tooltip.supervised" text="tooltip.supervised" var="tooltipSupervised" htmlEscape="false" />
+						&nbsp;<a href="#" title="${ tooltipSupervised}" class="${n}toolTip"><img src='<c:url value="/images/questionmark.jpg"/>' alt="?"/></a>
+		            </td>
 		            <td><form:checkbox path="mustBeSupervised"/></td>
 		          </tr>
 		          <tr>
-		            <td></td>
-		            <td class="uportal-channel-table-caption"><spring:message code="moderatorsMayViewAllPrivateMessagesInSession" text="moderatorsMayViewAllPrivateMessagesInSession"/></td>
-		          </tr>
-		          <tr>
-		            <td><span class="uportal-channel-strong"><spring:message code="allPermissions" text="allPermissions"/>: </span></td>
+		            <td>
+		            	<span class="uportal-channel-strong"><spring:message code="allPermissions" text="allPermissions"/></span>
+		            	<spring:message code="tooltip.allPermissions" text="tooltip.allPermissions" var="tooltipAllPermissions" htmlEscape="false" />
+						&nbsp;<a href="#" title="${ tooltipAllPermissions}" class="${n}toolTip"><img src='<c:url value="/images/questionmark.jpg"/>' alt="?"/></a>
+		            </td>
 		            <td><form:checkbox path="permissionsOn"/></td>
 		          </tr>
 		          <tr>
-		            <td></td>
-		            <td class="uportal-channel-table-caption"><spring:message code="allParticipantsHaveFullPermissionsToAccessSessionResources" text="allParticipantsHaveFullPermissionsToAccessSessionResources"/></td>
-		          </tr>
-		          <tr>
-		            <td><span class="uportal-channel-strong"><spring:message code="raiseHandOnEntry" text="raiseHandOnEntry"/>: </span></td>
+		            <td>
+		            	<span class="uportal-channel-strong"><spring:message code="raiseHandOnEntry" text="raiseHandOnEntry"/></span>
+		            	<spring:message code="tooltip.raiseHandOnEntry" text="tooltip.raiseHandOnEntry" var="tooltipRaiseHandOnEntry" htmlEscape="false" />
+						&nbsp;<a href="#" title="${ tooltipRaiseHandOnEntry}" class="${n}toolTip"><img src='<c:url value="/images/questionmark.jpg"/>' alt="?"/></a>
+		            </td>
 		            <td><form:checkbox path="raiseHandOnEnter"/></td>
 		          </tr>
 		          <tr>
-		            <td></td>
-		            <td class="uportal-channel-table-caption"><spring:message code="usersAutomaticallyRaiseHandsOnEntry" text="usersAutomaticallyRaiseHandsOnEntry"/></td>
-		          </tr>
-		          <tr>
-		            <td><span class="uportal-channel-strong"><spring:message code="recordingMode" text="recordingMode"/>: </span></td>
+		            <td>
+		            	<span class="uportal-channel-strong"><spring:message code="recordingMode" text="recordingMode"/></span>
+		            	<spring:message code="tooltip.recordingMode" text="tooltip.recordingMode" var="tooltipRecordingMode" htmlEscape="false" />
+						&nbsp;<a href="#" title="${ tooltipRecordingMode}" class="${n}toolTip"><img src='<c:url value="/images/questionmark.jpg"/>' alt="?"/></a>
+		            </td>
 		            <td>
 		              <form:select path="recordingMode" items="${recordingModes}" />
 		            </td>
 		          </tr>
 		          <tr>
-		            <td></td>
-		            <td class="uportal-channel-table-caption"><spring:message code="modeOfRecordingForSession" text="modeOfRecordingForSession"/></td>
-		          </tr>
-		          <tr>
-		            <td><span class="uportal-channel-strong"><spring:message code="hideNamesInRecordings" text="hideNamesInRecordings"/>: </span></td>
+		            <td>
+		            	<span class="uportal-channel-strong"><spring:message code="hideNamesInRecordings" text="hideNamesInRecordings"/></span>
+		            	<spring:message code="tooltip.hideNamesInRecordings" text="tooltip.hideNamesInRecordings" var="tooltiphideNamesInRecordings" htmlEscape="false" />
+						&nbsp;<a href="#" title="${ tooltiphideNamesInRecordings}" class="${n}toolTip"><img src='<c:url value="/images/questionmark.jpg"/>' alt="?"/></a>
+		            </td>
 		            <td><form:checkbox path="hideParticipantNames"/></td>
 		          </tr>
 		          <tr>
-		            <td></td>
-		            <td class="uportal-channel-table-caption"><spring:message code="namesOfSessionParticipantsAreHiddenInRecordings" text="namesOfSessionParticipantsAreHiddenInRecordings"/></td>
-		          </tr>
-		          <tr>
-		            <td><span class="uportal-channel-strong"><spring:message code="allowInSessionInvitations" text="allowInSessionInvitations"/>: </span></td>
+		            <td>
+		            	<span class="uportal-channel-strong"><spring:message code="allowInSessionInvitations" text="allowInSessionInvitations"/></span>
+		            	<spring:message code="tooltip.allowInSessionInvitations" text="tooltip.allowInSessionInvitations" var="tooltipallowInSessionInvitations" htmlEscape="false" />
+						&nbsp;<a href="#" title="${ tooltipallowInSessionInvitations}" class="${n}toolTip"><img src='<c:url value="/images/questionmark.jpg"/>' alt="?"/></a>
+		            </td>
 		            <td><form:checkbox path="allowInSessionInvites"/></td>
-		          </tr>
-		          <tr>
-		            <td></td>
-		            <td class="uportal-channel-table-caption"><spring:message code="moderatorsMaySendInvitationsWhileInSession" text="moderatorsMaySendInvitationsWhileInSession"/></td>
 		          </tr>
 		          </c:when>
 		          <c:otherwise>
@@ -258,6 +259,7 @@
     </table>
   </spring:nestedPath>
 </form>
+
 <script type="text/javascript">
     <rs:compressJs>
     (function($) {
@@ -270,6 +272,7 @@
     		      autoHeight: false,
     		      active: false
     		});
+    		blackboardPortlet.showTooltip('.${n}toolTip');
 
     	});
     })(blackboardPortlet.jQuery);
