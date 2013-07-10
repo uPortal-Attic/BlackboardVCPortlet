@@ -56,7 +56,7 @@ if (!blackboardPortlet._) {
             at : "center top",
             using : function(position, feedback) {
                $(this).css(position);
-               $("<div>").addClass("arrow").addClass(feedback.vertical).addClass(feedback.horizontal).appendTo(this);
+               $("<div>").addClass("bbcArrow").addClass(feedback.vertical).addClass(feedback.horizontal).appendTo(this);
             }
          },
          content : function() {

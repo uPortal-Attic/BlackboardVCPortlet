@@ -122,7 +122,7 @@ p.uportal-channel-success {padding:1em 1em 1em 3em; border:2px solid; color:#004
 	text-align: left;
 }
 
-.ui-tooltip, .arrow:after {
+.ui-tooltip, .bbcArrow:after {
     background: white;
     border: 2px solid grey;
   }
@@ -131,11 +131,10 @@ p.uportal-channel-success {padding:1em 1em 1em 3em; border:2px solid; color:#004
     color: black;
     border-radius: 2em;
     font: bold;
-    text-transform: uppercase;
     box-shadow: 0 0 .5em white;
     width: 20em;
   }
-  .arrow {
+  .bbcArrow {
     width: 70px;
     height: 16px;
     overflow: hidden;
@@ -144,14 +143,14 @@ p.uportal-channel-success {padding:1em 1em 1em 3em; border:2px solid; color:#004
     margin-left: -35px;
     bottom: -16px;
   }
-  .arrow.top {
+  .bbcArrow.top {
     top: -16px;
     bottom: auto;
   }
-  .arrow.left {
+  .bbcArrow.left {
     left: 20%;
   }
-  .arrow:after {
+  .bbcArrow:after {
     content: "";
     position: absolute;
     left: 20px;
@@ -165,7 +164,7 @@ p.uportal-channel-success {padding:1em 1em 1em 3em; border:2px solid; color:#004
     -o-transform: rotate(45deg);
     tranform: rotate(45deg);
   }
-  .arrow.top:after {
+  .bbcArrow.top:after {
     bottom: -20px;
     top: auto;
   }
