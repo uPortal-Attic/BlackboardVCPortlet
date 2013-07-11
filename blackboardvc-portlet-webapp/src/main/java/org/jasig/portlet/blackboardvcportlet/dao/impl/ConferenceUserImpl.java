@@ -1,6 +1,8 @@
 package org.jasig.portlet.blackboardvcportlet.dao.impl;
 
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.persistence.Cacheable;
@@ -15,6 +17,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
@@ -153,6 +157,23 @@ public class ConferenceUserImpl implements ConferenceUser {
         this.setEmail(email);
         this.external = true;
         this.invitationKey = invitationKey;
+    }
+    
+    @PrePersist
+    @PreUpdate
+    public void fixEmailCase() {
+        final Set<String> fixedEmails = new LinkedHashSet<String>();
+        
+        for (final Iterator<String> additionalEmailItr = this.additionalEmails.iterator(); additionalEmailItr.hasNext();) {
+            final String additionalEmail = additionalEmailItr.next();
+            final String fixedAdditionalEmail = additionalEmail.toUpperCase();
+            if (!additionalEmail.equals(fixedAdditionalEmail)) {
+                additionalEmailItr.remove();
+                fixedEmails.add(fixedAdditionalEmail);
+            }
+        }
+        
+        this.additionalEmails.addAll(fixedEmails);
     }
     
     @Override

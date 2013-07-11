@@ -201,7 +201,7 @@ public class ConferenceUserDaoImpl extends BaseJpaDao implements InternalConfere
     @OpenEntityManager
     public ConferenceUserImpl getUserByUniqueId(String uniqueId) {
         final NaturalIdQuery<ConferenceUserImpl> query = this.createNaturalIdQuery(ConferenceUserImpl.class);
-        query.using(ConferenceUserImpl_.uniqueId, uniqueId);
+        query.using(ConferenceUserImpl_.uniqueId, uniqueId.toUpperCase());
         query.using(ConferenceUserImpl_.external, false);
         
         return query.load();
@@ -211,7 +211,7 @@ public class ConferenceUserDaoImpl extends BaseJpaDao implements InternalConfere
     @OpenEntityManager
     public ConferenceUserImpl getExternalUserByEmail(String email) {
         final NaturalIdQuery<ConferenceUserImpl> query = this.createNaturalIdQuery(ConferenceUserImpl.class);
-        query.using(ConferenceUserImpl_.uniqueId, email);
+        query.using(ConferenceUserImpl_.uniqueId, email.toUpperCase());
         query.using(ConferenceUserImpl_.external, true);
         
         return query.load();
@@ -220,7 +220,7 @@ public class ConferenceUserDaoImpl extends BaseJpaDao implements InternalConfere
     @Override
     public Set<ConferenceUser> getUsersByAnyEmail(String email) {
         final TypedQuery<ConferenceUserImpl> query = this.createQuery(this.getUsersByAnyEmailQuery);
-        query.setParameter(this.emailParameter, email);
+        query.setParameter(this.emailParameter, email.toUpperCase());
         
         final List<ConferenceUserImpl> resultList = query.getResultList();
         return new LinkedHashSet<ConferenceUser>(resultList);
@@ -229,7 +229,7 @@ public class ConferenceUserDaoImpl extends BaseJpaDao implements InternalConfere
     @Override
     public Set<ConferenceUser> getUsersByPrimaryEmail(String email) {
         final TypedQuery<ConferenceUserImpl> query = this.createQuery(this.getUsersByPrimaryEmailQuery);
-        query.setParameter(this.emailParameter, email);
+        query.setParameter(this.emailParameter, email.toUpperCase());
         
         final List<ConferenceUserImpl> resultList = query.getResultList();
         return new LinkedHashSet<ConferenceUser>(resultList);
