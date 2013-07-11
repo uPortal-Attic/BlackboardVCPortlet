@@ -1,5 +1,6 @@
 package org.jasig.portlet.blackboardvcportlet.security;
 
+import org.jasig.portlet.blackboardvcportlet.data.BasicUser;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.springframework.security.core.Authentication;
 
@@ -25,4 +26,8 @@ public interface ConferenceUserService {
     Authentication getCurrentAuthentication();
     
     ConferenceUser getOrCreateConferenceUser(String displayName, String email);
+    
+    ConferenceUser getOrCreateConferenceUser(String uniqueId, String displayName, String email);
+    
+    ConferenceUser getOrCreateConferenceUser(BasicUser basicUser);
 }

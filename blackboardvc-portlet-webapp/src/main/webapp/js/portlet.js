@@ -65,7 +65,83 @@ if (!blackboardPortlet._) {
       });
    };
 
-   blackboardPortlet.init = function(bbOpts) {
+   blackboardPortlet.initParticipantAutoComplete = function(bbOpts) {
+      var uniqueIdInput = $(bbOpts.uniqueIdSelector);
+      var nameInput = $(bbOpts.nameSelector);
+      var emailInput = $(bbOpts.emailSelector);
+      
+      var searchCache = {
+         name: {},
+         email: {}
+      }
+      
+      var searchMaker = function(searchType) {
+         return function(request, response) {
+            if (bbOpts.currentSearchRequest != null) {
+               bbOpts.currentSearchRequest.abort();
+               bbOpts.currentSearchRequest = null;
+            }
+            
+            var term = request.term;
+            if (term in searchCache[searchType]) {
+               response( searchCache[searchType][term] );
+               return;
+            }
+            
+            var data = {};
+            data[searchType] = term;
+            
+            $.log("Search for: " + searchType + "=" + term);
+            
+            bbOpts.currentSearchRequest = $.ajax({
+               url: bbOpts.searchForParticipantsUrl,
+               type: 'POST',
+               timeout: 10000,
+               data: data,
+               success: function( data, status, xhr ) {
+                  bbOpts.currentSearchRequest = null;
+                  
+                  data = data.result;
+                  searchCache[searchType][term] = data;
+                  response( data );
+               }
+            });
+         };
+      };
+      
+      var setupAutocomplete = function(input, searchType) {
+         input.autocomplete({
+            source: searchMaker(searchType),
+            minLength: 2,
+            dataType: 'json',
+            focus: function( event, ui ) {
+               uniqueIdInput.val( ui.item.uniqueId );
+               nameInput.val( ui.item.displayName );
+               emailInput.val( ui.item.email );
+               return false;
+            },
+            select: function( event, ui ) {
+               uniqueIdInput.val( ui.item.uniqueId );
+               nameInput.val( ui.item.displayName );
+               emailInput.val( ui.item.email );
+               return false;
+            }
+         }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+            return $( "<li>" )
+              .append( "<a>" + item.displayName + "<br>(" + item.email + ")</a>" )
+              .appendTo( ul );
+         };
+         
+         input.keypress(function() {
+            uniqueIdInput.val( "" );
+         });
+      };
+      
+      setupAutocomplete(nameInput, "name");
+      setupAutocomplete(emailInput, "email");
+   };
+
+   blackboardPortlet.initParticipantBackbone = function(bbOpts) {
       blackboardPortlet.model = blackboardPortlet.model || {};
       blackboardPortlet.view = blackboardPortlet.view || {};
 
@@ -167,6 +243,7 @@ if (!blackboardPortlet._) {
             }
 
             if (params.url != null) {
+               bbOpts.onSyncAjax(type, method, model, options);
                $.ajax(_.extend(params, options));
             }
 
@@ -226,6 +303,7 @@ if (!blackboardPortlet._) {
             this.listenTo(this.model, 'reset', this.addAll);
             this.listenTo(this.model, 'error', this.error);
 
+            this.uniqueIdInput = this.$("input[name='newUniqueId']");
             this.nameInput = this.$("input[name='newName']");
             this.emailInput = this.$("input[name='newEmail']");
             this.modSelect = this.$("select[name='newModerator']");
@@ -248,6 +326,7 @@ if (!blackboardPortlet._) {
          },
          error : function(model, resp, options) {
             this.model.remove(model);
+            this.uniqueIdInput.val(model.get("uniqueId"));
             this.nameInput.val(model.get("name"));
             this.emailInput.val(model.get("email"));
             this.modSelect.val(model.get("moderator") + "");
@@ -265,6 +344,7 @@ if (!blackboardPortlet._) {
          addParticipant : function(e) {
             this.$("div.ajaxerror").hide();
 
+            var uniqueId = this.uniqueIdInput.val();
             var newName = this.nameInput.val();
             var newEmail = this.emailInput.val();
             var newModerator = this.modSelect.find("option:selected").val();
@@ -274,6 +354,7 @@ if (!blackboardPortlet._) {
             }
 
             this.model.create({
+               uniqueId : uniqueId,
                name : newName,
                email : newEmail,
                moderator : newModerator.toUpperCase() === 'TRUE'

@@ -4,10 +4,12 @@
  */
 package org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr.forms;
 
+import java.io.Serializable;
+
+import javax.validation.constraints.NotNull;
+
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 
 public class AddParticipantForm implements Serializable
 {
@@ -15,6 +17,8 @@ public class AddParticipantForm implements Serializable
 
 	@NotNull
 	private long sessionId;
+	
+	private String uniqueId;
 	
     @Length(min = 1)
     private String name;
@@ -32,6 +36,14 @@ public class AddParticipantForm implements Serializable
 
     public void setSessionId(long sessionId) {
         this.sessionId = sessionId;
+    }
+    
+    public String getUniqueId() {
+        return uniqueId;
+    }
+
+    public void setUniqueId(String uniqueId) {
+        this.uniqueId = uniqueId;
     }
 
     public String getName() {
@@ -60,7 +72,7 @@ public class AddParticipantForm implements Serializable
 
     @Override
     public String toString() {
-        return "AddParticipantForm [sessionId=" + sessionId + ", name=" + name + ", email=" + email + ", moderator="
-                + moderator + "]";
+        return "AddParticipantForm [sessionId=" + sessionId + ", uniqueId=" + uniqueId + ", name=" + name + ", email="
+                + email + ", moderator=" + moderator + "]";
     }
 }

@@ -1,5 +1,6 @@
 package org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -10,12 +11,15 @@ import javax.portlet.WindowState;
 import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
+import org.jasig.portlet.blackboardvcportlet.data.BasicUser;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr.forms.AddParticipantForm;
 import org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr.forms.DeleteParticipantsForm;
 import org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr.forms.UpdateParticipantForm;
+import org.jasig.portlet.blackboardvcportlet.security.ConferenceUserService;
 import org.jasig.portlet.blackboardvcportlet.service.SessionService;
+import org.jasig.portlet.blackboardvcportlet.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +41,19 @@ public class ManageParticipantsController {
 
     private SessionService sessionService;
     private ViewSessionListController viewController;
+    private UserService userService;
+    private ConferenceUserService conferenceUserService;
     
-    
+    @Autowired
+    public void setConferenceUserService(ConferenceUserService conferenceUserService) {
+        this.conferenceUserService = conferenceUserService;
+    }
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
     @Autowired
     public void setSessionService(SessionService sessionService) {
         this.sessionService = sessionService;
@@ -85,15 +100,17 @@ public class ManageParticipantsController {
             model.put("fieldErrors", fieldErrors);
         }
         else {
+            final String uniqueId = StringUtils.trimToNull(addParticipantForm.getUniqueId());
             final String displayName = StringUtils.trimToNull(addParticipantForm.getName());
             final String email = StringUtils.trimToNull(addParticipantForm.getEmail());
+            final ConferenceUser conferenceUser = this.conferenceUserService.getOrCreateConferenceUser(uniqueId, displayName, email);
             
             final ConferenceUser participant;
             if (addParticipantForm.isModerator()) {
-                participant = this.sessionService.addSessionChair(addParticipantForm.getSessionId(), displayName, email);
+                participant = this.sessionService.addSessionChair(addParticipantForm.getSessionId(), conferenceUser.getUserId());
             }
             else {
-                participant = this.sessionService.addSessionNonChair(addParticipantForm.getSessionId(), displayName, email);
+                participant = this.sessionService.addSessionNonChair(addParticipantForm.getSessionId(), conferenceUser.getUserId());
             }
             model.put("participant", participant);
         }
@@ -146,6 +163,25 @@ public class ManageParticipantsController {
             this.sessionService.removeSessionChairs(deleteParticipantForm.getSessionId(), deleteParticipantForm.getId());
             this.sessionService.removeSessionNonChairs(deleteParticipantForm.getSessionId(), deleteParticipantForm.getId());
         }
+        
+        return "json";
+    }
+    
+    @ResourceMapping("searchForParticipants")
+    public String searchForParticipants(ModelMap model, @RequestParam(required=false) String name, @RequestParam(required=false) String email) {
+        //TODO per-user rate limiting
+        final Set<BasicUser> result;
+        if (name != null) {
+            result = this.userService.searchForUserByName(name);
+        }
+        else if (email != null) {
+            result = this.userService.searchForUserByEmail(email);
+        }
+        else {
+            result = Collections.emptySet();
+        }
+        
+        model.addAttribute("result", result);
         
         return "json";
     }

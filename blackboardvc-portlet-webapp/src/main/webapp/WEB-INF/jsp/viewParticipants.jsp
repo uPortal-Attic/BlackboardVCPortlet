@@ -29,11 +29,15 @@
     </div>
 </c:if>
 
+<portlet:renderURL var="viewSessionUrl" windowState="MAXIMIZED" portletMode="VIEW">
+   <portlet:param name="sessionId" value="${session.sessionId}" />
+   <portlet:param name="action" value="viewSession" />
+</portlet:renderURL>
 <table class="sessionName">
   <thead>
     <tr>
         <th style="text-align: left;"><spring:message code="sessionName"/></th>
-        <th style="text-align: right;">${session.sessionName}</th>
+        <th style="text-align: right;"><a href="${viewSessionUrl}">${session.sessionName}</a></th>
     </tr>
   </thead>
 </table>
@@ -61,7 +65,7 @@
   </tbody>
   <tfoot>
     <tr>
-      <td></td>
+      <td><input type="hidden" name="newUniqueId"/></td>
       <td>
         <div class="ajaxerror name"></div>
         <input type="text" name="newName"/>
@@ -78,8 +82,11 @@
       </td>
     </tr>
     <tr>
-        <td colspan="2" align="left"><button name="deleteSelected">Delete Selected</button></td>
-        <td colspan="2" align="right"><button name="addParticipant">Add Another Participant</button></td>
+      <td colspan="2" align="left"><button name="deleteSelected">Delete Selected</button></td>
+      <td colspan="2" align="right"><button name="addParticipant">Add Participant</button></td>
+    </tr>
+    <tr>
+      <td colspan="4" align="left"><a href="${viewSessionUrl}" class="uportal-button">Complete</a></td>
     </tr>
   </tfoot>
 </table>
@@ -88,6 +95,7 @@
 <portlet:resourceURL var="addParticipantUrl" id="addParticipant" escapeXml="false" />
 <portlet:resourceURL var="updateParticipantUrl" id="updateParticipant" escapeXml="false" />
 <portlet:resourceURL var="deleteParticipantUrl" id="deleteParticipant" escapeXml="false" />
+<portlet:resourceURL var="searchForParticipantsUrl" id="searchForParticipants" escapeXml="false" />
 
 <script id="${n}participantTemplate" type="text/template">
   <td><input name="participant_select" type="checkbox" value="{{= cid }}"/></td>
@@ -104,15 +112,31 @@
 <script type="text/javascript">
 (function($, Backbone, _) {
    'use strict';
+
+   var autoCompleteOpts = {
+      searchForParticipantsUrl: "${searchForParticipantsUrl}",
+      uniqueIdSelector: "div#${n}blackboardCollaboratePortlet table.participantList input[name='newUniqueId']",
+      nameSelector: "div#${n}blackboardCollaboratePortlet table.participantList input[name='newName']",
+      emailSelector: "div#${n}blackboardCollaboratePortlet table.participantList input[name='newEmail']",
+      currentSearchRequest: null
+   };
    
-   blackboardPortlet.init({
+   blackboardPortlet.initParticipantAutoComplete(autoCompleteOpts);
+   
+   blackboardPortlet.initParticipantBackbone({
       getParticipantsUrl: "${getParticipantsUrl}",
       addParticipantUrl: "${addParticipantUrl}",
       updateParticipantUrl: "${updateParticipantUrl}",
       deleteParticipantUrl: "${deleteParticipantUrl}",
       sessionId : '${session.sessionId}',
       participantTemplateSelector: '#${n}participantTemplate',
-      participantsViewSelector: "div#${n}blackboardCollaboratePortlet table.participantList"
+      participantsViewSelector: "div#${n}blackboardCollaboratePortlet table.participantList",
+      onSyncAjax: function() {
+         if (autoCompleteOpts.currentSearchRequest != null) {
+            autoCompleteOpts.currentSearchRequest.abort();
+            autoCompleteOpts.currentSearchRequest = null;
+         }
+      }
    });
 
 })(blackboardPortlet.jQuery, blackboardPortlet.Backbone, blackboardPortlet._);

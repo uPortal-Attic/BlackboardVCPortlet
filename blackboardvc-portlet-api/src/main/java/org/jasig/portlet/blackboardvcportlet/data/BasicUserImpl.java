@@ -1,6 +1,7 @@
 package org.jasig.portlet.blackboardvcportlet.data;
 
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class BasicUserImpl implements BasicUser {
@@ -19,7 +20,7 @@ public class BasicUserImpl implements BasicUser {
         this.uniqueId = uniqueId;
         this.email = email;
         this.displayName = displayName;
-        this.additionalEmails = additionalEmails;
+        this.additionalEmails = additionalEmails != null ? additionalEmails : new LinkedHashSet<String>();
     }
 
     @Override

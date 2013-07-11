@@ -3,9 +3,12 @@ package org.jasig.portlet.blackboardvcportlet.service.impl;
 import java.util.Set;
 
 import org.jasig.portlet.blackboardvcportlet.dao.ConferenceUserDao;
+import org.jasig.portlet.blackboardvcportlet.data.BasicUser;
+import org.jasig.portlet.blackboardvcportlet.data.BasicUserImpl;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.security.ConferenceSecurityUser;
 import org.jasig.portlet.blackboardvcportlet.security.ConferenceUserService;
+import org.jasig.portlet.blackboardvcportlet.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.security.core.Authentication;
@@ -19,7 +22,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class ConferenceUserServiceImpl implements ConferenceUserService {
     private ConferenceUserDao conferenceUserDao;
-    
+    private UserService userService;
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
     @Autowired
     public void setConferenceUserDao(ConferenceUserDao conferenceUserDao) {
         this.conferenceUserDao = conferenceUserDao;
@@ -54,6 +63,43 @@ public class ConferenceUserServiceImpl implements ConferenceUserService {
 
     @Override
     public ConferenceUser getOrCreateConferenceUser(String displayName, String email) {
+        return getOrCreateConferenceUser(new BasicUserImpl(null, email, displayName));
+    }
+
+    @Override
+    public ConferenceUser getOrCreateConferenceUser(String uniqueId, String displayName, String email) {
+        
+        if (uniqueId != null) {
+            final BasicUser basicUser = this.userService.findUser(uniqueId);
+            if (basicUser != null) {
+                return getOrCreateConferenceUser(basicUser);
+            }
+        }
+        
+        return getOrCreateConferenceUser(new BasicUserImpl(null, email, displayName));
+    }
+
+    @Override
+    public ConferenceUser getOrCreateConferenceUser(BasicUser basicUser) {
+        //If the uniqueId is specified try to find an existing user by uniqueId
+        //if no existing user is found create a new internal user
+        final String uniqueId = basicUser.getUniqueId();
+        if (uniqueId != null) {
+            ConferenceUser user = this.conferenceUserDao.getUserByUniqueId(uniqueId);
+            if (user != null) {
+                return user;
+            }
+            
+            user = this.conferenceUserDao.createInternalUser(uniqueId);
+            user.setDisplayName(basicUser.getDisplayName());
+            user.setEmail(basicUser.getEmail());
+            user.getAdditionalEmails().addAll(basicUser.getAdditionalEmails());
+            
+            return user;
+        }
+        
+        final String email = basicUser.getEmail();
+        
         //Try to find a single user by email, it potentially possible to have more than one
         //user entry with the same primary email address in the case of a user being able to
         //chose their address
@@ -77,6 +123,6 @@ public class ConferenceUserServiceImpl implements ConferenceUserService {
             return user;
         }
         
-        return this.conferenceUserDao.createExternalUser(displayName, email);
+        return this.conferenceUserDao.createExternalUser(basicUser.getDisplayName(), email);
     }
 }

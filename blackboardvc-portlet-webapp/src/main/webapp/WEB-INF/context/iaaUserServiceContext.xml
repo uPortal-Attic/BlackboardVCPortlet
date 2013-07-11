@@ -14,6 +14,8 @@
     
     <bean id="iaaJdbcOperations" class="org.springframework.jdbc.core.JdbcTemplate">
         <constructor-arg ref="iaaDataSource" />
+        <property name="maxRows" value="25" />
+        <property name="queryTimeout" value="10" />
     </bean>
         
     <!-- Set the datasource details to the database where you want to cache Collaborate data --> 
@@ -36,6 +38,7 @@
         <property name="abandonWhenPercentageFull" value="70" />
         <property name="removeAbandoned" value="true" />
         <property name="removeAbandonedTimeout" value="300" />
+        <property name="validationQuery" value="SELECT 1 FROM DUAL" />
 
         <property name="jdbcInterceptors" value="ConnectionState(useEquals=true);ResetAbandonedTimer"/>
         <property name="testWhileIdle" value="true" />
