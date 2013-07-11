@@ -134,7 +134,7 @@ public class ConferenceUserImpl implements ConferenceUser {
         this.userId = -1;
         this.entityVersion = -1;
         
-        this.uniqueId = uniqueId;
+        this.uniqueId = uniqueId.toUpperCase();
         this.external = false;
         this.invitationKey = null;
     }
@@ -149,13 +149,12 @@ public class ConferenceUserImpl implements ConferenceUser {
         this.userId = -1;
         this.entityVersion = -1;
         
-        this.uniqueId = email;
-        this.email = email;
+        this.uniqueId = email.toUpperCase();
+        this.setEmail(email);
         this.external = true;
         this.invitationKey = invitationKey;
     }
     
-
     @Override
     public long getUserId() {
         return userId;
@@ -186,7 +185,7 @@ public class ConferenceUserImpl implements ConferenceUser {
 
     @Override
     public void setEmail(String email) {
-        this.email = email;
+        this.email = email != null ? email.toUpperCase() : null;
     }
 
     @Override
