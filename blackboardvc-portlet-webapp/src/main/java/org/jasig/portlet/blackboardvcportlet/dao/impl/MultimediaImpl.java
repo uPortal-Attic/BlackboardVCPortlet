@@ -63,7 +63,7 @@ public class MultimediaImpl implements Multimedia {
     @JoinColumn(name = "CREATOR", nullable = false)
     private final ConferenceUser creator;
 	
-	@Column(name="DESCRIPTION", nullable = false, length = 1000)
+	@Column(name="DESCRIPTION", length = 1000)
     private String description;
 	
 	@Column(name="FILENAME", nullable = false, length = 1000)
@@ -105,6 +105,11 @@ public class MultimediaImpl implements Multimedia {
     @PrePersist
     protected final void onUpdate() {
         lastUpdated = DateTime.now();
+        
+        //Fix for Oracle "" == null
+        if (this.description.length() == 0) {
+            this.description = " ";
+        }
     }
 
 	@Override

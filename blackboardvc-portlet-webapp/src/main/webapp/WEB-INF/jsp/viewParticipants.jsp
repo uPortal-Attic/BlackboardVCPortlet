@@ -138,16 +138,11 @@
          }
       }
    });
+   
+   $(document).ready(function() {
+      blackboardPortlet.showTooltip('.${n}toolTip');
+   });
 
 })(blackboardPortlet.jQuery, blackboardPortlet.Backbone, blackboardPortlet._);
-
-(function($) {
-	blackboardPortlet.jQuery(function($) {
-		$(document).ready(function() {
-			blackboardPortlet.showTooltip('.${n}toolTip');
-		});
-	});
-})(blackboardPortlet.jQuery);
-
 </script>
 </div>

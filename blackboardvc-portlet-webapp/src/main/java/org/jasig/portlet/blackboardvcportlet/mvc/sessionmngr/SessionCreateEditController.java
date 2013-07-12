@@ -87,9 +87,6 @@ public class SessionCreateEditController
 	@Value("${presentationFileTypes}")
 	private String presentationFileTypes;
 
-	@Value("${multimediaFileTypes}")
-	private String multimediaFileTypes;
-
 	@Autowired
 	public void setConferenceUserService(ConferenceUserService conferenceUserService) {
         this.conferenceUserService = conferenceUserService;
@@ -163,8 +160,6 @@ public class SessionCreateEditController
         model.addAttribute("presentationFileTypes", presentationFileTypes);
 		model.addAttribute("presentation", session.getPresentation());
 
-		model.addAttribute("multimediaFileTypes", multimediaFileTypes);
-
 		if (presentationUploadError != null)
 		{
 			model.addAttribute("presentationUploadError", presentationUploadError);
@@ -217,53 +212,6 @@ public class SessionCreateEditController
 
         response.setPortletMode(PortletMode.VIEW);
     }
-    
-    @ActionMapping(params = "action=Upload Multimedia")
-    public void uploadMultimedia(ActionResponse response, Locale locale, @RequestParam long sessionId, @RequestParam MultipartFile multimediaUpload, @RequestParam boolean needToSendInitialEmail) throws PortletModeException
-	{
-		String fileExtension = StringUtils.substringAfter(multimediaUpload.getOriginalFilename(), ".").toLowerCase();
-
-		// Validate
-		if (multimediaUpload.getSize() < 1)
-		{
-			response.setRenderParameter("multimediaUploadError", messageSource.getMessage("error.uploadfilenotselected", null, locale));
-		}
-		else if (multimediaUpload.getSize() > maxFileUploadSize)
-		{
-			response.setRenderParameter("multimediaUploadError", messageSource.getMessage("error.uploadfilesizetoobig", null, locale));
-		}
-		else if (fileExtension.length() == 0 || !multimediaFileTypes.contains(fileExtension))
-		{
-			response.setRenderParameter("multimediaUploadError", messageSource.getMessage("error.uploadfileextensionswrong", null, locale));
-		}
-		else
-		{
-			this.sessionService.addMultimedia(sessionId, multimediaUpload);
-		}
-
-        response.setPortletMode(PortletMode.EDIT);
-        response.setRenderParameter("sessionId", Long.toString(sessionId));
-		response.setRenderParameter("action", "editSession");
-		response.setRenderParameter("needToSendInitialEmail", Boolean.toString(needToSendInitialEmail));
-	}
-
-    @ActionMapping(params = "action=Delete Multimedia Item(s)")
-    public void deleteMultimedia(ActionResponse response, Locale locale, @RequestParam long sessionId, @RequestParam(required = false) long[] deleteMultimedia, @RequestParam boolean needToSendInitialEmail) throws PortletModeException
-	{
-		if (deleteMultimedia == null)
-		{
-			response.setRenderParameter("deleteMultimediaError", messageSource.getMessage("error.nothingselected", null, locale));
-		}
-		else
-		{
-			this.sessionService.deleteMultimedia(sessionId, deleteMultimedia);
-		}
-
-		response.setPortletMode(PortletMode.EDIT);
-		response.setRenderParameter("sessionId", Long.toString(sessionId));
-		response.setRenderParameter("action", "editSession");
-		response.setRenderParameter("needToSendInitialEmail", Boolean.toString(needToSendInitialEmail));
-	}
     
     @ActionMapping(params = "action=Upload Presentation")
     public void uploadPresentation(ActionResponse response, Locale locale, @RequestParam long sessionId, @RequestParam MultipartFile presentationUpload, @RequestParam boolean needToSendInitialEmail) throws PortletModeException

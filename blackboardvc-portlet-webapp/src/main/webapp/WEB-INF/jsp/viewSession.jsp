@@ -185,7 +185,7 @@
         	</c:choose>
 			<portlet:renderURL var="addMediaFileUrl" portletMode="EDIT" windowState="MAXIMIZED" >
 			    <portlet:param name="sessionId" value="${session.sessionId}" />
-			    <portlet:param name="action" value="addMediaFile" />
+			    <portlet:param name="action" value="manageMediaFiles" />
 			</portlet:renderURL>
 	    	<a href="${addMediaFileUrl}" class="uportal-button">Upload Media File(s)</a>
 		</td>
@@ -216,20 +216,11 @@
 </table>   
 
 <script type="text/javascript">
-
-(function($) 
-		{
-			blackboardPortlet.jQuery(function($) 
-					{
-  					$(document).ready(function() 
-  							{
-  								blackboardPortlet.showTooltip('.${n}toolTip');
-  							});
-  					
-					});
-			
-		})(blackboardPortlet.jQuery);
-
+(function($) {
+   $(document).ready(function() {
+      blackboardPortlet.showTooltip('.${n}toolTip');
+   });			
+})(blackboardPortlet.jQuery);
 </script>
 
 </div>

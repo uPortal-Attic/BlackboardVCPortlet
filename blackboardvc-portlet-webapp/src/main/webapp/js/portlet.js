@@ -74,7 +74,7 @@ if (!blackboardPortlet._) {
       var searchCache = {
          name: {},
          email: {}
-      }
+      };
       
       var searchMaker = function(searchType) {
          return function(request, response) {
@@ -141,19 +141,242 @@ if (!blackboardPortlet._) {
       setupAutocomplete(nameInput, "name");
       setupAutocomplete(emailInput, "email");
    };
+   
+   blackboardPortlet.initMediaFileBackbone = function(bbOpts) {
+      blackboardPortlet.mediaFile = blackboardPortlet.mediaFile || {};
+      blackboardPortlet.mediaFile.model = blackboardPortlet.mediaFile.model || {};
+      blackboardPortlet.mediaFile.view = blackboardPortlet.mediaFile.view || {};
+      
+      var bbNamespace = blackboardPortlet.mediaFile;
+      
+      /**
+       * Centralized sync method
+       */
+      bbNamespace.sync = function(type) {
+         return function(method, model, options) {
+            // We don't own options so we shouldn't modify it,
+            // but we can do whatever we want to a clone.
+            options = _(options).clone();
+
+            var params = {
+               type : 'POST',
+            };
+
+            $.log("-----SYNC-----");
+            $.log(type);
+            $.log(method);
+            $.log(model);
+            $.log(options);
+            
+
+
+            if (type === "MediaFilesList") {
+               if (method == "read") {
+                  params.url = bbOpts.getMediaFilesUrl;
+
+                  params.data = {
+                     sessionId : bbOpts.sessionId
+                  };
+
+                  // Replace options.success with a wrapper.
+                  var success = options.success;
+                  options.success = function(data, textStatus, jqXHR) {
+                     if (success) {
+                        var parsedData = [];
+
+                        $.each(data.multimedias, function(idx, mediaFile) {
+                           parsedData.push({
+                              id : mediaFile.multimediaId,
+                              name : mediaFile.filename
+                           });
+                        });
+
+                        success(parsedData, textStatus, jqXHR);
+                     }
+                  };
+               }
+            }
+            
+            if (params.url != null) {
+               if (bbOpts.onSyncAjax != null) {
+                  bbOpts.onSyncAjax(type, method, model, options);
+               }
+               $.ajax(_.extend(params, options));
+            }
+            
+            $.log("--------------");
+         };
+      };
+
+      bbNamespace.model.MediaFile = Backbone.Model.extend({
+         sync : bbNamespace.sync("MediaFile"),
+         toJSON : function() {
+            var json = Backbone.Model.prototype.toJSON.apply(this, arguments);
+            json.cid = this.cid;
+            return json;
+         }
+      });
+
+      bbNamespace.model.MediaFilesList = Backbone.Collection.extend({
+         model : bbNamespace.model.MediaFile,
+         sync : bbNamespace.sync("MediaFilesList")
+      });
+
+      bbNamespace.view.MediaFileView = Backbone.View.extend({
+         tagName : "tr",
+         className : "mediFile-row",
+         template : _.template($(bbOpts.mediaFileTemplateSelector).html()),
+
+         initialize : function() {
+            _.bindAll(this);
+
+            this.listenTo(this.model, 'change', this.render);
+            this.listenTo(this.model, 'destroy', this.remove);
+         },
+
+         render : function() {
+            $(this.el).html(this.template(this.model.toJSON()));
+            return this;
+         }
+      });
+
+      bbNamespace.view.MediaFilesView = Backbone.View.extend({
+         el : $(bbOpts.mediaFilesViewSelector),
+
+         initialize : function(options) {
+            this.listenTo(this.model, 'add', this.addOne);
+            this.listenTo(this.model, 'remove', this.remove);
+            this.listenTo(this.model, 'reset', this.addAll);
+            this.listenTo(this.model, 'error', this.error);
+
+//            this.uniqueIdInput = this.$("input[name='newUniqueId']");
+//            this.nameInput = this.$("input[name='newName']");
+//            this.emailInput = this.$("input[name='newEmail']");
+//            this.modSelect = this.$("select[name='newModerator']");
+         },
+         events : {
+            "click button[name='deleteSelected']" : "deleteSelected",
+            "click button[name='uploadFile']" : "uploadFile"
+         },
+         render : function() {
+            var container = document.createDocumentFragment();
+            _.forEach(this.model.models, function(mediaFile) {
+               var view = new bbNamespace.view.MediaFileView({
+                  model : mediaFile
+               });
+               container.appendChild(view.render().el);
+            }, this);
+            this.$("tbody").html(container);
+
+            return this;
+         },
+//         error : function(model, resp, options) {
+//            //TODO the upload needs to happen syncronously
+//            this.model.remove(model);
+//            this.uniqueIdInput.val(model.get("uniqueId"));
+//            this.nameInput.val(model.get("name"));
+//            this.emailInput.val(model.get("email"));
+//            this.modSelect.val(model.get("moderator") + "");
+//
+//            var responseData = $.parseJSON(resp.responseText);
+//            $.log(responseData);
+//
+//            var that = this;
+//            $.each(responseData.fieldErrors, function(key, value) {
+//               var errorDiv = that.$("div.ajaxerror." + key);
+//               errorDiv.text(value);
+//               errorDiv.show();
+//            });
+//         },
+         uploadFile : function(e) {
+            this.$("div.ajaxerror").hide();
+
+            var uniqueId = this.uniqueIdInput.val();
+            var newName = this.nameInput.val();
+            var newEmail = this.emailInput.val();
+            var newModerator = this.modSelect.find("option:selected").val();
+
+            if (!newName || !newEmail) {
+               return;
+            }
+
+            this.model.create({
+               uniqueId : uniqueId,
+               name : newName,
+               email : newEmail,
+               moderator : newModerator.toUpperCase() === 'TRUE'
+            });
+
+            this.nameInput.val('');
+            this.emailInput.val('');
+         },
+
+         deleteSelected : function(e) {
+            var data = {
+               sessionId : bbOpts.sessionId,
+               id : []
+            };
+
+            var mdl = this.model;
+
+            var selectedFiles = this.$("input[name='file_select']:checked");
+            selectedFiles.each(function(idx, fileSelect) {
+               var cid = $(fileSelect).val();
+               var fileModel = mdl.get(cid);
+               data.id.push(fileModel.get("id"));
+               fileModel.destroy();
+            });
+
+            $.ajax({
+               type : 'POST',
+               url : bbOpts.deleteMediaFileUrl,
+               data : data,
+               traditional : true
+            });
+         },
+
+         // Add a single setting item to the list by creating a view for it
+         addOne : function(participant) {
+            var view = new bbNamespace.view.MediaFileView({
+               model : participant
+            });
+            this.$("tbody").append(view.render().el);
+         },
+
+         // Add all items in the setting collection at once.
+         addAll : function() {
+            this.model.each(this.addOne, this);
+         },
+
+         remove : function(e) {
+            this.render();
+         }
+      });
+
+      var mediaFilesList = new bbNamespace.model.MediaFilesList();
+
+      new bbNamespace.view.MediaFilesView({
+         model : mediaFilesList
+      });
+
+      mediaFilesList.fetch();
+   };
 
    blackboardPortlet.initParticipantBackbone = function(bbOpts) {
-      blackboardPortlet.model = blackboardPortlet.model || {};
-      blackboardPortlet.view = blackboardPortlet.view || {};
+      blackboardPortlet.participant = blackboardPortlet.participant || {};
+      blackboardPortlet.participant.model = blackboardPortlet.participant.model || {};
+      blackboardPortlet.participant.view = blackboardPortlet.participant.view || {};
+      
+      var bbNamespace = blackboardPortlet.participant;
 
       /**
        * Centralized sync method
        */
-      blackboardPortlet.sync = function(type) {
+      bbNamespace.sync = function(type) {
          return function(method, model, options) {
             // We don't own options so we shouldn't modify it,
             // but we can do whatever we want to a clone.
-            options = _(options).clone()
+            options = _(options).clone();
 
             var params = {
                type : 'POST',
@@ -244,7 +467,9 @@ if (!blackboardPortlet._) {
             }
 
             if (params.url != null) {
-               bbOpts.onSyncAjax(type, method, model, options);
+               if (bbOpts.onSyncAjax != null) {
+                  bbOpts.onSyncAjax(type, method, model, options);
+               }
                $.ajax(_.extend(params, options));
             }
 
@@ -252,8 +477,8 @@ if (!blackboardPortlet._) {
          };
       };
 
-      blackboardPortlet.model.Participant = Backbone.Model.extend({
-         sync : blackboardPortlet.sync("Participant"),
+      bbNamespace.model.Participant = Backbone.Model.extend({
+         sync : bbNamespace.sync("Participant"),
          toJSON : function() {
             var json = Backbone.Model.prototype.toJSON.apply(this, arguments);
             json.cid = this.cid;
@@ -261,12 +486,12 @@ if (!blackboardPortlet._) {
          }
       });
 
-      blackboardPortlet.model.ParticipantsList = Backbone.Collection.extend({
-         model : blackboardPortlet.model.Participant,
-         sync : blackboardPortlet.sync("ParticipantsList")
+      bbNamespace.model.ParticipantsList = Backbone.Collection.extend({
+         model : bbNamespace.model.Participant,
+         sync : bbNamespace.sync("ParticipantsList")
       });
 
-      blackboardPortlet.view.ParticipantView = Backbone.View.extend({
+      bbNamespace.view.ParticipantView = Backbone.View.extend({
          tagName : "tr",
          className : "participant-row",
          template : _.template($(bbOpts.participantTemplateSelector).html()),
@@ -295,7 +520,7 @@ if (!blackboardPortlet._) {
          }
       });
 
-      blackboardPortlet.view.ParticipantsView = Backbone.View.extend({
+      bbNamespace.view.ParticipantsView = Backbone.View.extend({
          el : $(bbOpts.participantsViewSelector),
 
          initialize : function(options) {
@@ -316,7 +541,7 @@ if (!blackboardPortlet._) {
          render : function() {
             var container = document.createDocumentFragment();
             _.forEach(this.model.models, function(participant) {
-               var view = new blackboardPortlet.view.ParticipantView({
+               var view = new bbNamespace.view.ParticipantView({
                   model : participant
                });
                container.appendChild(view.render().el);
@@ -391,7 +616,7 @@ if (!blackboardPortlet._) {
 
          // Add a single setting item to the list by creating a view for it
          addOne : function(participant) {
-            var view = new blackboardPortlet.view.ParticipantView({
+            var view = new bbNamespace.view.ParticipantView({
                model : participant
             });
             this.$("tbody").append(view.render().el);
@@ -407,9 +632,9 @@ if (!blackboardPortlet._) {
          }
       });
 
-      var participantsList = new blackboardPortlet.model.ParticipantsList();
+      var participantsList = new bbNamespace.model.ParticipantsList();
 
-      new blackboardPortlet.view.ParticipantsView({
+      new bbNamespace.view.ParticipantsView({
          model : participantsList
       });
 

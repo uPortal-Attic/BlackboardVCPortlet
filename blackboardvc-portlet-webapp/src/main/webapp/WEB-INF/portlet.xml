@@ -51,6 +51,10 @@
           <role-name>ROLE_FULL_ACCESS</role-name>
           <role-link>Web Conferencing Full Access</role-link>
         </security-role-ref>
+        <security-role-ref>
+          <role-name>ROLE_ADMIN</role-name>
+          <role-link>Administrators - Web Conferencing</role-link>
+        </security-role-ref>
         <portlet-preferences>
         	<preference>
         		<name>helpUrl</name>
