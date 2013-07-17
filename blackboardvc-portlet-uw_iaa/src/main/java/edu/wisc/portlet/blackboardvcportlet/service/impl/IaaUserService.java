@@ -39,9 +39,9 @@ public class IaaUserService implements UserService {
     @Override
     public BasicUser findUser(String uniqueId) {
         final List<BasicUser> results = this.jdbcOperations.query(
-                "select EPPN, FIRST_NAME, MIDDLE_NAME, LAST_NAME, NAME_PRIVATE, EMAIL_ADDRESS, EMAIL_PRIVATE " +
+                "select EPPN, FIRST_NAME, MIDDLE_NAME, LAST_NAME, EMAIL_ADDRESS " +
                 "from iaaviews.portal_blackboard_lookup " +
-                "where EPPN = ?", 
+                "where spvi = (pase.get_pvi_by_eppn(?))", 
                 BasicUserRowMapper.INSTANCE, 
                 uniqueId);
         
@@ -73,7 +73,7 @@ public class IaaUserService implements UserService {
         }
         
         final List<BasicUser> results = this.jdbcOperations.query(
-                "select EPPN, FIRST_NAME, MIDDLE_NAME, LAST_NAME, NAME_PRIVATE, EMAIL_ADDRESS, EMAIL_PRIVATE " +
+                "select EPPN, FIRST_NAME, MIDDLE_NAME, LAST_NAME, EMAIL_ADDRESS " +
                 "from iaaviews.portal_blackboard_lookup " +
                 "where " + whereClause,
                 BasicUserRowMapper.INSTANCE, 
@@ -90,7 +90,7 @@ public class IaaUserService implements UserService {
         }
 
         final List<BasicUser> results = this.jdbcOperations.query(
-                "select EPPN, FIRST_NAME, MIDDLE_NAME, LAST_NAME, NAME_PRIVATE, EMAIL_ADDRESS, EMAIL_PRIVATE " +
+                "select EPPN, FIRST_NAME, MIDDLE_NAME, LAST_NAME, EMAIL_ADDRESS " +
                 "from iaaviews.portal_blackboard_lookup " +
                 "where upper(EMAIL_ADDRESS) like upper(?)",
                 BasicUserRowMapper.INSTANCE, 

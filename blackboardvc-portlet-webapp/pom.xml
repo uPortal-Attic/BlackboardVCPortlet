@@ -15,7 +15,6 @@
     	<dependency>
           <groupId>com.atg</groupId>
           <artifactId>json-taglib</artifactId>
-          <version>0.4.1</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
@@ -62,6 +61,10 @@
         <dependency>
             <groupId>taglibs</groupId>
             <artifactId>standard</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.portals.pluto</groupId>

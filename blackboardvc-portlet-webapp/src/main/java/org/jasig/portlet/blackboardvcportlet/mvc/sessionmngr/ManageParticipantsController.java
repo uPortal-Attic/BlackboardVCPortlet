@@ -19,7 +19,6 @@ import org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr.forms.DeletePartici
 import org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr.forms.UpdateParticipantForm;
 import org.jasig.portlet.blackboardvcportlet.security.ConferenceUserService;
 import org.jasig.portlet.blackboardvcportlet.service.SessionService;
-import org.jasig.portlet.blackboardvcportlet.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,17 +40,11 @@ public class ManageParticipantsController {
 
     private SessionService sessionService;
     private ViewSessionListController viewController;
-    private UserService userService;
     private ConferenceUserService conferenceUserService;
     
     @Autowired
     public void setConferenceUserService(ConferenceUserService conferenceUserService) {
         this.conferenceUserService = conferenceUserService;
-    }
-
-    @Autowired
-    public void setUserService(UserService userService) {
-        this.userService = userService;
     }
 
     @Autowired
@@ -172,10 +165,10 @@ public class ManageParticipantsController {
         //TODO per-user rate limiting
         final Set<BasicUser> result;
         if (name != null) {
-            result = this.userService.searchForUserByName(name);
+            result = this.conferenceUserService.searchForBasicUserByName(name);
         }
         else if (email != null) {
-            result = this.userService.searchForUserByEmail(email);
+            result = this.conferenceUserService.searchForBasicUserByEmail(email);
         }
         else {
             result = Collections.emptySet();

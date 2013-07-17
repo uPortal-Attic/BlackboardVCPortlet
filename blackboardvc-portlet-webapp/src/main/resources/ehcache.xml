@@ -39,6 +39,9 @@
     <defaultCache eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="60" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
+    <cache name="UserService" 
+        maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
     
     <cache name="org.jasig.portlet.blackboardvcportlet.dao.impl.ConferenceUserImpl" 

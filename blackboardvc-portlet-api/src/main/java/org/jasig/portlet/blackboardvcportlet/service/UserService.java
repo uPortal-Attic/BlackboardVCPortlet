@@ -15,7 +15,7 @@ public interface UserService {
      * @return The user for the uniqueId
      */
     BasicUser findUser(String uniqueId);
-
+    
     /**
      * Search for a set of users via {@link BasicUser#getDisplayName()}. It is up to 
      * the implementation to parse the name parameter to return the best result set based
