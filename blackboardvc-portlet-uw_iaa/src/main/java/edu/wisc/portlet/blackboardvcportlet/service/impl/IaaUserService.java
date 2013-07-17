@@ -66,10 +66,10 @@ public class IaaUserService implements UserService {
         
         final String whereClause;
         if (nameParts.size() == 1) {
-            whereClause = "upper(first_name) like upper(?) OR upper(last_name) like upper(?) OR upper(FIRST_NAME || ' ' || MIDDLE_NAME || ' ' || LAST_NAME) like ?";
+            whereClause = "upper(first_name) like upper(?) OR upper(last_name) like upper(?) OR upper(FIRST_NAME || ' ' || MIDDLE_NAME || ' ' || LAST_NAME) like upper(?)";
         }
         else {
-            whereClause = "(upper(first_name) like upper(?) AND upper(last_name) like upper(?)) OR upper(FIRST_NAME || ' ' || MIDDLE_NAME || ' ' || LAST_NAME) like ?";
+            whereClause = "(upper(first_name) like upper(?) AND upper(last_name) like upper(?)) OR upper(FIRST_NAME || ' ' || MIDDLE_NAME || ' ' || LAST_NAME) like upper(?)";
         }
         
         final List<BasicUser> results = this.jdbcOperations.query(

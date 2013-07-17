@@ -44,7 +44,7 @@ public class IaaUserServiceTest {
         assertEquals(0, result.size());
         
         verify(jdbcOperations).query(
-                eq("select EPPN, FIRST_NAME, MIDDLE_NAME, LAST_NAME, EMAIL_ADDRESS from iaaviews.portal_blackboard_lookup where upper(first_name) like upper(?) OR upper(last_name) like upper(?) OR upper(FIRST_NAME || ' ' || MIDDLE_NAME || ' ' || LAST_NAME) like ?"), 
+                eq("select EPPN, FIRST_NAME, MIDDLE_NAME, LAST_NAME, EMAIL_ADDRESS from iaaviews.portal_blackboard_lookup where upper(first_name) like upper(?) OR upper(last_name) like upper(?) OR upper(FIRST_NAME || ' ' || MIDDLE_NAME || ' ' || LAST_NAME) like upper(?)"), 
                 any(RowMapper.class), 
                 eq("John%"),
                 eq("John%"),
@@ -57,7 +57,7 @@ public class IaaUserServiceTest {
         assertEquals(0, result.size());
         
         verify(jdbcOperations).query(
-                eq("select EPPN, FIRST_NAME, MIDDLE_NAME, LAST_NAME, EMAIL_ADDRESS from iaaviews.portal_blackboard_lookup where (upper(first_name) like upper(?) AND upper(last_name) like upper(?)) OR upper(FIRST_NAME || ' ' || MIDDLE_NAME || ' ' || LAST_NAME) like ?"), 
+                eq("select EPPN, FIRST_NAME, MIDDLE_NAME, LAST_NAME, EMAIL_ADDRESS from iaaviews.portal_blackboard_lookup where (upper(first_name) like upper(?) AND upper(last_name) like upper(?)) OR upper(FIRST_NAME || ' ' || MIDDLE_NAME || ' ' || LAST_NAME) like upper(?)"), 
                 any(RowMapper.class), 
                 eq("John%"),
                 eq("Doe%"),
@@ -70,7 +70,7 @@ public class IaaUserServiceTest {
         assertEquals(0, result.size());
         
         verify(jdbcOperations).query(
-                eq("select EPPN, FIRST_NAME, MIDDLE_NAME, LAST_NAME, EMAIL_ADDRESS from iaaviews.portal_blackboard_lookup where (upper(first_name) like upper(?) AND upper(last_name) like upper(?)) OR upper(FIRST_NAME || ' ' || MIDDLE_NAME || ' ' || LAST_NAME) like ?"), 
+                eq("select EPPN, FIRST_NAME, MIDDLE_NAME, LAST_NAME, EMAIL_ADDRESS from iaaviews.portal_blackboard_lookup where (upper(first_name) like upper(?) AND upper(last_name) like upper(?)) OR upper(FIRST_NAME || ' ' || MIDDLE_NAME || ' ' || LAST_NAME) like upper(?)"), 
                 any(RowMapper.class), 
                 eq("John%"),
                 eq("Doe%"),
@@ -83,7 +83,7 @@ public class IaaUserServiceTest {
         assertEquals(0, result.size());
         
         verify(jdbcOperations).query(
-                eq("select EPPN, FIRST_NAME, MIDDLE_NAME, LAST_NAME, EMAIL_ADDRESS from iaaviews.portal_blackboard_lookup where (upper(first_name) like upper(?) AND upper(last_name) like upper(?)) OR upper(FIRST_NAME || ' ' || MIDDLE_NAME || ' ' || LAST_NAME) like ?"), 
+                eq("select EPPN, FIRST_NAME, MIDDLE_NAME, LAST_NAME, EMAIL_ADDRESS from iaaviews.portal_blackboard_lookup where (upper(first_name) like upper(?) AND upper(last_name) like upper(?)) OR upper(FIRST_NAME || ' ' || MIDDLE_NAME || ' ' || LAST_NAME) like upper(?)"), 
                 any(RowMapper.class), 
                 eq("John%"),
                 eq("Dum%"),
