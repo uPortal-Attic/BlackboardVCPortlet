@@ -10,3 +10,5 @@ Ends:   ${sessionEndTime}
 ${creatorName} 
 
 Email: ${creatorEmail}
+
+This automated message comes from an email address that is checked periodically. If you need support for Blackboard Collaborate, please see the Knowledgebase at https://kb.wisc.edu/myuwsystem/search.php?q=&cat=2485
