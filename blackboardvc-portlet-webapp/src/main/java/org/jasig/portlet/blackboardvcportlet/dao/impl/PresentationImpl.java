@@ -62,7 +62,7 @@ public class PresentationImpl implements Presentation {
     @JoinColumn(name = "CREATOR", nullable = false)
     private final ConferenceUserImpl creator;
 	
-	@Column(name="DESCRIPTION", nullable = false, length = 1000)
+	@Column(name="DESCRIPTION", nullable = true, length = 1000)
     private String description;
 	
 	@Column(name="FILENAME", nullable = false, length = 1000)

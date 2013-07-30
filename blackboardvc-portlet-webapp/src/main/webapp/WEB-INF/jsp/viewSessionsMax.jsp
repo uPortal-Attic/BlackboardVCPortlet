@@ -28,17 +28,8 @@
     <tbody>
       <tr>
         <td align="right" colspan="3">
-        	<sec:authorize var="adminAccess" access="hasRole('ROLE_ADMIN')" />
-		      <c:choose>
-		        <c:when test="${adminAccess}">
-		        	<portlet:renderURL var="homeURL" portletMode="VIEW" windowState="MAXIMIZED" />
-	          		<a href="${homeURL}" class="uportal-button"><spring:message code="adminHome" text="adminHome"/></a>
-		        </c:when>
-        		<c:otherwise>
-	        		<a href="${createSessionUrl }" id="create-user" class="uportal-button"><spring:message code="scheduleWebConferencingSession" text="scheduleWebConferencingSession"/></a>
-        		</c:otherwise>
-	        </c:choose>
-        </td>
+    		<a href="${createSessionUrl }" id="create-user" class="uportal-button"><spring:message code="scheduleWebConferencingSession" text="scheduleWebConferencingSession"/></a>
+       </td>
         <td align="right" width="2em" colspan="1">
         <c:if test="${!empty prefs['helpUrl'][0]}">
         	<a href="${prefs['helpUrl'][0]}" target="_blank" class="uportal-button"><spring:message code="help" text="help"/></a>
