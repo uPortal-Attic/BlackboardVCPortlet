@@ -79,7 +79,7 @@ public class SessionForm implements Serializable {
         this.newSession = true;
         this.needToSendInitialEmail = true;
         
-        final DateTime startTime = DateTime.now().plusDays(1).hourOfDay().roundFloorCopy();
+        final DateTime startTime = DateTime.now().plusHours(1).hourOfDay().roundFloorCopy();
         this.setStartTime(startTime);
         this.setEndTime(startTime.plusHours(1));
         
