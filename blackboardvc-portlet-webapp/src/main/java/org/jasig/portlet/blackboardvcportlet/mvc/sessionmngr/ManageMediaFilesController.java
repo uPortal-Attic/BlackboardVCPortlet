@@ -80,12 +80,16 @@ public class ManageMediaFilesController {
     }
 
     @RenderMapping(params = "action=manageMediaFiles")
-    public String manageMultimedia(PortletRequest request, @RequestParam long sessionId, ModelMap model) {
+    public String manageMultimedia(PortletRequest request, @RequestParam long sessionId, @RequestParam(required=false, value="multimediaUploadError") String multimediaUploadError, ModelMap model) {
         if (WindowState.NORMAL.equals(request.getWindowState())) {
             return viewController.view(request, model, null, null);
         }
 
         model.addAttribute("multimediaFileTypes", multimediaFileTypes);
+        
+        if(multimediaUploadError != null && multimediaUploadError.length() > 0) {
+        	model.addAttribute("multimediaUploadError",multimediaUploadError);
+        }
 
         final Session session = this.sessionService.getSession(sessionId);
         model.addAttribute("session", session);

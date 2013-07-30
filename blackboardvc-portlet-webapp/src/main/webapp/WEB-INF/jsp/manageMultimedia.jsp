@@ -33,11 +33,15 @@
    <portlet:param name="sessionId" value="${session.sessionId}" />
    <portlet:param name="action" value="viewSession" />
 </portlet:renderURL>
+
+<div class="error">
+<span class="uportal-channel-strong">${multimediaUploadError}</span>
+</div>
 <table class="sessionName">
   <thead>
     <tr>
-        <th style="text-align: left;"><spring:message code="sessionName"/></th>
-        <th style="text-align: right;"><a href="${viewSessionUrl}">${session.sessionName}</a></th>
+        <td style="text-align: left;"><span class="uportal-channel-strong"><spring:message code="sessionName"/></span></td>
+        <td style="text-align: right;"><a href="${viewSessionUrl}">${session.sessionName}</a></td>
     </tr>
   </thead>
 </table>
@@ -46,13 +50,12 @@
   <thead>
     <tr>
       <th colspan="4" style="text-align: left;">
-        <h2>Invite / Edit Media Files</h2><br/>
+        <h2>Upload / Edit Media Files</h2><br/>
         <small>You may upload most common video formats, including .mpeg, .mpg, .mpe, .mov, .qt, .swf, .m4v, .mp3, .mp4, .wmv.</small>
       </th>
     </tr>
     <tr>
-      <th style="text-align: left;">Select</th>
-      <th style="text-align: left;">Media Files</th>
+      <td style="text-align: left;"><span class="uportal-channel-strong">Select</span></td><td style="text-align: left;"><span class="uportal-channel-strong">Media Files</span></td>
     </tr>
   </thead>
   <tbody>
