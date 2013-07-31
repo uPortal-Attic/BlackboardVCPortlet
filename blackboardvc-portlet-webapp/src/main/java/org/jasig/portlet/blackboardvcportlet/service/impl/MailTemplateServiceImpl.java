@@ -241,7 +241,7 @@ public class MailTemplateServiceImpl implements BeanFactoryAware, MailTemplateSe
 		substitutions.put(MailSubstitutions.SESSION_START_TIME.toString(), session.getStartTime().toString(DATE_FORMAT));
 		substitutions.put(MailSubstitutions.SESSION_END_TIME.toString(), session.getEndTime().toString(DATE_FORMAT));
 		substitutions.put(MailSubstitutions.SESSION_USER_URL.toString(), sessionService.getOrCreateSessionUrl(participant, session));
-		substitutions.put(MailSubstitutions.SESSION_GUEST_URL.toString(), session.getGuestUrl());
+		//substitutions.put(MailSubstitutions.SESSION_GUEST_URL.toString(), session.getGuestUrl());
 		substitutions.put(MailSubstitutions.SESSION_CREATOR_EMAIL.toString(), session.getCreator().getEmail());
 		substitutions.put(MailSubstitutions.SESSION_CREATOR_NAME.toString(), session.getCreator().getDisplayName());
 		substitutions.put(MailSubstitutions.SESSION_UPDATE_TEXT.toString(), isUpdate ? "**Time update for existing session.**" : "");

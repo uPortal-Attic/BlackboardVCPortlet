@@ -12,10 +12,6 @@ To join the session, please click on the link below within ${boundaryTime} minut
 
 ${userURL}
 
-To invite others to join the session, e-mail the following link:
-
-${guestURL}
-
 ${creatorName}
 
 Email: ${creatorEmail}
