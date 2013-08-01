@@ -142,8 +142,8 @@
 		          </form:select>
 		        </td>
 		      </tr>
-		      <sec:authorize var="fullAccess" access="hasRole('ROLE_FULL_ACCESS')" />
-		      <%-- <c:set value="true" var="fullAccess"/> --%>
+		      <%-- <sec:authorize var="fullAccess" access="hasRole('ROLE_FULL_ACCESS')" /> --%>
+		      <c:set value="true" var="fullAccess"/> 
 		      <c:choose>
 		        <c:when test="${fullAccess}">
 		          <tr>
