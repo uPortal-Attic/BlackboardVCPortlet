@@ -17,6 +17,9 @@ import org.jasig.portlet.blackboardvcportlet.service.MailTemplateService;
 import org.jasig.portlet.blackboardvcportlet.service.SessionService;
 import org.jasig.portlet.blackboardvcportlet.service.util.MailMessages;
 import org.jasig.portlet.blackboardvcportlet.service.util.MailSubstitutions;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -53,7 +56,9 @@ public class MailTemplateServiceImpl implements BeanFactoryAware, MailTemplateSe
 	private VelocityEngine velocityEngine;
 	private SessionService sessionService;
 	
-	private static final String DATE_FORMAT = "MM/dd/yyyy HH:mm";
+	private static final String DATE_FORMAT = "MM/dd/yyyy HH:mm z";
+	private static final DateTimeFormatter dateFormatter = DateTimeFormat.forPattern(DATE_FORMAT);
+	private static final DateTimeZone timezone = DateTimeZone.forID("America/Chicago");
 
 	private String defaultFromAddress;
 	
@@ -209,17 +214,12 @@ public class MailTemplateServiceImpl implements BeanFactoryAware, MailTemplateSe
 		String userSessionUrl = sessionService.getOrCreateSessionUrl(moderator, session);
 		
 		//substitutions
-		Map<String, String> substitutions = new HashMap<String, String>();
+		Map<String, String> substitutions = createBaseSubstitutionMap(session);
 		
 		substitutions.put(MailSubstitutions.DISPLAY_NAME.toString(), moderator.getDisplayName());
-		substitutions.put(MailSubstitutions.SESSION_NAME.toString(), session.getSessionName());
-		substitutions.put(MailSubstitutions.SESSION_TYPE.toString(), session.getAccessType().getName());
-		substitutions.put(MailSubstitutions.SESSION_START_TIME.toString(), session.getStartTime().toString(DATE_FORMAT));
-		substitutions.put(MailSubstitutions.SESSION_END_TIME.toString(), session.getEndTime().toString(DATE_FORMAT));
 		substitutions.put(MailSubstitutions.SESSION_USER_URL.toString(), userSessionUrl);
 		substitutions.put(MailSubstitutions.SESSION_GUEST_URL.toString(), session.getGuestUrl());
 		substitutions.put(MailSubstitutions.SESSION_UPDATE_TEXT.toString(), isUpdate ? "**Time update for existing session.**" : "");
-		substitutions.put(MailSubstitutions.SESSION_BOUNDARY_TIME.toString(), String.valueOf(session.getBoundaryTime()));
 		
 		MailTask mt = new MailTask(emailList,substitutions,MailMessages.MODERATOR);
 		mt.setMeetingInvite(buildIcsFile(session, moderator));
@@ -233,19 +233,13 @@ public class MailTemplateServiceImpl implements BeanFactoryAware, MailTemplateSe
 		emailList.add(participant.getEmail());
 		
 		//substitutions
-		Map<String, String> substitutions = new HashMap<String, String>();
+		Map<String, String> substitutions = createBaseSubstitutionMap(session);
 		
 		substitutions.put(MailSubstitutions.DISPLAY_NAME.toString(), participant.getDisplayName());
-		substitutions.put(MailSubstitutions.SESSION_NAME.toString(), session.getSessionName());
-		substitutions.put(MailSubstitutions.SESSION_TYPE.toString(), session.getAccessType().getName());
-		substitutions.put(MailSubstitutions.SESSION_START_TIME.toString(), session.getStartTime().toString(DATE_FORMAT));
-		substitutions.put(MailSubstitutions.SESSION_END_TIME.toString(), session.getEndTime().toString(DATE_FORMAT));
 		substitutions.put(MailSubstitutions.SESSION_USER_URL.toString(), sessionService.getOrCreateSessionUrl(participant, session));
-		//substitutions.put(MailSubstitutions.SESSION_GUEST_URL.toString(), session.getGuestUrl());
 		substitutions.put(MailSubstitutions.SESSION_CREATOR_EMAIL.toString(), session.getCreator().getEmail());
 		substitutions.put(MailSubstitutions.SESSION_CREATOR_NAME.toString(), session.getCreator().getDisplayName());
 		substitutions.put(MailSubstitutions.SESSION_UPDATE_TEXT.toString(), isUpdate ? "**Time update for existing session.**" : "");
-		substitutions.put(MailSubstitutions.SESSION_BOUNDARY_TIME.toString(), String.valueOf(session.getBoundaryTime()));
 		
 		MailTask mt = new MailTask(emailList,substitutions,MailMessages.EXTERNAL_PARTICIPANT);
 		mt.setMeetingInvite(buildIcsFile(session, participant));
@@ -270,21 +264,30 @@ public class MailTemplateServiceImpl implements BeanFactoryAware, MailTemplateSe
 		emailList.add(user.getEmail());
 		
 		//substitutions
-		Map<String, String> substitutions = new HashMap<String, String>();
+		Map<String, String> substitutions = createBaseSubstitutionMap(session);
 		
 		substitutions.put(MailSubstitutions.DISPLAY_NAME.toString(), user.getDisplayName());
-		substitutions.put(MailSubstitutions.SESSION_NAME.toString(), session.getSessionName());
-		substitutions.put(MailSubstitutions.SESSION_TYPE.toString(), session.getAccessType().getName());
-		substitutions.put(MailSubstitutions.SESSION_START_TIME.toString(), session.getStartTime().toString(DATE_FORMAT));
-		substitutions.put(MailSubstitutions.SESSION_END_TIME.toString(), session.getEndTime().toString(DATE_FORMAT));
 		substitutions.put(MailSubstitutions.SESSION_CREATOR_EMAIL.toString(), session.getCreator().getEmail());
 		substitutions.put(MailSubstitutions.SESSION_CREATOR_NAME.toString(), session.getCreator().getDisplayName());
-		substitutions.put(MailSubstitutions.SESSION_BOUNDARY_TIME.toString(), String.valueOf(session.getBoundaryTime()));
 		
 		MailTask mt = new MailTask(emailList,substitutions,MailMessages.SESSION_DELETION);
 		mt.setMeetingInvite(buildIcsFile(session, user, true));
 		mt.setSubject(sessionDeletionSubject + ": " + session.getSessionName());
 		return mt;
+	}
+	
+	private Map<String, String> createBaseSubstitutionMap(Session session) {
+		Map<String, String> substitutions = new HashMap<String, String>();
+		
+		substitutions.put(MailSubstitutions.SESSION_NAME.toString(), session.getSessionName());
+		substitutions.put(MailSubstitutions.SESSION_TYPE.toString(), session.getAccessType().getName());
+		substitutions.put(MailSubstitutions.SESSION_START_TIME.toString(), dateFormatter.print(session.getStartTime().withZone(timezone)));
+		substitutions.put(MailSubstitutions.SESSION_END_TIME.toString(), dateFormatter.print(session.getEndTime().withZone(timezone)));
+		
+		substitutions.put(MailSubstitutions.SESSION_BOUNDARY_TIME.toString(), String.valueOf(session.getBoundaryTime()));
+		
+		
+		return substitutions;
 	}
 	
 	private Calendar buildIcsFile(Session session, ConferenceUser user) {
