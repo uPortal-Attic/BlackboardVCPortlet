@@ -47,7 +47,7 @@ public class ServerQuotaServiceImpl implements ServerQuotaService
         return serverQuota;
     }
     
-    @Scheduled(fixedRate=3600000)
+    @Scheduled(fixedRate=86400000)
     public void scheduledRefreshServerQuota() {
         this.refreshServerQuota();
     }
@@ -59,8 +59,8 @@ public class ServerQuotaServiceImpl implements ServerQuotaService
 	public ServerQuota refreshServerQuota()
     {
 	    final ServerQuota serverQuota = this.serverQuotaDao.getServerQuota();
-	    if (serverQuota != null && serverQuota.getLastUpdated().plusHours(1).isAfterNow()) {
-	        //Nothing to do, serverQuota exists and is less than 1 hour old
+	    if (serverQuota != null && serverQuota.getLastUpdated().plusWeeks(1).isAfterNow()) {
+	        //Nothing to do, serverQuota exists and is less than 1 week old
 	        return serverQuota;
 	    }
 	    
