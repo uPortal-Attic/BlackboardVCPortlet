@@ -9,7 +9,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>edu.wisc.my.portlet.blackboardcollaborate</groupId>
     <artifactId>blackboardvc-portlet-parent</artifactId>
-    <version>1.2.0.9-SNAPSHOT</version>
+    <version>1.2.0.9</version>
     <packaging>pom</packaging>
     <name>BlackboardVCPortlet</name>
     <url>https://github.com/UW-Madison-DoIT/BlackboardVCPortlet</url>
@@ -79,7 +79,7 @@
         <connection>scm:git:git@github.com:UW-Madison-DoIT/BlackboardVCPortlet.git</connection>
         <developerConnection>scm:git:git@github.com:UW-Madison-DoIT/BlackboardVCPortlet.git</developerConnection>
         <url>https://github.com/UW-Madison-DoIT/BlackboardVCPortlet</url>
-      <tag>HEAD</tag>
+      <tag>bbc-1.2.0.9</tag>
   </scm>
 
     <properties>
