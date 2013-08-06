@@ -115,7 +115,7 @@ public class ManageMediaFilesController {
         if (multimediaUpload.getSize() < 1) {
             response.setRenderParameter("multimediaUploadError", messageSource.getMessage("error.uploadfilenotselected", null, locale));
         } else if (multimediaUpload.getSize() > maxFileUploadSize) {
-            response.setRenderParameter("multimediaUploadError", messageSource.getMessage("error.uploadfilesizetoobig", null, locale));
+            response.setRenderParameter("multimediaUploadError", messageSource.getMessage("error.uploadfilesizetoobig", new Object[] {maxFileUploadSize}, locale));
         } else if (fileExtension.length() == 0 || !multimediaFileTypes.contains(fileExtension.toLowerCase())) {
             response.setRenderParameter("multimediaUploadError", messageSource.getMessage("error.uploadfileextensionswrong", null, locale));
         } else {
