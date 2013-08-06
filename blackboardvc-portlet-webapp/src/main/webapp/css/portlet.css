@@ -126,6 +126,12 @@ p.uportal-channel-success {padding:1em 1em 1em 3em; border:2px solid; color:#004
 	background: #fff url(../images/ajax-loader.gif) no-repeat 95%;
 }
 
+.blackboardVCRoot .ui-state-active {
+	background: none #fff;
+	margin-bottom : 0;
+	padding-bottom : 1px;
+}
+
 .bbc-ui-tooltip, .bbcArrow:after {
     background: white;
     border: 2px solid grey;
@@ -172,3 +178,5 @@ p.uportal-channel-success {padding:1em 1em 1em 3em; border:2px solid; color:#004
     bottom: -20px;
     top: auto;
   }
+  
+  
