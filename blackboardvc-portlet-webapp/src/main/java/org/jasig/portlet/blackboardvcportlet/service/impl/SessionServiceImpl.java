@@ -218,10 +218,10 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
     public void removeSession(long sessionId) {
         final Session session = this.sessionDao.getSession(sessionId);
         
-        final Set<Long> bbMultimediaIds = getBlackboardMultimediaIds(session);
+        
         final Set<Multimedia> multimedias = this.sessionDao.getSessionMultimedias(session);
         for (final Multimedia multimedia : multimedias) {
-            removeMultimediaFromSession(session, bbMultimediaIds, multimedia);
+            removeMultimediaFromSession(session, null, multimedia);
         }
         
         this.deletePresentation(session.getSessionId());
@@ -235,8 +235,11 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
 
     private void removeMultimediaFromSession(Session session, Set<Long> bbMultimediaIds, Multimedia multimedia) {
         //Un-link multimedia file from session
-        if (bbMultimediaIds.contains(multimedia.getBbMultimediaId())) {
-            this.multimediaWSDao.removeSessionMultimedia(session.getBbSessionId(), multimedia.getBbMultimediaId());
+        if (bbMultimediaIds != null) {
+        	if(bbMultimediaIds.contains(multimedia.getBbMultimediaId()))
+        		this.multimediaWSDao.removeSessionMultimedia(session.getBbSessionId(), multimedia.getBbMultimediaId());
+        } else {
+        	this.multimediaWSDao.removeSessionMultimedia(session.getBbSessionId(), multimedia.getBbMultimediaId());
         }
         this.sessionDao.deleteMultimediaFromSession(session, multimedia);
 

@@ -105,7 +105,7 @@ public class MultimediaDaoImpl extends BaseJpaDao implements InternalMultimediaD
         creatorImpl.getMultimedias().remove(multimediaImpl);
         
         entityManager.remove(multimediaImpl);
-        entityManager.remove(creatorImpl);      
+        //entityManager.remove(creatorImpl);      
     }
 
     private void updateBlackboardMultimedia(BlackboardMultimediaResponse multimediaResponse, String filename, MultimediaImpl multimedia) {
