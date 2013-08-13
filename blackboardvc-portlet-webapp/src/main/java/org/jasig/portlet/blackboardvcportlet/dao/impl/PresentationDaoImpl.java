@@ -105,7 +105,7 @@ public class PresentationDaoImpl extends BaseJpaDao implements InternalPresentat
         creatorImpl.getPresentations().remove(presentationImpl);
         
         entityManager.remove(presentationImpl);
-        entityManager.remove(creatorImpl);
+        entityManager.persist(creatorImpl);
 	}
 	
 	private void updateBlackboardPresentation(BlackboardPresentationResponse presentationResponse, String filename, PresentationImpl presentation) {
