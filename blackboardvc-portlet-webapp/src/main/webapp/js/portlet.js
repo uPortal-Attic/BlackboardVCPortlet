@@ -139,7 +139,7 @@ if (!blackboardPortlet._) {
       };
       
       setupAutocomplete(nameInput, "name");
-      setupAutocomplete(emailInput, "email");
+      //setupAutocomplete(emailInput, "email");
    };
    
    blackboardPortlet.initMediaFileBackbone = function(bbOpts) {
