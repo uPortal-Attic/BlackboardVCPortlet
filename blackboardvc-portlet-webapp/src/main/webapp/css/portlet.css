@@ -132,6 +132,18 @@ p.uportal-channel-success {padding:1em 1em 1em 3em; border:2px solid; color:#004
 	padding-bottom : 1px;
 }
 
+.blackboardVCRoot  .destroy {
+        cursor: pointer;
+        width: 15px;
+        height: 15px;
+        background: url(../images/destroy.png) no-repeat;
+        display: inline-block;
+    }
+
+.blackboardVCRoot  .destroy:hover {
+        background-position: 0 -15px;
+    }
+
 .bbc-ui-tooltip, .bbcArrow:after {
     background: white;
     border: 2px solid grey;

@@ -213,6 +213,16 @@ public class SessionCreateEditController
         response.setPortletMode(PortletMode.VIEW);
     }
     
+    @ActionMapping(params = "action=deletePresentation")
+    public void deletePresentation(ActionResponse response, Locale locale, @RequestParam long sessionId) throws PortletModeException
+	{
+		this.sessionService.deletePresentation(sessionId);
+
+        response.setPortletMode(PortletMode.VIEW);
+        response.setRenderParameter("sessionId", Long.toString(sessionId));
+		response.setRenderParameter("action", "viewSession");
+	}
+    
     @ActionMapping(params = "action=Upload Presentation")
     public void uploadPresentation(ActionResponse response, Locale locale, @RequestParam long sessionId, @RequestParam MultipartFile presentationUpload, @RequestParam boolean needToSendInitialEmail) throws PortletModeException
 	{

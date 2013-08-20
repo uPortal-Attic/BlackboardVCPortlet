@@ -143,7 +143,13 @@
 			
 			  <c:choose>
 			  <c:when test="${!empty session.presentation }">
-				  ${session.presentation.filename }
+				  ${session.presentation.filename } 
+				  &nbsp;
+				  <portlet:actionURL var="deletePresentationURL" portletMode="EDIT">
+				    <portlet:param name="sessionId" value="${session.sessionId}" />
+				    <portlet:param name="action" value="deletePresentation" />
+				</portlet:actionURL>
+		    	<a href="${deletePresentationURL}" class="destroy">&nbsp;</a>
 			  </c:when>
 			  <c:otherwise>
 			  	No Presentation Uploaded
