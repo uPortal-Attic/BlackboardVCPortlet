@@ -149,7 +149,7 @@
 				    <portlet:param name="sessionId" value="${session.sessionId}" />
 				    <portlet:param name="action" value="deletePresentation" />
 				</portlet:actionURL>
-		    	<a href="${deletePresentationURL}" class="destroy">&nbsp;</a>
+		    	<a href="${deletePresentationURL}" class="destroy" title="Delete">&nbsp;</a>
 			  </c:when>
 			  <c:otherwise>
 			  	No Presentation Uploaded
