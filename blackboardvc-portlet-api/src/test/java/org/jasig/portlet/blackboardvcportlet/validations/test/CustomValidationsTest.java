@@ -66,8 +66,7 @@ public class CustomValidationsTest
 		sessionForm.setEndMinute(15);
 
 		Set<ConstraintViolation<SessionForm>> constraintViolations = validator.validate(sessionForm);
-		// Will be 2 because End Time constraint will also appear
-		assertEquals(2, constraintViolations.size());
+		assertEquals(1, constraintViolations.size());
 
 		// Test All Good Scenario
 		sessionForm.setEndHour(21);
@@ -103,8 +102,7 @@ public class CustomValidationsTest
 
 		sessionForm.setEndDate(DateMidnight.now().plusDays(2));
 		constraintViolations = validator.validate(sessionForm);
-		// Will be 2 because Begin Time constraint will also appear
-		assertEquals(2, constraintViolations.size());
+		assertEquals(1, constraintViolations.size());
 
 		logger.info("testSessionEndTimeRangeCheck() finished.");
 	}

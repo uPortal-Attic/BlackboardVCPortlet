@@ -4,9 +4,11 @@
  */
 package org.jasig.portlet.blackboardvcportlet.validations.validators;
 
+import org.apache.commons.lang.StringUtils;
 import org.jasig.portlet.blackboardvcportlet.validations.annotations.SessionNameCheck;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
@@ -23,10 +25,10 @@ public class SessionNameCheckValidator implements ConstraintValidator<SessionNam
 	public boolean isValid(String value, ConstraintValidatorContext context)
 	{
 		logger.debug("isValid() called with value = {}", value);
-		if (value == null)
+		if (StringUtils.isEmpty(value))
 		{
-			logger.debug("Null, so returning true.");
-			return true;
+			logger.debug("Null, so returning false.");
+			return false;
 		}
 
 		// Test For Size

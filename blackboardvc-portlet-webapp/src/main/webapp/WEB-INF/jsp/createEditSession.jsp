@@ -38,6 +38,7 @@
   <form:hidden path="sessionId"/>
   <form:hidden path="newSession" />
   <form:hidden path="needToSendInitialEmail" />
+  <form:errors path="" cssClass="error"/>
   <table width="100%">
     <tbody>
       <tr>
@@ -62,7 +63,6 @@
         <td><span class="uportal-channel-strong"><spring:message code="startDateAndTime" text="startDateAndTime"/></span></td>
         <td>
           <form:input id="${n}startdatepicker" path="startDate" style="width: 82px;"/>&nbsp;
-          <form:errors path="startDate" cssClass="error"/>&nbsp;
           <form:select path="startHour">
               <c:forEach var="i" begin="0" end="23" step="1">
               		<form:option value="${i}">${i}</form:option>
@@ -80,11 +80,14 @@
               </c:forEach>
           </form:select>
           &nbsp;<spring:message code="centralTime" text="centralTime"/>
+          &nbsp;<form:errors path="startDate" cssClass="error"/>
+          &nbsp;<form:errors path="startHour" cssClass="error"/>
+          &nbsp;<form:errors path="startMinute" cssClass="error"/>
+          &nbsp;<form:errors path="startTime" cssClass="error"/>
+          
           <br/>
           <span class="uportal-channel-table-caption">mm/dd/yyyy</span>
-            <form:errors path="startHour" cssClass="error"/>&nbsp;
-            <form:errors path="startMinute" cssClass="error"/>&nbsp;
-            <form:errors path="startTime" cssClass="error"/>
+            
         </td>
       </tr>
       <tr>
@@ -92,7 +95,6 @@
 
         <td>
           <form:input id="${n}enddatepicker" path="endDate" style="width: 82px;"/>&nbsp;
-            <form:errors path="endDate" cssClass="error"/>&nbsp;
             <form:select path="endHour">
             <c:forEach var="i" begin="0" end="23" step="1">
               <form:option value="${i}">${i}</form:option>
@@ -109,12 +111,13 @@
 	                </c:choose>
             </c:forEach>
           </form:select>
-          &nbsp;<spring:message code="centralTime" text="centralTime"/>
-          <br/>
-          <span class="uportal-channel-table-caption">mm/dd/yyyy</span>
+          &nbsp;<spring:message code="centralTime" text="centralTime"/>&nbsp;
+          <form:errors path="endDate" cssClass="error"/>&nbsp;
             <form:errors path="endHour" cssClass="error"/>&nbsp;
             <form:errors path="endMinute" cssClass="error"/>&nbsp;
             <form:errors path="endTime" cssClass="error"/>
+          <br/>
+          <span class="uportal-channel-table-caption">mm/dd/yyyy</span>
         </td>
       </tr>
       <tr><td colspan="2">

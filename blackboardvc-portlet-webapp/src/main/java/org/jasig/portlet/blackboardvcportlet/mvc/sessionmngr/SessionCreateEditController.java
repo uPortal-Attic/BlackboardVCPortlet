@@ -183,9 +183,13 @@ public class SessionCreateEditController
 	{
 		if (bindingResult.hasErrors())
 		{
-			response.setRenderParameter("sessionId", Long.toString(session.getSessionId()));
-			response.setRenderParameter("action", "editSession");
-			response.setPortletMode(PortletMode.EDIT);
+			if(session.isNewSession()) {
+				response.setPortletMode(PortletMode.EDIT);
+			} else {
+				response.setRenderParameter("sessionId", Long.toString(session.getSessionId()));
+				response.setRenderParameter("action", "editSession");
+				response.setPortletMode(PortletMode.EDIT);
+			}
 		}
 		else
 		{

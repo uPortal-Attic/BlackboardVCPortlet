@@ -24,24 +24,27 @@ import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.validations.annotations.*;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Required;
+
 import javax.validation.constraints.Future;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+
 import java.io.Serializable;
 
 /**
  * form backing object for creating/editing sessions
  */
-@SessionBeginTimeRangeCheck()
-@SessionEndTimeRangeCheck()
+@SessionStartIsBeforeEndTimeCheck
+@SessionEndTimeRangeCheck
 public class SessionForm implements Serializable {
     private static final long serialVersionUID = 1L;
     
     private boolean newSession;
     private boolean needToSendInitialEmail;
     private long sessionId;
-	@SessionNameCheck()
+    @SessionNameCheck()
     private String sessionName;
 	@NotNull
     private int boundaryTime;
