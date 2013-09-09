@@ -6,14 +6,19 @@ package org.jasig.portlet.blackboardvcportlet.validations.test;
 
 import org.jasig.portlet.blackboardvcportlet.service.SessionForm;
 import org.joda.time.DateMidnight;
+import org.joda.time.DateTime;
+import org.joda.time.LocalTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
+
 import java.util.Set;
+
 import static org.junit.Assert.assertEquals;
 
 public class CustomValidationsTest
@@ -38,12 +43,8 @@ public class CustomValidationsTest
 		SessionForm sessionForm = new SessionForm();
 		sessionForm.setSessionName("Test Session");
 		sessionForm.setBoundaryTime(15);
-		sessionForm.setStartDate(DateMidnight.now().plusDays(7));
-		sessionForm.setStartHour(5);
-		sessionForm.setStartMinute(15);
-		sessionForm.setEndDate(sessionForm.getStartDate());
-		sessionForm.setEndHour(6);
-		sessionForm.setEndMinute(35);
+		sessionForm.setStartTime(DateTime.now().plusDays(7).withHourOfDay(5).withMinuteOfHour(15).withSecondOfMinute(0).withMillisOfSecond(0));
+		sessionForm.setEndTime(sessionForm.getStartTime().withHourOfDay(6).withMinuteOfHour(35).withSecondOfMinute(0).withMillisOfSecond(0));
 
 		Set<ConstraintViolation<SessionForm>> constraintViolations = validator.validate(sessionForm);
 		assertEquals(1, constraintViolations.size());
@@ -58,19 +59,14 @@ public class CustomValidationsTest
 		SessionForm sessionForm = new SessionForm();
 		sessionForm.setSessionName("Test Session");
 		sessionForm.setBoundaryTime(15);
-		sessionForm.setStartDate(DateMidnight.now().plusDays(7));
-		sessionForm.setStartHour(20);
-		sessionForm.setStartMinute(15);
-		sessionForm.setEndDate(sessionForm.getStartDate());
-		sessionForm.setEndHour(20);
-		sessionForm.setEndMinute(15);
+		sessionForm.setStartTime(DateTime.now().plusDays(7).withHourOfDay(20).withMinuteOfHour(15).withSecondOfMinute(0).withMillisOfSecond(0));
+		sessionForm.setEndTime(sessionForm.getStartTime().withHourOfDay(20).withMinuteOfHour(15).withSecondOfMinute(0).withMillisOfSecond(0));
 
 		Set<ConstraintViolation<SessionForm>> constraintViolations = validator.validate(sessionForm);
 		assertEquals(1, constraintViolations.size());
 
 		// Test All Good Scenario
-		sessionForm.setEndHour(21);
-		sessionForm.setEndMinute(45);
+		sessionForm.setEndTime(sessionForm.getStartTime().withHourOfDay(21).withMinuteOfHour(45).withSecondOfMinute(0).withMillisOfSecond(0));
 		constraintViolations = validator.validate(sessionForm);
 		assertEquals(0, constraintViolations.size());
 
@@ -90,12 +86,8 @@ public class CustomValidationsTest
 		SessionForm sessionForm = new SessionForm();
 		sessionForm.setSessionName("Test Session");
 		sessionForm.setBoundaryTime(15);
-		sessionForm.setStartDate(DateMidnight.now().plusDays(7));
-		sessionForm.setStartHour(20);
-		sessionForm.setStartMinute(15);
-		sessionForm.setEndDate(sessionForm.getStartDate());
-		sessionForm.setEndHour(21);
-		sessionForm.setEndMinute(45);
+		sessionForm.setStartTime(DateTime.now().plusDays(7).withHourOfDay(20).withMinuteOfHour(15).withSecondOfMinute(0).withMillisOfSecond(0));
+		sessionForm.setEndTime(sessionForm.getStartTime().withHourOfDay(21).withMinuteOfHour(45).withSecondOfMinute(0).withMillisOfSecond(0));
 
 		Set<ConstraintViolation<SessionForm>> constraintViolations = validator.validate(sessionForm);
 		assertEquals(0, constraintViolations.size());
@@ -113,12 +105,8 @@ public class CustomValidationsTest
 		logger.info("testSessionNameCheck() started....");
 		SessionForm sessionForm = new SessionForm();
 		sessionForm.setBoundaryTime(15);
-		sessionForm.setStartDate(DateMidnight.now().plusDays(7));
-		sessionForm.setStartHour(20);
-		sessionForm.setStartMinute(15);
-		sessionForm.setEndDate(sessionForm.getStartDate());
-		sessionForm.setEndHour(21);
-		sessionForm.setEndMinute(45);
+		sessionForm.setStartTime(DateTime.now().plusDays(7).withHourOfDay(20).withMinuteOfHour(15).withSecondOfMinute(0).withMillisOfSecond(0));
+		sessionForm.setEndTime(sessionForm.getStartTime().withHourOfDay(21).withMinuteOfHour(45).withSecondOfMinute(0).withMillisOfSecond(0));
 
 		// Test The Length Flag
 		sessionForm.setSessionName("Test Session Name That Will Be Longer Than Two Hundred And Fifty Five Characters So That It'll Trigger The Validation Error.  Test Session Name That Will Be Longer Than Two Hundred And Fifty Five Characters So That It'll Trigger The Validation Error.  Test Session Name That Will Be Longer Than Two Hundred And Fifty Five Characters So That It'll Trigger The Validation Error.  Test Session Name That Will Be Longer Than Two Hundred And Fifty Five Characters So That It'll Trigger The Validation Error.  Test Session Name That Will Be Longer Than Two Hundred And Fifty Five Characters So That It'll Trigger The Validation Error.  Test Session Name That Will Be Longer Than Two Hundred And Fifty Five Characters So That It'll Trigger The Validation Error.  Test Session Name That Will Be Longer Than Two Hundred And Fifty Five Characters So That It'll Trigger The Validation Error.  Test Session Name That Will Be Longer Than Two Hundred And Fifty Five Characters So That It'll Trigger The Validation Error.");

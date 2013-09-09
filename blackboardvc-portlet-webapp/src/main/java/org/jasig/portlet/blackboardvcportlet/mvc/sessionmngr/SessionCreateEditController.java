@@ -18,6 +18,7 @@
  */
 package org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr;
 
+
 import java.util.Locale;
 import java.util.Set;
 
@@ -39,6 +40,7 @@ import org.jasig.portlet.blackboardvcportlet.service.ServerConfigurationService;
 import org.jasig.portlet.blackboardvcportlet.service.SessionForm;
 import org.jasig.portlet.blackboardvcportlet.service.SessionService;
 import org.joda.time.DateMidnight;
+import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
 import org.slf4j.Logger;
@@ -108,6 +110,9 @@ public class SessionCreateEditController
     public void initBinder(WebDataBinder binder) {
 	    final DateTimeFormatter formatter = new DateTimeFormatterBuilder().appendPattern("MM/dd/yyyy").toFormatter();
         binder.registerCustomEditor(DateMidnight.class, new CustomDateMidnightEditor(formatter, false));
+        
+        final DateTimeFormatter formatter2 = new DateTimeFormatterBuilder().appendPattern("HH:mm").toFormatter();
+        binder.registerCustomEditor(LocalTime.class, new CustomTimeEditor(formatter2, false));
     }
 	
 	@ModelAttribute("recordingModes")

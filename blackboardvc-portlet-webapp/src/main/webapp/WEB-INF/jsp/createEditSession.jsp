@@ -63,22 +63,9 @@
         <td><span class="uportal-channel-strong"><spring:message code="startDateAndTime" text="startDateAndTime"/></span></td>
         <td>
           <form:input id="${n}startdatepicker" path="startDate" style="width: 82px;"/>&nbsp;
-          <form:select path="startHour">
-              <c:forEach var="i" begin="0" end="23" step="1">
-              		<form:option value="${i}">${i}</form:option>
-              </c:forEach>
-          </form:select>
-          :
-          <form:select path="startMinute">
-              <c:forEach var="i" begin="0" end="45" step="15">
-	              <c:choose>
-	                  <c:when test="${i == 0 }">
-	              			<form:option value="0">00</form:option>
-	              		</c:when>
-	              		<c:otherwise><form:option value="${i}">${i}</form:option></c:otherwise>
-	              </c:choose>
-              </c:forEach>
-          </form:select>
+          
+          <form:input id="${n}startHourMinute" path="startHourMinute" style="width: 82px;"/>&nbsp;
+          
           &nbsp;<spring:message code="centralTime" text="centralTime"/>
           &nbsp;<form:errors path="startDate" cssClass="error"/>
           &nbsp;<form:errors path="startHour" cssClass="error"/>
@@ -95,22 +82,8 @@
 
         <td>
           <form:input id="${n}enddatepicker" path="endDate" style="width: 82px;"/>&nbsp;
-            <form:select path="endHour">
-            <c:forEach var="i" begin="0" end="23" step="1">
-              <form:option value="${i}">${i}</form:option>
-            </c:forEach>
-          </form:select>
-          :
-          <form:select path="endMinute">
-            <c:forEach var="i" begin="0" end="45" step="15">
-              		<c:choose>
-	                  <c:when test="${i == 0 }">
-	              			<form:option value="0">00</form:option>
-	              		</c:when>
-	              		<c:otherwise><form:option value="${i}">${i}</form:option></c:otherwise>
-	                </c:choose>
-            </c:forEach>
-          </form:select>
+          
+          <form:input id="${n}endHourMinute" path="endHourMinute" style="width: 82px;"/>&nbsp;
           &nbsp;<spring:message code="centralTime" text="centralTime"/>&nbsp;
           <form:errors path="endDate" cssClass="error"/>&nbsp;
             <form:errors path="endHour" cssClass="error"/>&nbsp;
@@ -276,6 +249,8 @@
     		      active: false
     		});
     		blackboardPortlet.showTooltip('.${n}toolTip');
+    		$("#${n}startHourMinute").timePicker();
+    		$("#${n}endHourMinute").timePicker();
 
     	});
     })(blackboardPortlet.jQuery);

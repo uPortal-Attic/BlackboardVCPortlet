@@ -24,6 +24,8 @@ import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.validations.annotations.*;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
+import org.joda.time.LocalTime;
+import org.joda.time.TimeOfDay;
 import org.springframework.beans.factory.annotation.Required;
 
 import javax.validation.constraints.Future;
@@ -58,6 +60,9 @@ public class SessionForm implements Serializable {
 	private boolean allowInSessionInvites;
 
 	private DateMidnight startDate;
+	
+	private LocalTime startHourMinute;
+	private LocalTime endHourMinute;
 
 	@Min(0)
 	@Max(23)
@@ -146,24 +151,26 @@ public class SessionForm implements Serializable {
 	@Future
 	@FutureWithYearLimit()
     public DateTime getStartTime() {
-        return startDate.toDateTime().withHourOfDay(this.startHour).withMinuteOfHour(this.startMinute);
+		return startDate.toDateTime().withHourOfDay(startHourMinute.getHourOfDay()).withMinuteOfHour(startHourMinute.getMinuteOfHour());
     }
 
     public void setStartTime(DateTime startTime) {
         startDate = startTime.toDateMidnight();
         startHour = startTime.getHourOfDay();
         startMinute = startTime.getMinuteOfHour();
+        startHourMinute = new LocalTime(startTime);
     }
 
 	@Future
     public DateTime getEndTime() {
-        return endDate.toDateTime().withHourOfDay(this.endHour).withMinuteOfHour(this.endMinute);
+		return endDate.toDateTime().withHourOfDay(endHourMinute.getHourOfDay()).withMinuteOfHour(endHourMinute.getMinuteOfHour());
     }
 
     public void setEndTime(DateTime endTime) {
         endDate = endTime.toDateMidnight();
         endHour = endTime.getHourOfDay();
         endMinute = endTime.getMinuteOfHour();
+        endHourMinute = new LocalTime(endTime);
     }
 
 	public int getBoundaryTime() {
@@ -284,6 +291,22 @@ public class SessionForm implements Serializable {
 
     public void setEndMinute(int endMinute) {
         this.endMinute = endMinute;
+    }
+    
+    public void setStartHourMinute(LocalTime startHourMinute) {
+    	this.startHourMinute = startHourMinute;
+    }
+    
+    public LocalTime getStartHourMinute() {
+    	return startHourMinute;
+    }
+    
+    public void setEndHourMinute(LocalTime endHourMinute) {
+    	this.endHourMinute = endHourMinute;
+    }
+    
+    public LocalTime getEndHourMinute() {
+    	return endHourMinute;
     }
 
     @Override
