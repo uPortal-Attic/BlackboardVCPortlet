@@ -649,6 +649,7 @@ if (!blackboardPortlet._) {
 		
 		var endTimeSelector = params.endTimeSelector;
 		var endDateSelector = params.endDateSelector;
+		var endDateChanged = false;
 		// some default cars
 		var newHTML = '';
 		var $t = $(this);
@@ -697,7 +698,7 @@ if (!blackboardPortlet._) {
 		
 		$("#" + newid + " select").change(function () {
 			if(endTimeSelector != '') {
-	        	adjustEndTime($t.val(),$(this).val(), endTimeSelector, endDateSelector);
+				endDateChanged = adjustEndTime($t.val(),$(this).val(), endTimeSelector, endDateSelector, endDateChanged);
 	        }
 			$t.val($(this).val());
 	        $(this).hide();
@@ -717,13 +718,13 @@ if (!blackboardPortlet._) {
 		return this;
 	};
 	
-	function adjustEndTime(currentStartTime, newStartTime, endTimeSelector, endDateSelector) {
+	function adjustEndTime(currentStartTime, newStartTime, endTimeSelector, endDateSelector, endDateChanged) {
 		//get some information 
 		var currentEndTime = $(endTimeSelector).val();
 		var endHour = currentEndTime.substring(0,currentEndTime.indexOf(':'));
 		var endMinute = currentEndTime.substring(currentEndTime.indexOf(':')+1);
 		var endTime = (endHour*60) + parseInt(endMinute);
-		var dayJump = false;
+		var dayJumpInEffect = false;
 		
 		var currentStartHour = currentStartTime.substring(0,currentStartTime.indexOf(':'));
 		var currentStartMinute = currentStartTime.substring(currentStartTime.indexOf(':')+1);
@@ -737,7 +738,7 @@ if (!blackboardPortlet._) {
 		var currentDuration = endTime - currentStartTimeMinutes;
 		if(currentDuration < 0) { //dayJump check
 			currentDuration = endTime + (24*60) - currentStartTimeMinutes;
-			dayJump = true;
+			dayJumpInEffect = true;
 		}
 		
 		//calculate new end time
@@ -749,15 +750,19 @@ if (!blackboardPortlet._) {
 		
 		//check for timelapse issues
 		if(endDateSelector != '') {
-			if(newEndHour - 23 > 0) {
+			if(newEndHour > 23) {
 				newEndHour = newEndHour % 24;
-				var endDate = $(endDateSelector).datepicker("getDate");
-				endDate.setDate(endDate.getDate() + 1);
-				$(endDateSelector).datepicker("setDate",endDate);
-			} else if (dayJump) {
+				if(!endDateChanged) {
+					var endDate = $(endDateSelector).datepicker("getDate");
+					endDate.setDate(endDate.getDate() + 1);
+					$(endDateSelector).datepicker("setDate",endDate);
+					endDateChanged = true;
+				}
+			} else if ((dayJumpInEffect  && endDateChanged)) {
 				var endDate = $(endDateSelector).datepicker("getDate");
 				endDate.setDate(endDate.getDate() - 1);
 				$(endDateSelector).datepicker("setDate",endDate);
+				endDateChanged = false;
 			}
 		}
 		
@@ -771,7 +776,7 @@ if (!blackboardPortlet._) {
 		
 		$(endTimeSelector).val(newEndHour + ":" + newEndMinute);
 		
-		
+		return endDateChanged;
 	}
    
 })(blackboardPortlet.jQuery, blackboardPortlet.Backbone, blackboardPortlet._);
