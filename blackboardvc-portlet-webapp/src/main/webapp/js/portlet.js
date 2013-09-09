@@ -645,8 +645,10 @@ if (!blackboardPortlet._) {
    $.fn.timePicker = function(params) {
 
 		// merge default and user parameters
-		params = $.extend( {defaultTime: 0, mouseoverClass: 'jquery-timepicker-mouseover'}, params);
+		params = $.extend( {defaultTime: 0, mouseoverClass: 'jquery-timepicker-mouseover', endTimeSelector : '', endDateSelector : ''}, params);
 		
+		var endTimeSelector = params.endTimeSelector;
+		var endDateSelector = params.endDateSelector;
 		// some default cars
 		var newHTML = '';
 		var $t = $(this);
@@ -694,9 +696,14 @@ if (!blackboardPortlet._) {
 		});
 		
 		$("#" + newid + " select").change(function () {
-	        $t.val($(this).val());
+			if(endTimeSelector != '') {
+	        	adjustEndTime($t.val(),$(this).val(), endTimeSelector, endDateSelector);
+	        }
+			$t.val($(this).val());
 	        $(this).hide();
 		});
+		
+		
 		
 		// 4) Assign mouseover/mouseout to the options
 		$("#" + newid + " select option").mouseover(function () {
@@ -709,5 +716,78 @@ if (!blackboardPortlet._) {
 		// allow jQuery chaining
 		return this;
 	};
+	
+	function adjustEndTime(currentStartTime, newStartTime, endTimeSelector, endDateSelector) {
+		//get some information 
+		var currentEndTime = $(endTimeSelector).val();
+		var endHour = currentEndTime.substring(0,currentEndTime.indexOf(':'));
+		var endMinute = currentEndTime.substring(currentEndTime.indexOf(':')+1);
+		var endTime = (endHour*60) + parseInt(endMinute);
+		var dayJump = false;
+		
+		var currentStartHour = currentStartTime.substring(0,currentStartTime.indexOf(':'));
+		var currentStartMinute = currentStartTime.substring(currentStartTime.indexOf(':')+1);
+		var currentStartTimeMinutes = (currentStartHour*60) + parseInt(currentStartMinute);
+		
+		var newStartHour = newStartTime.substring(0,newStartTime.indexOf(':'));
+		var newStartMinute = newStartTime.substring(newStartTime.indexOf(':')+1);
+		var newStartTimeMinutes = (newStartHour*60) + parseInt(newStartMinute);
+		
+		//determine current duration
+		var currentDuration = endTime - currentStartTimeMinutes;
+		if(currentDuration < 0) { //dayJump check
+			currentDuration = endTime + (24*60) - currentStartTimeMinutes;
+			dayJump = true;
+		}
+		
+		//calculate new end time
+		var newEndTime = Math.abs(newStartTimeMinutes + currentDuration);
+		
+		//adjust endtime to the same duration
+		var newEndHour = Math.floor(newEndTime / 60);
+		var newEndMinute = newEndTime % 60;
+		
+		//check for timelapse issues
+		if(endDateSelector != '') {
+			if(newEndHour - 23 > 0) {
+				newEndHour = newEndHour % 24;
+				var endDate = $(endDateSelector).datepicker("getDate");
+				endDate.setDate(endDate.getDate() + 1);
+				$(endDateSelector).datepicker("setDate",endDate);
+			} else if (dayJump) {
+				var endDate = $(endDateSelector).datepicker("getDate");
+				endDate.setDate(endDate.getDate() - 1);
+				$(endDateSelector).datepicker("setDate",endDate);
+			}
+		}
+		
+		//adjust characters if need to add a leading 0
+		if(newEndHour < 10) {
+			newEndHour = '0' + newEndHour;
+		}
+		if(newEndMinute < 10) {
+			newEndMinute = '0' + newEndMinute;
+		}
+		
+		$(endTimeSelector).val(newEndHour + ":" + newEndMinute);
+		
+		
+	}
    
 })(blackboardPortlet.jQuery, blackboardPortlet.Backbone, blackboardPortlet._);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

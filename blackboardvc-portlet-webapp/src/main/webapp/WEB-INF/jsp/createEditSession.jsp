@@ -249,7 +249,10 @@
     		      active: false
     		});
     		blackboardPortlet.showTooltip('.${n}toolTip');
-    		$("#${n}startHourMinute").timePicker();
+    		$("#${n}startHourMinute").timePicker({
+    				endTimeSelector : "#${n}endHourMinute",
+    				endDateSelector : "#${n}enddatepicker"
+    		});
     		$("#${n}endHourMinute").timePicker();
 
     	});
