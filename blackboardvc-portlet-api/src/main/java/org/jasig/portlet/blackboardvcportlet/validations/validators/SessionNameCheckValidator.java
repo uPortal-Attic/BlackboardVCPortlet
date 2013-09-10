@@ -39,7 +39,7 @@ public class SessionNameCheckValidator implements ConstraintValidator<SessionNam
 		}
 
 		// Test for illegal characters
-		if (value.contains("<") || value.contains("&") || value.contains("#") && value.contains("%"))
+		if (value.contains("<") || value.contains("&") || value.contains("#") || value.contains("%"))
 		{
 			logger.debug("Illegal character found, so returning false.");
 			return false;
