@@ -660,7 +660,7 @@ if (!blackboardPortlet._) {
 		
 		// generate our html dropdown
 		var timeMargins = ['00', '15', '30', '45'];
-		newHTML += ' <select style="position: absolute; left:0;top:' + height + 'px; width: ' + width + 'px; z-index:100; height: 5em;" size="7">'
+		newHTML += ' <select style="position: absolute; left:0;top:' + height + 'px; width: ' + width + 'px; z-index:100; " size="6">'
 		for(var h = 0; h <= 23; h++)
 		{
 			for(var i = 0; i < timeMargins.length; i++)
