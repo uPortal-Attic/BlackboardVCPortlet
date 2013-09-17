@@ -28,8 +28,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class IaaUserService implements UserService {
     private static final Pattern NAME_SPLIT = Pattern.compile("\\s+");
+    protected static final String SCHEMA_OWNER = "phexport";
     
     private JdbcOperations jdbcOperations;
+    
 
     @Autowired
     public void setJdbcOperations(JdbcOperations jdbcOperations) {
@@ -40,7 +42,7 @@ public class IaaUserService implements UserService {
     public BasicUser findUser(String uniqueId) {
         final List<BasicUser> results = this.jdbcOperations.query(
                 "select EPPN, FIRST_NAME, MIDDLE_NAME, LAST_NAME, EMAIL_ADDRESS " +
-                "from iaaviews.portal_blackboard_lookup " +
+                "from "+SCHEMA_OWNER+".portal_blackboard_lookup " +
                 "where spvi = (pase.get_pvi_by_eppn(?))", 
                 BasicUserRowMapper.INSTANCE, 
                 uniqueId);
@@ -74,7 +76,7 @@ public class IaaUserService implements UserService {
         
         final List<BasicUser> results = this.jdbcOperations.query(
                 "select EPPN, FIRST_NAME, MIDDLE_NAME, LAST_NAME, EMAIL_ADDRESS " +
-                "from iaaviews.portal_blackboard_lookup " +
+                "from "+SCHEMA_OWNER+".portal_blackboard_lookup " +
                 "where " + whereClause,
                 BasicUserRowMapper.INSTANCE, 
                 args);
@@ -91,7 +93,7 @@ public class IaaUserService implements UserService {
 
         final List<BasicUser> results = this.jdbcOperations.query(
                 "select EPPN, FIRST_NAME, MIDDLE_NAME, LAST_NAME, EMAIL_ADDRESS " +
-                "from iaaviews.portal_blackboard_lookup " +
+                "from "+SCHEMA_OWNER+".portal_blackboard_lookup " +
                 "where upper(EMAIL_ADDRESS) like upper(?)",
                 BasicUserRowMapper.INSTANCE, 
                 email + "%");
