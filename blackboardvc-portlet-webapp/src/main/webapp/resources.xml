@@ -26,6 +26,7 @@
 
     <js included="plain" resource="true">/rs/jquery/1.9.1/jquery-1.9.1.js</js>
     <js included="aggregated" resource="true">/rs/jquery/1.9.1/jquery-1.9.1.min.js</js>
+    
 <!-- 
     <js included="plain" resource="true">/rs/jqueryui/1.8.24/jquery-ui-1.8.13.js</js>
     <js included="aggregated" resource="true">/rs/jqueryui/1.8.24/jquery-ui-1.8.13.min.js</js>
@@ -41,6 +42,8 @@
     <js included="plain">js/debug.js</js>
 
     <js>js-lib/jquery.dataTables.js</js>
+    <js>js/timepicker.js</js>
     <js>js/portlet.js</js>
+    <js>js/datepair.js</js>
 
 </resources>

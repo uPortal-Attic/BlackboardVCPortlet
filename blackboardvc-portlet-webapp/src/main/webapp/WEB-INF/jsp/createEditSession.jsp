@@ -38,7 +38,7 @@
   <form:hidden path="sessionId"/>
   <form:hidden path="newSession" />
   <form:hidden path="needToSendInitialEmail" />
-  <table width="100%">
+  <table width="100%" class="datepair">
     <tbody>
       <tr>
       	<th colspan="2" style="text-align: left;"><h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-all ui-accordion-icons ui-state-focus"><span class="uportal-channel-strong" style="padding-left:2.4em;"><spring:message code="enterInfo" text="enterInfo"/></span></h3></th>
@@ -62,10 +62,9 @@
         <td><span class="uportal-channel-strong"><spring:message code="startDateAndTime" text="startDateAndTime"/></span></td>
         <td>
           <form:errors path="" cssClass="error"/><br/>
-          <form:input id="${n}startdatepicker" path="startDate" style="width: 82px;"/>&nbsp;
+          <form:input id="${n}startdatepicker" class="date start" path="startDate" style="width: 82px;"/>&nbsp;
           
-          <form:input id="${n}startHourMinute" path="startHourMinute" style="width: 82px;"/>&nbsp;
-          
+          <form:input id="${n}startHourMinute" class="time start ui-timepicker-input" path="startHourMinute" style="width: 82px;"/>&nbsp;
           &nbsp;<spring:message code="centralTime" text="centralTime"/>
           &nbsp;<form:errors path="startDate" cssClass="error"/>
           &nbsp;<form:errors path="startHour" cssClass="error"/>
@@ -82,9 +81,11 @@
         <td><span class="uportal-channel-strong"><spring:message code="endDateAndTime" text="endDateAndTime"/></span></td>
 
         <td>
-          <form:input id="${n}enddatepicker" path="endDate" style="width: 82px;"/>&nbsp;
+          <span class="datepair">
+          <form:input id="${n}enddatepicker" class="date end" path="endDate" style="width: 82px;"/>&nbsp;
           
-          <form:input id="${n}endHourMinute" path="endHourMinute" style="width: 82px;"/>&nbsp;
+          <form:input id="${n}endHourMinute" class="time end ui-timepicker-input" path="endHourMinute" style="width: 82px;"/>&nbsp;
+          </span>
           &nbsp;<spring:message code="centralTime" text="centralTime"/>&nbsp;
           <form:errors path="endDate" cssClass="error"/>&nbsp;
             <form:errors path="endHour" cssClass="error"/>&nbsp;
@@ -241,8 +242,8 @@
     <rs:compressJs>
     (function($) {
     	$(document).ready(function() {
-    		$("#${n}startdatepicker").datepicker();
-    		$("#${n}enddatepicker").datepicker();
+    		//$("#${n}startdatepicker").datepicker();
+    		//$("#${n}enddatepicker").datepicker();
     		$( "#${n}accordion" ).accordion({
     		      collapsible: true,
     		      heightStyle: "content",
@@ -250,11 +251,12 @@
     		      active: false
     		});
     		blackboardPortlet.showTooltip('.${n}toolTip');
-    		$("#${n}startHourMinute").timePicker({
-    				endTimeSelector : "#${n}endHourMinute",
-    				endDateSelector : "#${n}enddatepicker"
+    		
+    		/* $("#${n}startHourMinute").timepicker({
+    			step : 15,
+    			timeFormat : 'H:i'
     		});
-    		$("#${n}endHourMinute").timePicker();
+    		$("#${n}endHourMinute").timepicker(); */
 
     	});
     })(blackboardPortlet.jQuery);
