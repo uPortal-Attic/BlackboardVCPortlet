@@ -15,6 +15,7 @@ public class SessionStartIsBeforeEndTimeCheckValidator implements ConstraintVali
 	@Override
 	public void initialize(SessionStartIsBeforeEndTimeCheck constraintAnnotation)
 	{
+		
 	}
 
 	@Override
