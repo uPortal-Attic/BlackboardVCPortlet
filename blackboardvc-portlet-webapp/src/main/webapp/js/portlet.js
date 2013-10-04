@@ -125,6 +125,9 @@ if (!blackboardPortlet._) {
                uniqueIdInput.val( ui.item.uniqueId );
                nameInput.val( ui.item.displayName );
                emailInput.val( ui.item.email );
+               
+               $("input.ui-autocomplete-loading").removeClass("ui-autocomplete-loading");
+               
                return false;
             }
          }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
@@ -569,6 +572,7 @@ if (!blackboardPortlet._) {
          },
          addParticipant : function(e) {
             this.$("div.ajaxerror").hide();
+            this.$("input.ui-autocomplete-loading").removeClass("ui-autocomplete-loading");
 
             var uniqueId = this.uniqueIdInput.val();
             var newName = this.nameInput.val();
