@@ -41,13 +41,13 @@
     </tr>
   </thead>
 </table>
-
+<br/>
 <table class="participantList">
   <thead>
     <tr>
       <th colspan="4" style="text-align: left;">
-        <h2>Invite / Edit Participants</h2><br/>
-        <small>Note: Participants listed here will receive an email invitation. Alternatively, you could manually share the Guest Link with participants.</small>
+        <h3>Invite / Edit Participants</h3>
+        <small><i>Note: Participants listed here will receive an email invitation. Alternatively, you could manually share the Guest Link with participants.</i></small>
       </th>
     </tr>
     <tr>
@@ -82,8 +82,8 @@
       </td>
     </tr>
     <tr>
-      <td colspan="2" align="left"><button name="deleteSelected">Delete Selected</button></td>
-      <td colspan="2" align="right"><button name="addParticipant">Add Participant</button></td>
+      <td colspan="2" align="left"><button class="uportal-button" name="deleteSelected">Delete Selected</button></td>
+      <td colspan="2" align="right"><button class="uportal-button" name="addParticipant">Add Participant</button></td>
     </tr>
     <tr>
       <td colspan="4" align="left"><a href="${viewSessionUrl}" class="uportal-button">Complete</a></td>

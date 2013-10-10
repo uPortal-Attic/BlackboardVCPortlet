@@ -77,7 +77,7 @@
 			return;
 		}
 
-		var container = target.closest('.datepair');
+		var container = target.closest('table.datepair');
 
 		if (target.hasClass('date')) {
 			updateDatePair(target, container);
@@ -172,7 +172,7 @@
 
 			end.timepicker('setTime', newEnd);
 			newDelta = newEnd - startInt;
-		} else if (startInt !== null && endInt !== null) {
+		}else if (startInt!==null && endInt !== null){
 			newDelta = endInt - startInt;
 		} else {
 			return;

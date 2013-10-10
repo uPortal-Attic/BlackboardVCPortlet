@@ -75,6 +75,11 @@ p.uportal-channel-success {padding:1em 1em 1em 3em; border:2px solid; color:#004
 	color: gray!important;
 }
 
+.blackboardVCRoot table.participantList {
+	background-color: #efe8dc !important;
+	width : 80%;
+}
+
 .blackboardVCRoot table .odd {
 	background-color:#fff;
 }
@@ -120,6 +125,10 @@ p.uportal-channel-success {padding:1em 1em 1em 3em; border:2px solid; color:#004
 	width: 20%;
 	vertical-align: top;
 	text-align: left;
+}
+
+.blackboardVCRoot .dataTables_wrapper {
+	overflow: hidden;
 }
 
 .blackboardVCRoot .ui-autocomplete-loading {
