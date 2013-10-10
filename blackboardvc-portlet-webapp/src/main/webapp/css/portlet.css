@@ -127,6 +127,10 @@ p.uportal-channel-success {padding:1em 1em 1em 3em; border:2px solid; color:#004
 	text-align: left;
 }
 
+.blackboardVCRoot .dataTables_wrapper {
+	overflow: hidden;
+}
+
 .blackboardVCRoot .ui-autocomplete-loading {
 	background: #fff url(../images/ajax-loader.gif) no-repeat 95%;
 }
