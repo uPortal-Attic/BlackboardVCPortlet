@@ -127,13 +127,10 @@ public class ManageParticipantsController {
             
             final ConferenceUser participant;
             if (updateParticipantForm.isModerator()) {
-                //TODO make "switch role" api to reduce WS call count
-                this.sessionService.removeSessionNonChairs(sessionId, userId);
-                participant = this.sessionService.addSessionChair(sessionId, userId);
+            	participant = this.sessionService.updateRole(sessionId, userId, ConferenceUser.Roles.CHAIR);
             }
             else {
-                this.sessionService.removeSessionChairs(sessionId, userId);
-                participant = this.sessionService.addSessionNonChair(sessionId, userId);
+            	participant = this.sessionService.updateRole(sessionId, userId, ConferenceUser.Roles.NONCHAIR);
             }
             
             model.put("participant", participant);

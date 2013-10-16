@@ -12,6 +12,7 @@ import net.fortuna.ical4j.model.property.Uid;
 import org.apache.velocity.app.VelocityEngine;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
+import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser.Roles;
 import org.jasig.portlet.blackboardvcportlet.service.MailTask;
 import org.jasig.portlet.blackboardvcportlet.service.MailTemplateService;
 import org.jasig.portlet.blackboardvcportlet.service.SessionService;
@@ -34,6 +35,7 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.velocity.VelocityEngineUtils;
+
 import javax.mail.internet.MimeMessage;
 
 import java.io.ByteArrayOutputStream;
@@ -196,6 +198,7 @@ public class MailTemplateServiceImpl implements BeanFactoryAware, MailTemplateSe
 			theQueue.add(mailTask);
 	}
 	
+	@Override
 	public void buildAndSendSessionEmails(Session session, boolean isUpdate, boolean isFirstTime) {
 		
 		for(ConferenceUser moderator : sessionService.getSessionChairs(session)) {
@@ -207,7 +210,7 @@ public class MailTemplateServiceImpl implements BeanFactoryAware, MailTemplateSe
 		}
 	}
 	
-	//build substitutions for moderator
+	@Override
 	public MailTask buildModeratorMailTask(ConferenceUser moderator, Session session, boolean isUpdate) {
 		List<String> emailList = new ArrayList<String>();
 		emailList.add(moderator.getEmail());
@@ -226,8 +229,36 @@ public class MailTemplateServiceImpl implements BeanFactoryAware, MailTemplateSe
 		mt.setSubject(moderatorSubject + ": " + session.getSessionName());
 		return mt;
 	}
+	
+	@Override
+	public MailTask buildSwitchRolesEmail(ConferenceUser user, Session session, Roles newRole) {
+		List<String> emailList = new ArrayList<String>();
+		emailList.add(user.getEmail());
+		String userSessionUrl = sessionService.getOrCreateSessionUrl(user, session);
 		
-	//build substitutions for participant
+		//substitutions
+		Map<String, String> substitutions = createBaseSubstitutionMap(session);
+		
+		substitutions.put(MailSubstitutions.DISPLAY_NAME.toString(), user.getDisplayName());
+		substitutions.put(MailSubstitutions.SESSION_USER_URL.toString(), userSessionUrl);
+		substitutions.put(MailSubstitutions.SESSION_GUEST_URL.toString(), session.getGuestUrl());
+		substitutions.put(MailSubstitutions.SESSION_UPDATE_TEXT.toString(), "*** Your role for this session has changed and the URL for the session has been updated ***");
+		
+		MailTask mt;
+		if(Roles.CHAIR.equals(newRole)) {
+			mt = new MailTask(emailList,substitutions,MailMessages.MODERATOR);
+			mt.setSubject(moderatorSubject + ": " + session.getSessionName());
+		} else {
+			mt = new MailTask(emailList,substitutions,MailMessages.INTERNAL_PARTICIPANT);
+			mt.setSubject(internalParticipantSubject + ": " + session.getSessionName());
+		}
+		
+		mt.setMeetingInvite(buildIcsFile(session, user));
+		
+		return mt;
+	}
+		
+	@Override
 	public MailTask buildParticipantMailTask(ConferenceUser participant, Session session, boolean isUpdate) {
 		List<String> emailList = new ArrayList<String>();
 		emailList.add(participant.getEmail());
@@ -247,6 +278,7 @@ public class MailTemplateServiceImpl implements BeanFactoryAware, MailTemplateSe
 		return mt;
 	}
 	
+	@Override
 	public void buildAndSendCancelationMeetingEmail(Session session) {
 		List <ConferenceUser> users = new ArrayList<ConferenceUser>();
 		
@@ -258,7 +290,7 @@ public class MailTemplateServiceImpl implements BeanFactoryAware, MailTemplateSe
 		}
 	}
 		
-	//build cancellation notice
+	@Override
 	public MailTask buildCancellationNoticeMailTask(ConferenceUser user, Session session) {
 		List<String> emailList = new ArrayList<String>();
 		emailList.add(user.getEmail());
