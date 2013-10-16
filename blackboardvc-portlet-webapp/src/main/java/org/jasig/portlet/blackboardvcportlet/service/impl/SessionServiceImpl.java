@@ -405,8 +405,9 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
         final Set<ConferenceUser> sessionChairs = new LinkedHashSet<ConferenceUser>(this.getSessionChairs(session));
         
         for (final ConferenceUser user : users) {
-            if(sendCancelEmail)
+            if(sendCancelEmail) {
             	mailService.sendEmail(mailService.buildCancellationNoticeMailTask(user, session));
+            }
             sessionChairs.remove(user);
         }
         

@@ -242,6 +242,8 @@ public class MailTemplateServiceImpl implements BeanFactoryAware, MailTemplateSe
 		substitutions.put(MailSubstitutions.DISPLAY_NAME.toString(), user.getDisplayName());
 		substitutions.put(MailSubstitutions.SESSION_USER_URL.toString(), userSessionUrl);
 		substitutions.put(MailSubstitutions.SESSION_GUEST_URL.toString(), session.getGuestUrl());
+		substitutions.put(MailSubstitutions.SESSION_CREATOR_EMAIL.toString(), session.getCreator().getEmail());
+		substitutions.put(MailSubstitutions.SESSION_CREATOR_NAME.toString(), session.getCreator().getDisplayName());
 		substitutions.put(MailSubstitutions.SESSION_UPDATE_TEXT.toString(), "*** Your role for this session has changed and the URL for the session has been updated ***");
 		
 		MailTask mt;
