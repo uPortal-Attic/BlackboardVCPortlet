@@ -180,7 +180,7 @@
 
 		container.data('timeDelta', newDelta);
 
-		if (newDelta < 0 && (!oldDelta || oldDelta > 0)) {
+		if (newDelta < 0 && (!oldDelta || oldDelta > 0) && (newDelta !=oldDelta) && target.hasClass("end")) {
 			// overnight time span. advance the end date 1 day
 			endDateAdvance = 86400000;
 
@@ -198,7 +198,7 @@
 			dateDelta = 0;
 			container.data('dateDelta', 0);
 		}
-
+		
 		if (endDateAdvance != 0) {
 			if (dateDelta || dateDelta === 0) {
 				var endDate =  parseDate(endInput.val(), DATEPICKER_FORMAT);
