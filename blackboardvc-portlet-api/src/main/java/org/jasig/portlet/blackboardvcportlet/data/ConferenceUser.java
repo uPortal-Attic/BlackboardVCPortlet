@@ -2,6 +2,13 @@ package org.jasig.portlet.blackboardvcportlet.data;
 
 
 public interface ConferenceUser extends BasicUser {
+	
+	public static enum Roles {
+		CHAIR,
+		NONCHAIR
+	}
+	
+	
     public static final String EXTERNAL_USERID_PREFIX = "@EXT@";
 
     long getUserId();

@@ -22,6 +22,7 @@ import org.jasig.portlet.blackboardvcportlet.dao.ws.MultimediaWSDao;
 import org.jasig.portlet.blackboardvcportlet.dao.ws.PresentationWSDao;
 import org.jasig.portlet.blackboardvcportlet.dao.ws.SessionWSDao;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
+import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser.Roles;
 import org.jasig.portlet.blackboardvcportlet.data.Multimedia;
 import org.jasig.portlet.blackboardvcportlet.data.Presentation;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
@@ -144,11 +145,22 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
     			|| sessionDao.getSessionNonChairs(session).contains(userFromDB));
     }
 
+    @Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#session, 'view')")
 	@Transactional
 	public String getOrCreateSessionUrl(ConferenceUser user, Session session) {
+		return getOrCreateSessionUrl(user, session,false);
+	}
+	
+    @Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#session, 'view')")
+	@Transactional
+	public String getOrCreateSessionUrl(ConferenceUser user, Session session, boolean forceFetch) {
 		//check for the url in the db
-		UserSessionUrl url = userSessionUrlDao.getUserSessionUrlsBySessionAndUser(session, user);
+		UserSessionUrl url = null;
+		
+		if(!forceFetch)
+			url = userSessionUrlDao.getUserSessionUrlsBySessionAndUser(session, user);
 		
 		if(url == null) {
 			//if null then create a user's session url via web service call
@@ -158,6 +170,13 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
 		}
 		return url.getUrl();
 	}
+    
+    @Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#session, 'view')")
+	@Transactional
+	public void deleteSessionUrl(ConferenceUser user, Session session) {
+    	userSessionUrlDao.deleteOldSessionUrls(session, user);
+    }
 	
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#session, 'view')")
@@ -293,7 +312,7 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
     public ConferenceUser addSessionChair(long sessionId, String displayName, String email) {
         final ConferenceUser newSessionChair = this.conferenceUserService.getOrCreateConferenceUser(displayName, email);
         
-        this.addSessionChair(sessionId, newSessionChair);
+        this.addSessionChair(sessionId, newSessionChair, true);
         
         return newSessionChair;
     }
@@ -301,15 +320,48 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
     @Override
     @Transactional
     @PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'edit')")
-    public ConferenceUser addSessionChair(long sessionId, long userId) {
-        final ConferenceUser user = this.conferenceUserDao.getUser(userId);
+    public ConferenceUser updateRole(long sessionId, long userId, Roles newRole) {
+    	final ConferenceUser user = this.conferenceUserDao.getUser(userId);
+    	final Session session = this.sessionDao.getSession(sessionId);
+    	this.deleteSessionUrl(user, session);
+    	if(Roles.CHAIR.equals(newRole)) {
+    		//remove nonchair
+    		this.removeSessionNonChairs(sessionId, false, userId);
+    		//add chair
+    		this.addSessionChair(sessionId, user, false);
+    		
+    		
+    	} else {
+    		//remove chair
+    		this.removeSessionChairs(sessionId, false, userId);
+    		//add nonchair
+    		this.addSessionNonChair(sessionId, user, false);
+    		
+    	}
+    	//send update role email
+    	mailService.sendEmail(mailService.buildSwitchRolesEmail(user, session, newRole));
+    	return user;
+    }
+    
+    @Override
+    @Transactional
+    @PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'edit')")
+    public ConferenceUser addSessionChair(long sessionId, long userId, boolean sendEmail) {
+    	final ConferenceUser user = this.conferenceUserDao.getUser(userId);
         if (user != null) {
-            addSessionChair(sessionId, user);
+            addSessionChair(sessionId, user, sendEmail);
         }
         return user;
     }
+    
+    @Override
+    @Transactional
+    @PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'edit')")
+    public ConferenceUser addSessionChair(long sessionId, long userId) {
+        return addSessionChair(sessionId,userId, true);
+    }
 
-    private void addSessionChair(long sessionId, ConferenceUser user) {
+    private void addSessionChair(long sessionId, ConferenceUser user, boolean sendEmail) {
         Assert.notNull(user, "user must not be null");
         
         final Session session = this.sessionDao.getSession(sessionId);
@@ -318,27 +370,44 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
         
         final BlackboardSessionResponse sessionResponse = this.sessionWSDao.setSessionChairs(session.getBbSessionId(), sessionChairs);
         sessionDao.updateSession(sessionResponse);
-        mailService.sendEmail(mailService.buildModeratorMailTask(user, session, false));
+        if(sendEmail)
+        	mailService.sendEmail(mailService.buildModeratorMailTask(user, session, false));
     }
 
     @Override
     @Transactional
     @PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'edit')")
-    public void removeSessionChairs(long sessionId, long... userIds) {
-        final Set<ConferenceUser> users = conferenceUserDao.getUsers(userIds);
+    public void removeSessionChairs(long sessionId, boolean sendEmail, long... userIds) {
+    	final Set<ConferenceUser> users = conferenceUserDao.getUsers(userIds);
         
-        this.removeSessionChairs(sessionId, users);
+        this.removeSessionChairs(sessionId, users, sendEmail);
+    }
+    
+    @Override
+    @Transactional
+    @PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'edit')")
+    public void removeSessionChairs(long sessionId, long... userIds) {
+        removeSessionChairs(sessionId, true, userIds);
     }
 
     @Override
     @Transactional
     @PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'edit')")
     public void removeSessionChairs(long sessionId, Iterable<ConferenceUser> users) {
-        final Session session = this.sessionDao.getSession(sessionId);
+        removeSessionChairs(sessionId, users, true);
+    }
+    
+    @Override
+    @Transactional
+    @PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'edit')")
+    public void removeSessionChairs(long sessionId, Iterable<ConferenceUser> users, boolean sendCancelEmail) {
+    	final Session session = this.sessionDao.getSession(sessionId);
         final Set<ConferenceUser> sessionChairs = new LinkedHashSet<ConferenceUser>(this.getSessionChairs(session));
         
         for (final ConferenceUser user : users) {
-            mailService.sendEmail(mailService.buildCancellationNoticeMailTask(user, session));
+            if(sendCancelEmail) {
+            	mailService.sendEmail(mailService.buildCancellationNoticeMailTask(user, session));
+            }
             sessionChairs.remove(user);
         }
         
@@ -359,7 +428,7 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
     public ConferenceUser addSessionNonChair(long sessionId, String displayName, String email) {
         final ConferenceUser newSessionNonChair = this.conferenceUserService.getOrCreateConferenceUser(displayName, email);
         
-        addSessionNonChair(sessionId, newSessionNonChair);
+        addSessionNonChair(sessionId, newSessionNonChair, true);
         
         return newSessionNonChair;
     }
@@ -370,12 +439,12 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
     public ConferenceUser addSessionNonChair(long sessionId, long userId) {
         final ConferenceUser user = this.conferenceUserDao.getUser(userId);
         if (user != null) {
-            this.addSessionNonChair(sessionId, user);
+            this.addSessionNonChair(sessionId, user, true);
         }
         return user;
     }
 
-    private void addSessionNonChair(long sessionId, ConferenceUser user) {
+    private void addSessionNonChair(long sessionId, ConferenceUser user, boolean sendEmail) {
         Assert.notNull(user, "user must not be null");
         final Session session = this.sessionDao.getSession(sessionId);
         final Set<ConferenceUser> sessionNonChairs = new LinkedHashSet<ConferenceUser>(this.getSessionNonChairs(session));
@@ -383,7 +452,8 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
         
         final BlackboardSessionResponse sessionResponse = this.sessionWSDao.setSessionNonChairs(session.getBbSessionId(), sessionNonChairs);
         sessionDao.updateSession(sessionResponse);
-        mailService.sendEmail(mailService.buildParticipantMailTask(user, session, false));
+        if(sendEmail)
+        	mailService.sendEmail(mailService.buildParticipantMailTask(user, session, false));
     }
 
     @Override
@@ -394,16 +464,32 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
         
         this.removeSessionNonChairs(sessionId, users);
     }
-
+    
+    @Override
+    @Transactional
+    @PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'edit')")
+    public void removeSessionNonChairs(long sessionId, boolean sendEmail, long... userIds) {
+        final Set<ConferenceUser> users = conferenceUserDao.getUsers(userIds);
+        this.removeSessionNonChairs(sessionId, users, sendEmail);
+    }
+    
     @Override
     @Transactional
     @PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'edit')")
     public void removeSessionNonChairs(long sessionId, Iterable<ConferenceUser> users) {
+    	removeSessionNonChairs(sessionId, users,true);
+    }
+
+    @Override
+    @Transactional
+    @PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'edit')")
+    public void removeSessionNonChairs(long sessionId, Iterable<ConferenceUser> users, boolean sendEmail) {
         final Session session = this.sessionDao.getSession(sessionId);
         final Set<ConferenceUser> sessionNonChairs = new LinkedHashSet<ConferenceUser>(this.getSessionNonChairs(session));
         
         for (final ConferenceUser user : users) {
-            mailService.sendEmail(mailService.buildCancellationNoticeMailTask(user, session));
+        	if(sendEmail)
+        		mailService.sendEmail(mailService.buildCancellationNoticeMailTask(user, session));
             sessionNonChairs.remove(user);
         }
         

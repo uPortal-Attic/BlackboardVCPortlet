@@ -14,4 +14,6 @@ public interface UserSessionUrlDao {
 
 	public UserSessionUrl createUserSessionUrl(Session session, ConferenceUser user, String url);
 
+	public void deleteOldSessionUrls(Session session, ConferenceUser user);
+
 }

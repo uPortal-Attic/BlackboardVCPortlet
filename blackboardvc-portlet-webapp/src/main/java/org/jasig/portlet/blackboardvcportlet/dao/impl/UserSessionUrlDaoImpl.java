@@ -3,6 +3,7 @@ package org.jasig.portlet.blackboardvcportlet.dao.impl;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -23,7 +24,8 @@ import com.google.common.base.Function;
 
 @Repository
 public class UserSessionUrlDaoImpl extends BaseJpaDao implements UserSessionUrlDao {
-private CriteriaQuery<UserSessionUrlImpl> findAllUserSessionUrl;
+	private CriteriaQuery<UserSessionUrlImpl> findAllUserSessionUrl;
+	private CriteriaQuery<UserSessionUrlImpl> findUserSessionUrls; 
 	
 	private InternalConferenceUserDao blackboardUserDao;
 	
@@ -51,6 +53,8 @@ private CriteriaQuery<UserSessionUrlImpl> findAllUserSessionUrl;
                 return criteriaQuery;
             }
         });
+        
+        
     }
 	
 	@Override
@@ -93,5 +97,28 @@ private CriteriaQuery<UserSessionUrlImpl> findAllUserSessionUrl;
 		this.getEntityManager().persist(urlObject);
 		
 		return urlObject;
+	}
+	
+	@Override
+	@Transactional
+	public void deleteOldSessionUrls(Session session, ConferenceUser user) {
+		final EntityManager entityManager = this.getEntityManager();
+		
+		//fetch session
+		SessionImpl sessionFromDb = sessionDao.getSession(session.getSessionId());
+		//fetch user
+		ConferenceUserImpl userFromDb = blackboardUserDao.getUser(user.getUserId());
+		//assert they are valid
+		Validate.notNull(sessionFromDb);
+		Validate.notNull(userFromDb);
+		
+		final NaturalIdQuery<UserSessionUrlImpl> query = this.createNaturalIdQuery(UserSessionUrlImpl.class);
+        query.using(UserSessionUrlImpl_.session, sessionFromDb);
+        query.using(UserSessionUrlImpl_.user, userFromDb);
+        
+        UserSessionUrlImpl url = query.load();
+        
+        entityManager.remove(url);
+        entityManager.flush();
 	}
 }

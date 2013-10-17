@@ -19,6 +19,7 @@
 package org.jasig.portlet.blackboardvcportlet.service;
 
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
+import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser.Roles;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
@@ -42,5 +43,7 @@ public interface MailTemplateService
 	public MailTask buildCancellationNoticeMailTask(ConferenceUser user, Session session);
 	public MailTask buildParticipantMailTask(ConferenceUser participant, Session session, boolean isUpdate);
 	public MailTask buildModeratorMailTask(ConferenceUser moderator, Session session, boolean isUpdate);
+
+	public MailTask buildSwitchRolesEmail(ConferenceUser user, Session session, Roles newRole);
 	
 }

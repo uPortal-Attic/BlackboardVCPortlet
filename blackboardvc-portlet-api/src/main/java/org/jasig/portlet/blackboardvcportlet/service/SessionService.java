@@ -21,6 +21,7 @@ package org.jasig.portlet.blackboardvcportlet.service;
 import java.util.Set;
 
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
+import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser.Roles;
 import org.jasig.portlet.blackboardvcportlet.data.Multimedia;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.springframework.web.multipart.MultipartFile;
@@ -59,9 +60,12 @@ public interface SessionService {
     
     ConferenceUser addSessionChair(long sessionId, long userId);
     
+    ConferenceUser updateRole(long sessionId, long userId, Roles chair);
+    
     void removeSessionChairs(long sessionId, Iterable<ConferenceUser> user);
     
     void removeSessionChairs(long sessionId, long... userIds);
+    public void removeSessionChairs(long sessionId, Iterable<ConferenceUser> users, boolean sendCancelEmail);
     
     
     
@@ -92,4 +96,17 @@ public interface SessionService {
 	Set<Session> getAllSessions();
 
 	void populateLaunchUrl(ConferenceUser user, Session session);
+
+	void removeSessionNonChairs(long sessionId, Iterable<ConferenceUser> users, boolean sendEmail);
+
+	void removeSessionNonChairs(long sessionId, boolean sendEmail, long ... userIds);
+
+	ConferenceUser addSessionChair(long sessionId, long userId, boolean sendEmail);
+
+	void removeSessionChairs(long sessionId, boolean sendEmail, long... userIds);
+
+	String getOrCreateSessionUrl(ConferenceUser user, Session session,
+			boolean forceFetch);
+
+	void deleteSessionUrl(ConferenceUser user, Session session);
 }
