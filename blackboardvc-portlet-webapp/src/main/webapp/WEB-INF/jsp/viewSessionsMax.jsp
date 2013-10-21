@@ -18,6 +18,7 @@
     under the License.
 
 --%>
+<div class="fl-widget portlet error view-detailed" role="section">
 
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 <%@ include file="/WEB-INF/jsp/header.jsp"%>
@@ -301,4 +302,5 @@ blackboardPortlet.jQuery(function() {
 })(blackboardPortlet.jQuery);
 </rs:compressJs>
 </script>
+</div>
 </div>
