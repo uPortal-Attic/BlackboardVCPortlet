@@ -184,7 +184,6 @@
 </div>
 </div>
 <script type="text/javascript">
-
 (function($) 
 		{
 			blackboardPortlet.jQuery(function($) 
@@ -192,7 +191,21 @@
   					$(document).ready(function() 
   							{
   								var tabs = $("#${n}tabs");
-  								tabs.tabs();
+  								var currentWCPTab = "${n}"+"webConferencePortletTab";
+  								tabs.tabs(
+  										{   											
+  											create: function(event, ui){
+  												if(!sessionStorage.getItem(currentWCPTab)){
+  													sessionStorage.setItem(currentWCPTab, 0);
+  												}
+  											},
+  											active: sessionStorage.getItem(currentWCPTab),
+  											activate: function(event, ui){
+  												var currentTab = tabs.tabs("option", "active");
+  												sessionStorage.setItem(currentWCPTab, currentTab);
+  											}
+  										}
+  								);
   								
   								blackboardPortlet.showTooltip('.${n}statusLink');
   							});
