@@ -29,7 +29,7 @@ public class ConferenceUserPreAuthenticatedGrantedAuthoritiesUserDetailsService 
     private ConferenceUserDao conferenceUserDao;
     private TransactionOperations transactionOperations;
     private List<String> uniqueIdAttributeName = ImmutableList.of("uid");
-    private List<String> emailAttributeName = ImmutableList.of("mail");
+    private List<String> emailAttributeName = ImmutableList.of("wisceduallemails");
     private List<String> displayNameAttributeName = ImmutableList.of("displayName");
 
     @Autowired
@@ -42,7 +42,7 @@ public class ConferenceUserPreAuthenticatedGrantedAuthoritiesUserDetailsService 
         this.transactionOperations = transactionOperations;
     }
 
-    @Value("${emailAttributeName:mail}")
+    @Value("${emailAttributeName:wisceduallemails}")
     public void setEmailAttributeName(String emailAttributeName) {
         this.emailAttributeName = ImmutableList.copyOf(ATTRIBUTE_NAME_SEPERATOR.split(emailAttributeName));
     }

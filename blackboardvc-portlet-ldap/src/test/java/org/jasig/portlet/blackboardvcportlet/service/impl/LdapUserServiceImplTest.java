@@ -75,7 +75,7 @@ public class LdapUserServiceImplTest {
         final Set<BasicUser> result = ldapUserServiceImpl.searchForUserByEmail("john.doe@example");
         assertEquals(0, result.size());
         
-        verify(ldapOperations).search(eq(""), eq("(&(objectclass=person)(mail=john.doe@example*))"), any(AttributesMapper.class));
+        verify(ldapOperations).search(eq(""), eq("(&(objectclass=person)(wisceduallemails=john.doe@example*))"), any(AttributesMapper.class));
     }
     
     @Test

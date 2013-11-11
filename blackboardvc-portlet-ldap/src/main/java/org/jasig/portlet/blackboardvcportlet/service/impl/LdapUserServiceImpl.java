@@ -65,7 +65,7 @@ public class LdapUserServiceImpl implements UserService {
     private String displayNameAttributeName = "cn";
     private String firstNameAttributeName = "givenName";
     private String lastNameAttributeName = "sn";
-    private String mailAttributeName = "mail";
+    private String mailAttributeName = "wisceduallemails";
     
     public void setUniqueIdAttributeName(String uniqueIdAttributeName) {
         this.uniqueIdAttributeName = uniqueIdAttributeName;
