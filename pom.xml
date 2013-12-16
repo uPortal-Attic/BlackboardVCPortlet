@@ -1,18 +1,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <parent>
-        <groupId>edu.wisc.doit.code</groupId>
-        <artifactId>shared-tools-uw-parent</artifactId>
-        <version>7</version>
+        <groupId>org.jasig.parent</groupId>
+        <artifactId>jasig-parent</artifactId>
+        <version>34</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>edu.wisc.my.portlet.blackboardcollaborate</groupId>
+     <groupId>org.jasig.portlet</groupId>
     <artifactId>blackboardvc-portlet-parent</artifactId>
-    <version>1.2.0.17-SNAPSHOT</version>
+    <version>2.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>BlackboardVCPortlet</name>
-    <url>https://github.com/UW-Madison-DoIT/BlackboardVCPortlet</url>
+    <url>https://github.com/Jasig/BlackboardVCPortlet</url>
 
     <prerequisites>
         <maven>3.0.0</maven>
@@ -25,62 +25,33 @@
         <module>blackboardvc-portlet-uw_iaa</module>
     </modules>
 
-    <distributionManagement>
-        <repository>
-            <id>code.doit-uw-releases</id>
-            <name>code.doit-uw-releases</name>
-            <url>https://code.doit.wisc.edu/maven/content/repositories/uw-releases</url>
-        </repository>
-        <snapshotRepository>
-            <id>code.doit-uw-snapshots</id>
-            <name>code.doit-uw-snapshots</name>
-            <url>https://code.doit.wisc.edu/maven/content/repositories/uw-snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
-
     <repositories>
-        <repository>
-            <id>code.doit-public-releases</id>
-            <name>code.doit-public-releases</name>
-            <url>https://code.doit.wisc.edu/maven/content/repositories/public-releases</url>
-        </repository>
-        <repository>
-            <id>code.doit-public-snapshots</id>
-            <name>code.doit-public-snapshots</name>
-            <url>https://code.doit.wisc.edu/maven/content/repositories/public-snapshots</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>code.doit-uw-releases</id>
-            <name>code.doit-uw-releases</name>
-            <url>https://code.doit.wisc.edu/maven/content/repositories/uw-releases</url>
-        </repository>
-        <repository>
-            <id>code.doit-release-proxies</id>
-            <name>code.doit-release-proxies</name>
-            <url>https://code.doit.wisc.edu/maven/content/groups/release-proxies</url>
-        </repository>
-        <repository>
+        <repository>            
             <id>sonatype-nexus-snapshots</id>
             <name>Sonatype Nexus Snapshots</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
+            <url>http://oss.sonatype.org/content/repositories/snapshots</url>
+            <releases><enabled>false</enabled></releases>
+            <snapshots><enabled>true</enabled></snapshots>
         </repository>
+        <repository>
+            <url>http://repo1.maven.org/maven2/</url>
+            <id>Portlet-1.0-Lib</id>
+            <layout>default</layout>
+            <name>Repository for library Library[Portlet-1.0-Lib]</name>
+        </repository>
+        <repository>
+            <url>http://download.java.net/maven/2/</url>
+            <id>hibernate-support</id>
+            <layout>default</layout>
+            <name>Repository for library Library[hibernate-support]</name>
+        </repository>       
     </repositories>
 
     <scm>
-        <connection>scm:git:git@github.com:UW-Madison-DoIT/BlackboardVCPortlet.git</connection>
-        <developerConnection>scm:git:git@github.com:UW-Madison-DoIT/BlackboardVCPortlet.git</developerConnection>
-        <url>https://github.com/UW-Madison-DoIT/BlackboardVCPortlet</url>
-      <tag>HEAD</tag>
-  </scm>
+        <connection>scm:git:git://github.com/Jasig/BlackboardVCPortlet.git</connection>
+        <developerConnection>scm:git:git@github.com:Jasig/BlackboardVCPortlet.git</developerConnection>
+        <url>https://github.com/Jasig/BlackboardVCPortlet</url>
+    </scm>
 
     <properties>
         <aspectjrt.version>1.7.1</aspectjrt.version>
