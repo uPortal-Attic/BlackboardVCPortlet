@@ -1,6 +1,6 @@
 ## Web Service Configuration
-bbc.username=WISCONSIN-ADMIN
-bbc.password=Wared4aM
+bbc.username=
+bbc.password=
 #bbc.callbackURL=https://my-qa.wisc.edu/BlackboardVCPortlet/callback/recCallback/
 sas.defaultUri=https://sas-int.elluminate.com/site/external/adapter/default/v3/webservice.wsdl
 
@@ -12,8 +12,8 @@ bbc.db.password=
 
 ## IAA Person Lookup Database Configuration 
 uwiaa.db.driverClassName=oracle.jdbc.OracleDriver
-uwiaa.db.jdbc=jdbc:oracle:thin:@iaa.db.doit.wisc.edu:1586:IAA
-uwiaa.db.username=PORTAL_BLACKBOARD_USR
+uwiaa.db.jdbc=jdbc:oracle:thin:@database.com:1521:TEST
+uwiaa.db.username=
 uwiaa.db.password=
 
 ## Email Notification Configuration
