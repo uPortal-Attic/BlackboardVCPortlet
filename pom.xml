@@ -22,7 +22,6 @@
         <module>blackboardvc-portlet-api</module>
         <module>blackboardvc-portlet-ldap</module>
         <module>blackboardvc-portlet-webapp</module>
-        <module>blackboardvc-portlet-uw_iaa</module>
     </modules>
 
     <repositories>

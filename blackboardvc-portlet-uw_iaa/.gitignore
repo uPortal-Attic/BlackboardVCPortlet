@@ -1,9 +1,0 @@
-/.settings
-/.project
-/.classpath
-/target
-/src/main/resources/webapp.properties
-.idea/
-*.iml
-*/*.iml
-.springBeans
