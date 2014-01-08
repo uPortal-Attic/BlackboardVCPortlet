@@ -405,10 +405,20 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
         final Set<ConferenceUser> sessionChairs = new LinkedHashSet<ConferenceUser>(this.getSessionChairs(session));
         
         for (final ConferenceUser user : users) {
-            if(sendCancelEmail) {
+
+            // the user might or might not be a session chair,
+            // so we might or might not be making a change.
+            // If we're not making a change because they are not a chair to remove
+            // then don't bother sending an email.
+
+            // remove the user if present and note whether was present
+            boolean madeChange = sessionChairs.remove(user);
+
+            // if we made a change and we are to send an email, send it.
+            if(madeChange && sendCancelEmail) {
             	mailService.sendEmail(mailService.buildCancellationNoticeMailTask(user, session));
             }
-            sessionChairs.remove(user);
+
         }
         
         final BlackboardSessionResponse sessionResponse;
@@ -488,9 +498,19 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
         final Set<ConferenceUser> sessionNonChairs = new LinkedHashSet<ConferenceUser>(this.getSessionNonChairs(session));
         
         for (final ConferenceUser user : users) {
-        	if(sendEmail)
-        		mailService.sendEmail(mailService.buildCancellationNoticeMailTask(user, session));
-            sessionNonChairs.remove(user);
+
+            // the user might or might not be a non-chair, so
+            // we might or might not be there to remove.
+            // if this is a no-op, do not bother the user with a confusing email.
+
+            // remove the user and note whether this had any effect
+
+            boolean madeChange = sessionNonChairs.remove(user);
+
+            if (madeChange && sendEmail) {
+                mailService.sendEmail(mailService.buildCancellationNoticeMailTask(user, session));
+            }
+
         }
         
         if(sessionNonChairs.isEmpty()) {
