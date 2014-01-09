@@ -28,9 +28,9 @@ public class ConferenceUserPreAuthenticatedGrantedAuthoritiesUserDetailsService 
     
     private ConferenceUserDao conferenceUserDao;
     private TransactionOperations transactionOperations;
-    private List<String> uniqueIdAttributeName = ImmutableList.of("uid");
-    private List<String> emailAttributeName = ImmutableList.of("wisceduallemails");
-    private List<String> displayNameAttributeName = ImmutableList.of("displayName");
+    private List<String> uniqueIdAttributeName;
+    private List<String> emailAttributeName;
+    private List<String> displayNameAttributeName;
 
     @Autowired
     public void setConferenceUserDao(ConferenceUserDao conferenceUserDao) {
@@ -42,7 +42,7 @@ public class ConferenceUserPreAuthenticatedGrantedAuthoritiesUserDetailsService 
         this.transactionOperations = transactionOperations;
     }
 
-    @Value("${emailAttributeName:wisceduallemails}")
+    @Value("${emailAttributeName:mail}")
     public void setEmailAttributeName(String emailAttributeName) {
         this.emailAttributeName = ImmutableList.copyOf(ATTRIBUTE_NAME_SEPERATOR.split(emailAttributeName));
     }

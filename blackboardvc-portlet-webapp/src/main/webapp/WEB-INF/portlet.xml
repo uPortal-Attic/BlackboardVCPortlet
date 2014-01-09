@@ -106,6 +106,9 @@
         <name>wisceduallemails</name>
     </user-attribute>
     <user-attribute>
+        <name>mail</name>
+    </user-attribute>
+    <user-attribute>
         <name>eppn</name>
     </user-attribute>
     <user-attribute>
