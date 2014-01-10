@@ -180,7 +180,6 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
 	
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#session, 'view')")
-	@Transactional
 	public void populateLaunchUrl(ConferenceUser user, Session session) {
 		
 		if(isSessionParticipant(session, user)) {
