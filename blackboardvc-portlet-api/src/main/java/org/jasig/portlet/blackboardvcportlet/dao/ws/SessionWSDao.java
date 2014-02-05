@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
+import org.jasig.portlet.blackboardvcportlet.data.SessionTelephony;
 import org.jasig.portlet.blackboardvcportlet.service.SessionForm;
 import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceOperations;
 
@@ -18,8 +19,7 @@ public interface SessionWSDao {
 	public BlackboardSessionResponse createSession(ConferenceUser user, SessionForm sessionForm);
 	public String buildGuestSessionUrl(long sessionId);
 	public String buildSessionUrl(long sessionId, ConferenceUser user);
-	//TODO : this might just go into create session
-	public boolean createSessionTelephony(long sessionId, BlackboardSetSessionTelephony telephony);
+	public BlackboardSessionTelephonyResponse createSessionTelephony(long sessionId, SessionTelephony telephony);
 
 	//read
 	//TODO : Determine if this is needed as we should be reading from the local database.
@@ -40,6 +40,7 @@ public interface SessionWSDao {
 	//Misc. reads that have to do with a session but don't warrant there own dao
 	public List<BlackboardSessionAttendanceResponse> getSessionAttendance(long sessionId, Object startTime);
 	public List<BlackboardSessionTelephonyResponse> getSessionTelephony(long sessionId);
+	public boolean removeSessionTelephony(long sessionId);
 	
 	//update
 	public BlackboardSessionResponse updateSession(long bbSessionId, SessionForm sessionForm);
@@ -52,6 +53,7 @@ public interface SessionWSDao {
 	public boolean clearSessionNonChairList(long sessionId);
 	
 	public void setSasWebServiceOperations(SASWebServiceOperations sasWebServiceOperations);
+	
 
 	
 

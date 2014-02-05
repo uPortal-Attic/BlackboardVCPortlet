@@ -23,6 +23,7 @@ import org.jasig.portlet.blackboardvcportlet.data.Presentation;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingMode;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
+import org.jasig.portlet.blackboardvcportlet.data.SessionTelephony;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.stereotype.Repository;
@@ -136,6 +137,21 @@ public class SessionDaoImpl extends BaseJpaDao implements InternalSessionDao {
 
         //Create a copy to trigger loading of the user data
         return ImmutableSet.<SessionRecording>copyOf(sessionImpl.getSessionRecordings());
+    }
+    
+    @Override
+    public Set<SessionTelephony> getSessionTelephony(Session session) {
+        if (session == null) {
+            return null;
+        }
+        
+        final SessionImpl sessionImpl = this.getSession(session.getSessionId());
+        if (sessionImpl == null) {
+            return null;
+        }
+
+        //Create a copy to trigger loading of the user data
+        return ImmutableSet.<SessionTelephony>copyOf(sessionImpl.getSessionTelephony());
     }
 
     @Override

@@ -97,6 +97,63 @@
 <br/>
 <table class="viewSession">
 	<tr>
+		<th style="text-align: left;">Telephony Information</th>
+		<th style="text-align: right">
+			<sec:authorize access="hasRole('ROLE_ADMIN') || hasPermission(#session, 'edit')">
+				<portlet:renderURL var="configTelephonyURL" portletMode="EDIT" windowState="MAXIMIZED">
+					<portlet:param name="sessionId" value="${session.sessionId}" />
+				    <portlet:param name="action" value="configureTelephony" />
+				</portlet:renderURL>
+				<a href="${configTelephonyURL }" class="uportal-button">Configure Telephony</a>
+			</sec:authorize>
+		</th>
+	</tr>
+	<c:choose>
+		<c:when test="${!empty sessionTelephony }">
+			<sec:authorize access="hasRole('ROLE_ADMIN') || hasPermission(#session, 'edit')">
+				<!-- Only want to see chair number/pin if chair -->
+				<tr class="even">
+					<td class="label">
+						<span class="uportal-channel-strong">
+							<spring:message code="moderatorPhone" text="Moderator Phone" />
+						</span>
+					</td>
+					<td>
+						${sessionTelephony.chairPhone }<c:if test="${!empty sessionTelephony.chairPIN }">&nbsp;PIN: ${sessionTelephony.chairPIN }</c:if>
+					</td>
+				</tr>
+			</sec:authorize>
+			<tr class="odd">
+				<td class="label">
+					<span class="uportal-channel-strong">
+						<spring:message code="participantPhone" text="Participant Phone" />
+					</span>
+				</td>
+				<td>
+					${sessionTelephony.nonChairPhone } <c:if test="${!empty sessionTelephony.nonChairPIN }">&nbsp;PIN:&nbsp;${sessionTelephony.nonChairPIN }</c:if>
+				</td>
+			</tr>
+			<tr class="even">
+				<td class="label">
+					<span class="uportal-channel-strong">
+						<spring:message code="SIPPhone" text="SIP Phone" />
+					</span>
+				</td>
+				<td>
+					${sessionTelephony.sessionSIPPhone } <c:if test="${!empty sessionTelephony.sessionPIN }">&nbsp;PIN:&nbsp;${sessionTelephony.sessionPIN }</c:if>
+				</td>
+			</tr>
+		</c:when>
+		<c:otherwise>
+			<tr>
+				<td colspan='2'><spring:message code="notelephony" text="No Telephony set. This session will utilize the default integrated telephony."/></td>
+			</tr>
+		</c:otherwise>
+	</c:choose>
+</table>
+<br/>
+<table class="viewSession">
+	<tr>
 		<th colspan="2" style="text-align :left;"><spring:message code="additionalInfo" text="Additional Information"/></th>
 	</tr>
 	<tr>
@@ -126,7 +183,7 @@
 			</sec:authorize>		
 		</td>
 	</tr>
-	<tr class="even">
+	<tr class="odd">
 		<td class="label">
 			<span class="uportal-channel-strong">
 				<spring:message code="presentationFile" text="Presentation File" />
@@ -166,7 +223,7 @@
            	</form>
 		</td>
 	</tr>
-	<tr>
+	<tr class="even">
 		<td class="label">
 			<span class="uportal-channel-strong">
 				<spring:message code="mediaFiles" text="Media Files" />
@@ -197,7 +254,7 @@
 	    	<a href="${addMediaFileUrl}" class="uportal-button">Upload Media File(s)</a>
 		</td>
 	</tr>
-	<tr class="even">
+	<tr class="odd">
 		<td class="label">
 			<span class="uportal-channel-strong">
 				<spring:message code="recordings" text="Recordings" />

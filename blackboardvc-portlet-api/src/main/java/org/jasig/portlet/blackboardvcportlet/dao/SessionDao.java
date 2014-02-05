@@ -7,6 +7,7 @@ import org.jasig.portlet.blackboardvcportlet.data.Multimedia;
 import org.jasig.portlet.blackboardvcportlet.data.Presentation;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
+import org.jasig.portlet.blackboardvcportlet.data.SessionTelephony;
 
 import com.elluminate.sas.BlackboardSessionResponse;
 
@@ -16,6 +17,8 @@ public interface SessionDao {
     Set<ConferenceUser> getSessionNonChairs(Session session);
     
     Set<SessionRecording> getSessionRecordings(Session session);
+    
+    Set<SessionTelephony> getSessionTelephony(Session session);
     
     Set<Session> getAllSessions();
     

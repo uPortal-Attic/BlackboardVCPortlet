@@ -10,6 +10,7 @@ import org.jasig.portlet.blackboardvcportlet.dao.ws.SessionWSDao;
 import org.jasig.portlet.blackboardvcportlet.dao.ws.WSDaoUtils;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.RecordingMode;
+import org.jasig.portlet.blackboardvcportlet.data.SessionTelephony;
 import org.jasig.portlet.blackboardvcportlet.security.SecurityExpressionEvaluator;
 import org.jasig.portlet.blackboardvcportlet.service.SessionForm;
 import org.jasig.portlet.blackboardvcportlet.service.util.SASWebServiceOperations;
@@ -108,12 +109,6 @@ public class SessionWSDaoImpl implements SessionWSDao {
         return  jaxbResponse.getValue().getUrl().replace("&username=GUEST_PLACEHOLDER", "");
     }
 
-    @Override
-	public boolean createSessionTelephony(long sessionId, BlackboardSetSessionTelephony telephony) {
-		telephony.setSessionId(sessionId);
-		return WSDaoUtils.isSuccessful(sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/SetSessionTelephony", telephony));
-	}
-
 	@Override
 	public List<BlackboardSessionResponse> getSessions(String userId, String groupingId, Long sessionId,
 			String creatorId, Long startTime, Long endTime, String sessionName) {
@@ -171,6 +166,33 @@ public class SessionWSDaoImpl implements SessionWSDao {
 		request.setSessionId(sessionId);
 		final BlackboardSessionTelephonyResponseCollection response = (BlackboardSessionTelephonyResponseCollection) sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/ListSessionTelephony", request);
 		return response.getSessionTelephonyResponses();
+	}
+	
+	@Override
+	public boolean removeSessionTelephony(long sessionId) {
+		BlackboardSessionTelephony bst = new ObjectFactory().createBlackboardSessionTelephony();
+		bst.setSessionId(sessionId);
+		JAXBElement<BlackboardSessionTelephony> removeSessionTelephony = new ObjectFactory().createRemoveSessionTelephony(bst);
+		
+		return WSDaoUtils.isSuccessful(sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/RemoveSessionTelephony", removeSessionTelephony));
+	}
+	
+	@Override
+	public BlackboardSessionTelephonyResponse createSessionTelephony(long sessionId, SessionTelephony telephony) {
+		BlackboardSetSessionTelephony request = new ObjectFactory().createBlackboardSetSessionTelephony();
+		request.setSessionId(sessionId);
+		request.setChairPhone(telephony.getChairPhone());
+		request.setChairPIN(telephony.getChairPIN());
+		request.setIsPhone(telephony.isPhone());
+		request.setNonChairPhone(telephony.getNonChairPhone());
+		request.setNonChairPIN(telephony.getNonChairPIN());
+		request.setSessionPIN(telephony.getSessionPIN());
+		request.setSessionSIPPhone(telephony.getSessionSIPPhone());
+		Object obj = sasWebServiceOperations.marshalSendAndReceiveToSAS("http://sas.elluminate.com/SetSessionTelephony", request);
+		
+		@SuppressWarnings("unchecked")
+		JAXBElement<BlackboardSessionTelephonyResponseCollection> jaxbResponse = (JAXBElement<BlackboardSessionTelephonyResponseCollection>) obj;
+		return DataAccessUtils.singleResult(jaxbResponse.getValue().getSessionTelephonyResponses());
 	}
 
 	@Override

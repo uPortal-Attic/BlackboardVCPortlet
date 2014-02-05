@@ -17,6 +17,7 @@ import org.jasig.portlet.blackboardvcportlet.dao.ConferenceUserDao;
 import org.jasig.portlet.blackboardvcportlet.dao.MultimediaDao;
 import org.jasig.portlet.blackboardvcportlet.dao.PresentationDao;
 import org.jasig.portlet.blackboardvcportlet.dao.SessionDao;
+import org.jasig.portlet.blackboardvcportlet.dao.SessionTelephonyDao;
 import org.jasig.portlet.blackboardvcportlet.dao.UserSessionUrlDao;
 import org.jasig.portlet.blackboardvcportlet.dao.ws.MultimediaWSDao;
 import org.jasig.portlet.blackboardvcportlet.dao.ws.PresentationWSDao;
@@ -26,6 +27,7 @@ import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser.Roles;
 import org.jasig.portlet.blackboardvcportlet.data.Multimedia;
 import org.jasig.portlet.blackboardvcportlet.data.Presentation;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
+import org.jasig.portlet.blackboardvcportlet.data.SessionTelephony;
 import org.jasig.portlet.blackboardvcportlet.data.UserSessionUrl;
 import org.jasig.portlet.blackboardvcportlet.security.ConferenceUserService;
 import org.jasig.portlet.blackboardvcportlet.service.MailTemplateService;
@@ -48,6 +50,7 @@ import org.springframework.ws.client.WebServiceClientException;
 import com.elluminate.sas.BlackboardMultimediaResponse;
 import com.elluminate.sas.BlackboardPresentationResponse;
 import com.elluminate.sas.BlackboardSessionResponse;
+import com.elluminate.sas.BlackboardSessionTelephonyResponse;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterators;
@@ -65,6 +68,7 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
 	private MultimediaWSDao multimediaWSDao;
 	private PresentationWSDao presentationWSDao;
 	private MailTemplateService mailService;
+	private SessionTelephonyDao sessionTelephonyDao;
 	private File tempDir;
 
 	private UserSessionUrlDao userSessionUrlDao;
@@ -118,6 +122,11 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
     @Autowired
     public void setPresentationWSDao(PresentationWSDao presentationWSDao) {
         this.presentationWSDao = presentationWSDao;
+    }
+    
+    @Autowired
+    public void setSessionTelephonyDao(SessionTelephonyDao dao) {
+    	this.sessionTelephonyDao = dao;
     }
     
     @Override
@@ -678,4 +687,27 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
             FileUtils.deleteQuietly(multimediaFile);
         }
     }
+
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#session, 'view')")
+	public SessionTelephony getSessionTelephony(Session session) {
+		return sessionTelephonyDao.getSessionTelephony(session);
+	}
+
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'edit')")
+	public void createOrUpdateSessionTelephony(long sessionId, SessionTelephony telephony) {
+		BlackboardSessionTelephonyResponse response = sessionWSDao.createSessionTelephony(sessionId, telephony);
+		sessionTelephonyDao.createOrUpdateTelephony(response);
+	}
+
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'edit')")
+	public void deleteSessionTelephony(long sessionId) {
+		//delete ws record
+		sessionWSDao.removeSessionTelephony(sessionId);
+		//delete local db record
+		sessionTelephonyDao.deleteTelephony(sessionId);
+		
+	}
 }

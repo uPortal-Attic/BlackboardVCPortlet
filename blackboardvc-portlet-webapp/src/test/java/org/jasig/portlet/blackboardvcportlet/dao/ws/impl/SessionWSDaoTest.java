@@ -113,6 +113,12 @@ public class SessionWSDaoTest extends SessionWSDaoTestBase {
 		super.clearSessionNonChairList();
 	}
 	
+	@Override
+	@Test
+	public void createSessionTelephony() {
+		when(sasWebServiceOperations.marshalSendAndReceiveToSAS(contains("http://sas.elluminate.com/SetSessionTelephony") , any(Object.class))).thenReturn(mockTrue());
+	}
+	
 	private JAXBElement<BlackboardUrlResponse> mockSessionUrlResponse() throws JAXBException {
 		final JAXBContext context = JAXBContext.newInstance("com.elluminate.sas");
         final Unmarshaller unmarshaller = context.createUnmarshaller();

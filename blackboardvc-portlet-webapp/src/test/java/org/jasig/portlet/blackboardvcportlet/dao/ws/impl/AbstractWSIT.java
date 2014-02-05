@@ -3,6 +3,8 @@ package org.jasig.portlet.blackboardvcportlet.dao.ws.impl;
 import java.util.Set;
 
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
+import org.jasig.portlet.blackboardvcportlet.data.Session;
+import org.jasig.portlet.blackboardvcportlet.data.SessionTelephony;
 import org.jasig.portlet.blackboardvcportlet.service.SessionForm;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
@@ -52,24 +54,20 @@ public abstract class AbstractWSIT {
 
             @Override
             public void setEmail(String email) {
-                // TODO Auto-generated method stub
             }
 
             @Override
             public Set<String> getAdditionalEmails() {
-                // TODO Auto-generated method stub
                 return null;
             }
 
             @Override
             public String getInvitationKey() {
-                // TODO Auto-generated method stub
                 return null;
             }
 
             @Override
             public boolean isExternal() {
-                // TODO Auto-generated method stub
                 return false;
             }
 
@@ -108,5 +106,58 @@ public abstract class AbstractWSIT {
 		newForm.setEndTime((new DateTime(new Long("1370185200000"))));
 		
 		return newForm;
+	}
+	
+	SessionTelephony buildSessionTelephony() {
+		SessionTelephony tel = new SessionTelephony() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public Session getSession() {
+				return null;
+			}
+
+			@Override
+			public String getChairPhone() {
+				return "1234567899";
+			}
+
+			@Override
+			public String getChairPIN() {
+				return "456789";
+			}
+
+			@Override
+			public String getNonChairPhone() {
+				// TODO Auto-generated method stub
+				return "1234567899";
+			}
+
+			@Override
+			public String getNonChairPIN() {
+				return "456789";
+			}
+
+			@Override
+			public String getSessionSIPPhone() {
+				return "1234567899";
+			}
+
+			@Override
+			public String getSessionPIN() {
+				return "123789";
+			}
+
+			@Override
+			public boolean isPhone() {
+				return false;
+			}
+
+			@Override
+			public long getTelephonyId() {
+				return 1;
+			}
+		};
+		return tel;
 	}
 }

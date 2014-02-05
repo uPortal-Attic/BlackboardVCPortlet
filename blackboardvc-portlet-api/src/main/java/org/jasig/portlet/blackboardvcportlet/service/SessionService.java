@@ -24,6 +24,7 @@ import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser.Roles;
 import org.jasig.portlet.blackboardvcportlet.data.Multimedia;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
+import org.jasig.portlet.blackboardvcportlet.data.SessionTelephony;
 import org.springframework.web.multipart.MultipartFile;
 
 
@@ -109,4 +110,14 @@ public interface SessionService {
 			boolean forceFetch);
 
 	void deleteSessionUrl(ConferenceUser user, Session session);
+	
+	/**
+	 * @param session The session of which you are querying upon
+	 * @return SessionTelephony object, or null if one doesn't exist
+	 */
+	SessionTelephony getSessionTelephony(Session session);
+	
+	void createOrUpdateSessionTelephony(long sessionId, SessionTelephony telephony);
+	
+	void deleteSessionTelephony(long sessionId);
 }

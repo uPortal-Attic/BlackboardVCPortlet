@@ -37,7 +37,9 @@
     <bean class="org.jasig.portlet.blackboardvcportlet.dao.impl.ServerConfigurationDaoImpl" />
     <bean class="org.jasig.portlet.blackboardvcportlet.dao.impl.ServerQuotaDaoImpl" />
     <bean class="org.jasig.portlet.blackboardvcportlet.dao.impl.SessionRecordingDaoImpl" />
+    <bean class="org.jasig.portlet.blackboardvcportlet.dao.impl.SessionTelephonyDaoImpl" />
     <bean class="org.jasig.portlet.blackboardvcportlet.dao.impl.UserSessionUrlDaoImpl" />
+    
                         
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
         <property name="entityManagerFactory" ref="factoryBean" />

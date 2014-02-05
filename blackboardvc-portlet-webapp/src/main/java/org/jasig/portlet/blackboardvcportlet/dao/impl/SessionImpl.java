@@ -35,6 +35,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.SequenceGenerator;
@@ -200,9 +201,15 @@ public class SessionImpl implements Session {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private final Set<SessionRecordingImpl> sessionRecordings = new HashSet<SessionRecordingImpl>(0);
     
+    //Really a onetoone but blackboard treats it like a one to many
+    @OneToMany(mappedBy = "session", targetEntity = SessionTelephonyImpl.class, cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, orphanRemoval = true)
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private final Set<SessionTelephonyImpl> sessionTelephony = new HashSet<SessionTelephonyImpl>(0);
+    
     //Exists only to allow cascading deletes, should NEVER be accessed by normal code
     @OneToMany(mappedBy = "session", targetEntity = UserSessionUrlImpl.class, cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, orphanRemoval = true)
     private final Set<UserSessionUrl> userUrls = new HashSet<UserSessionUrl>(0);
+    
     
 
 
@@ -343,6 +350,10 @@ public class SessionImpl implements Session {
     Set<SessionRecordingImpl> getSessionRecordings() {
         return sessionRecordings;
     }
+    
+    Set<SessionTelephonyImpl> getSessionTelephony() {
+		return sessionTelephony;
+	}
 
     @Override
     public DateTime getLastUpdated() {
@@ -486,6 +497,7 @@ public class SessionImpl implements Session {
 		return launchUrl;
 	}
 	
+
 	@Override
 	public String getTimeFancyText(DateTime from, DateTime to) {
 		final String prefix = "Join in ";

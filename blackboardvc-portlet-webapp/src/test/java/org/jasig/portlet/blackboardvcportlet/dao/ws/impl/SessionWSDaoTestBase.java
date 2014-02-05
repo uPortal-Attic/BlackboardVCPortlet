@@ -1,9 +1,6 @@
 package org.jasig.portlet.blackboardvcportlet.dao.ws.impl;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
@@ -11,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jasig.portlet.blackboardvcportlet.dao.ws.SessionWSDao;
+import org.jasig.portlet.blackboardvcportlet.data.SessionTelephony;
 import org.jasig.portlet.blackboardvcportlet.security.SecurityExpressionEvaluator;
 import org.jasig.springframework.mockito.MockitoFactoryBean;
 import org.joda.time.DateTime;
@@ -21,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.support.DataAccessUtils;
 
 import com.elluminate.sas.BlackboardSessionResponse;
+import com.elluminate.sas.BlackboardSessionTelephonyResponse;
 
 public class SessionWSDaoTestBase  extends AbstractWSIT {
 	
@@ -59,6 +58,15 @@ public class SessionWSDaoTestBase  extends AbstractWSIT {
 		assertEquals(session.getStartTime(), form.getStartTime().getMillis());
 		
 		assertEquals(session.getCreatorId(), user.getUniqueId());
+	}
+	
+	@Test
+	public void createSessionTelephony() {
+		SessionTelephony tel = buildSessionTelephony();
+		BlackboardSessionTelephonyResponse response = dao.createSessionTelephony(session.getSessionId(), tel);
+		assertNotNull(response);
+		assertEquals(response.getChairPhone(),tel.getChairPhone());
+		assertEquals(response.getSessionPIN(), tel.getSessionPIN());
 	}
 	
 	@Test

@@ -28,6 +28,7 @@ import org.jasig.portlet.blackboardvcportlet.data.ConferenceUser;
 import org.jasig.portlet.blackboardvcportlet.data.Multimedia;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
+import org.jasig.portlet.blackboardvcportlet.data.SessionTelephony;
 import org.jasig.portlet.blackboardvcportlet.security.ConferenceUserService;
 import org.jasig.portlet.blackboardvcportlet.service.SessionService;
 import org.slf4j.Logger;
@@ -96,6 +97,9 @@ public class ViewSessionController
         final Set<SessionRecording> sessionRecordings = this.sessionDao.getSessionRecordings(session);
         model.addAttribute("recordings", ImmutableSortedSet.copyOf(SessionRecordingDisplayComparator.INSTANCE, sessionRecordings));
         
+        final SessionTelephony sessionTelephony = this.sessionService.getSessionTelephony(session);
+        model.addAttribute("sessionTelephony", sessionTelephony);
+        
         final ConferenceUser conferenceUser = this.conferenceUserService.getCurrentConferenceUser();
         sessionService.populateLaunchUrl(conferenceUser, session);
         
@@ -109,4 +113,5 @@ public class ViewSessionController
 
         return "viewSession";
 	}
+    
 }
