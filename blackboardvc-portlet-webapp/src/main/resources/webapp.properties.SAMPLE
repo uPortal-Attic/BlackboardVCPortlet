@@ -30,6 +30,7 @@ mail.sendMail=false
 emailAttributeName=mail
 displayNameAttributeName=displayName
 uniqueIdAttributeName=wiscedupvi,eppn,spvi
+telephonyEnabled=true
 
 ## Misc
 maxuploadsize=10000000

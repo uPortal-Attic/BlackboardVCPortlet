@@ -34,6 +34,7 @@ import org.jasig.portlet.blackboardvcportlet.service.SessionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -56,12 +57,17 @@ public class ViewSessionController
 	private ConferenceUserService conferenceUserService;
 	private SessionService sessionService;
 	private SessionDao sessionDao;
-	
+	private String telephonyEnabled;
 	
 	@Autowired
 	public void setSessionService(SessionService sessionService) {
         this.sessionService = sessionService;
     }
+	
+	@Value("${telephonyEnabled}")
+	public void setTelephonyEnabled(String telephonyEnabled) {
+		this.telephonyEnabled = telephonyEnabled;
+	}
 	
 	@Autowired
 	private ViewSessionListController viewController;
@@ -105,6 +111,8 @@ public class ViewSessionController
         
         
         model.addAttribute("session", session);
+        
+        model.addAttribute("telephonyEnabled",telephonyEnabled);
         
         if (presentationUploadError != null)
 		{
