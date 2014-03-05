@@ -7,3 +7,4 @@
 *.iml
 */*.iml
 .springBeans
+blackboardvc-portlet-webapp/overlays
