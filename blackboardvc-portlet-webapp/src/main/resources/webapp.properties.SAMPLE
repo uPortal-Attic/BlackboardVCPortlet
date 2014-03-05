@@ -1,0 +1,38 @@
+## Web Service Configuration
+bbc.username=
+bbc.password=
+#bbc.callbackURL=https://my-qa.wisc.edu/BlackboardVCPortlet/callback/recCallback/
+sas.defaultUri=https://sas-int.elluminate.com/site/external/adapter/default/v3/webservice.wsdl
+
+## Local Database Configuration
+bbc.db.driverClassName=org.hsqldb.jdbcDriver
+bbc.db.jdbc=jdbc:hsqldb:hsql://localhost:8887/uPortal
+bbc.db.username=sa
+bbc.db.password=
+
+## IAA Person Lookup Database Configuration 
+uwiaa.db.driverClassName=oracle.jdbc.OracleDriver
+uwiaa.db.jdbc=jdbc:oracle:thin:@database.com:1521:TEST
+uwiaa.db.username=
+uwiaa.db.password=
+
+## Email Notification Configuration
+mail.host=localhost
+mail.from=me@people.com
+mail.port=25
+mail.extParticipantMailMessage.subject=Collaborate Session Invite
+mail.moderatorMailMessage.subject=Collaborate Session Invite
+mail.sessionDeletionMessage.subject=Collaborate Session Cancellation
+mail.intParticipantMailMessage.subject=Collaborate Session Invite
+mail.sendMail=false
+
+## User Attribute Configuration
+emailAttributeName=mail
+displayNameAttributeName=displayName
+uniqueIdAttributeName=wiscedupvi,eppn,spvi
+telephonyEnabled=true
+
+## Misc
+maxuploadsize=10000000
+presentationFileTypes=.wbd,.wbp,.elp,.elpx
+multimediaFileTypes=.mpeg,.mpg,.mpe,.mov,.qt,.swf,.m4v,.mp3,.mp4,.mpeg,.wmv

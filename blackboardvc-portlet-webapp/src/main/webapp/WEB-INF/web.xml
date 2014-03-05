@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+    <display-name>BlackboardVCPortlet</display-name>
+    <context-param>
+        <param-name>webAppRootKey</param-name>
+        <param-value>BlackboardVCPortlet.webapp.root</param-value>
+    </context-param>
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>/WEB-INF/context/*.xml</param-value>
+    </context-param>
+    <context-param>
+        <param-name>portletContextConfigLocation</param-name>
+        <param-value>/WEB-INF/context/portlet/portletApplicationContext.xml</param-value>
+    </context-param>
+    
+    <listener>
+        <listener-class>org.springframework.web.util.WebAppRootListener</listener-class>
+    </listener>
+    <listener>
+        <listener-class>ch.qos.logback.classic.selector.servlet.ContextDetachingSCL</listener-class>
+    </listener>
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    <listener>
+        <!-- MUST be listed after ContextLoaderListener -->
+        <listener-class>org.jasig.springframework.web.portlet.context.PortletContextLoaderListener</listener-class>
+    </listener>
+    
+    <filter>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    
+    <!-- TODO apply this filter to any request that requires the user already have an authenticated session with the portlet 
+    <filter-mapping>
+      <filter-name>springSecurityFilterChain</filter-name>
+      <servlet-name>ViewRendererServlet</servlet-name>
+    </filter-mapping>
+     -->
+    
+    <servlet>
+        <servlet-name>callbackDispatcher</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>/WEB-INF/context/servlet/callbackDispatcher-servlet.xml</param-value>
+        </init-param>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+    <servlet>
+        <servlet-name>ViewRendererServlet</servlet-name>
+        <servlet-class>org.springframework.web.servlet.ViewRendererServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ViewRendererServlet</servlet-name>
+        <url-pattern>/WEB-INF/servlet/view</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>callbackDispatcher</servlet-name>
+        <url-pattern>/callback/*</url-pattern>
+    </servlet-mapping>
+</web-app>

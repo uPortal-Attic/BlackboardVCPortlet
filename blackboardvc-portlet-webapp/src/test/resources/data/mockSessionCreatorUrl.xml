@@ -1,0 +1,3 @@
+<BuildSessionUrlResponse xmlns="http://sas.elluminate.com/"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+   <url xsi:type="xs:string">https://sas-int.elluminate.com/m.jnlp?sid=20130128&amp;miuid=7DB4D532193AE5B4C0B70449B52D44D2</url>
+</BuildSessionUrlResponse>

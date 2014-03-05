@@ -1,0 +1,6 @@
+   <MultimediaResponse xmlns="http://sas.elluminate.com/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <multimediaId xsi:type="xs:long">4637</multimediaId>
+      <description xsi:type="xs:string"/>
+      <size xsi:type="xs:long">6</size>
+      <creatorId xsi:type="xs:string">levett@wisc.edu</creatorId>
+   </MultimediaResponse>

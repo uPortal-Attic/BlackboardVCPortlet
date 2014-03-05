@@ -1,0 +1,134 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+<portlet-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd"
+    version="2.0">
+    
+    <portlet>
+        <description>View and schedule web conferences</description>
+        <portlet-name>BlackboardVCPortlet</portlet-name>
+        <display-name>Collaborate</display-name>
+        <portlet-class>org.jasig.springframework.web.portlet.context.ContribDispatcherPortlet</portlet-class>
+        <init-param>
+            <name>contextConfigLocation</name>
+            <value>/WEB-INF/context/portlet/BlackboardVCPortlet-portlet.xml</value>
+        </init-param>
+        <expiration-cache>0</expiration-cache>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>VIEW</portlet-mode>
+            <portlet-mode>EDIT</portlet-mode>
+        </supports>
+        <supported-locale>en</supported-locale>
+        <resource-bundle>messages</resource-bundle>
+        <portlet-info>
+            <title>Web Conferencing</title>
+            <short-title>Web Conferencing</short-title>
+        </portlet-info>
+    
+        <security-role-ref>
+          <role-name>ROLE_FULL_ACCESS</role-name>
+          <role-link>Web Conferencing Full Access</role-link>
+        </security-role-ref>
+        <security-role-ref>
+          <role-name>ROLE_ADMIN</role-name>
+          <role-link>Administrators - Web Conferencing</role-link>
+        </security-role-ref>
+        <portlet-preferences>
+        	<preference>
+        		<name>helpUrl</name>
+        		<read-only>false</read-only>
+	        	<value>https://kb.wisc.edu/search.php?q=blackboard%20collaborate</value> <!-- TBD WCP-59 -->
+        	</preference>
+        </portlet-preferences>
+    </portlet>
+    
+    <portlet>
+        <description>Administer the Blackboard Collaborate Portlet</description>
+        <portlet-name>BlackboardVCPortletAdmin</portlet-name>
+        <display-name>Collaborate Administration</display-name>
+        <portlet-class>org.jasig.springframework.web.portlet.context.ContribDispatcherPortlet</portlet-class>
+        <init-param>
+            <name>contextConfigLocation</name>
+            <value>/WEB-INF/context/portlet/BlackboardVCPortletAdmin-portlet.xml</value>
+        </init-param>
+        <expiration-cache>0</expiration-cache>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>VIEW</portlet-mode>
+            <portlet-mode>EDIT</portlet-mode>
+        </supports>
+        <supported-locale>en</supported-locale>
+        <resource-bundle>messages</resource-bundle>
+        <portlet-info>
+            <title>Web Conferencing Administration</title>
+            <short-title>Web Conferencing Administration</short-title>
+        </portlet-info>
+    
+        <security-role-ref>
+          <role-name>ROLE_ADMIN</role-name>
+          <role-link>Administrators - Web Conferencing</role-link>
+        </security-role-ref>
+        <portlet-preferences>
+        	<preference>
+        		<name>helpUrl</name>
+        		<read-only>false</read-only>
+	        	<value>https://kb.wisc.edu/search.php?q=blackboard%20collaborate</value> <!-- TBD WCP-59 -->
+        	</preference>
+        </portlet-preferences>
+    </portlet>
+    
+    <user-attribute>
+        <name>displayName</name>
+    </user-attribute>
+    <user-attribute>
+        <name>wisceduallemails</name>
+    </user-attribute>
+    <user-attribute>
+        <name>mail</name>
+    </user-attribute>
+    <user-attribute>
+        <name>eppn</name>
+    </user-attribute>
+    <user-attribute>
+        <name>spvi</name>
+    </user-attribute>
+    <user-attribute>
+        <name>wiscedupvi</name>
+    </user-attribute>
+    
+    <filter>
+        <filter-name>springSecurityPortletFilterChain</filter-name>
+        <filter-class>org.jasig.springframework.web.portlet.filter.DelegatingPortletFilterProxy</filter-class>
+        <lifecycle>ACTION_PHASE</lifecycle>
+        <lifecycle>EVENT_PHASE</lifecycle>
+        <lifecycle>RENDER_PHASE</lifecycle>
+        <lifecycle>RESOURCE_PHASE</lifecycle>
+    </filter>
+    
+    <filter-mapping>
+        <filter-name>springSecurityPortletFilterChain</filter-name>
+        <portlet-name>*</portlet-name>
+    </filter-mapping>
+</portlet-app>

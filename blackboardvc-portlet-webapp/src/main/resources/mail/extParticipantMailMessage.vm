@@ -1,0 +1,19 @@
+${sessionUpdateText}
+${displayName}:
+
+You have been invited to attend the following BlackBoard Collaborate web conferencing session:
+
+Name: ${sessionName}
+Type: ${sessionType}
+Starts: ${sessionStartTime}
+Ends: ${sessionEndTime}
+
+To join the session, please click on the link below within ${boundaryTime} minutes of the specified time.
+
+${userURL}
+
+${creatorName}
+
+Email: ${creatorEmail}
+
+This automated message comes from an email address that is checked periodically. If you need support for Blackboard Collaborate, please see the Knowledgebase at https://kb.wisc.edu/myuwsystem/search.php?q=&cat=2485

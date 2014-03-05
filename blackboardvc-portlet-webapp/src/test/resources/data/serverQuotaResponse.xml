@@ -1,0 +1,8 @@
+<GetServerQuotasResponseCollection xmlns="http://sas.elluminate.com/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+   <ServerQuotasResponse>
+      <diskQuota xsi:type="xs:long">1073741824</diskQuota>
+      <diskQuotaAvailable xsi:type="xs:long">1062919645</diskQuotaAvailable>
+      <sessionQuota xsi:type="xs:int">1024</sessionQuota>
+      <sessionQuotaAvailable xsi:type="xs:int">996</sessionQuotaAvailable>
+   </ServerQuotasResponse>
+</GetServerQuotasResponseCollection>
