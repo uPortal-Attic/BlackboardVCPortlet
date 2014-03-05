@@ -15,4 +15,5 @@ public interface SessionTelephony  extends Serializable{
 	boolean isPhone();
 	
 	long getTelephonyId();
+	Long getSessionId();
 }

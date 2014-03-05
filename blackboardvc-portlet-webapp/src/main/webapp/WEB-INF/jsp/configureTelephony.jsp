@@ -42,8 +42,11 @@
   </thead>
 </table>
 <br/>
+<c:if test="${!empty errorCode }">
+	<div class="error"><spring:message code="${errorCode }" /></div>
+</c:if>
 <c:if test="${!empty error }">
-	<div class="error"><spring:message code="${error }" /></div>
+    <div class="error">${error }</div>
 </c:if>
 <portlet:actionURL portletMode="EDIT" var="saveTelephonyActionUrl">
   <portlet:param name="action" value="saveTelephony" />
@@ -65,10 +68,10 @@
 		  		<td><span class="uportal-channel-strong"><spring:message code="label.moderatorphone" text="Moderator Phone & PIN" /></span></td><td><form:input path="chairPhone" style="width: 12em;" class="uportal-input-text" /> <form:input path="chairPIN" style="width: 7em;" class="uportal-input-text" />&nbsp;<form:errors path="chairPhone" cssClass="error"/></td>
 		  	</tr>
 		  	<tr>
-		  		<td><span class="uportal-channel-strong"><spring:message code="label.participantphone" text="Participant Phone & PIN" /></span></td><td><form:input path="nonChairPhone" style="width: 12em;" class="uportal-input-text" /> <form:input path="nonChairPIN" style="width: 7em;" class="uportal-input-text" /></td>
+		  		<td><span class="uportal-channel-strong"><spring:message code="label.participantphone" text="Participant Phone & PIN" /></span></td><td><form:input path="nonChairPhone" style="width: 12em;" class="uportal-input-text" /> <form:input path="nonChairPIN" style="width: 7em;" class="uportal-input-text" />&nbsp;<form:errors path="nonChairPhone" cssClass="error"/></td>
 		  	</tr>
 		  	<tr>
-		  		<td><span class="uportal-channel-strong"><spring:message code="label.sipphone" text="SIP Phone & PIN" /></span></td><td><form:input path="sessionSIPPhone" style="width: 12em;" class="uportal-input-text" /> <form:input path="sessionPIN" style="width: 7em;" class="uportal-input-text" /></td>
+		  		<td><span class="uportal-channel-strong"><spring:message code="label.sipphone" text="SIP Phone & PIN" /></span></td><td><form:input path="sessionSIPPhone" style="width: 12em;" class="uportal-input-text" /> <form:input path="sessionPIN" style="width: 7em;" class="uportal-input-text" />&nbsp;<form:errors path="sessionSIPPhone" cssClass="error"/></td>
 		  	</tr>
 		  </tbody>
 	</table>

@@ -157,4 +157,9 @@ public class SessionTelephonyImpl implements SessionTelephony {
 	public long getTelephonyId() {
 		return telephonyId;
 	}
+	
+	@Override
+	public Long getSessionId() {
+	    return session != null ? session.getSessionId() : null;
+	}
 }

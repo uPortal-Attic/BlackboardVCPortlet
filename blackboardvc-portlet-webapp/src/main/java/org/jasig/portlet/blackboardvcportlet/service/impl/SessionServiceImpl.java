@@ -697,15 +697,17 @@ public class SessionServiceImpl implements SessionService, ServletContextAware {
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'edit')")
 	public void createOrUpdateSessionTelephony(long sessionId, SessionTelephony telephony) {
-		BlackboardSessionTelephonyResponse response = sessionWSDao.createSessionTelephony(sessionId, telephony);
+	    Session session = getSession(sessionId);
+		BlackboardSessionTelephonyResponse response = sessionWSDao.createSessionTelephony(session.getBbSessionId(), telephony);
 		sessionTelephonyDao.createOrUpdateTelephony(response);
 	}
 
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#sessionId, 'org.jasig.portlet.blackboardvcportlet.data.Session', 'edit')")
 	public void deleteSessionTelephony(long sessionId) {
+	    Session session = getSession(sessionId);
 		//delete ws record
-		sessionWSDao.removeSessionTelephony(sessionId);
+		sessionWSDao.removeSessionTelephony(session.getBbSessionId());
 		//delete local db record
 		sessionTelephonyDao.deleteTelephony(sessionId);
 		

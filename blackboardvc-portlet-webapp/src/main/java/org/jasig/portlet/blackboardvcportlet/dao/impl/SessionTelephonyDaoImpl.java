@@ -103,7 +103,7 @@ public class SessionTelephonyDaoImpl extends BaseJpaDao implements SessionTeleph
         
         //Remove the reference from the session to the recording
         
-        session.getSessionRecordings().remove(sessionTelephony);
+        session.getSessionTelephony().remove(sessionTelephony);
         
         final EntityManager entityManager = this.getEntityManager();
         entityManager.remove(sessionTelephony);

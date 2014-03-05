@@ -69,14 +69,14 @@ public class ManageTelephonyController {
 		        response.setRenderParameter("action", "viewSession");
 			} catch (SoapFaultClientException ex) {
 				if("Telephony is not enabled".equalsIgnoreCase(ex.getMessage())) {
-					response.setRenderParameter("error", "error.thirdPartyDisabled");
-					
-					
-					response.setPortletMode(PortletMode.EDIT);
-					response.setRenderParameter("action", "configureTelephony");
+					response.setRenderParameter("errorCode", "error.thirdPartyDisabled");
 				} else {
-					throw ex;
+				    //use the error message sent from BBC. In theory we shouldn't get here but we might.
+				    response.setRenderParameter("error", ex.getMessage());
 				}
+				
+                response.setPortletMode(PortletMode.EDIT);
+                response.setRenderParameter("action", "configureTelephony");
 			}
 			
 		}

@@ -42,6 +42,8 @@ public class TelephonyForm implements SessionTelephony {
 	public void setChairPIN(String chairPIN) {
 		this.chairPIN = chairPIN;
 	}
+	
+	@NotBlank
 	public String getNonChairPhone() {
 		return nonChairPhone;
 	}
@@ -60,6 +62,8 @@ public class TelephonyForm implements SessionTelephony {
 	public void setPhone(boolean isPhone) {
 		this.isPhone = isPhone;
 	}
+	
+	@NotBlank
 	public String getSessionSIPPhone() {
 		return sessionSIPPhone;
 	}
@@ -80,10 +84,12 @@ public class TelephonyForm implements SessionTelephony {
 	public long getTelephonyId() {
 		return 0;
 	}
-	public long getSessionId() {
+	
+	@Override
+	public Long getSessionId() {
 		return sessionId;
 	}
-	public void setSessionId(long sessionId) {
+	public void setSessionId(Long sessionId) {
 		this.sessionId = sessionId;
 	}
 }

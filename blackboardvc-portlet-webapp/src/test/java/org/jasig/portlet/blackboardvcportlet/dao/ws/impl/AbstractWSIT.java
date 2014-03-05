@@ -129,7 +129,6 @@ public abstract class AbstractWSIT {
 
 			@Override
 			public String getNonChairPhone() {
-				// TODO Auto-generated method stub
 				return "1234567899";
 			}
 
@@ -157,6 +156,11 @@ public abstract class AbstractWSIT {
 			public long getTelephonyId() {
 				return 1;
 			}
+
+            @Override
+            public Long getSessionId() {
+                return Long.parseLong("1");
+            }
 		};
 		return tel;
 	}
