@@ -25,8 +25,6 @@ import org.jasig.portlet.blackboardvcportlet.validations.annotations.*;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
-import org.joda.time.TimeOfDay;
-import org.springframework.beans.factory.annotation.Required;
 
 import javax.validation.constraints.Future;
 import javax.validation.constraints.Max;

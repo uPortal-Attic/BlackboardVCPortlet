@@ -59,6 +59,8 @@ if (!blackboardPortlet._) {
                $("<div>").addClass("bbcArrow").addClass(feedback.vertical).addClass(feedback.horizontal).appendTo(this);
             }
          },
+         show: false,
+         hide: false,
          tooltipClass: "bbc-ui-tooltip",
          content : function() {
             return $(this).prop('title');

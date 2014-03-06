@@ -5,6 +5,7 @@
 package org.jasig.portlet.blackboardvcportlet.validations.test;
 
 import org.jasig.portlet.blackboardvcportlet.service.SessionForm;
+import org.jasig.portlet.blackboardvcportlet.validations.validators.PhoneNumberValidator;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
@@ -20,6 +21,8 @@ import javax.validation.Validator;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class CustomValidationsTest
 {
@@ -126,5 +129,36 @@ public class CustomValidationsTest
 		assertEquals(0, constraintViolations.size());
 
 		logger.info("testSessionNameCheck() finished.");
+	}
+	
+	/**
+     * From Blackboard, here are valid values:
+     * 1-xxx-xxx-xxxx
+     * 1 xxx xxx xxxx
+     * 1 (xxx) xxx xxxx
+     * 1 (xxx) xxx-xxxx
+     * xxx-xxx-xxxx
+     * xxx xxx xxxx
+     * (xxx) xxx-xxxx
+     * xxx.xxx.xxxx
+     */
+	@Test
+	public void testPhoneNumberValidator() throws Exception {
+	    PhoneNumberValidator validator = new PhoneNumberValidator();
+	    assertTrue(validator.isValid("1-123-123-1232",null));
+	    assertTrue(validator.isValid("1 123 123 1232",null));
+	    assertTrue(validator.isValid("1 (123) 123 1232",null));
+	    assertTrue(validator.isValid("1 (123) 123-1232",null));
+	    assertTrue(validator.isValid("123-123-1232",null));
+	    assertTrue(validator.isValid("123 123 1232",null));
+	    assertTrue(validator.isValid("(123) 123-1232",null));
+	    assertTrue(validator.isValid("123.123.1232",null));
+	    assertTrue(validator.isValid(null, null));//null is null and not a number
+	    
+	    assertFalse(validator.isValid("1234567897", null));//noformat
+	    assertFalse(validator.isValid("asd asd uiop", null));//letters?
+	    
+	    assertFalse(validator.isValid("123 456 789", null));//missing last letter
+	    assertFalse(validator.isValid("2-123-123-4567", null));//wrong country code, yes, they error on this
 	}
 }

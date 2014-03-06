@@ -22,7 +22,7 @@
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 <%@ include file="/WEB-INF/jsp/header.jsp"%>
 
-<div id="${n}blackboardCollaboratePortlet" class="blackboardVCRoot">
+<div id="${n}blackboardCollaboratePortlet" class="blackboardVCRoot config-telephony">
 <c:if test="${!empty prefs['helpUrl'][0]}">
     <div class="help-link">
       <a href="${prefs['helpUrl'][0]}" target="_blank" class="uportal-button"><spring:message code="help" text="help"/></a>
@@ -65,13 +65,58 @@
 		  </thead>
 		  <tbody>
 		  	<tr>
-		  		<td><span class="uportal-channel-strong"><spring:message code="label.moderatorphone" text="Moderator Phone & PIN" /></span></td><td><form:input path="chairPhone" style="width: 12em;" class="uportal-input-text" /> <form:input path="chairPIN" style="width: 7em;" class="uportal-input-text" />&nbsp;<form:errors path="chairPhone" cssClass="error"/></td>
+		  		<td>
+                <span class="uportal-channel-strong">
+                    <spring:message code="label.moderatorphone" text="Moderator Phone & PIN" />
+                </span>
+                <span>
+                    <spring:message code="tooltip.phoneformat" text="tooltip.phoneformat" var="tooltipPhoneformat" htmlEscape="false" />
+                    <a href="#" title="${tooltipPhoneformat}" class="${n}toolTip">
+                        <img src='<c:url value="/images/questionmark.jpg"/>' alt="?"/>
+                    </a>
+                </span>
+                </td>
+                <td>
+                    <form:input path="chairPhone" style="width: 12em;" class="uportal-input-text" />
+                    <form:input path="chairPIN" style="width: 7em;" class="uportal-input-text" />
+                    &nbsp;<form:errors path="chairPhone" cssClass="error"/>
+                    &nbsp;<form:errors path="chairPIN" cssClass="error"/>
+                </td>
 		  	</tr>
 		  	<tr>
-		  		<td><span class="uportal-channel-strong"><spring:message code="label.participantphone" text="Participant Phone & PIN" /></span></td><td><form:input path="nonChairPhone" style="width: 12em;" class="uportal-input-text" /> <form:input path="nonChairPIN" style="width: 7em;" class="uportal-input-text" />&nbsp;<form:errors path="nonChairPhone" cssClass="error"/></td>
+		  		<td>
+                    <span class="uportal-channel-strong">
+                        <spring:message code="label.participantphone" text="Participant Phone & PIN" />
+                    </span>
+                    <span>
+                        <a href="#" title="${tooltipPhoneformat}" class="${n}toolTip">
+                            <img src='<c:url value="/images/questionmark.jpg"/>' alt="?"/>
+                        </a>
+                    </span>
+                </td>
+                <td>
+                    <form:input path="nonChairPhone" style="width: 12em;" class="uportal-input-text" />
+                    <form:input path="nonChairPIN" style="width: 7em;" class="uportal-input-text" />
+                    &nbsp;<form:errors path="nonChairPhone" cssClass="error"/>
+                    &nbsp;<form:errors path="nonChairPIN" cssClass="error"/>
+                </td>
 		  	</tr>
 		  	<tr>
-		  		<td><span class="uportal-channel-strong"><spring:message code="label.sipphone" text="SIP Phone & PIN" /></span></td><td><form:input path="sessionSIPPhone" style="width: 12em;" class="uportal-input-text" /> <form:input path="sessionPIN" style="width: 7em;" class="uportal-input-text" />&nbsp;<form:errors path="sessionSIPPhone" cssClass="error"/></td>
+		  		<td>
+                    <span class="uportal-channel-strong">
+                        <spring:message code="label.sipphone" text="SIP Phone & PIN" />
+                    </span>
+                    <spring:message code="tooltip.sipphone" text="tooltip.sipphone" var="tooltipSIPPhone" htmlEscape="false" />
+                    <a href="#" title="${tooltipSIPPhone}" class="${n}toolTip">
+                        <img src='<c:url value="/images/questionmark.jpg"/>' alt="?"/>
+                    </a>
+                </td>
+                <td>
+                    <form:input path="sessionSIPPhone" style="width: 12em;" class="uportal-input-text" /> 
+                    <form:input path="sessionPIN" style="width: 7em;" class="uportal-input-text" />
+                    &nbsp;<form:errors path="sessionSIPPhone" cssClass="error"/>
+                    &nbsp;<form:errors path="sessionPIN" cssClass="error"/>
+                </td>
 		  	</tr>
 		  </tbody>
 	</table>
@@ -99,3 +144,11 @@
 	
 </form>
 </div>
+
+<script type="text/javascript">
+(function($) {
+   $(document).ready(function() {
+      blackboardPortlet.showTooltip('.${n}toolTip');
+   });          
+})(blackboardPortlet.jQuery);
+</script>

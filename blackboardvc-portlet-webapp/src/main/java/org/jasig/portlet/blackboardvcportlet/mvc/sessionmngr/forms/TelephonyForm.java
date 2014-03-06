@@ -1,9 +1,14 @@
 package org.jasig.portlet.blackboardvcportlet.mvc.sessionmngr.forms;
 
 
+import javax.validation.constraints.Pattern;
+
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.jasig.portlet.blackboardvcportlet.data.Session;
 import org.jasig.portlet.blackboardvcportlet.data.SessionTelephony;
+import org.jasig.portlet.blackboardvcportlet.validations.annotations.PhoneNumber;
 
 public class TelephonyForm implements SessionTelephony {
 	
@@ -29,6 +34,7 @@ public class TelephonyForm implements SessionTelephony {
 	private long sessionId;
 	
 	@NotBlank
+	@PhoneNumber
 	public String getChairPhone() {
 		return chairPhone;
 	}
@@ -36,6 +42,9 @@ public class TelephonyForm implements SessionTelephony {
 	public void setChairPhone(String chairPhone) {
 		this.chairPhone = chairPhone;
 	}
+	
+	@Pattern(regexp="[0-9\\*\\#\\,]*", message="{org.jasig.portlet.blackboardvcportlet.validations.pin.defaultmessage}")
+	@Length(max=64)
 	public String getChairPIN() {
 		return chairPIN;
 	}
@@ -43,6 +52,7 @@ public class TelephonyForm implements SessionTelephony {
 		this.chairPIN = chairPIN;
 	}
 	
+	@PhoneNumber
 	@NotBlank
 	public String getNonChairPhone() {
 		return nonChairPhone;
@@ -50,6 +60,9 @@ public class TelephonyForm implements SessionTelephony {
 	public void setNonChairPhone(String nonChairPhone) {
 		this.nonChairPhone = nonChairPhone;
 	}
+	
+	@Pattern(regexp="[0-9\\*\\#\\,]*", message="{org.jasig.portlet.blackboardvcportlet.validations.pin.defaultmessage}")
+	@Length(max=64)
 	public String getNonChairPIN() {
 		return nonChairPIN;
 	}
@@ -64,15 +77,25 @@ public class TelephonyForm implements SessionTelephony {
 	}
 	
 	@NotBlank
+	@Pattern(regexp="^sip\\:\\S{1,}", message="{org.jasig.portlet.blackboardvcportlet.validations.sipphone.defaultmessage}")
 	public String getSessionSIPPhone() {
 		return sessionSIPPhone;
 	}
+	
+	/**
+	 * Sets the variable sessionSIPPhone. If setting to "" it will change it to null so that the validation
+	 * will only provide one error message
+	 * @param sessionSIPPhone
+	 */
 	public void setSessionSIPPhone(String sessionSIPPhone) {
-		this.sessionSIPPhone = sessionSIPPhone;
+		this.sessionSIPPhone = StringUtils.defaultIfEmpty(sessionSIPPhone, null);
 	}
 	public String getSessionPIN() {
 		return sessionPIN;
 	}
+	
+	@Pattern(regexp="[0-9\\*\\#\\,]*", message="{org.jasig.portlet.blackboardvcportlet.validations.pin.defaultmessage}")
+	@Length(max=64)
 	public void setSessionPIN(String sessionPIN) {
 		this.sessionPIN = sessionPIN;
 	}

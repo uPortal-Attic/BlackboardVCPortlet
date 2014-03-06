@@ -26,6 +26,10 @@ p.uportal-channel-success {padding:1em 1em 1em 3em; border:2px solid; color:#004
     color: #ff0000;
 }
 
+.blackboardVCRoot.config-telephony table.telephony .error {
+    float: right;
+}
+
 .blackboardVCRoot div.ajaxerror {
     display: none;
     color: #ff0000;
@@ -267,4 +271,6 @@ li.ui-timepicker-selected .ui-timepicker-duration,
 .ui-timepicker-list li.ui-timepicker-selected.ui-timepicker-disabled {
 	background: #f2f2f2;
 }
+
+
   
