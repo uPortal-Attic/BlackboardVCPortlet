@@ -40,8 +40,8 @@
     <!-- Order is important here, the log script needs to be the first thing followed by the debug toggle -->
     <js>js-lib/jquery.log.js</js>
     <js included="plain">js/debug.js</js>
-
-    <js>js-lib/jquery.dataTables.js</js>
+    <js included="plain" resource="true">/rs/datatables/1.9.4/media/js/jquery.dataTables.js</js>
+    <js included="aggregated" resource="true">/rs/datatables/1.9.4/media/js/jquery.dataTables.min.js</js>
     <js>js/timepicker.js</js>
     <js>js/portlet.js</js>
     <js>js/datepair.js</js>
