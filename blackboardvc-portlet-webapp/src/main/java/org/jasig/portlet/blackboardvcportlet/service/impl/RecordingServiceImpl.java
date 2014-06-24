@@ -2,10 +2,14 @@ package org.jasig.portlet.blackboardvcportlet.service.impl;
 
 import java.util.List;
 
+import org.apache.commons.logging.Log;
 import org.jasig.portlet.blackboardvcportlet.dao.SessionRecordingDao;
 import org.jasig.portlet.blackboardvcportlet.dao.ws.RecordingWSDao;
 import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
 import org.jasig.portlet.blackboardvcportlet.service.RecordingService;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,6 +25,7 @@ public class RecordingServiceImpl implements RecordingService {
 	
 	private RecordingWSDao recordingWSDao;
 	private SessionRecordingDao recordingDao;
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 	
 	@Autowired
 	public void setRecordingWSDao (RecordingWSDao recordingWSDao) {
@@ -85,5 +90,22 @@ public class RecordingServiceImpl implements RecordingService {
             //Recording doesn't exist on the BB side, remove our local DB version
         }
         this.recordingDao.deleteRecording(sessionRecording);
+    }
+    
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public int datafixRecordings(DateTime startDate, DateTime endDate) {
+       int countErred = 0;
+       //fetch the recording long information from the web service
+        List<BlackboardRecordingLongResponse> recordingLongList = recordingWSDao.getRecordingLong(null, null, null, null, startDate.getMillis(), endDate.getMillis(), null);
+        for(BlackboardRecordingLongResponse recordingResponse : recordingLongList) {
+            try{
+                //post the information to the database
+                recordingDao.createOrUpdateRecording(recordingResponse);
+            } catch (Exception ex) {
+                logger.error("Error adding datafix for recording: " + recordingResponse.getRecordingId() + " for session : " + recordingResponse.getSessionId(), ex);
+                countErred++;
+            }
+        }
+        return countErred;
     }
 }
