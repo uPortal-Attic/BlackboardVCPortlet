@@ -67,7 +67,7 @@
 		  	<tr>
 		  		<td>
                 <span class="uportal-channel-strong">
-                    <spring:message code="label.moderatorphone" text="Moderator Phone & PIN" />
+                    <spring:message code="label.moderatorphone" text="Moderator Phone" />
                 </span>
                 <span>
                     <spring:message code="tooltip.phoneformat" text="tooltip.phoneformat" var="tooltipPhoneformat" htmlEscape="false" />
@@ -77,7 +77,11 @@
                 </span>
                 </td>
                 <td>
-                    <form:input path="chairPhone" style="width: 12em;" class="uportal-input-text" />
+                    <form:input path="chairPhone" style="width: 12em;" class="uportal-input-text" required="required"/>
+                        <span class="required"><spring:message code="requiredCharacter" text="*" /></span>
+                        <span class="uportal-channel-strong ">
+                            <spring:message code="label.pin" text="Moderator PIN" />
+                        </span>
                     <form:input path="chairPIN" style="width: 7em;" class="uportal-input-text" />
                     &nbsp;<form:errors path="chairPhone" cssClass="error"/>
                     &nbsp;<form:errors path="chairPIN" cssClass="error"/>
@@ -86,7 +90,7 @@
 		  	<tr>
 		  		<td>
                     <span class="uportal-channel-strong">
-                        <spring:message code="label.participantphone" text="Participant Phone & PIN" />
+                        <spring:message code="label.participantphone" text="Participant Phone" />
                     </span>
                     <span>
                         <a href="#" title="${tooltipPhoneformat}" class="${n}toolTip">
@@ -95,7 +99,11 @@
                     </span>
                 </td>
                 <td>
-                    <form:input path="nonChairPhone" style="width: 12em;" class="uportal-input-text" />
+                    <form:input path="nonChairPhone" style="width: 12em;" class="uportal-input-text" required="required"/>
+                        <span class="required"><spring:message code="requiredCharacter" text="*" /></span>
+                        <span class="uportal-channel-strong">
+                            <spring:message code="label.pin" text="Participant PIN" />
+                        </span>
                     <form:input path="nonChairPIN" style="width: 7em;" class="uportal-input-text" />
                     &nbsp;<form:errors path="nonChairPhone" cssClass="error"/>
                     &nbsp;<form:errors path="nonChairPIN" cssClass="error"/>
@@ -104,7 +112,7 @@
 		  	<tr>
 		  		<td>
                     <span class="uportal-channel-strong">
-                        <spring:message code="label.sipphone" text="SIP Phone & PIN" />
+                        <spring:message code="label.sipphone" text="SIP Phone" />
                     </span>
                     <spring:message code="tooltip.sipphone" text="tooltip.sipphone" var="tooltipSIPPhone" htmlEscape="false" />
                     <a href="#" title="${tooltipSIPPhone}" class="${n}toolTip">
@@ -112,7 +120,11 @@
                     </a>
                 </td>
                 <td>
-                    <form:input path="sessionSIPPhone" style="width: 12em;" class="uportal-input-text" /> 
+                    <form:input path="sessionSIPPhone" style="width: 12em;" class="uportal-input-text" required="required"/>
+                        <span class="required"><spring:message code="requiredCharacter" text="*" /></span>
+                        <span class="uportal-channel-strong">
+                            <spring:message code="label.pin" text="SIP PIN" />
+                        </span>
                     <form:input path="sessionPIN" style="width: 7em;" class="uportal-input-text" />
                     &nbsp;<form:errors path="sessionSIPPhone" cssClass="error"/>
                     &nbsp;<form:errors path="sessionPIN" cssClass="error"/>
@@ -120,6 +132,9 @@
 		  	</tr>
 		  </tbody>
 	</table>
+    <span class="required">
+        <spring:message code="requiredCharacter" text="*" /><spring:message code="required" text="required" />
+    </span>
 	</spring:nestedPath>
 	<table>
 	  <tfoot>

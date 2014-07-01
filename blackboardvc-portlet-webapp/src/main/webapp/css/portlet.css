@@ -272,5 +272,8 @@ li.ui-timepicker-selected .ui-timepicker-duration,
 	background: #f2f2f2;
 }
 
-
+.blackboardVCRoot .required{
+    color:#FF0000;
+    padding-right:2em;
+}
   
