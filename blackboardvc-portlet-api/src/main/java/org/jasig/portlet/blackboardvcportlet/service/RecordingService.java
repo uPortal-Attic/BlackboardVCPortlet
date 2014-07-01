@@ -19,6 +19,7 @@
 package org.jasig.portlet.blackboardvcportlet.service;
 
 import org.jasig.portlet.blackboardvcportlet.data.SessionRecording;
+import org.joda.time.DateTime;
 
 
 
@@ -34,4 +35,6 @@ public interface RecordingService {
 	void updateSessionRecordingName(long recordingId, String roomName);
 	
 	void removeRecording(long recordingId);
+	
+	int datafixRecordings(DateTime startDate, DateTime endDate);
 }
