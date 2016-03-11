@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.jasig.parent</groupId>
         <artifactId>jasig-parent</artifactId>
-        <version>34</version>
+        <version>39</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -600,19 +600,6 @@
     <build>
         <finalName>BlackboardVCPortlet</finalName>
         <plugins>
-            <plugin>
-                <groupId>org.jasig.maven</groupId>
-                <artifactId>maven-notice-plugin</artifactId>
-                <version>1.0.5</version>
-                <configuration>
-                    <generateChildNotices>false</generateChildNotices>
-                    <noticeTemplate>NOTICE.template</noticeTemplate>
-                    <noticeMessage>NOTICE</noticeMessage>
-                    <licenseMapping>
-                        <param>https://source.jasig.org/licenses/license-mappings.xml</param>
-                    </licenseMapping>
-                </configuration>
-            </plugin>
             <plugin>
                 <artifactId>maven-enforcer-plugin</artifactId>
                 <executions>
